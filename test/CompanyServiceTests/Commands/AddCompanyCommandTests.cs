@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
+using LT.DigitalOffice.CompanyService.Models;
 using LT.DigitalOffice.CompanyService.Commands;
-using LT.DigitalOffice.CompanyService.Commands.Interfaces;
 using LT.DigitalOffice.CompanyService.Database.Entities;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
-using LT.DigitalOffice.CompanyService.Models;
+using LT.DigitalOffice.CompanyService.Commands.Interfaces;
 using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;

@@ -11,6 +11,7 @@ using LT.DigitalOffice.CompanyService.Repositories;
 using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
 using LT.DigitalOffice.CompanyService.Validators;
 using LT.DigitalOffice.Kernel;
+using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,8 @@ namespace LT.DigitalOffice.CompanyService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<RabbitMQOptions>(Configuration);
+
             services.AddHealthChecks();
 
             services.AddDbContext<CompanyServiceDbContext>(options =>
@@ -42,9 +45,9 @@ namespace LT.DigitalOffice.CompanyService
 
             services.AddMassTransit(x =>
             {
-                const string serviceSection = "ServiceInfo";
-                string serviceId = Configuration.GetSection(serviceSection)["ID"];
-                string serviceName = Configuration.GetSection(serviceSection)["Name"];
+                const string serviceSection = "RabbitMQ";
+                string serviceName = Configuration.GetSection(serviceSection)["Username"];
+                string servicePassword = Configuration.GetSection(serviceSection)["Password"];
 
                 x.AddConsumer<GetUserPositionConsumer>();
 
@@ -52,8 +55,8 @@ namespace LT.DigitalOffice.CompanyService
                 {
                     cfg.Host("localhost", "/", hst =>
                     {
-                        hst.Username($"{serviceName}_{serviceId}");
-                        hst.Password(serviceId);
+                        hst.Username($"{serviceName}_{servicePassword}");
+                        hst.Password(servicePassword);
                     });
 
                     cfg.ReceiveEndpoint($"{serviceName}", e =>
@@ -121,7 +124,7 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IValidator<AddPositionRequest>, AddPositionRequestValidator>();
             services.AddTransient<IValidator<EditPositionRequest>, EditPositionRequestValidator>();
         }
-      
+
         private void ConfigureMappers(IServiceCollection services)
         {
             services.AddTransient<IMapper<DbCompany, Company>, CompanyMapper>();
