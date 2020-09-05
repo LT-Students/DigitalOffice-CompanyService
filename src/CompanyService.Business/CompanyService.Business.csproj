@@ -4,4 +4,15 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CompanyService.Mappers\CompanyService.Mappers.csproj" />
+    <ProjectReference Include="..\CompanyService.Models.Db\CompanyService.Models.Db.csproj" />
+    <ProjectReference Include="..\CompanyService.Models.Dto\CompanyService.Models.Dto.csproj" />
+  </ItemGroup>
+
 </Project>

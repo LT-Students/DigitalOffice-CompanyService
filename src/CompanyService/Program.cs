@@ -1,4 +1,6 @@
+using LT.DigitalOffice.CompanyService.Data.Provider;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace LT.DigitalOffice.CompanyService
@@ -10,6 +12,7 @@ namespace LT.DigitalOffice.CompanyService
             CreateHostBuilder(args).Build().Run();
         }
 
+        IDataProvider provider = new DbContext();
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });

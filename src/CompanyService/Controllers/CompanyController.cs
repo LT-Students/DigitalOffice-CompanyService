@@ -1,5 +1,5 @@
-﻿using LT.DigitalOffice.CompanyService.Commands.Interfaces;
-using LT.DigitalOffice.CompanyService.Models;
+﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
