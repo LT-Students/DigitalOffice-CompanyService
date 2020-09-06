@@ -1,6 +1,6 @@
-﻿using LT.DigitalOffice.CompanyService.Data.Provider;
+﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,6 @@ namespace LT.DigitalOffice.CompanyService.Data
         public Guid AddCompany(DbCompany company)
         {
             provider.Companies.Add(company);
-            provider.SaveChanges();
 
             return company.Id;
         }
@@ -53,7 +52,6 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             provider.Companies.Update(company);
-            provider.SaveChanges();
 
             return true;
         }

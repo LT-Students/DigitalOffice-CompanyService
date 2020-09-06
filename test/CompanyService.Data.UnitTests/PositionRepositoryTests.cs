@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.UnitTestLibrary;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -28,7 +29,7 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
                 .Options;
             dbContext = new CompanyServiceDbContext(dbOptions);
 
-            repository = new PositionRepository(dbContext);
+            repository = new PositionRepository((CompanyService.Data.Provider.IDataProvider)dbContext);
         }
 
         [SetUp]

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
@@ -57,13 +57,11 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             dbPosition.IsActive = false;
             provider.Positions.Update(dbPosition);
-            provider.SaveChanges();
         }
 
         public Guid AddPosition(DbPosition newPosition)
         {
             provider.Positions.Add(newPosition);
-            provider.SaveChanges();
 
             return newPosition.Id;
         }
@@ -80,7 +78,6 @@ namespace LT.DigitalOffice.CompanyService.Data
             dbPosition.Name = newPosition.Name;
             dbPosition.Description = newPosition.Description;
             provider.Positions.Update(dbPosition);
-            provider.SaveChanges();
 
             return true;
         }

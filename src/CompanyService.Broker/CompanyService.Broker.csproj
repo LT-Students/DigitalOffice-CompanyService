@@ -10,4 +10,8 @@
     <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CompanyService.Data\CompanyService.Data.csproj" />
+  </ItemGroup>
+
 </Project>

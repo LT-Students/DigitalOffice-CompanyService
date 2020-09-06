@@ -1,5 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 

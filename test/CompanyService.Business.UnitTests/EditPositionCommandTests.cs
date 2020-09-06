@@ -1,13 +1,13 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+﻿using FluentValidation;
+using LT.DigitalOffice.CompanyService.Business;
+using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto;
 using Moq;
 using NUnit.Framework;
 using System;
-using FluentValidation;
-using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Business;
 
 namespace LT.DigitalOffice.CompanyServiceUnitTests.Commands
 {
@@ -56,7 +56,7 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Commands
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(false);
 
-            Assert.Throws<ValidationException>(() => command.Execute(request), "Position field validation error");
+            Assert.Throws<ValidationException>(() => command.Execute(request));
             repositoryMock.Verify(repository => repository.EditPosition(It.IsAny<DbPosition>()), Times.Never);
         }
 

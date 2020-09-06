@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
-using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;

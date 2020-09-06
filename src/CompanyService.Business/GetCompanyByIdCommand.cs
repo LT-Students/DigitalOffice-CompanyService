@@ -2,9 +2,9 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {

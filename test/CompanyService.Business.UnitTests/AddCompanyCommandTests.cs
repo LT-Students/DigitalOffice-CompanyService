@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
+using LT.DigitalOffice.CompanyService.Business;
+using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using Moq;
 using NUnit.Framework;
 using System;
-using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Business;
 
 namespace LT.DigitalOffice.CompanyServiceUnitTests.Commands
 {

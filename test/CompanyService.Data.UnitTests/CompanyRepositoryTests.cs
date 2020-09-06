@@ -1,7 +1,9 @@
 ﻿using LT.DigitalOffice.CompanyService.Data;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.UnitTestLibrary;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -11,7 +13,7 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
 {
     public class CompanyRepositoryTests
     {
-        private CompanyServiceDbContext dbContext;
+        private IDataProvider provider;
         private ICompanyRepository repository;
 
         private DbCompany dbCompanyInDb;
@@ -23,11 +25,11 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
         public void OneTimeSetUp()
         {
             var dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
-                .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
-                .Options;
-            dbContext = new CompanyServiceDbContext(dbOptions);
+                   .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
+                   .Options;
+            provider = new CompanyServiceDbContext(dbOptions);
 
-            repository = new CompanyRepository(dbContext);
+            repository = new CompanyRepository(provider);
         }
 
         [SetUp]
@@ -40,8 +42,7 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
                 IsActive = true
             };
 
-            dbContext.Companies.Add(dbCompanyInDb);
-            dbContext.SaveChanges();
+            provider.Companies.Add(dbCompanyInDb);
 
             AddCompanySetUp();
             UpdateCompanySetUp();
@@ -77,15 +78,6 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
             };
         }
 
-        [TearDown]
-        public void CleanDb()
-        {
-            if (dbContext.Database.IsInMemory())
-            {
-                dbContext.Database.EnsureDeleted();
-            }
-        }
-
         #region GetCompanyById
         [Test]
         public void ShouldThrowExceptionWhenCompanyDoesNotExist()
@@ -98,7 +90,7 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
         {
             var actualCompany = repository.GetCompanyById(dbCompanyInDb.Id);
 
-            var expectedCompany = dbContext.Companies.Find(dbCompanyInDb.Id);
+            var expectedCompany = provider.Companies.Find(dbCompanyInDb.Id);
             SerializerAssert.AreEqual(expectedCompany, actualCompany);
         }
         #endregion
@@ -108,7 +100,7 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
         public void ShouldRightGetCompaniesList()
         {
             var actualCompaniesList = repository.GetCompaniesList();
-            var expectedCompaniesList = dbContext.Companies.ToList();
+            var expectedCompaniesList = provider.Companies.ToList();
 
             Assert.AreEqual(actualCompaniesList.Count, expectedCompaniesList.Count);
             foreach (var company in expectedCompaniesList)
@@ -125,7 +117,7 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
             var guidOfNewCompany = repository.AddCompany(dbCompanyToAdd);
 
             Assert.AreEqual(dbCompanyToAdd.Id, guidOfNewCompany);
-            Assert.NotNull(dbContext.Companies.Find(dbCompanyToAdd.Id));
+            Assert.NotNull(provider.Companies.Find(dbCompanyToAdd.Id));
         }
         #endregion
 
@@ -140,9 +132,8 @@ namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
         [Test]
         public void ShouldUpdateCompany()
         {
-            dbContext.Entry(dbCompanyInDb).State = EntityState.Detached;
             var result = repository.UpdateCompany(dbCompanyToUpdate);
-            var resultCompany = dbContext.Companies
+            var resultCompany = provider.Companies
                 .FirstOrDefaultAsync(x => x.Id == dbCompanyToUpdate.Id)
                 .Result;
 

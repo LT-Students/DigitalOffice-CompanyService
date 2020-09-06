@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LT.DigitalOffice.CompanyService.Repositories.Interfaces
+namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
     /// <summary>
     /// Represents interface of repository in repository pattern.
