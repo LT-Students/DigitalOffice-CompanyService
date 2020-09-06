@@ -7,9 +7,8 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Business;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Commands
+namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
     class AddPositionCommandTests
     {

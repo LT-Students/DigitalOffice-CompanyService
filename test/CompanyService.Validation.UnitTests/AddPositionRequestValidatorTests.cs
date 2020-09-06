@@ -1,10 +1,9 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Validation;
 using NUnit.Framework;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Validators
+namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
 {
     class AddPositionRequestValidatorTests
     {

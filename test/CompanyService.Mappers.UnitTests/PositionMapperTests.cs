@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.Kernel.UnitTestLibrary;
@@ -8,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Mappers
+namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
 {
     public class PositionMappersTests
     {

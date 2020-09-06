@@ -13,7 +13,7 @@ using MassTransit.Testing;
 using Moq;
 using NUnit.Framework;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Consumers
+namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 {
     internal class GetUserPositionConsumerTests
     {

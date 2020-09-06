@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Data;
-using LT.DigitalOffice.CompanyService.Data.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.UnitTestLibrary;
@@ -9,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
+namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 {
     internal class PositionRepositoryTests
     {

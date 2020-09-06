@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Business;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -11,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Commands
+namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
     class GetPositionByIdCommandTests
     {

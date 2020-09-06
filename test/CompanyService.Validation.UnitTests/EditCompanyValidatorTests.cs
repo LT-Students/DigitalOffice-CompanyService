@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Validation;
 using NUnit.Framework;
 using System;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Validators
+namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
 {
     public class EditCompanyValidatorTests
     {

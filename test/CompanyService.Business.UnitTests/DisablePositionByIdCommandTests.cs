@@ -1,11 +1,10 @@
-﻿using LT.DigitalOffice.CompanyService.Business;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using Moq;
 using NUnit.Framework;
 using System;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Commands
+namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
     class DisablePositionByIdCommandTests
     {

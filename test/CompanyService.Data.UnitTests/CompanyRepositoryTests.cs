@@ -9,7 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 
-namespace LT.DigitalOffice.CompanyServiceUnitTests.Repositories
+namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 {
     public class CompanyRepositoryTests
     {
