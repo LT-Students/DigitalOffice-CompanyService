@@ -9,5 +9,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider
         DbSet<DbCompany> Companies { get; set; }
         DbSet<DbDepartment> Departments { get; set; }
         DbSet<DbCompanyUser> CompaniesUsers { get; set; }
+
+        void SaveChanges();
+        object MakeEntityDetached(object obj);
     }
 }

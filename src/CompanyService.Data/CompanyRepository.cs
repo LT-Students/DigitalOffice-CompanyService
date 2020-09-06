@@ -31,6 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         public Guid AddCompany(DbCompany company)
         {
             provider.Companies.Add(company);
+            provider.SaveChanges();
 
             return company.Id;
         }
@@ -52,6 +53,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             provider.Companies.Update(company);
+            provider.SaveChanges();
 
             return true;
         }

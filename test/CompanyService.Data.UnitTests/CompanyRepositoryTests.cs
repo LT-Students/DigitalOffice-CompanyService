@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Data;
-using LT.DigitalOffice.CompanyService.Data.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -43,6 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             };
 
             provider.Companies.Add(dbCompanyInDb);
+            provider.SaveChanges();
 
             AddCompanySetUp();
             UpdateCompanySetUp();
@@ -132,6 +132,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldUpdateCompany()
         {
+            provider.MakeEntityDetached(dbCompanyInDb);
             var result = repository.UpdateCompany(dbCompanyToUpdate);
             var resultCompany = provider.Companies
                 .FirstOrDefaultAsync(x => x.Id == dbCompanyToUpdate.Id)

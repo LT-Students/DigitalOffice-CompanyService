@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace LT.DigitalOffice.CompanyService.Models.Db
 {
     public class DbCompanyUser
-    {
+    {   [Key]
         public Guid UserId { get; set; }
         public Guid CompanyId { get; set; }
         public DbCompany Company { get; set; }

@@ -24,5 +24,16 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
+
+        public object MakeEntityDetached(object obj)
+        {
+            this.Entry(obj).State = EntityState.Detached;
+            return this.Entry(obj).State;
+        }
+
+        void IDataProvider.SaveChanges()
+        {
+            this.SaveChanges();
+        }
     }
 }

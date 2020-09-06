@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.UnitTestLibrary;
@@ -12,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 {
     internal class PositionRepositoryTests
     {
-        private CompanyServiceDbContext dbContext;
+        private IDataProvider provider;
         private IPositionRepository repository;
 
         private DbPosition dbPosition;
@@ -26,9 +27,9 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             var dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
                 .UseInMemoryDatabase("InMemoryDatabase")
                 .Options;
-            dbContext = new CompanyServiceDbContext(dbOptions);
+            provider = new CompanyServiceDbContext(dbOptions);
 
-            repository = new PositionRepository((CompanyService.Data.Provider.IDataProvider)dbContext);
+            repository = new PositionRepository(provider);
         }
 
         [SetUp]
@@ -43,8 +44,8 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Name = "Name"
             };
 
-            dbContext.Positions.Add(dbPosition);
-            dbContext.SaveChanges();
+            provider.Positions.Add(dbPosition);
+            provider.SaveChanges();
 
             dbPositionToAdd = new DbPosition
             {
@@ -54,21 +55,12 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             };
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            if (dbContext.Database.IsInMemory())
-            {
-                dbContext.Database.EnsureDeleted();
-            }
-        }
-
         #region GetPositionById
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExist()
         {
             Assert.Throws<Exception>(() => repository.GetPositionById(Guid.NewGuid()));
-            Assert.AreEqual(dbContext.Positions, new List<DbPosition> { dbPosition });
+            Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
 
         [Test]
@@ -84,7 +76,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             };
 
             SerializerAssert.AreEqual(expected, result);
-            Assert.AreEqual(dbContext.Positions, new List<DbPosition> { dbPosition });
+            Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
         #endregion
 
@@ -98,7 +90,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 
             Assert.DoesNotThrow(() => repository.GetPositionsList());
             SerializerAssert.AreEqual(expected, result);
-            Assert.That(dbContext.Positions, Is.EqualTo(new List<DbPosition> { dbPosition }));
+            Assert.That(provider.Positions, Is.EqualTo(new List<DbPosition> { dbPosition }));
         }
         #endregion
 
@@ -120,18 +112,18 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 IsActive = true,
                 StartTime = DateTime.Now.AddDays(-1)
             };
-            var position = dbContext.Positions
+            var position = provider.Positions
                 .Include(p => p.UserIds)
                 .FirstOrDefault(p => p.Id == positionId);
             position.UserIds = new List<DbCompanyUser> { dbCompanyUser };
-            dbContext.SaveChanges();
+            provider.SaveChanges();
 
             var userId = dbPosition.UserIds.First().UserId;
             var result = repository.GetUserPosition(userId);
             Assert.AreEqual(dbPosition.Id, result.Id);
             Assert.AreEqual(dbPosition.Description, result.Description);
             Assert.AreEqual(dbPosition.Name, result.Name);
-            Assert.That(dbContext.Positions, Is.EquivalentTo(new[] { dbPosition }));
+            Assert.That(provider.Positions, Is.EquivalentTo(new[] { dbPosition }));
         }
         #endregion
 
@@ -144,7 +136,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             var result = repository.AddPosition(dbPositionToAdd);
 
             Assert.AreEqual(expected, result);
-            Assert.NotNull(dbContext.Positions.Find(dbPositionToAdd.Id));
+            Assert.NotNull(provider.Positions.Find(dbPositionToAdd.Id));
         }
         #endregion
 
@@ -160,11 +152,11 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             };
 
             var result = repository.EditPosition(newPosition);
-            DbPosition updatedPosition = dbContext.Positions.FirstOrDefault(p => p.Id == positionId);
+            DbPosition updatedPosition = provider.Positions.FirstOrDefault(p => p.Id == positionId);
 
             Assert.IsTrue(result);
             SerializerAssert.AreEqual(newPosition, updatedPosition);
-            Assert.That(dbContext.Positions, Is.EquivalentTo(new List<DbPosition> { updatedPosition }));
+            Assert.That(provider.Positions, Is.EquivalentTo(new List<DbPosition> { updatedPosition }));
         }
         #endregion
 
@@ -173,7 +165,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         public void ShouldThrowExceptionIfPositionDoesNotExistWhileDisablingPosition()
         {
             Assert.Throws<Exception>(() => repository.DisablePositionById(Guid.NewGuid()));
-            Assert.AreEqual(dbContext.Positions, new List<DbPosition> { dbPosition });
+            Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
 
         [Test]
@@ -181,15 +173,15 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         {
             repository.DisablePositionById(positionId);
 
-            Assert.IsTrue(dbContext.Positions.Find(positionId).IsActive == false);
-            Assert.AreEqual(dbContext.Positions, new List<DbPosition> { dbPosition });
+            Assert.IsTrue(provider.Positions.Find(positionId).IsActive == false);
+            Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
 
         [Test]
         public void ShouldThrowExceptionIfPositionIdNullWhileDisablingPosition()
         {
             Assert.Throws<Exception>(() => repository.DisablePositionById(Guid.Empty));
-            Assert.AreEqual(dbContext.Positions, new List<DbPosition> { dbPosition });
+            Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
         #endregion
     }
