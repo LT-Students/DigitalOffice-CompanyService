@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>LT.DigitalOffice.CompanyService.Broker</AssemblyName>
+    <RootNamespace>LT.DigitalOffice.CompanyService.Broker</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef</AssemblyName>
+    <RootNamespace>LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

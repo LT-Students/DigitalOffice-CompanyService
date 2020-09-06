@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService
             CreateHostBuilder(args).Build().Run();
         }
 
-        IDataProvider provider = new DbContext();
+        ICompanyDataProvider provider = new DbContext();
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });

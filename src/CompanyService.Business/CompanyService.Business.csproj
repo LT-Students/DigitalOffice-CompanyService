@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>LT.DigitalOffice.CompanyService.Business</AssemblyName>
+    <RootNamespace>LT.DigitalOffice.CompanyService.Business</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

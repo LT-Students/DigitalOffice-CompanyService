@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
-    public class PositionRepository : IPositionRepository
+    public class PositionRepository : IPositionDataProvider
     {
-        private readonly CompanyServiceDbContext dbContext;
+        private IPositionDataProvider provider;
 
-        public PositionRepository([FromServices] CompanyServiceDbContext dbContext)
+        public PositionRepository(IPositionDataProvider provider)
         {
-            this.dbContext = dbContext;
+            this.provider = provider;
         }
 
         public DbPosition GetPositionById(Guid positionId)

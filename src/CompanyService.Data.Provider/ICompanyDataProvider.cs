@@ -1,14 +1,11 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
-namespace LT.DigitalOffice.CompanyService.Data.Interfaces
+namespace LT.DigitalOffice.CompanyService.Data.Provider
 {
-    /// <summary>
-    /// Represents interface of repository in repository pattern.
-    /// Provides methods for working with the database of CompanyService.
-    /// </summary>
-    public interface ICompanyRepository
+    public interface ICompanyDataProvider
     {
         /// <summary>
         /// Returns the company with the specified id from database.
