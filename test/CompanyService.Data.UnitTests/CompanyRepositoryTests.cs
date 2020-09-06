@@ -78,6 +78,15 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             };
         }
 
+        [TearDown]
+        public void CleanDb()
+        {
+            if (provider.IsInMemory())
+            {
+                provider.EnsureDeleted();
+            }
+        }
+
         #region GetCompanyById
         [Test]
         public void ShouldThrowExceptionWhenCompanyDoesNotExist()

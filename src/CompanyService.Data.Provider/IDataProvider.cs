@@ -12,5 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider
 
         void SaveChanges();
         object MakeEntityDetached(object obj);
+        void EnsureDeleted();
+        bool IsInMemory();
     }
 }

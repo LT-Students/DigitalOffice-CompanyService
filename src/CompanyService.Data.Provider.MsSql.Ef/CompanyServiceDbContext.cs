@@ -35,5 +35,15 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
         {
             this.SaveChanges();
         }
+
+        public void EnsureDeleted()
+        {
+            this.Database.EnsureDeleted();
+        }
+
+        public bool IsInMemory()
+        {
+            return this.Database.IsInMemory();
+        }
     }
 }
