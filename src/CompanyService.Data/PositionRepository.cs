@@ -9,7 +9,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 {
     public class PositionRepository : IPositionRepository
     {
-        private IDataProvider provider;
+        private readonly IDataProvider provider;
 
         public PositionRepository(IDataProvider provider)
         {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace LT.DigitalOffice.CompanyService.Database.Migrations
+namespace LT.DigitalOffice.CompanyService.Data.Migrations
 {
     [DbContext(typeof(CompanyServiceDbContext))]
     [Migration("20200820194123_RenamedTableCompaniesUsers")]

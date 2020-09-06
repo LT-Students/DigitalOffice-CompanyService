@@ -23,6 +23,8 @@
     <ProjectReference Include="..\..\src\CompanyService.Business\CompanyService.Business.csproj" />
     <ProjectReference Include="..\..\src\CompanyService.Data\CompanyService.Data.csproj" />
     <ProjectReference Include="..\..\src\CompanyService.Mappers\CompanyService.Mappers.csproj" />
+    <ProjectReference Include="..\..\src\CompanyService.Models.Db\CompanyService.Models.Db.csproj" />
+    <ProjectReference Include="..\..\src\CompanyService.Models.Dto\CompanyService.Models.Dto.csproj" />
     <ProjectReference Include="..\..\src\CompanyService.Validation\CompanyService.Validation.csproj" />
   </ItemGroup>
 

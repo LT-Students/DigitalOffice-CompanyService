@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace LT.DigitalOffice.CompanyService.Database.Migrations
+namespace LT.DigitalOffice.CompanyService.Data.Migrations
 {
     public partial class RenamedTableCompaniesUsers : Migration
     {
