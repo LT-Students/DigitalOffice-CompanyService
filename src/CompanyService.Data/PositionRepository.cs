@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Provider;
-using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using Microsoft.AspNetCore.Mvc;
+using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
-    public class PositionRepository : IPositionDataProvider
+    public class PositionRepository : IPositionRepository
     {
-        private IPositionDataProvider provider;
+        private IDataProvider provider;
 
-        public PositionRepository(IPositionDataProvider provider)
+        public PositionRepository(IDataProvider provider)
         {
             this.provider = provider;
         }
 
         public DbPosition GetPositionById(Guid positionId)
         {
-            var dbPosition = dbContext.Positions.FirstOrDefault(position => position.Id == positionId);
+            var dbPosition = provider.Positions.FirstOrDefault(position => position.Id == positionId);
 
             if (dbPosition == null)
             {
@@ -31,12 +30,12 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public List<DbPosition> GetPositionsList()
         {
-            return dbContext.Positions.ToList();
+            return provider.Positions.ToList();
         }
 
         public DbPosition GetUserPosition(Guid userId)
         {
-            var dbCompanyUser = dbContext.CompaniesUsers
+            var dbCompanyUser = provider.CompaniesUsers
                 .FirstOrDefault(companyUser => companyUser.UserId == userId);
 
             if (dbCompanyUser == null)
@@ -44,12 +43,12 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new Exception("Position not found.");
             }
 
-            return dbContext.Positions.Find(dbCompanyUser.PositionId);
+            return provider.Positions.Find(dbCompanyUser.PositionId);
         }
 
         public void DisablePositionById(Guid positionId)
         {
-            var dbPosition = dbContext.Positions.FirstOrDefault(position => position.Id == positionId);
+            var dbPosition = provider.Positions.FirstOrDefault(position => position.Id == positionId);
 
             if (dbPosition == null)
             {
@@ -57,21 +56,21 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             dbPosition.IsActive = false;
-            dbContext.Positions.Update(dbPosition);
-            dbContext.SaveChanges();
+            provider.Positions.Update(dbPosition);
+            provider.SaveChanges();
         }
 
         public Guid AddPosition(DbPosition newPosition)
         {
-            dbContext.Positions.Add(newPosition);
-            dbContext.SaveChanges();
+            provider.Positions.Add(newPosition);
+            provider.SaveChanges();
 
             return newPosition.Id;
         }
 
         public bool EditPosition(DbPosition newPosition)
         {
-            var dbPosition = dbContext.Positions.FirstOrDefault(position => position.Id == newPosition.Id);
+            var dbPosition = provider.Positions.FirstOrDefault(position => position.Id == newPosition.Id);
 
             if (dbPosition == null)
             {
@@ -80,8 +79,8 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             dbPosition.Name = newPosition.Name;
             dbPosition.Description = newPosition.Description;
-            dbContext.Positions.Update(dbPosition);
-            dbContext.SaveChanges();
+            provider.Positions.Update(dbPosition);
+            provider.SaveChanges();
 
             return true;
         }
