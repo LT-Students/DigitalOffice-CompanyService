@@ -1,15 +1,16 @@
 using FluentValidation;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
-using LT.DigitalOffice.CompanyService.Commands;
-using LT.DigitalOffice.CompanyService.Commands.Interfaces;
-using LT.DigitalOffice.CompanyService.Database;
-using LT.DigitalOffice.CompanyService.Database.Entities;
+using LT.DigitalOffice.CompanyService.Business;
+using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Data;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
+using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Mappers;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
-using LT.DigitalOffice.CompanyService.Models;
-using LT.DigitalOffice.CompanyService.Repositories;
-using LT.DigitalOffice.CompanyService.Repositories.Interfaces;
-using LT.DigitalOffice.CompanyService.Validators;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Validation;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
@@ -82,6 +83,14 @@ namespace LT.DigitalOffice.CompanyService
 
             app.UseRouting();
 
+            string corsUrl = Configuration.GetSection("Settings")["CorsUrl"];
+
+            app.UseCors(builder =>
+                builder
+                    .WithOrigins(corsUrl)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -112,6 +121,8 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureRepositories(IServiceCollection services)
         {
+            services.AddTransient<IDataProvider, CompanyServiceDbContext>();
+
             services.AddTransient<ICompanyRepository, CompanyRepository>();
             services.AddTransient<IPositionRepository, PositionRepository>();
         }
