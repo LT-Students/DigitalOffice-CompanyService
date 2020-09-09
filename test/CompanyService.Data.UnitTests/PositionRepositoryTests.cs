@@ -103,7 +103,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         }
         #endregion
 
-  /*      #region GetUserPosition
+        #region GetUserPosition
         [Test]
         public void ShouldThrowExceptionWhenUserIdEmpty()
         {
@@ -135,7 +135,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             Assert.That(provider.Positions, Is.EquivalentTo(new[] { dbPosition }));
         }
         #endregion
-*/
+
         #region AddPosition
         [Test]
         public void ShouldAddNewPositionSuccessfully()
