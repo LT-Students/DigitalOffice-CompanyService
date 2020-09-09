@@ -10,13 +10,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     [ApiController]
     public class CompanyController : ControllerBase
     {
-        [HttpPost("getCompanyById")]
+        [HttpGet("getCompanyById")]
         public Company GetCompanyById([FromServices] IGetCompanyByIdCommand command, [FromQuery] Guid companyId)
         {
             return command.Execute(companyId);
         }
 
-        [HttpPost("getCompaniesList")]
+        [HttpGet("getCompaniesList")]
         public List<Company> GetCompaniesList([FromServices] IGetCompaniesListCommand command)
         {
             return command.Execute();

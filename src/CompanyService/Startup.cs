@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Business;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Mappers;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
@@ -120,6 +121,8 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureRepositories(IServiceCollection services)
         {
+            services.AddTransient<IDataProvider, CompanyServiceDbContext>();
+
             services.AddTransient<ICompanyRepository, CompanyRepository>();
             services.AddTransient<IPositionRepository, PositionRepository>();
         }

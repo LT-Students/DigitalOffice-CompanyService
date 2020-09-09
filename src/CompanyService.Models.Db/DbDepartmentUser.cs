@@ -7,7 +7,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
 {
     public class DbDepartmentUser
     {
-        [Key]
         public Guid UserId { get; set; }
         public Guid DepartmentId { get; set; }
         public DbDepartment Department { get; set; }

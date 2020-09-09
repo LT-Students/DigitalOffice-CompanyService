@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
         // Fluent API is written here.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("LT.DigitalOffice.CompanyService.Models.Db"));
         }
 
         public object MakeEntityDetached(object obj)
