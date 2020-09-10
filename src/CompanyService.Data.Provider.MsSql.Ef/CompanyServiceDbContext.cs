@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
             return this.Entry(obj).State;
         }
 
-        void IDataProvider.SaveChanges()
+        void IDataProvider.Save()
         {
             this.SaveChanges();
         }

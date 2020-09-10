@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             };
 
             provider.Positions.Add(dbPosition);
-            provider.SaveChanges();
+            provider.Save();
 
             dbPositionToAdd = new DbPosition
             {
@@ -125,7 +125,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 .Include(p => p.UserIds)
                 .FirstOrDefault(p => p.Id == positionId);
             position.UserIds = new List<DbCompanyUser> { dbCompanyUser };
-            provider.SaveChanges();
+            provider.Save();
 
             var userId = dbPosition.UserIds.First().UserId;
             var result = repository.GetUserPosition(userId);

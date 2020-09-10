@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             };
 
             provider.Companies.Add(dbCompanyInDb);
-            provider.SaveChanges();
+            provider.Save();
 
             AddCompanySetUp();
             UpdateCompanySetUp();

@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider
         DbSet<DbDepartment> Departments { get; set; }
         DbSet<DbCompanyUser> CompaniesUsers { get; set; }
 
-        void SaveChanges();
+        void Save();
         object MakeEntityDetached(object obj);
         void EnsureDeleted();
         bool IsInMemory();

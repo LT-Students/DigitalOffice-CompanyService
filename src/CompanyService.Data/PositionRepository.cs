@@ -57,13 +57,13 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             dbPosition.IsActive = false;
             provider.Positions.Update(dbPosition);
-            provider.SaveChanges();
+            provider.Save();
         }
 
         public Guid AddPosition(DbPosition newPosition)
         {
             provider.Positions.Add(newPosition);
-            provider.SaveChanges();
+            provider.Save();
 
             return newPosition.Id;
         }
@@ -80,7 +80,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             dbPosition.Name = newPosition.Name;
             dbPosition.Description = newPosition.Description;
             provider.Positions.Update(dbPosition);
-            provider.SaveChanges();
+            provider.Save();
 
             return true;
         }
