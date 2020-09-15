@@ -33,35 +33,5 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         {
             return command.Execute(request);
         }
-
-        [HttpGet("getPositionById")]
-        public Position GetPositionById([FromServices] IGetPositionByIdCommand command, [FromQuery] Guid positionId)
-        {
-            return command.Execute(positionId);
-        }
-
-        [HttpGet("getPositionsList")]
-        public List<Position> GetPositionsList([FromServices] IGetPositionsListCommand command)
-        {
-            return command.Execute();
-        }
-
-        [HttpPost("addPosition")]
-        public Guid AddPosition([FromServices] IAddPositionCommand command, [FromBody] AddPositionRequest request)
-        {
-            return command.Execute(request);
-        }
-
-        [HttpDelete("disablePositionById")]
-        public void DisablePositionById([FromServices] IDisablePositionByIdCommand command, [FromQuery] Guid positionId)
-        {
-            command.Execute(positionId);
-        }
-
-        [HttpPost("editPosition")]
-        public bool EditPosition([FromServices] IEditPositionCommand command, [FromBody] EditPositionRequest request)
-        {
-            return command.Execute(request);
-        }
     }
 }
