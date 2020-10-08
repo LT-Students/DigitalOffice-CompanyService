@@ -5,9 +5,12 @@ using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using System.Linq;
+using LT.DigitalOffice.Kernel.Exceptions;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
+    /// <inheritdoc cref="IEditPositionCommand"/>
     public class EditPositionCommand : IEditPositionCommand
     {
         private readonly IValidator<EditPositionRequest> validator;
@@ -26,7 +29,15 @@ namespace LT.DigitalOffice.CompanyService.Business
 
         public bool Execute(EditPositionRequest request)
         {
-            validator.ValidateAndThrow(request);
+            var validationResult = validator.Validate(request);
+
+            if (validationResult != null && !validationResult.IsValid)
+            {
+                var messages = validationResult.Errors.Select(x => x.ErrorMessage);
+                string message = messages.Aggregate((x, y) => x + "\n" + y);
+
+                throw new BadRequestException(message);
+            }
 
             var position = mapper.Map(request);
 

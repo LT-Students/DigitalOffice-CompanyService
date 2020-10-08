@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Represents the command pattern.
     /// Provides method for getting all added positions.
     /// </summary>
     public interface IGetPositionsListCommand

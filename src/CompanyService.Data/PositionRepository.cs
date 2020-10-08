@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbPosition == null)
             {
-                throw new Exception("Position with this id was not found.");
+                throw new NotFoundException("Position with this id was not found.");
             }
 
             return dbPosition;
@@ -40,7 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbCompanyUser == null)
             {
-                throw new Exception("Position not found.");
+                throw new NotFoundException("Position not found.");
             }
 
             return provider.Positions.Find(dbCompanyUser.PositionId);
@@ -52,7 +53,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbPosition == null)
             {
-                throw new Exception("Position with this id was not found.");
+                throw new NotFoundException("Position with this id was not found.");
             }
 
             dbPosition.IsActive = false;
@@ -74,7 +75,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbPosition == null)
             {
-                throw new Exception("Position with this id was not found.");
+                throw new NotFoundException("Position with this id was not found.");
             }
 
             dbPosition.Name = newPosition.Name;

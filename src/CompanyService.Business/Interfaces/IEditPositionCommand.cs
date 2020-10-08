@@ -3,7 +3,7 @@
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Represents the command pattern.
     /// Provides method for editing a position.
     /// </summary>
     public interface IEditPositionCommand
@@ -13,6 +13,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">Position data.</param>
         /// <returns>Whether it was successful to edit.</returns>
+        /// <exception cref="Kernel.Exceptions.BadRequestException">Thrown when position data is incorrect.</exception>
+        /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when position is not found.</exception>
         bool Execute(EditPositionRequest request);
     }
 }

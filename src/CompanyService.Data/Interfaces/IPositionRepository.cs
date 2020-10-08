@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
     /// <summary>
-    /// Represents interface of repository in repository pattern.
+    /// Represents the repository pattern.
     /// Provides methods for working with the database of CompanyService.
     /// </summary>
     public interface IPositionRepository
