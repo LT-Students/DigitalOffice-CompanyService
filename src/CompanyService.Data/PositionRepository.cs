@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
+    /// <inheritdoc cref="IPositionRepository"/>
     public class PositionRepository : IPositionRepository
     {
         private readonly IDataProvider provider;

@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
+    /// <inheritdoc cref="ICompanyRepository"/>
     public class CompanyRepository : ICompanyRepository
     {
         private readonly IDataProvider provider;
