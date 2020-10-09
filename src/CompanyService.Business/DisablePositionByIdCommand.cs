@@ -5,6 +5,7 @@ using System;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
+    /// <inheritdoc cref="IDisablePositionByIdCommand"/>
     public class DisablePositionByIdCommand : IDisablePositionByIdCommand
     {
         private readonly IPositionRepository repository;

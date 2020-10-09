@@ -4,7 +4,7 @@ using System;
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Represents the command pattern.
     /// Provides method for adding a new position.
     /// </summary>
     public interface IAddPositionCommand
@@ -14,6 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">Position data.</param>
         /// <returns>New position Id.</returns>
+        /// <exception cref="ValidationException">Thrown when position data is incorrect.</exception>
         Guid Execute(AddPositionRequest request);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
+    /// <inheritdoc cref="ICompanyRepository"/>
     public class CompanyRepository : ICompanyRepository
     {
         private readonly IDataProvider provider;
@@ -22,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             var dbCompany = provider.Companies.FirstOrDefault(x => x.Id == companyId);
             if (dbCompany == null)
             {
-                throw new Exception("Company was not found.");
+                throw new NotFoundException("Company was not found.");
             }
 
             return dbCompany;
@@ -49,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbCompany == null)
             {
-                throw new Exception("Company was not found.");
+                throw new NotFoundException("Company was not found.");
             }
 
             provider.Companies.Update(company);

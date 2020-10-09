@@ -4,7 +4,7 @@ using System;
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Represents the command pattern.
     /// Provides method for getting company model by id.
     /// </summary>
     public interface IGetCompanyByIdCommand
@@ -14,6 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="companyId">Specified id of company.</param>
         /// <returns>Company model with specified id.</returns>
+        /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when company is not found.</exception>
         Company Execute(Guid companyId);
     }
 }

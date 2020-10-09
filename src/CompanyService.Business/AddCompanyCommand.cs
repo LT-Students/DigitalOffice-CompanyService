@@ -4,11 +4,15 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
+    /// <inheritdoc cref="IAddCompanyCommand"/>
     public class AddCompanyCommand : IAddCompanyCommand
     {
         private readonly IValidator<AddCompanyRequest> validator;
@@ -27,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business
 
         public Guid Execute(AddCompanyRequest request)
         {
-            validator.ValidateAndThrow(request);
+            validator.ValidateAndThrowCustom(request);
 
             var dbCompany = mapper.Map(request);
 

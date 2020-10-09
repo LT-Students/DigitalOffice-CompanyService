@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.UnitTestLibrary;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -91,7 +92,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenCompanyDoesNotExist()
         {
-            Assert.Throws<Exception>(() => repository.GetCompanyById(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => repository.GetCompanyById(Guid.NewGuid()));
         }
 
         [Test]
@@ -134,7 +135,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenCompanyForUpdateDoesNotExist()
         {
-            Assert.Throws<Exception>(() => repository.UpdateCompany(
+            Assert.Throws<NotFoundException>(() => repository.UpdateCompany(
                 new DbCompany() { Id = Guid.Empty }));
         }
 

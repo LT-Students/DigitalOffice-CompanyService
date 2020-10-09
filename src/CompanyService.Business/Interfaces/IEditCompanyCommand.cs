@@ -3,7 +3,7 @@
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Represents the command pattern.
     /// Provides method for changing a company.
     /// </summary>
     public interface IEditCompanyCommand
@@ -13,6 +13,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">New company data.</param>
         /// <returns>true if the data is up to date. Otherwise false.</returns>
+        /// <exception cref="ValidationException">Thrown when company data is incorrect.</exception>
+        /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when company is not found.</exception>
         bool Execute(EditCompanyRequest request);
     }
 }

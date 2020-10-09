@@ -7,6 +7,9 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using FluentValidation.Results;
+using LT.DigitalOffice.Kernel.Exceptions;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
@@ -51,8 +54,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         public void ShouldThrowExceptionAccordingToValidator()
         {
             validatorMock
-                .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
-                .Returns(false);
+                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
+                .Returns(new ValidationResult(
+                    new List<ValidationFailure>
+                    {
+                        new ValidationFailure("test", "something", null)
+                    }));
 
             Assert.Throws<ValidationException>(() => command.Execute(request));
             repositoryMock.Verify(repository => repository.AddPosition(It.IsAny<DbPosition>()), Times.Never);

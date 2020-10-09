@@ -4,7 +4,7 @@ using System;
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Represents the command pattern.
     /// Provides method for adding a new company.
     /// </summary>
     public interface IAddCompanyCommand
@@ -14,6 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">Company data.</param>
         /// <returns>Id of the added company.</returns>
+        /// <exception cref="ValidationException">Thrown when company data is incorrect.</exception>
         Guid Execute(AddCompanyRequest request);
     }
 }

@@ -5,9 +5,13 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.Kernel.Exceptions;
+using System.Linq;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
+    /// <inheritdoc cref="IEditCompanyCommand"/>
     public class EditCompanyCommand : IEditCompanyCommand
     {
         private readonly IValidator<EditCompanyRequest> validator;
@@ -26,7 +30,8 @@ namespace LT.DigitalOffice.CompanyService.Business
 
         public bool Execute(EditCompanyRequest request)
         {
-            validator.ValidateAndThrow(request);
+            validator.ValidateAndThrowCustom(request);
+
             var dbCompany = mapper.Map(request);
 
             return repository.UpdateCompany(dbCompany);

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
     /// <summary>
-    /// Represents interface for a command in command pattern.
+    /// Represents the command pattern.
     /// Provides method for getting all companies.
     /// </summary>
     public interface IGetCompaniesListCommand

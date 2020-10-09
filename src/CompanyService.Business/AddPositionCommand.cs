@@ -6,9 +6,13 @@ using LT.DigitalOffice.CompanyService.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using System.Linq;
+using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
+    /// <inheritdoc cref="IAddPositionCommand"/>
     public class AddPositionCommand : IAddPositionCommand
     {
         private readonly IValidator<AddPositionRequest> validator;
@@ -27,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business
 
         public Guid Execute(AddPositionRequest request)
         {
-            validator.ValidateAndThrow(request);
+            validator.ValidateAndThrowCustom(request);
 
             var position = mapper.Map(request);
 

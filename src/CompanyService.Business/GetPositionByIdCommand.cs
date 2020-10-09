@@ -8,6 +8,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
+    /// <inheritdoc cref="IGetPositionByIdCommand"/>
     public class GetPositionByIdCommand : IGetPositionByIdCommand
     {
         private readonly IPositionRepository repository;
