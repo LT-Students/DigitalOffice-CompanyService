@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.UnitTestLibrary;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -68,7 +69,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExist()
         {
-            Assert.Throws<Exception>(() => repository.GetPositionById(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => repository.GetPositionById(Guid.NewGuid()));
             Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
 
@@ -107,7 +108,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenUserIdEmpty()
         {
-            Assert.Throws<Exception>(() => repository.GetUserPosition(Guid.Empty));
+            Assert.Throws<NotFoundException>(() => repository.GetUserPosition(Guid.Empty));
         }
 
         [Test]
@@ -173,7 +174,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExistWhileDisablingPosition()
         {
-            Assert.Throws<Exception>(() => repository.DisablePositionById(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => repository.DisablePositionById(Guid.NewGuid()));
             Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
 
@@ -189,7 +190,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionIfPositionIdNullWhileDisablingPosition()
         {
-            Assert.Throws<Exception>(() => repository.DisablePositionById(Guid.Empty));
+            Assert.Throws<NotFoundException>(() => repository.DisablePositionById(Guid.Empty));
             Assert.AreEqual(provider.Positions, new List<DbPosition> { dbPosition });
         }
         #endregion
