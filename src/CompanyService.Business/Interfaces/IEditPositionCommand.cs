@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">Position data.</param>
         /// <returns>Whether it was successful to edit.</returns>
-        /// <exception cref="Kernel.Exceptions.BadRequestException">Thrown when position data is incorrect.</exception>
+        /// <exception cref="ValidationException">Thrown when position data is incorrect.</exception>
         /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when position is not found.</exception>
         bool Execute(EditPositionRequest request);
     }

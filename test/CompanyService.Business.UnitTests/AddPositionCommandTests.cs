@@ -61,7 +61,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                         new ValidationFailure("test", "something", null)
                     }));
 
-            Assert.Throws<BadRequestException>(() => command.Execute(request));
+            Assert.Throws<ValidationException>(() => command.Execute(request));
             repositoryMock.Verify(repository => repository.AddPosition(It.IsAny<DbPosition>()), Times.Never);
         }
 

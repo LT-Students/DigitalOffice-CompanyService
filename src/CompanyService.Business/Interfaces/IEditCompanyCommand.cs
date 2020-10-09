@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">New company data.</param>
         /// <returns>true if the data is up to date. Otherwise false.</returns>
-        /// <exception cref="Kernel.Exceptions.BadRequestException">Thrown when company data is incorrect.</exception>
+        /// <exception cref="ValidationException">Thrown when company data is incorrect.</exception>
         /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when company is not found.</exception>
         bool Execute(EditCompanyRequest request);
     }

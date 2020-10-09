@@ -66,7 +66,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Setup(x => x.Map(It.IsAny<EditCompanyRequest>()))
                 .Returns(dbCompany);
 
-            Assert.Throws<BadRequestException>(() => command.Execute(request));
+            Assert.Throws<ValidationException>(() => command.Execute(request));
             mapperMock.Verify(mapper => mapper.Map(It.IsAny<EditCompanyRequest>()), Times.Never);
             repositoryMock.Verify(repository => repository.UpdateCompany(It.IsAny<DbCompany>()), Times.Never);
         }

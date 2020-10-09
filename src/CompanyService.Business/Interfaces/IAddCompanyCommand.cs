@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">Company data.</param>
         /// <returns>Id of the added company.</returns>
-        /// <exception cref="Kernel.Exceptions.BadRequestException">Thrown when company data is incorrect.</exception>
+        /// <exception cref="ValidationException">Thrown when company data is incorrect.</exception>
         Guid Execute(AddCompanyRequest request);
     }
 }

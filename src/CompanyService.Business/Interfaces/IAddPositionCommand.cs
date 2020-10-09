@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="request">Position data.</param>
         /// <returns>New position Id.</returns>
-        /// <exception cref="Kernel.Exceptions.BadRequestException">Thrown when position data is incorrect.</exception>
+        /// <exception cref="ValidationException">Thrown when position data is incorrect.</exception>
         Guid Execute(AddPositionRequest request);
     }
 }
