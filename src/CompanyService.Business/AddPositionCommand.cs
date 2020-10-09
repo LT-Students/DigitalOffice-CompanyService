@@ -8,6 +8,7 @@ using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using System.Linq;
 using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
@@ -30,15 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business
 
         public Guid Execute(AddPositionRequest request)
         {
-            var validationResult = validator.Validate(request);
-
-            if (validationResult != null && !validationResult.IsValid)
-            {
-                var messages = validationResult.Errors.Select(x => x.ErrorMessage);
-                string message = messages.Aggregate((x, y) => x + "\n" + y);
-
-                throw new BadRequestException(message);
-            }
+            validator.ValidateAndThrowCustom(request);
 
             var position = mapper.Map(request);
 

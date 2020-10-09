@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>LT.DigitalOffice.CompanyService.Broker</AssemblyName>
     <RootNamespace>LT.DigitalOffice.CompanyService.Broker</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.2" />
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.8" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -30,15 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business
 
         public Guid Execute(AddCompanyRequest request)
         {
-            var validationResult = validator.Validate(request);
-
-            if (validationResult != null && !validationResult.IsValid)
-            {
-                var messages = validationResult.Errors.Select(x => x.ErrorMessage);
-                string message = messages.Aggregate((x, y) => x + "\n" + y);
-
-                throw new BadRequestException(message);
-            }
+            validator.ValidateAndThrowCustom(request);
 
             var dbCompany = mapper.Map(request);
 
