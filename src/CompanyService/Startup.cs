@@ -1,3 +1,4 @@
+using CompanyService.Mappers;
 using FluentValidation;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Business;
@@ -73,7 +74,7 @@ namespace LT.DigitalOffice.CompanyService
             ConfigureMappers(services);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseHealthChecks("/api/healthcheck");
 
@@ -119,6 +120,8 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IAddPositionCommand, AddPositionCommand>();
             services.AddTransient<IEditPositionCommand, EditPositionCommand>();
             services.AddTransient<IDisablePositionByIdCommand, DisablePositionByIdCommand>();
+
+            services.AddTransient<IAddDepartmentCommand, AddDepartmentCommand>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -126,6 +129,7 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IDataProvider, CompanyServiceDbContext>();
 
             services.AddTransient<ICompanyRepository, CompanyRepository>();
+            services.AddTransient<IDepartmentRepository, DepartmentRepository>();
             services.AddTransient<IPositionRepository, PositionRepository>();
         }
 
@@ -136,6 +140,8 @@ namespace LT.DigitalOffice.CompanyService
 
             services.AddTransient<IValidator<AddPositionRequest>, AddPositionRequestValidator>();
             services.AddTransient<IValidator<EditPositionRequest>, EditPositionRequestValidator>();
+
+            services.AddTransient<IValidator<DepartmentRequest>, DepartmentRequestValidator>();
         }
 
         private void ConfigureMappers(IServiceCollection services)
@@ -147,6 +153,8 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IMapper<DbPosition, Position>, PositionMapper>();
             services.AddTransient<IMapper<AddPositionRequest, DbPosition>, PositionMapper>();
             services.AddTransient<IMapper<EditPositionRequest, DbPosition>, PositionMapper>();
+
+            services.AddTransient<IMapper<DepartmentRequest, DbDepartment>, DepartmentMapper>();
         }
     }
 }
