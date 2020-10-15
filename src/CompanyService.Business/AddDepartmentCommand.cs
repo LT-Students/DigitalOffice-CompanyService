@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Business
         {
             const int rightId = 4;
 
-            if (!accessValidator.IsAdmin() || accessValidator.HasRights(rightId))
+            if (!(accessValidator.IsAdmin() || accessValidator.HasRights(rightId)))
             {
                 throw new Exception("Not enough rights.");
             }
