@@ -11,6 +11,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
@@ -33,7 +34,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             {
                 Name = "Department",
                 Description = "Description",
-                CompanyId = Guid.NewGuid()
+                CompanyId = Guid.NewGuid(),
+                UsersIds = new List<Guid>() { Guid.NewGuid()}
             };
 
             createdDepartment = new DbDepartment
@@ -42,7 +44,14 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 Name = request.Name,
                 Description = request.Description,
                 CompanyId = request.CompanyId,
-                IsActive = true
+                IsActive = true,
+                UserIds = new List<DbDepartmentUser>()
+                {
+                    new DbDepartmentUser
+                    {
+                        UserId = request.UsersIds.ElementAt(0)
+                    }
+                }
             };
         }
 

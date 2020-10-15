@@ -6,6 +6,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace CompanyService.Data.UnitTests
 {
@@ -36,7 +37,16 @@ namespace CompanyService.Data.UnitTests
                 Name = "Name",
                 Description = "Description",
                 CompanyId = Guid.NewGuid(),
-                IsActive = true
+                IsActive = true,
+                UserIds = new List<DbDepartmentUser>()
+                {
+                    new DbDepartmentUser
+                    {
+                        UserId  = Guid.NewGuid(),
+                        IsActive = true,
+                        StartTime = DateTime.UtcNow
+                    }
+                }
             };
         }
 

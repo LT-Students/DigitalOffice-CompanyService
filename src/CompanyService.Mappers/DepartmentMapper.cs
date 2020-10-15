@@ -2,7 +2,9 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.Kernel.Exceptions;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace CompanyService.Mappers
 {
@@ -15,15 +17,28 @@ namespace CompanyService.Mappers
                 throw new BadRequestException();
             }
 
-            return new DbDepartment
+            var dbDepartment = new DbDepartment
             {
                 Id = Guid.NewGuid(),
                 Name = value.Name,
                 Description = value.Description,
                 IsActive = true,
                 CompanyId = value.CompanyId,
-              //  UserIds = value.UsersIds
+                UserIds = new List<DbDepartmentUser>()
             };
+
+            foreach (Guid userId in value.UsersIds)
+            {
+                dbDepartment.UserIds.Add(new DbDepartmentUser
+                {
+                    DepartmentId = dbDepartment.Id,
+                    UserId = userId,
+                    IsActive = true,
+                    StartTime = DateTime.UtcNow
+                });
+            }
+
+            return dbDepartment;
         }
     }
 }

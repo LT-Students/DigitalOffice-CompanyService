@@ -6,6 +6,8 @@ using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.UnitTestLibrary;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
 {
@@ -23,14 +25,23 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
             {
                 Name = "Department",
                 Description = "Description",
-                CompanyId = Guid.NewGuid()
+                CompanyId = Guid.NewGuid(),
+                UsersIds = new List<Guid>() { Guid.NewGuid()}
             };
             expectedDbDepartment = new DbDepartment
             {
                 Name = "Department",
                 Description = "Description",
                 CompanyId = departmentRequest.CompanyId,
-                IsActive = true
+                IsActive = true,
+                UserIds = new List<DbDepartmentUser>()
+                {
+                    new DbDepartmentUser
+                    {
+                        UserId = departmentRequest.UsersIds.ElementAt(0),
+                        IsActive = true
+                    }
+                }
             };
         }
 
@@ -47,6 +58,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
             var dbDepartment = departmentRequestMapper.Map(departmentRequest);
 
             expectedDbDepartment.Id = dbDepartment.Id;
+            expectedDbDepartment.UserIds.ElementAt(0).DepartmentId = dbDepartment.Id;
+            expectedDbDepartment.UserIds.ElementAt(0).StartTime = dbDepartment.UserIds.ElementAt(0).StartTime;
 
             SerializerAssert.AreEqual(expectedDbDepartment, dbDepartment);
         }
