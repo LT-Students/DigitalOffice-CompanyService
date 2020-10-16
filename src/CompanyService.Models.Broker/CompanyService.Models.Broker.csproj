@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>LT.DigitalOffice.CompanyService.Models.Broker</AssemblyName>
+    <RootNamespace>LT.DigitalOffice.CompanyService.Models.Broker</RootNamespace>
+  </PropertyGroup>
+
+</Project>
