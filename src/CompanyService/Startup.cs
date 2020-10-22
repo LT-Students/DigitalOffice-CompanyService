@@ -45,36 +45,42 @@ namespace LT.DigitalOffice.CompanyService
 
             services.AddControllers();
 
-            services.AddMassTransit(x =>
-            {
-                const string serviceSection = "RabbitMQ";
-                string serviceName = Configuration.GetSection(serviceSection)["Username"];
-                string servicePassword = Configuration.GetSection(serviceSection)["Password"];
-
-                x.AddConsumer<GetUserPositionConsumer>();
-
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host("localhost", "/", hst =>
-                    {
-                        hst.Username($"{serviceName}_{servicePassword}");
-                        hst.Password(servicePassword);
-                    });
-
-                    cfg.ReceiveEndpoint($"{serviceName}", e =>
-                    {
-                        e.ConfigureConsumer<GetUserPositionConsumer>(context);
-                    });
-                });
-            });
+            services.AddKernelExtensions();
 
             ConfigureCommands(services);
             ConfigureRepositories(services);
             ConfigureValidators(services);
             ConfigureMappers(services);
+            ConfigureMassTransit(services);
         }
 
-        public void Configure(IApplicationBuilder app)
+        private void ConfigureMassTransit(IServiceCollection services)
+        {
+            var rabbitMQOptions = Configuration.GetSection(RabbitMQOptions.RabbitMQ).Get<RabbitMQOptions>();
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<GetUserPositionConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(rabbitMQOptions.Host, "/", hst =>
+                    {
+                        hst.Username($"{rabbitMQOptions.Username}_{rabbitMQOptions.Password}");
+                        hst.Password(rabbitMQOptions.Password);
+                    });
+
+                    cfg.ReceiveEndpoint($"{rabbitMQOptions.Username}", e =>
+                    {
+                        e.ConfigureConsumer<GetUserPositionConsumer>(context);
+                    });
+                });
+
+                x.ConfigureKernelMassTransit(rabbitMQOptions);
+            });
+        }
+
+            public void Configure(IApplicationBuilder app)
         {
             app.UseHealthChecks("/api/healthcheck");
 
@@ -82,7 +88,9 @@ namespace LT.DigitalOffice.CompanyService
 
             UpdateDatabase(app);
 
+#if RELEASE
             app.UseHttpsRedirection();
+#endif
 
             app.UseRouting();
 
