@@ -3,7 +3,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.Kernel.UnitTestLibrary;
+using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using NUnit.Framework;
 using System;

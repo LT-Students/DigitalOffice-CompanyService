@@ -1,7 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.Kernel.UnitTestLibrary;
+using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
         private IMapper<DbPosition, Position> mapperDbPositionToPosition;
         private IMapper<EditPositionRequest, DbPosition> mapperEditPositionRequestToDbPosition;
 
-        private DbCompanyUser dbUserIds;
+        private DbDepartmentUser dbUserIds;
         private DbPosition dbPosition;
 
         private EditPositionRequest editPositionRequest;
@@ -52,10 +52,10 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
                 IsActive = true
             };
 
-            dbUserIds = new DbCompanyUser
+            dbUserIds = new DbDepartmentUser
             {
                 UserId = Guid.NewGuid(),
-                CompanyId = Guid.NewGuid(),
+                DepartmentId = Guid.NewGuid(),
                 PositionId = Guid.NewGuid(),
                 IsActive = true,
                 StartTime = new DateTime()
@@ -66,7 +66,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
                 Name = "Position",
                 Description = "Description",
                 IsActive = true,
-                UserIds = new List<DbCompanyUser> { dbUserIds }
+                Users = new List<DbDepartmentUser> { dbUserIds }
             };
         }
 
@@ -105,7 +105,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
                 Name = dbPosition.Name,
                 Description = dbPosition.Description,
                 IsActive = dbPosition.IsActive,
-                UserIds = dbPosition.UserIds?.Select(x => x.UserId).ToList()
+                UserIds = dbPosition.Users?.Select(x => x.UserId).ToList()
             };
 
             SerializerAssert.AreEqual(expected, result);

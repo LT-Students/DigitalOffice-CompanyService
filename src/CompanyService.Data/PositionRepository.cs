@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbPosition == null)
             {
-                throw new NotFoundException("Position with this id was not found.");
+                throw new NotFoundException($"Position with this id: '{positionId}' was not found.");
             }
 
             return dbPosition;
@@ -37,12 +38,13 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public DbPosition GetUserPosition(Guid userId)
         {
-            var dbCompanyUser = provider.CompaniesUsers
-                .FirstOrDefault(companyUser => companyUser.UserId == userId);
+            var dbCompanyUser = provider.DepartmentsUsers
+                .Include(u => u.Position)
+                .FirstOrDefault(du => du.UserId == userId);
 
             if (dbCompanyUser == null)
             {
-                throw new NotFoundException("Position not found.");
+                throw new NotFoundException($"User with id: '{userId}' was not found.");
             }
 
             return provider.Positions.Find(dbCompanyUser.PositionId);
@@ -54,7 +56,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbPosition == null)
             {
-                throw new NotFoundException("Position with this id was not found.");
+                throw new NotFoundException($"Position with this id: '{positionId}' was not found.");
             }
 
             dbPosition.IsActive = false;
@@ -76,7 +78,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (dbPosition == null)
             {
-                throw new NotFoundException("Position with this id was not found.");
+                throw new NotFoundException($"Position with this id: '{newPosition.Id}' was not found.");
             }
 
             dbPosition.Name = newPosition.Name;

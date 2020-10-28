@@ -15,9 +15,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
         }
 
         public DbSet<DbPosition> Positions { get; set; }
-        public DbSet<DbCompany> Companies { get; set; }
         public DbSet<DbDepartment> Departments { get; set; }
-        public DbSet<DbCompanyUser> CompaniesUsers { get; set; }
+        public DbSet<DbDepartmentUser> DepartmentsUsers { get; set; }
 
         // Fluent API is written here.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,23 +26,24 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
 
         public object MakeEntityDetached(object obj)
         {
-            this.Entry(obj).State = EntityState.Detached;
-            return this.Entry(obj).State;
+            Entry(obj).State = EntityState.Detached;
+
+            return Entry(obj).State;
         }
 
-        void IDataProvider.Save()
+        public void Save()
         {
-            this.SaveChanges();
+            SaveChanges();
         }
 
         public void EnsureDeleted()
         {
-            this.Database.EnsureDeleted();
+            Database.EnsureDeleted();
         }
 
         public bool IsInMemory()
         {
-            return this.Database.IsInMemory();
+            return Database.IsInMemory();
         }
     }
 }

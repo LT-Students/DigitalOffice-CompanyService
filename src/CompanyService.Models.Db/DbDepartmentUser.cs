@@ -1,32 +1,44 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace LT.DigitalOffice.CompanyService.Models.Db
 {
     public class DbDepartmentUser
     {
-        public Guid UserId { get; set; }
-        public Guid DepartmentId { get; set; }
-        public DbDepartment Department { get; set; }
+        public const string TableName = "DepartmentsUsers";
 
-        [Required]
+        public Guid Id { get; set; }
+        public Guid UserId { get; set; }
+        public Guid PositionId { get; set; }
+        public Guid DepartmentId { get; set; }
         public bool IsActive { get; set; }
-        [Required]
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+
+        public DbDepartment Department { get; set; }
+        public DbPosition Position { get; set; }
     }
 
-    public class DepartmentUserConfiguration : IEntityTypeConfiguration<DbDepartmentUser>
+    public class DbDepartmentUserConfiguration : IEntityTypeConfiguration<DbDepartmentUser>
     {
         public void Configure(EntityTypeBuilder<DbDepartmentUser> builder)
         {
-            builder.HasKey(user => new {user.UserId, user.DepartmentId});
+            builder
+                .ToTable(DbDepartmentUser.TableName);
 
-            builder.HasOne(user => user.Department)
-                .WithMany(department => department.UserIds)
-                .HasForeignKey(user => user.DepartmentId);
+            builder
+                .HasKey(u => u.Id);
+
+            builder
+                .HasOne(u => u.Department)
+                .WithMany(d => d.Users)
+                .HasForeignKey(u => u.DepartmentId);
+
+            builder
+                .HasOne(u => u.Position)
+                .WithMany(p => p.Users)
+                .HasForeignKey(u => u.PositionId);
         }
     }
 }

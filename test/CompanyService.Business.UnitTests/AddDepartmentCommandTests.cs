@@ -5,7 +5,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.Kernel.AccessValidator.Interfaces;
+using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions;
 using Moq;
 using NUnit.Framework;
@@ -43,9 +43,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                CompanyId = request.CompanyId,
                 IsActive = true,
-                UserIds = new List<DbDepartmentUser>()
+                Users = new List<DbDepartmentUser>()
                 {
                     new DbDepartmentUser
                     {

@@ -1,14 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>LT.DigitalOffice.CompanyService.Broker</AssemblyName>
     <RootNamespace>LT.DigitalOffice.CompanyService.Broker</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.9" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CompanyService.Data\CompanyService.Data.csproj" />

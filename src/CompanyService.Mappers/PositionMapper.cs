@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers
             {
                 Name = value.Name,
                 Description = value.Description,
-                UserIds = value.UserIds?.Select(x => x.UserId).ToList(),
+                UserIds = value.Users?.Select(x => x.UserId).ToList(),
                 IsActive = value.IsActive
             };
         }

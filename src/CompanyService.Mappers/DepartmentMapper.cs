@@ -2,7 +2,6 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.Kernel.Exceptions;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -23,13 +22,12 @@ namespace CompanyService.Mappers
                 Name = value.Name,
                 Description = value.Description,
                 IsActive = true,
-                CompanyId = value.CompanyId,
-                UserIds = new List<DbDepartmentUser>()
+                Users = new List<DbDepartmentUser>()
             };
 
             foreach (Guid userId in value.UsersIds)
             {
-                dbDepartment.UserIds.Add(new DbDepartmentUser
+                dbDepartment.Users.Add(new DbDepartmentUser
                 {
                     DepartmentId = dbDepartment.Id,
                     UserId = userId,

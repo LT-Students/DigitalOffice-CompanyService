@@ -37,7 +37,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompanyService.Mappers.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompanyService.Validation.UnitTests", "test\CompanyService.Validation.UnitTests\CompanyService.Validation.UnitTests.csproj", "{DC8E59C2-3160-4377-B5C0-D223BE956238}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompanyService.Models.Broker", "src\CompanyService.Models.Broker\CompanyService.Models.Broker.csproj", "{5D3D0429-A12C-48E6-94C2-C9A4C009494F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompanyService.Models.Broker", "src\CompanyService.Models.Broker\CompanyService.Models.Broker.csproj", "{5D3D0429-A12C-48E6-94C2-C9A4C009494F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AB3584F5-7D71-4CF8-AACD-3159B406802D}"
+	ProjectSection(SolutionItems) = preProject
+		Common.Configurations.targets = Common.Configurations.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

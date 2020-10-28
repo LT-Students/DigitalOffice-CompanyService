@@ -34,8 +34,6 @@ namespace LT.DigitalOffice.CompanyService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<RabbitMQOptions>(Configuration);
-
             services.AddHealthChecks();
 
             services.AddDbContext<CompanyServiceDbContext>(options =>
@@ -56,11 +54,12 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMassTransit(IServiceCollection services)
         {
-            var rabbitMQOptions = Configuration.GetSection(RabbitMQOptions.RabbitMQ).Get<RabbitMQOptions>();
+            var rabbitMQOptions = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<BaseRabbitMqOptions>();
 
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<GetUserPositionConsumer>();
+                x.AddConsumer<GetDepartmentConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -74,13 +73,20 @@ namespace LT.DigitalOffice.CompanyService
                     {
                         e.ConfigureConsumer<GetUserPositionConsumer>(context);
                     });
+
+                    cfg.ReceiveEndpoint($"{rabbitMQOptions.Username}_Departments", e =>
+                    {
+                        e.ConfigureConsumer<GetDepartmentConsumer>(context);
+                    });
                 });
 
                 x.ConfigureKernelMassTransit(rabbitMQOptions);
             });
+
+            services.AddMassTransitHostedService();
         }
 
-            public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseHealthChecks("/api/healthcheck");
 
@@ -119,10 +125,6 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureCommands(IServiceCollection services)
         {
-            services.AddTransient<IGetCompanyByIdCommand, GetCompanyByIdCommand>();
-            services.AddTransient<IGetCompaniesListCommand, GetCompaniesListCommand>();
-            services.AddTransient<IAddCompanyCommand, AddCompanyCommand>();
-
             services.AddTransient<IGetPositionByIdCommand, GetPositionByIdCommand>();
             services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
             services.AddTransient<IAddPositionCommand, AddPositionCommand>();
@@ -136,7 +138,6 @@ namespace LT.DigitalOffice.CompanyService
         {
             services.AddTransient<IDataProvider, CompanyServiceDbContext>();
 
-            services.AddTransient<ICompanyRepository, CompanyRepository>();
             services.AddTransient<IDepartmentRepository, DepartmentRepository>();
             services.AddTransient<IPositionRepository, PositionRepository>();
         }
@@ -154,10 +155,6 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMappers(IServiceCollection services)
         {
-            services.AddTransient<IMapper<DbCompany, Company>, CompanyMapper>();
-            services.AddTransient<IMapper<AddCompanyRequest, DbCompany>, CompanyMapper>();
-            services.AddTransient<IMapper<EditCompanyRequest, DbCompany>, CompanyMapper>();
-
             services.AddTransient<IMapper<DbPosition, Position>, PositionMapper>();
             services.AddTransient<IMapper<AddPositionRequest, DbPosition>, PositionMapper>();
             services.AddTransient<IMapper<EditPositionRequest, DbPosition>, PositionMapper>();

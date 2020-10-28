@@ -3,7 +3,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.Kernel.UnitTestLibrary;
+using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private Mock<IMapper<DbPosition, Position>> mapperMock;
         private IGetPositionByIdCommand command;
 
-        private DbCompanyUser dbUsersIds;
+        private DbDepartmentUser dbUsersIds;
         private DbPosition position;
 
         private Guid positionId;
@@ -35,10 +35,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             companyId = Guid.NewGuid();
             userId = Guid.NewGuid();
             positionId = Guid.NewGuid();
-            dbUsersIds = new DbCompanyUser
+            dbUsersIds = new DbDepartmentUser
             {
                 UserId = userId,
-                CompanyId = companyId,
+                DepartmentId = companyId,
                 PositionId = positionId,
                 IsActive = true,
                 StartTime = new DateTime()
@@ -48,7 +48,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 Id = positionId,
                 Name = "Position",
                 Description = "Description",
-                UserIds = new List<DbCompanyUser> { dbUsersIds }
+                Users = new List<DbDepartmentUser> { dbUsersIds }
             };
         }
 
@@ -77,7 +77,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             {
                 Name = position.Name,
                 Description = position.Description,
-                UserIds = position.UserIds?.Select(x => x.UserId).ToList()
+                UserIds = position.Users?.Select(x => x.UserId).ToList()
             };
 
             repositoryMock

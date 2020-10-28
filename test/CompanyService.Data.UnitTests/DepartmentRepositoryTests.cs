@@ -36,9 +36,8 @@ namespace CompanyService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 Name = "Name",
                 Description = "Description",
-                CompanyId = Guid.NewGuid(),
                 IsActive = true,
-                UserIds = new List<DbDepartmentUser>()
+                Users = new List<DbDepartmentUser>()
                 {
                     new DbDepartmentUser
                     {

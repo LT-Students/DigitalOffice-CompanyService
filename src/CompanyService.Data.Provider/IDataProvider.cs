@@ -1,18 +1,13 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace LT.DigitalOffice.CompanyService.Data.Provider
 {
-    public interface IDataProvider
+    public interface IDataProvider : IBaseDataProvider
     {
         DbSet<DbPosition> Positions { get; set; }
-        DbSet<DbCompany> Companies { get; set; }
         DbSet<DbDepartment> Departments { get; set; }
-        DbSet<DbCompanyUser> CompaniesUsers { get; set; }
-
-        void Save();
-        object MakeEntityDetached(object obj);
-        void EnsureDeleted();
-        bool IsInMemory();
+        DbSet<DbDepartmentUser> DepartmentsUsers { get; set; }
     }
 }
