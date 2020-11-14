@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>LT.DigitalOffice.CompanyService.Models.Db</AssemblyName>
-    <RootNamespace>LT.DigitalOffice.CompanyService.Models.Db</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
