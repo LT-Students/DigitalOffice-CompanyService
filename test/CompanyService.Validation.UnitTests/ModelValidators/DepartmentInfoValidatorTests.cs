@@ -1,23 +1,28 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 using NUnit.Framework;
+using System;
 
-namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
+namespace LT.DigitalOffice.CompanyService.Validation.UnitTests.ModelValidators
 {
-    class AddPositionRequestValidatorTests
+    public class DepartmentInfoValidatorTests
     {
-        private IValidator<AddPositionRequest> validator;
-        private AddPositionRequest request;
+        private IValidator<DepartmentInfo> validator;
+        private DepartmentInfo request;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            validator = new AddPositionRequestValidator();
+            validator = new DepartmentInfoValidator();
 
-            request = new AddPositionRequest
+            request = new DepartmentInfo
             {
-                Name = "Position",
+                DirectorUserId = Guid.NewGuid(),
+                Name = "Department A",
                 Description = "Description"
             };
         }
@@ -39,8 +44,8 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         [Test]
         public void FailValidationTooLongName()
         {
-            var companyName = "Company" + new string('a', 100);
-            validator.ShouldHaveValidationErrorFor(x => x.Name, companyName);
+            var name = "Department" + new string('a', 100);
+            validator.ShouldHaveValidationErrorFor(x => x.Name, name);
         }
 
         [Test]
@@ -54,7 +59,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         [Test]
         public void FailValidationTooLongDescription()
         {
-            var description = "Positiion" + new string('a', 350);
+            var description = "Positiion" + new string('a', 1000);
             validator.ShouldHaveValidationErrorFor(x => x.Description, description);
         }
     }

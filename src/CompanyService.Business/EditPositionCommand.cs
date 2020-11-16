@@ -8,6 +8,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using System.Linq;
 using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {

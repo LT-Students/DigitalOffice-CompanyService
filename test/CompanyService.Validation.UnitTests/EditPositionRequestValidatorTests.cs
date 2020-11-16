@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using NUnit.Framework;
 using System;
 
@@ -9,6 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
     public class EditPositionRequestValidatorTests
     {
         private IValidator<EditPositionRequest> validator;
+        private EditPositionRequest request;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -16,52 +19,59 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
             validator = new EditPositionRequestValidator();
         }
 
+        [SetUp]
+        public void SetUp()
+        {
+            request = new EditPositionRequest
+            {
+                Id = Guid.NewGuid(),
+                Info = new PositionInfo
+                {
+                    Name = "Position",
+                    Description = "Description"
+                }
+            };
+        }
+
         [Test]
         public void ShouldReturnIsValid()
         {
-            var request = new EditPositionRequest
-            {
-                Id = Guid.NewGuid(),
-                Name = "Position",
-                Description = "Description"
-            };
-
             validator.TestValidate(request).ShouldNotHaveAnyValidationErrors();
         }
 
         [Test]
         public void ShouldFailValidationEmptyPositionId()
         {
-            var positionId = Guid.Empty;
-            validator.ShouldHaveValidationErrorFor(x => x.Id, positionId);
+            request.Id = Guid.Empty;
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Id);
         }
 
         [Test]
         public void ShouldFailValidationNameIsEmptyString()
         {
-            var name = string.Empty;
-            validator.ShouldHaveValidationErrorFor(x => x.Name, name);
+            request.Info.Name = string.Empty;
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Info.Name);
         }
 
         [Test]
         public void ShouldFailValidationTooLongName()
         {
-            var positionName = "Position" + new string('a', 100);
-            validator.ShouldHaveValidationErrorFor(x => x.Name, positionName);
+            request.Info.Name = "Position" + new string('a', 100);
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Info.Name);
         }
 
         [Test]
         public void ShouldFailValidationDescriptionIsEmptyString()
         {
-            var description = string.Empty;
-            validator.ShouldHaveValidationErrorFor(x => x.Description, description);
+            request.Info.Description = string.Empty;
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Info.Description);
         }
 
         [Test]
         public void ShouldFailValidationTooLongDescription()
         {
-            var description = "Position" + new string('a', 350);
-            validator.ShouldHaveValidationErrorFor(x => x.Description, description);
+            request.Info.Description = "Position" + new string('a', 350);
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Info.Description);
         }
     }
 }

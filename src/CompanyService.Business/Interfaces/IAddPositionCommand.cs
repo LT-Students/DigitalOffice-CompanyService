@@ -1,4 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
@@ -15,6 +17,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// <param name="request">Position data.</param>
         /// <returns>New position Id.</returns>
         /// <exception cref="ValidationException">Thrown when position data is incorrect.</exception>
-        Guid Execute(AddPositionRequest request);
+        Guid Execute(PositionInfo request);
     }
 }

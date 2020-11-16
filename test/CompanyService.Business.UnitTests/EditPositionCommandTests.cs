@@ -5,6 +5,8 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Exceptions;
 using Moq;
 using NUnit.Framework;
@@ -29,15 +31,18 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             request = new EditPositionRequest
             {
                 Id = Guid.NewGuid(),
-                Name = "Position",
-                Description = "Description"
+                Info = new PositionInfo
+                {
+                    Name = "Position",
+                    Description = "Description"
+                }
             };
 
             newPosition = new DbPosition
             {
                 Id = request.Id,
-                Name = request.Name,
-                Description = request.Description
+                Name = request.Info.Name,
+                Description = request.Info.Description
             };
         }
 

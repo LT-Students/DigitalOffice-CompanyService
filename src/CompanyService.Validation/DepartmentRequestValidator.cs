@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 
 namespace LT.DigitalOffice.CompanyService.Validation
 {
@@ -7,13 +9,11 @@ namespace LT.DigitalOffice.CompanyService.Validation
     {
         public DepartmentRequestValidator()
         {
-            RuleFor(request => request.Name)
-                .NotEmpty().WithMessage("Department name can not be empty.")
-                .MinimumLength(2).WithMessage("Department name is too short")
-                .MaximumLength(100).WithMessage("Department name is too long.");
+            RuleForEach(request => request.UsersIds)
+                .NotEmpty();
 
-            RuleFor(request => request.CompanyId)
-                .NotEmpty().WithMessage("Company Id can not be empty.");
+            RuleFor(request => request.Info)
+                .SetValidator(new DepartmentInfoValidator());
         }
     }
 }

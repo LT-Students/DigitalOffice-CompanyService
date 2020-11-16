@@ -1,5 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpPost("addPosition")]
-        public Guid AddPosition([FromServices] IAddPositionCommand command, [FromBody] AddPositionRequest request)
+        public Guid AddPosition([FromServices] IAddPositionCommand command, [FromBody] PositionInfo request)
         {
             return command.Execute(request);
         }

@@ -3,6 +3,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using NUnit.Framework;
@@ -75,8 +76,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         {
             var expected = new Position
             {
-                Name = position.Name,
-                Description = position.Description,
+                Info = new PositionInfo
+                {
+                    Name = position.Name,
+                    Description = position.Description
+                },
                 UserIds = position.Users?.Select(x => x.UserId).ToList()
             };
 

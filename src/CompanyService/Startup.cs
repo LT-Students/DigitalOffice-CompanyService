@@ -11,7 +11,10 @@ using LT.DigitalOffice.CompanyService.Mappers;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation;
+using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
@@ -144,10 +147,7 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureValidators(IServiceCollection services)
         {
-            services.AddTransient<IValidator<AddCompanyRequest>, AddCompanyValidator>();
-            services.AddTransient<IValidator<EditCompanyRequest>, EditCompanyValidator>();
-
-            services.AddTransient<IValidator<AddPositionRequest>, AddPositionRequestValidator>();
+            services.AddTransient<IValidator<PositionInfo>, PositionInfoValidator>();
             services.AddTransient<IValidator<EditPositionRequest>, EditPositionRequestValidator>();
 
             services.AddTransient<IValidator<DepartmentRequest>, DepartmentRequestValidator>();
@@ -155,8 +155,9 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMappers(IServiceCollection services)
         {
+            services.AddTransient<IMapper<PositionInfo, DbPosition>, PositionMapper>();
+
             services.AddTransient<IMapper<DbPosition, Position>, PositionMapper>();
-            services.AddTransient<IMapper<AddPositionRequest, DbPosition>, PositionMapper>();
             services.AddTransient<IMapper<EditPositionRequest, DbPosition>, PositionMapper>();
 
             services.AddTransient<IMapper<DepartmentRequest, DbDepartment>, DepartmentMapper>();

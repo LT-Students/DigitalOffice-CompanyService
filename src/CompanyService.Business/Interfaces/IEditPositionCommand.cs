@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {

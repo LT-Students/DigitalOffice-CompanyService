@@ -2,6 +2,8 @@
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
@@ -23,9 +25,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
             departmentRequestMapper = new DepartmentMapper();
             departmentRequest = new DepartmentRequest
             {
-                Name = "Department",
-                Description = "Description",
-                CompanyId = Guid.NewGuid(),
+                Info = new DepartmentInfo
+                {
+                    Name = "Department",
+                    Description = "Description"
+                },
                 UsersIds = new List<Guid>() { Guid.NewGuid()}
             };
             expectedDbDepartment = new DbDepartment

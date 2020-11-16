@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 
 namespace LT.DigitalOffice.CompanyService.Validation
 {
@@ -7,18 +9,11 @@ namespace LT.DigitalOffice.CompanyService.Validation
     {
         public EditPositionRequestValidator()
         {
-            RuleFor(position => position.Id)
+            RuleFor(request => request.Id)
                 .NotEmpty();
 
-            RuleFor(position => position.Name)
-                .NotEmpty()
-                .MaximumLength(80)
-                .WithMessage("Position name is too long");
-
-            RuleFor(position => position.Description)
-                .NotEmpty()
-                .MaximumLength(350)
-                .WithMessage("Position description is too long");
+            RuleFor(request => request.Info)
+                .SetValidator(new PositionInfoValidator());
         }
     }
 }

@@ -9,27 +9,29 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using System.Linq;
 using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
     /// <inheritdoc cref="IAddPositionCommand"/>
     public class AddPositionCommand : IAddPositionCommand
     {
-        private readonly IValidator<AddPositionRequest> validator;
+        private readonly IValidator<PositionInfo> validator;
         private readonly IPositionRepository repository;
-        private readonly IMapper<AddPositionRequest, DbPosition> mapper;
+        private readonly IMapper<PositionInfo, DbPosition> mapper;
 
         public AddPositionCommand(
-            [FromServices] IValidator<AddPositionRequest> validator,
+            [FromServices] IValidator<PositionInfo> validator,
             [FromServices] IPositionRepository repository,
-            [FromServices] IMapper<AddPositionRequest, DbPosition> mapper)
+            [FromServices] IMapper<PositionInfo, DbPosition> mapper)
         {
             this.validator = validator;
             this.repository = repository;
             this.mapper = mapper;
         }
 
-        public Guid Execute(AddPositionRequest request)
+        public Guid Execute(PositionInfo request)
         {
             validator.ValidateAndThrowCustom(request);
 

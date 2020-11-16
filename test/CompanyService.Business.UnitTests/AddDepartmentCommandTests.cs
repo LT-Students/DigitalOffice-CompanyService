@@ -5,6 +5,8 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions;
 using Moq;
@@ -32,17 +34,20 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         {
             request = new DepartmentRequest
             {
-                Name = "Department",
-                Description = "Description",
-                CompanyId = Guid.NewGuid(),
+                Info = new DepartmentInfo
+                {
+                    Name = "Department",
+                    Description = "Description"
+                },
                 UsersIds = new List<Guid>() { Guid.NewGuid()}
             };
 
             createdDepartment = new DbDepartment
             {
                 Id = Guid.NewGuid(),
-                Name = request.Name,
-                Description = request.Description,
+                Name = request.Info.Name,
+                Description = request.Info.Description,
+                DirectorUserId = request.Info.DirectorUserId,
                 IsActive = true,
                 Users = new List<DbDepartmentUser>()
                 {

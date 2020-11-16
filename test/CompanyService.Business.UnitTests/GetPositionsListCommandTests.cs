@@ -3,6 +3,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using NUnit.Framework;
@@ -34,8 +35,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             dbPositionsList = new List<DbPosition> { dbPosition };
             var position = new Position
             {
-                Name = dbPosition.Name,
-                Description = dbPosition.Description
+                Info = new PositionInfo
+                {
+                    Name = dbPosition.Name,
+                    Description = dbPosition.Description
+                }
             };
             positionsList = new List<Position> { position };
 
