@@ -4,13 +4,10 @@ using Moq;
 using NUnit.Framework;
 using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using FluentValidation.Results;
-using LT.DigitalOffice.Kernel.Exceptions;
 using System.Collections.Generic;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
@@ -18,17 +15,17 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     class AddPositionCommandTests
     {
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<PositionInfo, DbPosition>> mapperMock;
-        private Mock<IValidator<PositionInfo>> validatorMock;
+        private Mock<IMapper<Position, DbPosition>> mapperMock;
+        private Mock<IValidator<Position>> validatorMock;
 
         private IAddPositionCommand command;
-        private PositionInfo request;
+        private Position request;
         private DbPosition createdPosition;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            request = new PositionInfo
+            request = new Position
             {
                 Name = "Position",
                 Description = "Description"
@@ -45,9 +42,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            validatorMock = new Mock<IValidator<PositionInfo>>();
+            validatorMock = new Mock<IValidator<Position>>();
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<PositionInfo, DbPosition>>();
+            mapperMock = new Mock<IMapper<Position, DbPosition>>();
 
             command = new AddPositionCommand(validatorMock.Object, repositoryMock.Object, mapperMock.Object);
         }
@@ -75,7 +72,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                  .Returns(true);
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<PositionInfo>()))
+                .Setup(x => x.Map(It.IsAny<Position>()))
                 .Returns(createdPosition);
 
             repositoryMock
@@ -94,7 +91,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                  .Returns(true);
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<PositionInfo>()))
+                .Setup(x => x.Map(It.IsAny<Position>()))
                 .Returns(createdPosition);
 
             repositoryMock

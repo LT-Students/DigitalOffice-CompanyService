@@ -4,10 +4,7 @@ using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.Kernel.Exceptions;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -17,41 +14,40 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
     public class EditPositionCommandTests
     {
-        private Mock<IValidator<EditPositionRequest>> validatorMock;
+        private Mock<IValidator<Position>> validatorMock;
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<EditPositionRequest, DbPosition>> mapperMock;
+        private Mock<IMapper<Position, DbPosition>> mapperMock;
 
         private IEditPositionCommand command;
-        private EditPositionRequest request;
+        private Position request;
         private DbPosition newPosition;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            request = new EditPositionRequest
+            request = new Position
             {
                 Id = Guid.NewGuid(),
-                Info = new PositionInfo
-                {
-                    Name = "Position",
-                    Description = "Description"
-                }
+                Name = "Position",
+                Description = "Description",
+                IsActive = true
             };
 
             newPosition = new DbPosition
             {
-                Id = request.Id,
-                Name = request.Info.Name,
-                Description = request.Info.Description
+                Id = (Guid)request.Id,
+                Name = request.Name,
+                Description = request.Description,
+                IsActive = request.IsActive
             };
         }
 
         [SetUp]
         public void SetUp()
         {
-            validatorMock = new Mock<IValidator<EditPositionRequest>>();
+            validatorMock = new Mock<IValidator<Position>>();
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<EditPositionRequest, DbPosition>>();
+            mapperMock = new Mock<IMapper<Position, DbPosition>>();
 
             command = new EditPositionCommand(validatorMock.Object, repositoryMock.Object, mapperMock.Object);
         }
@@ -79,7 +75,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                  .Returns(true);
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<EditPositionRequest>()))
+                .Setup(x => x.Map(It.IsAny<Position>()))
                 .Returns(newPosition);
 
             repositoryMock
@@ -98,7 +94,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                  .Returns(true);
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<EditPositionRequest>()))
+                .Setup(x => x.Map(It.IsAny<Position>()))
                 .Returns(newPosition);
 
             repositoryMock

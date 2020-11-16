@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     class GetPositionByIdCommandTests
     {
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<DbPosition, Position>> mapperMock;
+        private Mock<IMapper<DbPosition, PositionResponse>> mapperMock;
         private IGetPositionByIdCommand command;
 
         private DbDepartmentUser dbUsersIds;
@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         public void SetUp()
         {
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<DbPosition, Position>>();
+            mapperMock = new Mock<IMapper<DbPosition, PositionResponse>>();
             command = new GetPositionByIdCommand(repositoryMock.Object, mapperMock.Object);
 
             companyId = Guid.NewGuid();
@@ -74,9 +74,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         [Test]
         public void ShouldReturnPositionInfoSuccessfully()
         {
-            var expected = new Position
+            var expected = new PositionResponse
             {
-                Info = new PositionInfo
+                Info = new Position
                 {
                     Name = position.Name,
                     Description = position.Description

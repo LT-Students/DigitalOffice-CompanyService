@@ -15,6 +15,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Position model with specified id.</returns>
         /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when position is not found.</exception>
-        Position Execute(Guid positionId);
+        PositionResponse Execute(Guid positionId);
     }
 }

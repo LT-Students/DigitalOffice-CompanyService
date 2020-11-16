@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 using NUnit.Framework;
 using System;
@@ -11,15 +9,15 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests.ModelValidators
 {
     public class DepartmentInfoValidatorTests
     {
-        private IValidator<DepartmentInfo> validator;
-        private DepartmentInfo request;
+        private IValidator<Department> validator;
+        private Department request;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             validator = new DepartmentInfoValidator();
 
-            request = new DepartmentInfo
+            request = new Department
             {
                 DirectorUserId = Guid.NewGuid(),
                 Name = "Department A",

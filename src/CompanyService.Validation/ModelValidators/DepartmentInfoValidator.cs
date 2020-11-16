@@ -3,7 +3,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Validation.ModelValidators
 {
-    public class DepartmentInfoValidator : AbstractValidator<DepartmentInfo>
+    public class DepartmentInfoValidator : AbstractValidator<Department>
     {
         public DepartmentInfoValidator()
         {

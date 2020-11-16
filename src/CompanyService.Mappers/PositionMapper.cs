@@ -1,16 +1,15 @@
-﻿﻿using LT.DigitalOffice.CompanyService.Models.Db;
+﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using System;
 using System.Linq;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Mappers
 {
-    public class PositionMapper : IMapper<PositionInfo, DbPosition>, IMapper<EditPositionRequest, DbPosition>, IMapper<DbPosition, Position>
+    public class PositionMapper : IMapper<Position, DbPosition>, IMapper<DbPosition, PositionResponse>
     {
-        public DbPosition Map(PositionInfo value)
+        public DbPosition Map(Position value)
         {
             if (value == null)
             {
@@ -22,41 +21,26 @@ namespace LT.DigitalOffice.CompanyService.Mappers
                 Id = Guid.NewGuid(),
                 Name = value.Name,
                 Description = value.Description,
-                IsActive = true
+                IsActive = value.IsActive
             };
         }
 
-        public DbPosition Map(EditPositionRequest value)
+        public PositionResponse Map(DbPosition value)
         {
             if (value == null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
 
-            return new DbPosition
+            return new PositionResponse
             {
-                Id = value.Id,
-                Name = value.Info.Name,
-                Description = value.Info.Description,
-            };
-        }
-
-        public Position Map(DbPosition value)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            return new Position
-            {
-                Info = new PositionInfo
+                Info = new Position
                 {
                     Name = value.Name,
-                    Description = value.Description
+                    Description = value.Description,
+                    IsActive = value.IsActive
                 },
                 UserIds = value.Users?.Select(x => x.UserId).ToList(),
-                IsActive = value.IsActive
             };
         }
     }

@@ -13,17 +13,17 @@ namespace LT.DigitalOffice.CompanyService.Business
     public class GetPositionsListCommand : IGetPositionsListCommand
     {
         private readonly IPositionRepository repository;
-        private readonly IMapper<DbPosition, Position> mapper;
+        private readonly IMapper<DbPosition, PositionResponse> mapper;
 
         public GetPositionsListCommand(
             [FromServices] IPositionRepository repository,
-            [FromServices] IMapper<DbPosition, Position> mapper)
+            [FromServices] IMapper<DbPosition, PositionResponse> mapper)
         {
             this.repository = repository;
             this.mapper = mapper;
         }
 
-        public List<Position> Execute()
+        public List<PositionResponse> Execute()
         {
             return repository.GetPositionsList().Select(position => mapper.Map(position)).ToList();
         }

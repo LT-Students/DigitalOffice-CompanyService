@@ -1,5 +1,4 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         [HttpPost("addDepartment")]
         public Guid AddDepartment(
             [FromServices] IAddDepartmentCommand command,
-            [FromBody] DepartmentRequest department)
+            [FromBody] NewDepartmentRequest department)
         {
             return command.Execute(department);
         }

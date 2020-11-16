@@ -147,20 +147,17 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureValidators(IServiceCollection services)
         {
-            services.AddTransient<IValidator<PositionInfo>, PositionInfoValidator>();
-            services.AddTransient<IValidator<EditPositionRequest>, EditPositionRequestValidator>();
+            services.AddTransient<IValidator<Position>, PositionInfoValidator>();
 
-            services.AddTransient<IValidator<DepartmentRequest>, DepartmentRequestValidator>();
+            services.AddTransient<IValidator<NewDepartmentRequest>, DepartmentRequestValidator>();
         }
 
         private void ConfigureMappers(IServiceCollection services)
         {
-            services.AddTransient<IMapper<PositionInfo, DbPosition>, PositionMapper>();
+            services.AddTransient<IMapper<DbPosition, PositionResponse>, PositionMapper>();
+            services.AddTransient<IMapper<Position, DbPosition>, PositionMapper>();
 
-            services.AddTransient<IMapper<DbPosition, Position>, PositionMapper>();
-            services.AddTransient<IMapper<EditPositionRequest, DbPosition>, PositionMapper>();
-
-            services.AddTransient<IMapper<DepartmentRequest, DbDepartment>, DepartmentMapper>();
+            services.AddTransient<IMapper<NewDepartmentRequest, DbDepartment>, DepartmentMapper>();
         }
     }
 }

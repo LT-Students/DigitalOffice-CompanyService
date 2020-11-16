@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+﻿using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
@@ -16,6 +15,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// <param name="request">Department data.</param>
         /// <returns>Id of the added department.</returns>
         /// <exception cref="ValidationException">Thrown when department data is incorrect.</exception>
-        Guid Execute(DepartmentRequest request);
+        Guid Execute(NewDepartmentRequest request);
     }
 }

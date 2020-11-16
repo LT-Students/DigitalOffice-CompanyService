@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto
 {
-    public class Position
+    public class PositionResponse
     {
-        public PositionInfo Info { get; set; }
-        public bool IsActive { get; set; }
+        public Position Info { get; set; }
         public IEnumerable<Guid> UserIds { get; set; }
     }
 }

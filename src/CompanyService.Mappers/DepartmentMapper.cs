@@ -1,6 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Exceptions;
 using System;
@@ -8,9 +7,9 @@ using System.Collections.Generic;
 
 namespace CompanyService.Mappers
 {
-    public class DepartmentMapper : IMapper<DepartmentRequest, DbDepartment>
+    public class DepartmentMapper : IMapper<NewDepartmentRequest, DbDepartment>
     {
-        public DbDepartment Map(DepartmentRequest value)
+        public DbDepartment Map(NewDepartmentRequest value)
         {
             if (value == null)
             {

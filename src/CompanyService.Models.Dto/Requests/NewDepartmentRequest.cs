@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
 {
-    public class DepartmentRequest
+    public class NewDepartmentRequest
     {
-        public DepartmentInfo Info { get; set; }
+        public Department Info { get; set; }
         public IEnumerable<Guid> UsersIds { get; set; }
     }
 }

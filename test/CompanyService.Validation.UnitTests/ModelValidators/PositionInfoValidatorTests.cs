@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 using NUnit.Framework;
 
@@ -10,15 +8,15 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests.ModelValidators
 {
     public class PositionInfoValidatorTests
     {
-        private IValidator<PositionInfo> validator;
-        private PositionInfo request;
+        private IValidator<Position> validator;
+        private Position request;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             validator = new PositionInfoValidator();
 
-            request = new PositionInfo
+            request = new Position
             {
                 Name = "Position",
                 Description = "Description"

@@ -13,6 +13,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// Returns all added positions.
         /// </summary>
         /// <returns>All added positions.</returns>
-        List<Position> Execute();
+        List<PositionResponse> Execute();
     }
 }

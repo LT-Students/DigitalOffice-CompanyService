@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 
 namespace LT.DigitalOffice.CompanyService.Validation.ModelValidators
 {
-    public class PositionInfoValidator : AbstractValidator<PositionInfo>
+    public class PositionInfoValidator : AbstractValidator<Position>
     {
         public PositionInfoValidator()
         {
