@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace LT.DigitalOffice.CompanyService.Validation.UnitTests.ModelValidators
 {
-    public class PositionInfoValidatorTests
+    public class PositionValidatorTests
     {
         private IValidator<Position> validator;
         private Position request;
@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests.ModelValidators
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            validator = new PositionInfoValidator();
+            validator = new PositionValidator();
 
             request = new Position
             {

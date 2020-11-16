@@ -7,7 +7,7 @@ using System;
 
 namespace LT.DigitalOffice.CompanyService.Validation.UnitTests.ModelValidators
 {
-    public class DepartmentInfoValidatorTests
+    public class DepartmentValidatorTests
     {
         private IValidator<Department> validator;
         private Department request;
@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests.ModelValidators
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            validator = new DepartmentInfoValidator();
+            validator = new DepartmentValidator();
 
             request = new Department
             {

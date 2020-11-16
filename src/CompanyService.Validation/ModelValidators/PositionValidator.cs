@@ -3,9 +3,9 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Validation.ModelValidators
 {
-    public class PositionInfoValidator : AbstractValidator<Position>
+    public class PositionValidator : AbstractValidator<Position>
     {
-        public PositionInfoValidator()
+        public PositionValidator()
         {
             RuleFor(position => position.Name)
                 .NotEmpty()

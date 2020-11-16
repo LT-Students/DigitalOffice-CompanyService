@@ -3,15 +3,14 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Validation.ModelValidators
 {
-    public class DepartmentInfoValidator : AbstractValidator<Department>
+    public class DepartmentValidator : AbstractValidator<Department>
     {
-        public DepartmentInfoValidator()
+        public DepartmentValidator()
         {
-            When(request => request.DirectorUserId != null, ()
-                =>
+            When(request => request.DirectorUserId != null, () =>
             {
                 RuleFor(request => request.DirectorUserId)
-                .NotEmpty().WithMessage("Director can not be empty.");
+                    .NotEmpty().WithMessage("Director can not be empty.");
             });
 
             RuleFor(request => request.Name)

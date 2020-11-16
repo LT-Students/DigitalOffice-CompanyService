@@ -15,6 +15,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation;
 using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
+using LT.DigitalOffice.CompanyService.Validation.RequestValidators;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
@@ -147,7 +148,7 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureValidators(IServiceCollection services)
         {
-            services.AddTransient<IValidator<Position>, PositionInfoValidator>();
+            services.AddTransient<IValidator<Position>, PositionValidator>();
 
             services.AddTransient<IValidator<NewDepartmentRequest>, DepartmentRequestValidator>();
         }

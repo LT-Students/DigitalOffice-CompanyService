@@ -2,7 +2,7 @@
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 
-namespace LT.DigitalOffice.CompanyService.Validation
+namespace LT.DigitalOffice.CompanyService.Validation.RequestValidators
 {
     public class DepartmentRequestValidator : AbstractValidator<NewDepartmentRequest>
     {
@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Validation
                 .NotEmpty();
 
             RuleFor(request => request.Info)
-                .SetValidator(new DepartmentInfoValidator());
+                .SetValidator(new DepartmentValidator());
         }
     }
 }
