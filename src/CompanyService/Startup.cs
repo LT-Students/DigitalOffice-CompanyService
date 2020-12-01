@@ -14,8 +14,6 @@ using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation;
-using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
-using LT.DigitalOffice.CompanyService.Validation.RequestValidators;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;

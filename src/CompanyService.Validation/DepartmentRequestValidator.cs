@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.CompanyService.Validation.ModelValidators;
 
-namespace LT.DigitalOffice.CompanyService.Validation.RequestValidators
+namespace LT.DigitalOffice.CompanyService.Validation
 {
     public class DepartmentRequestValidator : AbstractValidator<NewDepartmentRequest>
     {
