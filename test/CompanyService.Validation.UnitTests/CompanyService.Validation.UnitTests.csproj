@@ -6,10 +6,6 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
-
-    <AssemblyName>LT.DigitalOffice.CompanyService.Validation.UnitTests</AssemblyName>
-
-    <RootNamespace>LT.DigitalOffice.CompanyService.Validation.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
