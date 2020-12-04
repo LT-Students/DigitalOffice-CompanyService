@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
 using System;
@@ -11,15 +12,15 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
 {
     public class PositionMappersTests
     {
-        private IMapper<AddPositionRequest, DbPosition> mapperAddPositionRequest;
-        private IMapper<DbPosition, Position> mapperDbPositionToPosition;
-        private IMapper<EditPositionRequest, DbPosition> mapperEditPositionRequestToDbPosition;
+        private IMapper<Position, DbPosition> mapperAddPositionRequest;
+        private IMapper<DbPosition, PositionResponse> mapperDbPositionToPosition;
+        private IMapper<Position, DbPosition> mapperEditPositionRequestToDbPosition;
 
         private DbDepartmentUser dbUserIds;
         private DbPosition dbPosition;
 
-        private EditPositionRequest editPositionRequest;
-        private AddPositionRequest addPositionRequest;
+        private Position editPositionRequest;
+        private Position addPositionRequest;
         private DbPosition expectedDbPosition;
 
         [OneTimeSetUp]
@@ -33,17 +34,19 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
         [SetUp]
         public void SetUp()
         {
-            editPositionRequest = new EditPositionRequest
+            editPositionRequest = new Position
             {
                 Id = Guid.NewGuid(),
                 Name = "Position",
-                Description = "Description"
+                Description = "Description",
+                IsActive = true
             };
 
-            addPositionRequest = new AddPositionRequest
+            addPositionRequest = new Position
             {
                 Name = "Name",
-                Description = "Description"
+                Description = "Description",
+                IsActive = true
             };
             expectedDbPosition = new DbPosition
             {
@@ -100,11 +103,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
         {
             var result = mapperDbPositionToPosition.Map(dbPosition);
 
-            var expected = new Position
+            var expected = new PositionResponse
             {
-                Name = dbPosition.Name,
-                Description = dbPosition.Description,
-                IsActive = dbPosition.IsActive,
+                Info = new Position
+                {
+                    Name = dbPosition.Name,
+                    Description = dbPosition.Description,
+                    IsActive = dbPosition.IsActive
+                },
                 UserIds = dbPosition.Users?.Select(x => x.UserId).ToList()
             };
 
@@ -128,7 +134,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
             {
                 Id = result.Id,
                 Name = editPositionRequest.Name,
-                Description = editPositionRequest.Description
+                Description = editPositionRequest.Description,
+                IsActive = true
             };
 
             SerializerAssert.AreEqual(expected, result);

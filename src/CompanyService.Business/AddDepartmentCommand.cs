@@ -3,7 +3,7 @@ using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using Microsoft.AspNetCore.Mvc;
@@ -14,14 +14,14 @@ namespace LT.DigitalOffice.CompanyService.Business
     public class AddDepartmentCommand : IAddDepartmentCommand
     {
         private readonly IDepartmentRepository repository;
-        private readonly IValidator<DepartmentRequest> validator;
-        private readonly IMapper<DepartmentRequest, DbDepartment> mapper;
+        private readonly IValidator<NewDepartmentRequest> validator;
+        private readonly IMapper<NewDepartmentRequest, DbDepartment> mapper;
         private readonly IAccessValidator accessValidator;
 
         public AddDepartmentCommand(
             [FromServices] IDepartmentRepository repository,
-            [FromServices] IValidator<DepartmentRequest> validator,
-            [FromServices] IMapper<DepartmentRequest, DbDepartment> mapper,
+            [FromServices] IValidator<NewDepartmentRequest> validator,
+            [FromServices] IMapper<NewDepartmentRequest, DbDepartment> mapper,
             [FromServices] IAccessValidator accessValidator)
         {
             this.repository = repository;
@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Business
             this.accessValidator = accessValidator;
         }
 
-        public Guid Execute(DepartmentRequest request)
+        public Guid Execute(NewDepartmentRequest request)
         {
             const int rightId = 4;
 

@@ -3,6 +3,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using NUnit.Framework;
@@ -14,16 +15,16 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     public class GetRightsListCommandTests
     {
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<DbPosition, Position>> mapperMock;
+        private Mock<IMapper<DbPosition, PositionResponse>> mapperMock;
         private IGetPositionsListCommand command;
-        private List<Position> positionsList;
+        private List<PositionResponse> positionsList;
         private List<DbPosition> dbPositionsList;
 
         [SetUp]
         public void SetUp()
         {
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<DbPosition, Position>>();
+            mapperMock = new Mock<IMapper<DbPosition, PositionResponse>>();
             command = new GetPositionsListCommand(repositoryMock.Object, mapperMock.Object);
 
             var dbPosition = new DbPosition
@@ -32,12 +33,15 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 Description = "Description"
             };
             dbPositionsList = new List<DbPosition> { dbPosition };
-            var position = new Position
+            var position = new PositionResponse
             {
-                Name = dbPosition.Name,
-                Description = dbPosition.Description
+                Info = new Position
+                {
+                    Name = dbPosition.Name,
+                    Description = dbPosition.Description
+                }
             };
-            positionsList = new List<Position> { position };
+            positionsList = new List<PositionResponse> { position };
 
             repositoryMock
                 .Setup(repository => repository.GetPositionsList())

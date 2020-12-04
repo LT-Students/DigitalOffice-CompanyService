@@ -1,26 +1,35 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
-using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
 {
     public class DepartmentRequestValidatorTests
     {
-        private IValidator<DepartmentRequest> validator;
-        private DepartmentRequest request;
+        private IValidator<NewDepartmentRequest> validator;
+        private NewDepartmentRequest request;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             validator = new DepartmentRequestValidator();
+        }
 
-            request = new DepartmentRequest
+        [SetUp]
+        public void SetUp()
+        {
+            request = new NewDepartmentRequest
             {
-                Name = "Position",
-                Description = "Description",
-                CompanyId = Guid.NewGuid()
+                UsersIds = new List<Guid> { Guid.NewGuid() },
+                Info = new Department
+                {
+                    Name = "Position",
+                    Description = "Description"
+                }
             };
         }
 
@@ -33,30 +42,22 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         [Test]
         public void FailValidationEmptyName()
         {
-            var name = string.Empty;
-
-            validator.ShouldHaveValidationErrorFor(x => x.Name, name);
+            request.Info.Name = string.Empty;
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Info.Name);
         }
 
         [Test]
         public void FailValidationTooLongName()
         {
-            var name = "Department" + new string('a', 100);
-            validator.ShouldHaveValidationErrorFor(x => x.Name, name);
+            request.Info.Name = "Department" + new string('a', 100);
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Info.Name);
         }
 
         [Test]
         public void FailValidationTooShortName()
         {
-            var name = "D";
-            validator.ShouldHaveValidationErrorFor(x => x.Name, name);
-        }
-
-        [Test]
-        public void FailValidationEmptyCompanyId()
-        {
-            var companyId = Guid.Empty;
-            validator.ShouldHaveValidationErrorFor(x => x.CompanyId, companyId);
+            request.Info.Name = "D";
+            validator.TestValidate(request).ShouldHaveValidationErrorFor(x => x.Info.Name);
         }
     }
 }

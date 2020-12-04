@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace LT.DigitalOffice.CompanyService.Models.Dto
+namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
 {
     public class Position
     {
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
-        public IEnumerable<Guid> UserIds { get; set; }
     }
 }

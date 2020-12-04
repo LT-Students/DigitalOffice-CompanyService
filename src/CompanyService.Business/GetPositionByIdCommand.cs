@@ -12,17 +12,17 @@ namespace LT.DigitalOffice.CompanyService.Business
     public class GetPositionByIdCommand : IGetPositionByIdCommand
     {
         private readonly IPositionRepository repository;
-        private readonly IMapper<DbPosition, Position> mapper;
+        private readonly IMapper<DbPosition, PositionResponse> mapper;
 
         public GetPositionByIdCommand(
             [FromServices] IPositionRepository repository,
-            [FromServices] IMapper<DbPosition, Position> mapper)
+            [FromServices] IMapper<DbPosition, PositionResponse> mapper)
         {
             this.repository = repository;
             this.mapper = mapper;
         }
 
-        public Position Execute(Guid positionId)
+        public PositionResponse Execute(Guid positionId)
         {
             var dbPosition = repository.GetPositionById(positionId);
             return mapper.Map(dbPosition);

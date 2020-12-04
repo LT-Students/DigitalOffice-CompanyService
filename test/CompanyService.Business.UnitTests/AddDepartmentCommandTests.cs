@@ -4,7 +4,8 @@ using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions;
 using Moq;
@@ -17,32 +18,35 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
     public class AddDepartmentCommandTests
     {
-        private Mock<IValidator<DepartmentRequest>> validatorMock;
-        private Mock<IMapper<DepartmentRequest, DbDepartment>> mapperMock;
+        private Mock<IValidator<NewDepartmentRequest>> validatorMock;
+        private Mock<IMapper<NewDepartmentRequest, DbDepartment>> mapperMock;
         private Mock<IDepartmentRepository> repositoryMock;
         private Mock<IAccessValidator> accessValidatorMock;
 
         private IAddDepartmentCommand command;
-        private DepartmentRequest request;
+        private NewDepartmentRequest request;
         private DbDepartment createdDepartment;
         private const int rightId = 4;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            request = new DepartmentRequest
+            request = new NewDepartmentRequest
             {
-                Name = "Department",
-                Description = "Description",
-                CompanyId = Guid.NewGuid(),
+                Info = new Department
+                {
+                    Name = "Department",
+                    Description = "Description"
+                },
                 UsersIds = new List<Guid>() { Guid.NewGuid()}
             };
 
             createdDepartment = new DbDepartment
             {
                 Id = Guid.NewGuid(),
-                Name = request.Name,
-                Description = request.Description,
+                Name = request.Info.Name,
+                Description = request.Info.Description,
+                DirectorUserId = request.Info.DirectorUserId,
                 IsActive = true,
                 Users = new List<DbDepartmentUser>()
                 {
@@ -57,8 +61,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            validatorMock = new Mock<IValidator<DepartmentRequest>>();
-            mapperMock = new Mock<IMapper<DepartmentRequest, DbDepartment>>();
+            validatorMock = new Mock<IValidator<NewDepartmentRequest>>();
+            mapperMock = new Mock<IMapper<NewDepartmentRequest, DbDepartment>>();
             repositoryMock = new Mock<IDepartmentRepository>();
             accessValidatorMock = new Mock<IAccessValidator>();
 
@@ -107,7 +111,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                  .Returns(true);
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<DepartmentRequest>()))
+                .Setup(x => x.Map(It.IsAny<NewDepartmentRequest>()))
                 .Throws(new BadRequestException());
 
             Assert.Throws<BadRequestException>(() => command.Execute(request));
@@ -125,7 +129,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                  .Returns(true);
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<DepartmentRequest>()))
+                .Setup(x => x.Map(It.IsAny<NewDepartmentRequest>()))
                 .Returns(createdDepartment);
 
             repositoryMock

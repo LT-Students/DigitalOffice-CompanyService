@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto;
+﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
@@ -15,6 +15,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// <returns>Whether it was successful to edit.</returns>
         /// <exception cref="ValidationException">Thrown when position data is incorrect.</exception>
         /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when position is not found.</exception>
-        bool Execute(EditPositionRequest request);
+        bool Execute(Position request);
     }
 }

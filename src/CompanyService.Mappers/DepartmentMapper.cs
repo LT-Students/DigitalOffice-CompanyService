@@ -1,15 +1,15 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Exceptions;
 using System;
 using System.Collections.Generic;
 
 namespace CompanyService.Mappers
 {
-    public class DepartmentMapper : IMapper<DepartmentRequest, DbDepartment>
+    public class DepartmentMapper : IMapper<NewDepartmentRequest, DbDepartment>
     {
-        public DbDepartment Map(DepartmentRequest value)
+        public DbDepartment Map(NewDepartmentRequest value)
         {
             if (value == null)
             {
@@ -19,8 +19,9 @@ namespace CompanyService.Mappers
             var dbDepartment = new DbDepartment
             {
                 Id = Guid.NewGuid(),
-                Name = value.Name,
-                Description = value.Description,
+                Name = value.Info.Name,
+                Description = value.Info.Description,
+                DirectorUserId = value.Info.DirectorUserId,
                 IsActive = true,
                 Users = new List<DbDepartmentUser>()
             };
