@@ -2,24 +2,18 @@ using FluentValidation;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Business;
-using LT.DigitalOffice.CompanyService.Business.Departments;
-using LT.DigitalOffice.CompanyService.Business.Departments.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Configurations;
 using LT.DigitalOffice.CompanyService.Data;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Mappers;
-using LT.DigitalOffice.CompanyService.Mappers.Departments;
-using LT.DigitalOffice.CompanyService.Mappers.Departments.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation;
-using LT.DigitalOffice.CompanyService.Validation.Departments;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Middlewares.Token;
@@ -64,7 +58,7 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMassTransit(IServiceCollection services)
         {
-            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<RabbitMqConfig>();
+            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<BaseRabbitMqOptions>();
 
             services.AddMassTransit(x =>
             {
@@ -90,7 +84,7 @@ namespace LT.DigitalOffice.CompanyService
                     });
                 });
 
-                x.AddRequestClient<ICheckTokenRequest>(new Uri(rabbitMqConfig.ValidateTokenUrl));
+                x.AddRequestClient<ICheckTokenRequest>(new Uri(rabbitMqConfig.ValidateTokenEndpoint));
 
                 x.ConfigureKernelMassTransit(rabbitMqConfig);
             });
@@ -141,13 +135,8 @@ namespace LT.DigitalOffice.CompanyService
         {
             services.AddTransient<IGetPositionByIdCommand, GetPositionByIdCommand>();
             services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
-            services.AddTransient<ICreatePositionCommand, CreatePositionCommand>();
             services.AddTransient<IEditPositionCommand, EditPositionCommand>();
             services.AddTransient<IDisablePositionByIdCommand, DisablePositionByIdCommand>();
-
-            services.AddTransient<ICreateDepartmentCommand, CreateDepartmentCommand>();
-            services.AddTransient<IGetDepartmentCommand, GetDepartmentCommand>();
-            services.AddTransient<IFindDepartmentsCommand, FindDepartmentsCommand>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -161,16 +150,12 @@ namespace LT.DigitalOffice.CompanyService
         private void ConfigureValidators(IServiceCollection services)
         {
             services.AddTransient<IValidator<Position>, PositionValidator>();
-            services.AddTransient<IValidator<DepartmentInfo>, DepartmentInfoValidator>();
         }
 
         private void ConfigureMappers(IServiceCollection services)
         {
             services.AddTransient<IMapper<DbPosition, PositionResponse>, PositionMapper>();
             services.AddTransient<IMapper<Position, DbPosition>, PositionMapper>();
-
-            services.AddTransient<IMapper<NewDepartmentRequest, DbDepartment>, DbDepartmentMapper>();
-            services.AddTransient<IDepartmentMapper, DepartmentMapper>();
         }
     }
 }
