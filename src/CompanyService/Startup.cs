@@ -1,27 +1,35 @@
-using CompanyService.Mappers;
 using FluentValidation;
+using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Business;
+using LT.DigitalOffice.CompanyService.Business.Departments;
+using LT.DigitalOffice.CompanyService.Business.Departments.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Configurations;
 using LT.DigitalOffice.CompanyService.Data;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Mappers;
+using LT.DigitalOffice.CompanyService.Mappers.Departments;
+using LT.DigitalOffice.CompanyService.Mappers.Departments.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation;
+using LT.DigitalOffice.CompanyService.Validation.Departments;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Middlewares.Token;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -56,7 +64,7 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMassTransit(IServiceCollection services)
         {
-            var rabbitMQOptions = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<BaseRabbitMqOptions>();
+            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<RabbitMqConfig>();
 
             services.AddMassTransit(x =>
             {
@@ -65,24 +73,26 @@ namespace LT.DigitalOffice.CompanyService
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(rabbitMQOptions.Host, "/", hst =>
+                    cfg.Host(rabbitMqConfig.Host, "/", hst =>
                     {
-                        hst.Username($"{rabbitMQOptions.Username}_{rabbitMQOptions.Password}");
-                        hst.Password(rabbitMQOptions.Password);
+                        hst.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
+                        hst.Password(rabbitMqConfig.Password);
                     });
 
-                    cfg.ReceiveEndpoint($"{rabbitMQOptions.Username}", e =>
+                    cfg.ReceiveEndpoint($"{rabbitMqConfig.Username}", e =>
                     {
                         e.ConfigureConsumer<GetUserPositionConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint($"{rabbitMQOptions.Username}_Departments", e =>
+                    cfg.ReceiveEndpoint($"{rabbitMqConfig.Username}_Departments", e =>
                     {
                         e.ConfigureConsumer<GetDepartmentConsumer>(context);
                     });
                 });
 
-                x.ConfigureKernelMassTransit(rabbitMQOptions);
+                x.AddRequestClient<ICheckTokenRequest>(new Uri(rabbitMqConfig.ValidateTokenUrl));
+
+                x.ConfigureKernelMassTransit(rabbitMqConfig);
             });
 
             services.AddMassTransitHostedService();
@@ -95,6 +105,8 @@ namespace LT.DigitalOffice.CompanyService
             app.UseExceptionHandler(tempApp => tempApp.Run(CustomExceptionHandler.HandleCustomException));
 
             UpdateDatabase(app);
+
+            app.UseMiddleware<TokenMiddleware>();
 
 #if RELEASE
             app.UseHttpsRedirection();
@@ -129,11 +141,13 @@ namespace LT.DigitalOffice.CompanyService
         {
             services.AddTransient<IGetPositionByIdCommand, GetPositionByIdCommand>();
             services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
-            services.AddTransient<IAddPositionCommand, AddPositionCommand>();
+            services.AddTransient<ICreatePositionCommand, CreatePositionCommand>();
             services.AddTransient<IEditPositionCommand, EditPositionCommand>();
             services.AddTransient<IDisablePositionByIdCommand, DisablePositionByIdCommand>();
 
-            services.AddTransient<IAddDepartmentCommand, AddDepartmentCommand>();
+            services.AddTransient<ICreateDepartmentCommand, CreateDepartmentCommand>();
+            services.AddTransient<IGetDepartmentCommand, GetDepartmentCommand>();
+            services.AddTransient<IFindDepartmentsCommand, FindDepartmentsCommand>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -147,8 +161,7 @@ namespace LT.DigitalOffice.CompanyService
         private void ConfigureValidators(IServiceCollection services)
         {
             services.AddTransient<IValidator<Position>, PositionValidator>();
-
-            services.AddTransient<IValidator<NewDepartmentRequest>, DepartmentRequestValidator>();
+            services.AddTransient<IValidator<DepartmentInfo>, DepartmentInfoValidator>();
         }
 
         private void ConfigureMappers(IServiceCollection services)
@@ -156,7 +169,8 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IMapper<DbPosition, PositionResponse>, PositionMapper>();
             services.AddTransient<IMapper<Position, DbPosition>, PositionMapper>();
 
-            services.AddTransient<IMapper<NewDepartmentRequest, DbDepartment>, DepartmentMapper>();
+            services.AddTransient<IMapper<NewDepartmentRequest, DbDepartment>, DbDepartmentMapper>();
+            services.AddTransient<IDepartmentMapper, DepartmentMapper>();
         }
     }
 }

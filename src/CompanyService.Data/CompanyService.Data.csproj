@@ -2,10 +2,6 @@
 
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CompanyService.Data.Provider.MsSql.Ef\CompanyService.Data.Provider.MsSql.Ef.csproj" />
     <ProjectReference Include="..\CompanyService.Data.Provider\CompanyService.Data.Provider.csproj" />
