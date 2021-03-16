@@ -73,6 +73,7 @@ namespace LT.DigitalOffice.CompanyService
                         hst.Password(rabbitMqConfig.Password);
                     });
 
+                    // TODO fix endpoint names add to config
                     cfg.ReceiveEndpoint($"{rabbitMqConfig.Username}", e =>
                     {
                         e.ConfigureConsumer<GetUserPositionConsumer>(context);
@@ -84,7 +85,8 @@ namespace LT.DigitalOffice.CompanyService
                     });
                 });
 
-                x.AddRequestClient<ICheckTokenRequest>(new Uri(rabbitMqConfig.ValidateTokenEndpoint));
+                x.AddRequestClient<ICheckTokenRequest>(
+                    new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.ValidateTokenEndpoint}"));
 
                 x.ConfigureKernelMassTransit(rabbitMqConfig);
             });
