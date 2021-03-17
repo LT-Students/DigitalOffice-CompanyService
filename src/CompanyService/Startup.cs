@@ -1,3 +1,4 @@
+using CompanyService.Mappers;
 using FluentValidation;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
@@ -139,6 +140,8 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
             services.AddTransient<IEditPositionCommand, EditPositionCommand>();
             services.AddTransient<IDisablePositionByIdCommand, DisablePositionByIdCommand>();
+
+            services.AddTransient<IAddDepartmentCommand, AddDepartmentCommand>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -152,12 +155,16 @@ namespace LT.DigitalOffice.CompanyService
         private void ConfigureValidators(IServiceCollection services)
         {
             services.AddTransient<IValidator<Position>, PositionValidator>();
+
+            services.AddTransient<IValidator<NewDepartmentRequest>, DepartmentRequestValidator>();
         }
 
         private void ConfigureMappers(IServiceCollection services)
         {
             services.AddTransient<IMapper<DbPosition, PositionResponse>, PositionMapper>();
             services.AddTransient<IMapper<Position, DbPosition>, PositionMapper>();
+
+            services.AddTransient<IMapper<NewDepartmentRequest, DbDepartment>, DepartmentMapper>();
         }
     }
 }
