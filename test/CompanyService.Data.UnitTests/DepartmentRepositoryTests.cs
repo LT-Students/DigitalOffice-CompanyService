@@ -3,6 +3,8 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.UnitTestKernel;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -12,26 +14,19 @@ namespace CompanyService.Data.UnitTests
 {
     public class DepartmentRepositoryTests
     {
-        private IDataProvider provider;
-        private IDepartmentRepository repository;
+        private IDataProvider _provider;
+        private IDepartmentRepository _repository;
 
-        private DbDepartment departmentToAdd;
+        private DbDepartment _departmentToAdd;
+        private DbDepartment _dbDepartment;
+        private DbContextOptions<CompanyServiceDbContext> _dbOptions;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
-                   .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
-                   .Options;
-            provider = new CompanyServiceDbContext(dbOptions);
+            CreateMemoryDb();
 
-            repository = new DepartmentRepository(provider);
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            departmentToAdd = new DbDepartment
+            _departmentToAdd = new DbDepartment
             {
                 Id = Guid.NewGuid(),
                 Name = "Name",
@@ -47,26 +42,79 @@ namespace CompanyService.Data.UnitTests
                     }
                 }
             };
+
+            _dbDepartment = new DbDepartment
+            {
+                Id = Guid.NewGuid(),
+                Name = "Digital solution",
+                Description = "Description",
+                IsActive = true,
+                Users = new List<DbDepartmentUser>()
+                {
+                    new DbDepartmentUser
+                    {
+                        UserId  = Guid.NewGuid(),
+                        IsActive = true,
+                        StartTime = DateTime.UtcNow
+                    }
+                }
+            };
+        }
+
+        public void CreateMemoryDb()
+        {
+            _dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
+                   .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
+                   .Options;
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
+            _provider = new CompanyServiceDbContext(_dbOptions);
+            _repository = new DepartmentRepository(_provider);
+
+            _provider.Departments.Add(_dbDepartment);
+            _provider.Save();
         }
 
         [TearDown]
         public void CleanDb()
         {
-            if (provider.IsInMemory())
+            if (_provider.IsInMemory())
             {
-                provider.EnsureDeleted();
+                _provider.EnsureDeleted();
             }
         }
 
-        #region AddDepartment
         [Test]
         public void ShouldAddDepartmentInDb()
         {
-            var guidOfAddedDepartment = repository.AddDepartment(departmentToAdd);
+            var guidOfAddedDepartment = _repository.AddDepartment(_departmentToAdd);
 
-            Assert.AreEqual(departmentToAdd.Id, guidOfAddedDepartment);
-            Assert.AreEqual(departmentToAdd, provider.Departments.Find(departmentToAdd.Id));
+            Assert.AreEqual(_departmentToAdd.Id, guidOfAddedDepartment);
+            Assert.AreEqual(_departmentToAdd, _provider.Departments.Find(_departmentToAdd.Id));
         }
-        #endregion
+
+        [Test]
+        public void ShouldNotFoundExceptionWhenDepartmentIdNotFound()
+        {
+            var departmentId = Guid.NewGuid();
+
+            Assert.Throws<NotFoundException>(() => _repository.GetDepartment(departmentId));
+        }
+
+        [Test]
+        public void ShouldGetDepartmenByIdSuccessfully()
+        {
+            var dbDepartment = _repository.GetDepartment(_dbDepartment.Id);
+
+            foreach (var user in dbDepartment.Users)
+            {
+                user.Department = null;
+            }
+
+            SerializerAssert.AreEqual(_dbDepartment, dbDepartment);
+        }
     }
 }
