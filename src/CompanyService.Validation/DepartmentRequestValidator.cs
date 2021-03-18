@@ -7,10 +7,19 @@ namespace LT.DigitalOffice.CompanyService.Validation
     {
         public DepartmentRequestValidator()
         {
-            RuleForEach(request => request.UsersIds)
-                .NotEmpty();
+            When(request => request.Users != null, () =>
+            {
+                RuleFor(request => request.Users)
+                    .NotEmpty()
+                    .ForEach(user =>
+                    {
+                        user.NotEmpty().SetValidator(new DepartmentUserValidator());
+                    });
+
+            });
 
             RuleFor(request => request.Info)
+                .NotEmpty()
                 .SetValidator(new DepartmentValidator());
         }
     }

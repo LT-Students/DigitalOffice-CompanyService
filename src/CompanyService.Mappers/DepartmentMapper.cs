@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Exceptions;
 using System;
@@ -13,7 +14,7 @@ namespace CompanyService.Mappers
         {
             if (value == null)
             {
-                throw new BadRequestException();
+                throw new ArgumentNullException(nameof(value));
             }
 
             var dbDepartment = new DbDepartment
@@ -26,12 +27,14 @@ namespace CompanyService.Mappers
                 Users = new List<DbDepartmentUser>()
             };
 
-            foreach (Guid userId in value.UsersIds)
+            foreach (DepartmentUser user in value.Users)
             {
                 dbDepartment.Users.Add(new DbDepartmentUser
                 {
+                    Id = Guid.NewGuid(),
                     DepartmentId = dbDepartment.Id,
-                    UserId = userId,
+                    UserId = user.UserId,
+                    PositionId = user.PositionId,
                     IsActive = true,
                     StartTime = DateTime.UtcNow
                 });

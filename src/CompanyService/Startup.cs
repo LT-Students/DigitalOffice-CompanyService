@@ -136,6 +136,7 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureCommands(IServiceCollection services)
         {
+            services.AddTransient<IAddPositionCommand, AddPositionCommand>();
             services.AddTransient<IGetPositionByIdCommand, GetPositionByIdCommand>();
             services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
             services.AddTransient<IEditPositionCommand, EditPositionCommand>();
