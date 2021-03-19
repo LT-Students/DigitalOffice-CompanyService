@@ -7,7 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
     /// Represents the command pattern.
     /// Provides method for adding a new position.
     /// </summary>
-    public interface IAddPositionCommand
+    public interface ICreatePositionCommand
     {
         /// <summary>
         ///  Adds a new position. Returns its Id if it succeeded to add a position, otherwise Exception.

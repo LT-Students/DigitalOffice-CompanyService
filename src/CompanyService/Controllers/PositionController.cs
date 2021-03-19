@@ -23,8 +23,8 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             return command.Execute();
         }
 
-        [HttpPost("addPosition")]
-        public Guid AddPosition([FromServices] IAddPositionCommand command, [FromBody] Position request)
+        [HttpPost("create")]
+        public Guid CreatePosition([FromServices] ICreatePositionCommand command, [FromBody] Position request)
         {
             return command.Execute(request);
         }

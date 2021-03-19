@@ -90,7 +90,7 @@ namespace CompanyService.Data.UnitTests
         [Test]
         public void ShouldAddDepartmentInDb()
         {
-            var guidOfAddedDepartment = _repository.AddDepartment(_departmentToAdd);
+            var guidOfAddedDepartment = _repository.CreateDepartment(_departmentToAdd);
 
             Assert.AreEqual(_departmentToAdd.Id, guidOfAddedDepartment);
             Assert.AreEqual(_departmentToAdd, _provider.Departments.Find(_departmentToAdd.Id));

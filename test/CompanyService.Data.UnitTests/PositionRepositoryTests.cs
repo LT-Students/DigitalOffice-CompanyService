@@ -133,7 +133,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         {
             var expected = dbPositionToAdd.Id;
 
-            var result = repository.AddPosition(dbPositionToAdd);
+            var result = repository.CreatePosition(dbPositionToAdd);
 
             Assert.AreEqual(expected, result);
             Assert.NotNull(provider.Positions.Find(dbPositionToAdd.Id));

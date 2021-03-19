@@ -7,7 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
     /// Represents the command pattern.
     /// Provides method for adding a new department.
     /// </summary>
-    public interface IAddDepartmentCommand
+    public interface ICreateDepartmentCommand
     {
         /// <summary>
         /// Adds a new department. Returns id of the added department.
