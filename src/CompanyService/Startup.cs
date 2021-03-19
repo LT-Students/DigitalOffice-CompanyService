@@ -4,6 +4,7 @@ using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Business;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Configuration;
 using LT.DigitalOffice.CompanyService.Data;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
@@ -19,6 +20,7 @@ using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Middlewares.Token;
 using MassTransit;
+using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +61,7 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMassTransit(IServiceCollection services)
         {
-            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<BaseRabbitMqOptions>();
+            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<RabbitMqConfig>();
 
             services.AddMassTransit(x =>
             {
@@ -74,16 +76,7 @@ namespace LT.DigitalOffice.CompanyService
                         hst.Password(rabbitMqConfig.Password);
                     });
 
-                    // TODO fix endpoint names add to config
-                    cfg.ReceiveEndpoint($"{rabbitMqConfig.Username}", e =>
-                    {
-                        e.ConfigureConsumer<GetUserPositionConsumer>(context);
-                    });
-
-                    cfg.ReceiveEndpoint($"{rabbitMqConfig.Username}_Departments", e =>
-                    {
-                        e.ConfigureConsumer<GetDepartmentConsumer>(context);
-                    });
+                    ConfigureEndpoints(context, cfg, rabbitMqConfig);
                 });
 
                 x.AddRequestClient<ICheckTokenRequest>(
@@ -93,6 +86,22 @@ namespace LT.DigitalOffice.CompanyService
             });
 
             services.AddMassTransitHostedService();
+        }
+
+        private void ConfigureEndpoints(
+            IBusRegistrationContext context,
+            IRabbitMqBusFactoryConfigurator cfg,
+            RabbitMqConfig rabbitMqConfig)
+        {
+            cfg.ReceiveEndpoint(rabbitMqConfig.GetUserPositionEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetUserPositionConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(rabbitMqConfig.GetDepartmentEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetDepartmentConsumer>(context);
+            });
         }
 
         public void Configure(IApplicationBuilder app)
