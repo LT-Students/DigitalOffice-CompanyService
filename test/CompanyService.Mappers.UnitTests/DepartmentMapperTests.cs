@@ -17,13 +17,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
 
         private NewDepartmentRequest _request;
         private DbDepartment _expectedDbDepartment;
+        private Department _newDepartment;
 
         [OneTimeSetUp]
         public void OneTimeSeyUp()
         {
             _mapper = new DepartmentMapper();
 
-            var newDepartment = new Department()
+            _newDepartment = new Department()
             {
                 Name = "Department",
                 Description = "Description",
@@ -46,17 +47,16 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
 
             _request = new NewDepartmentRequest
             {
-                Info = newDepartment,
+                Info = _newDepartment,
                 Users = newUsers
             };
 
             _expectedDbDepartment = new DbDepartment
             {
-                Name = newDepartment.Name,
-                Description = newDepartment.Description,
+                Name = _newDepartment.Name,
+                Description = _newDepartment.Description,
                 IsActive = true,
-                DirectorUserId = newDepartment.DirectorUserId,
-                Users = new List<DbDepartmentUser>()
+                DirectorUserId = _newDepartment.DirectorUserId
             };
 
             foreach (var newUser in newUsers)
@@ -71,7 +71,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
             }
         }
 
-
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
@@ -81,6 +80,29 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
         }
 
         [Test]
+        public void ShouldReturnDbDepartmentWithoutUserSuccessfully()
+        {
+            var newDepartment = new NewDepartmentRequest
+            {
+                Info = _newDepartment
+            };
+
+            var expectedDbDepartment = new DbDepartment
+            {
+                Name = _newDepartment.Name,
+                Description = _newDepartment.Description,
+                IsActive = true,
+                DirectorUserId = _newDepartment.DirectorUserId,
+                Users = null
+            };
+
+            var dbDepartment = _mapper.Map(newDepartment);
+
+            expectedDbDepartment.Id = dbDepartment.Id;
+
+            SerializerAssert.AreEqual(expectedDbDepartment, dbDepartment);
+        }
+            [Test]
         public void ShouldReturnDbDepartmentSuccessfully()
         {
             var dbDepartment = _mapper.Map(_request);
