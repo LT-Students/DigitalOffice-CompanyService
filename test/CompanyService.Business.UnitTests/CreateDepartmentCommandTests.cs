@@ -14,14 +14,14 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
-    internal class AddDepartmentCommandTests
+    internal class CreateDepartmentCommandTests
     {
         private Mock<IDepartmentRepository> _repositoryMock;
         private Mock<IAccessValidator> _accessValidatorMock;
         private Mock<IValidator<NewDepartmentRequest>> _validatorMock;
         private Mock<IMapper<NewDepartmentRequest, DbDepartment>> _mapperMock;
 
-        private IAddDepartmentCommand _command;
+        private ICreateDepartmentCommand _command;
         private NewDepartmentRequest _request;
         private DbDepartment _dbDepartment;
 
@@ -33,7 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             _validatorMock = new Mock<IValidator<NewDepartmentRequest>>();
             _mapperMock = new Mock<IMapper<NewDepartmentRequest, DbDepartment>>();
 
-            _command = new AddDepartmentCommand(
+            _command = new CreateDepartmentCommand(
                 _repositoryMock.Object,
                 _validatorMock.Object,
                 _mapperMock.Object,
@@ -128,7 +128,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Throws(new ArgumentNullException());
 
             Assert.Throws<ArgumentNullException>(() => _command.Execute(_request));
-            _repositoryMock.Verify(x => x.AddDepartment(_dbDepartment), Times.Never);
+            _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Never);
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Returns(_dbDepartment);
 
             _repositoryMock
-                .Setup(x => x.AddDepartment(_dbDepartment))
+                .Setup(x => x.CreateDepartment(_dbDepartment))
                 .Returns(_dbDepartment.Id);
 
 

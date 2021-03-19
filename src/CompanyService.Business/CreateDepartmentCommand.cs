@@ -12,14 +12,14 @@ using System;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
-    public class AddDepartmentCommand : IAddDepartmentCommand
+    public class CreateDepartmentCommand : ICreateDepartmentCommand
     {
         private readonly IDepartmentRepository repository;
         private readonly IValidator<NewDepartmentRequest> validator;
         private readonly IMapper<NewDepartmentRequest, DbDepartment> mapper;
         private readonly IAccessValidator accessValidator;
 
-        public AddDepartmentCommand(
+        public CreateDepartmentCommand(
             [FromServices] IDepartmentRepository repository,
             [FromServices] IValidator<NewDepartmentRequest> validator,
             [FromServices] IMapper<NewDepartmentRequest, DbDepartment> mapper,
@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Business
 
             validator.ValidateAndThrowCustom(request);
 
-            return repository.AddDepartment(mapper.Map(request));
+            return repository.CreateDepartment(mapper.Map(request));
         }
     }
 }

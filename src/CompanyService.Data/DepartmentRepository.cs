@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         }
 
         /// <inheritdoc />
-        public Guid AddDepartment(DbDepartment department)
+        public Guid CreateDepartment(DbDepartment department)
         {
             provider.Departments.Add(department);
             provider.Save();

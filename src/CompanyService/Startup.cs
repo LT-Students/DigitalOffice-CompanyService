@@ -145,13 +145,13 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureCommands(IServiceCollection services)
         {
-            services.AddTransient<IAddPositionCommand, AddPositionCommand>();
+            services.AddTransient<ICreatePositionCommand, CreatePositionCommand>();
             services.AddTransient<IGetPositionByIdCommand, GetPositionByIdCommand>();
             services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
             services.AddTransient<IEditPositionCommand, EditPositionCommand>();
             services.AddTransient<IDisablePositionByIdCommand, DisablePositionByIdCommand>();
 
-            services.AddTransient<IAddDepartmentCommand, AddDepartmentCommand>();
+            services.AddTransient<ICreateDepartmentCommand, CreateDepartmentCommand>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)

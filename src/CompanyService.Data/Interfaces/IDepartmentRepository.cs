@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <param name="department">Department to add.</param>
         /// <returns>New department Id.</returns>
-        Guid AddDepartment(DbDepartment department);
+        Guid CreateDepartment(DbDepartment department);
 
         /// <summary>
         /// Get <see cref="DbDepartment"/>.
