@@ -43,9 +43,17 @@ namespace LT.DigitalOffice.CompanyService
         {
             services.AddHealthChecks();
 
+            string connStr = Environment.GetEnvironmentVariable("ConnectionString");
+            if (string.IsNullOrEmpty(connStr))
+            {
+                connStr = Configuration.GetConnectionString("SQLConnectionString");
+            }
+
+            Console.WriteLine(connStr);
+
             services.AddDbContext<CompanyServiceDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("SQLConnectionString"));
+                options.UseSqlServer(connStr);
             });
 
             services.AddControllers();
