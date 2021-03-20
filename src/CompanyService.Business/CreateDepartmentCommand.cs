@@ -5,20 +5,21 @@ using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
-    public class AddDepartmentCommand : IAddDepartmentCommand
+    public class CreateDepartmentCommand : ICreateDepartmentCommand
     {
         private readonly IDepartmentRepository repository;
         private readonly IValidator<NewDepartmentRequest> validator;
         private readonly IMapper<NewDepartmentRequest, DbDepartment> mapper;
         private readonly IAccessValidator accessValidator;
 
-        public AddDepartmentCommand(
+        public CreateDepartmentCommand(
             [FromServices] IDepartmentRepository repository,
             [FromServices] IValidator<NewDepartmentRequest> validator,
             [FromServices] IMapper<NewDepartmentRequest, DbDepartment> mapper,
@@ -36,12 +37,12 @@ namespace LT.DigitalOffice.CompanyService.Business
 
             if (!(accessValidator.IsAdmin() || accessValidator.HasRights(rightId)))
             {
-                throw new Exception("Not enough rights.");
+                throw new ForbiddenException("Not enough rights.");
             }
 
             validator.ValidateAndThrowCustom(request);
 
-            return repository.AddDepartment(mapper.Map(request));
+            return repository.CreateDepartment(mapper.Map(request));
         }
     }
 }

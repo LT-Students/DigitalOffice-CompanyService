@@ -64,7 +64,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             provider.Save();
         }
 
-        public Guid AddPosition(DbPosition newPosition)
+        public Guid CreatePosition(DbPosition newPosition)
         {
             provider.Positions.Add(newPosition);
             provider.Save();

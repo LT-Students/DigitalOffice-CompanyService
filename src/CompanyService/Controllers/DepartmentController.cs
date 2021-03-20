@@ -9,9 +9,9 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     [ApiController]
     public class DepartmentController : ControllerBase
     {
-        [HttpPost("addDepartment")]
+        [HttpPost("create")]
         public Guid AddDepartment(
-            [FromServices] IAddDepartmentCommand command,
+            [FromServices] ICreateDepartmentCommand command,
             [FromBody] NewDepartmentRequest department)
         {
             return command.Execute(department);

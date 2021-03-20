@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         }
 
         /// <inheritdoc />
-        public Guid AddDepartment(DbDepartment department)
+        public Guid CreateDepartment(DbDepartment department)
         {
             provider.Departments.Add(department);
             provider.Save();
@@ -30,6 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         public DbDepartment GetDepartment(Guid id)
         {
             var result = provider.Departments.FirstOrDefault(d => d.Id == id);
+
             if (result == null)
             {
                 throw new NotFoundException($"Department with id: '{id}' was not found.");

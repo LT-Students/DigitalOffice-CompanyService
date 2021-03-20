@@ -12,13 +12,13 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
-    class AddPositionCommandTests
+    class CreatePositionCommandTests
     {
         private Mock<IPositionRepository> repositoryMock;
         private Mock<IMapper<Position, DbPosition>> mapperMock;
         private Mock<IValidator<Position>> validatorMock;
 
-        private IAddPositionCommand command;
+        private ICreatePositionCommand command;
         private Position request;
         private DbPosition createdPosition;
 
@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             repositoryMock = new Mock<IPositionRepository>();
             mapperMock = new Mock<IMapper<Position, DbPosition>>();
 
-            command = new AddPositionCommand(validatorMock.Object, repositoryMock.Object, mapperMock.Object);
+            command = new CreatePositionCommand(validatorMock.Object, repositoryMock.Object, mapperMock.Object);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                     }));
 
             Assert.Throws<ValidationException>(() => command.Execute(request));
-            repositoryMock.Verify(repository => repository.AddPosition(It.IsAny<DbPosition>()), Times.Never);
+            repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Never);
         }
 
         [Test]
@@ -76,11 +76,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Returns(createdPosition);
 
             repositoryMock
-                .Setup(x => x.AddPosition(It.IsAny<DbPosition>()))
+                .Setup(x => x.CreatePosition(It.IsAny<DbPosition>()))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => command.Execute(request));
-            repositoryMock.Verify(repository => repository.AddPosition(It.IsAny<DbPosition>()), Times.Once);
+            repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Once);
         }
 
         [Test]
@@ -95,11 +95,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Returns(createdPosition);
 
             repositoryMock
-                .Setup(x => x.AddPosition(It.IsAny<DbPosition>()))
+                .Setup(x => x.CreatePosition(It.IsAny<DbPosition>()))
                 .Returns(createdPosition.Id);
 
             Assert.AreEqual(createdPosition.Id, command.Execute(request));
-            repositoryMock.Verify(repository => repository.AddPosition(It.IsAny<DbPosition>()), Times.Once);
+            repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Once);
         }
     }
 }

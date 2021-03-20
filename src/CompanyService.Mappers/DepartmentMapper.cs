@@ -1,9 +1,9 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.Kernel.Exceptions;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace CompanyService.Mappers
 {
@@ -13,31 +13,36 @@ namespace CompanyService.Mappers
         {
             if (value == null)
             {
-                throw new BadRequestException();
+                throw new ArgumentNullException(nameof(value));
             }
+
+            var departmentId = Guid.NewGuid();
 
             var dbDepartment = new DbDepartment
             {
-                Id = Guid.NewGuid(),
+                Id = departmentId,
                 Name = value.Info.Name,
                 Description = value.Info.Description,
                 DirectorUserId = value.Info.DirectorUserId,
                 IsActive = true,
-                Users = new List<DbDepartmentUser>()
+                Users = value.Users?.Select(du =>
+                    GetDbDepartmentUser(departmentId, du)).ToList()
             };
 
-            foreach (Guid userId in value.UsersIds)
-            {
-                dbDepartment.Users.Add(new DbDepartmentUser
-                {
-                    DepartmentId = dbDepartment.Id,
-                    UserId = userId,
-                    IsActive = true,
-                    StartTime = DateTime.UtcNow
-                });
-            }
-
             return dbDepartment;
+        }
+
+        private DbDepartmentUser GetDbDepartmentUser(Guid departmentId, DepartmentUser user)
+        {
+            return new DbDepartmentUser
+            {
+                Id = Guid.NewGuid(),
+                DepartmentId = departmentId,
+                UserId = user.UserId,
+                PositionId = user.PositionId,
+                IsActive = true,
+                StartTime = DateTime.UtcNow
+            };
         }
     }
 }

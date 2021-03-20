@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <param name="position">Position to add.</param>
         /// <returns>New position Id.</returns>
-        Guid AddPosition(DbPosition position);
+        Guid CreatePosition(DbPosition position);
 
         /// <summary>
         /// Edits an existing position in the database. Returns whether it was successful to edit.
