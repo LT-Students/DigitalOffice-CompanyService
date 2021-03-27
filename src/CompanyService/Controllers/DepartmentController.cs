@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,6 +16,14 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromBody] NewDepartmentRequest department)
         {
             return command.Execute(department);
+        }
+
+        [HttpGet("get")]
+        public Department GetDepartmentById(
+            [FromServices] IGetDepartmentByIdCommand,
+            [FromQuery] Guid id)
+        {
+
         }
     }
 }
