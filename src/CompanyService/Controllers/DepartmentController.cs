@@ -20,10 +20,10 @@ namespace LT.DigitalOffice.CompanyService.Controllers
 
         [HttpGet("get")]
         public Department GetDepartmentById(
-            [FromServices] IGetDepartmentByIdCommand,
+            [FromServices] IGetDepartmentByIdCommand command,
             [FromQuery] Guid id)
         {
-
+            return command.Execute(id);
         }
     }
 }

@@ -160,7 +160,7 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
             services.AddTransient<IEditPositionCommand, EditPositionCommand>();
             services.AddTransient<IDisablePositionByIdCommand, DisablePositionByIdCommand>();
-
+            services.AddTransient<IGetDepartmentByIdCommand, GetDepartmentByIdCommand>();
             services.AddTransient<ICreateDepartmentCommand, CreateDepartmentCommand>();
         }
 
