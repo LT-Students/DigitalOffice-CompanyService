@@ -1,4 +1,4 @@
-using CompanyService.Mappers;
+using CompanyService.Mappers.RequestMappers;
 using FluentValidation;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
@@ -11,6 +11,7 @@ using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Mappers;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers;
 using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -184,7 +185,7 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IMapper<DbPosition, PositionResponse>, PositionMapper>();
             services.AddTransient<IMapper<Position, DbPosition>, PositionMapper>();
             services.AddTransient<IDepartmentResponseMapper, DepartmentResponseMapper>();
-            services.AddTransient<IMapper<NewDepartmentRequest, DbDepartment>, DepartmentMapper>();
+            services.AddTransient<IDepartmentMapper, DepartmentMapper>();
         }
     }
 }

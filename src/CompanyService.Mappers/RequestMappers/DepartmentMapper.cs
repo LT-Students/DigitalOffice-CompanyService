@@ -1,13 +1,13 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using System;
 using System.Linq;
 
-namespace CompanyService.Mappers
+namespace CompanyService.Mappers.RequestMappers
 {
-    public class DepartmentMapper : IMapper<NewDepartmentRequest, DbDepartment>
+    public class DepartmentMapper : IDepartmentMapper
     {
         public DbDepartment Map(NewDepartmentRequest value)
         {

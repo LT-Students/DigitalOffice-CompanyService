@@ -1,4 +1,4 @@
-﻿using CompanyService.Mappers;
+﻿using CompanyService.Mappers.RequestMappers;
 using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
