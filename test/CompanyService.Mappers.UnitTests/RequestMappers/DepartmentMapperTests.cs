@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
         private Department _newDepartment;
 
         [OneTimeSetUp]
-        public void OneTimeSeyUp()
+        public void OneTimeSetUp()
         {
             _mapper = new DepartmentMapper();
 

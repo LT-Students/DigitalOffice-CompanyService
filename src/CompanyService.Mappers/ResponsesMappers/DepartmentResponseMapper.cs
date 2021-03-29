@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.Exceptions;
+using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers
 {
@@ -12,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers
 
             if (value == null)
             {
-                throw new BadRequestException();
+                throw new ArgumentNullException();
             }
 
             return new Department
