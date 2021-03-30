@@ -20,6 +20,8 @@ namespace LT.DigitalOffice.CompanyService.Business
             this.mapper = mapper;
         }
         public Department Execute(Guid departmentId)
-            => mapper.Map(repository.GetDepartment(departmentId));
+        {
+            return mapper.Map(repository.GetDepartment(departmentId));
+        }
     }
 }
