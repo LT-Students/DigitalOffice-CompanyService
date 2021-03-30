@@ -9,13 +9,10 @@ using LT.DigitalOffice.CompanyService.Data;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.CompanyService.Mappers;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers;
 using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation;
@@ -182,8 +179,7 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMappers(IServiceCollection services)
         {
-            services.AddTransient<IMapper<DbPosition, PositionResponse>, PositionMapper>();
-            services.AddTransient<IMapper<Position, DbPosition>, PositionMapper>();
+            services.AddTransient<IPositionMapper, PositionMapper>();
             services.AddTransient<IDepartmentResponseMapper, DepartmentResponseMapper>();
             services.AddTransient<IDepartmentMapper, DepartmentMapper>();
         }
