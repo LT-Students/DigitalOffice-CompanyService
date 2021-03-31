@@ -12,9 +12,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// <summary>
         /// Returns the department model with the specified id.
         /// </summary>
-        /// <param name="id">Specified id of department.</param>
+        /// <param name="departmentId">Specified id of department.</param>
         /// <returns></returns>
         /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when departmen is not found.</exception>
-        Department Execute(Guid id);
+        Department Execute(Guid departmentId);
     }
 }
