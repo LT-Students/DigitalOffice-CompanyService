@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -17,8 +18,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     class GetDepartmentByIdCommandTests
     {
         private Mock<IDepartmentRepository> _repositoryMock;
-        private Mock<IDepartmentResponseMapper> _mapperMock;
+        private Mock<IDepartmentMapper> _mapperMock;
         private IGetDepartmentByIdCommand _command;
+        private ILogger _logger;
 
         private DbDepartment _dbDepartment;
         private Department _expectedDepartment;
@@ -29,8 +31,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         public void SetUp()
         {
             _repositoryMock = new Mock<IDepartmentRepository>();
-            _mapperMock = new Mock<IDepartmentResponseMapper>();
-            _command = new GetDepartmentByIdCommand(_repositoryMock.Object, _mapperMock.Object);
+            _mapperMock = new Mock<IDepartmentMapper>();
+            _command = new GetDepartmentByIdCommand(_logger, _repositoryMock.Object, _mapperMock.Object);
 
             _dbDepartmentId = Guid.NewGuid();
             _dbDepartment = new DbDepartment()

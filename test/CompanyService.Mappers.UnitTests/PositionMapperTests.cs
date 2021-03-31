@@ -28,9 +28,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            mapperDbPositionToPosition = new DbPositionMapper();
-            mapperEditPositionRequestToDbPosition = new PositionMapper();
-            mapperAddPositionRequest = new PositionMapper();
+            mapperDbPositionToPosition = new ResponsesMappers.DbPositionMapper();
+            mapperEditPositionRequestToDbPosition = new RequestMappers.DbPositionMapper();
+            mapperAddPositionRequest = new RequestMappers.DbPositionMapper();
         }
 
         [SetUp]

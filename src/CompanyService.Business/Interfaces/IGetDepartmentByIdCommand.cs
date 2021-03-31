@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
         /// </summary>
         /// <param name="id">Specified id of department.</param>
         /// <returns></returns>
-        /// /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when departmen is not found.</exception>
+        /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when departmen is not found.</exception>
         Department Execute(Guid id);
     }
 }

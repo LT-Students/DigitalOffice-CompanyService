@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.RequestMappers
 {
-    public class PositionMapper : IPositionMapper
+    public class DbPositionMapper : IDbPositionMapper
     {
         public DbPosition Map(Position value)
         {

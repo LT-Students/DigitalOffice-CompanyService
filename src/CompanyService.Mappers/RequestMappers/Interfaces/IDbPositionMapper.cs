@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces
     /// Represents mapper. Provides methods for converting an object of <see cref="Position"/>
     /// type into an object of <see cref="DbPosition"/> type according to some rule.
     /// </summary>
-    public interface IPositionMapper : IMapper<Position, DbPosition>
+    public interface IDbPositionMapper : IMapper<Position, DbPosition>
     {
     }
 }

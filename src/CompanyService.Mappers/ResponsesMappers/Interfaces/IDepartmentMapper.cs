@@ -8,7 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces
     /// Represents mapper. Provides methods for converting an object of <see cref="DbDepartment"/>
     /// type into an object of <see cref="Department"/> type according to some rule.
     /// </summary>
-    public interface IDepartmentResponseMapper : IMapper<DbDepartment, Department>
+    public interface IDepartmentMapper : IMapper<DbDepartment, Department>
     {
     }
 }

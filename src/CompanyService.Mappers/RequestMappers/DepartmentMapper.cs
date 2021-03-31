@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CompanyService.Mappers.RequestMappers
 {
-    public class DepartmentMapper : IDepartmentMapper
+    public class DepartmentMapper : IDbDepartmentMapper
     {
         public DbDepartment Map(NewDepartmentRequest value)
         {

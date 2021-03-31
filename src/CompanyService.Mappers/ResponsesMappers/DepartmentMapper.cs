@@ -6,7 +6,7 @@ using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers
 {
-    public class DepartmentResponseMapper : IDepartmentResponseMapper
+    public class DepartmentMapper : IDepartmentMapper
     {
         public Department Map(DbDepartment value)
         {

@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
 {
     class DepartmentResponseMapperTests
     {
-        private IDepartmentResponseMapper _mapper;
+        private IDepartmentMapper _mapper;
 
         private Department _expectedDepartment;
         private DbDepartment _newDbDepartment;
@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _mapper = new DepartmentResponseMapper();
+            _mapper = new DepartmentMapper();
 
             _newDbDepartment = new DbDepartment()
             {

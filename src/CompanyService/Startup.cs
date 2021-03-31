@@ -179,9 +179,9 @@ namespace LT.DigitalOffice.CompanyService
 
         private void ConfigureMappers(IServiceCollection services)
         {
-            services.AddTransient<IPositionMapper, PositionMapper>();
-            services.AddTransient<IDepartmentResponseMapper, DepartmentResponseMapper>();
-            services.AddTransient<IDepartmentMapper, DepartmentMapper>();
+            services.AddTransient<IDbPositionMapper, Mappers.RequestMappers.DbPositionMapper>();
+            services.AddTransient<IDepartmentMapper, Mappers.ResponsesMappers.DepartmentMapper>();
+            services.AddTransient<IDbDepartmentMapper, global::CompanyService.Mappers.RequestMappers.DepartmentMapper>();
         }
     }
 }
