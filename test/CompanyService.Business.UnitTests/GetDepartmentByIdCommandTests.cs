@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private Mock<IDepartmentRepository> _repositoryMock;
         private Mock<IDepartmentMapper> _mapperMock;
         private IGetDepartmentByIdCommand _command;
-        private ILogger _logger;
+        private ILogger<GetDepartmentByIdCommand> _logger;
 
         private DbDepartment _dbDepartment;
         private Department _expectedDepartment;
