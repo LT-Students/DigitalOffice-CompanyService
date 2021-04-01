@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers
 {
-    public class DbPositionMapper : IPositionMapper
+    public class PositionMapper : IPositionMapper
     {
         public PositionResponse Map(DbPosition value)
         {
