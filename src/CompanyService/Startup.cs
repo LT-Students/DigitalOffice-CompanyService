@@ -181,7 +181,7 @@ namespace LT.DigitalOffice.CompanyService
         {
             services.AddTransient<IDbPositionMapper, Mappers.RequestMappers.DbPositionMapper>();
             services.AddTransient<IDepartmentMapper, Mappers.ResponsesMappers.DepartmentMapper>();
-            services.AddTransient<IDbDepartmentMapper, global::CompanyService.Mappers.RequestMappers.DepartmentMapper>();
+            services.AddTransient<IDbDepartmentMapper, global::CompanyService.Mappers.RequestMappers.DbDepartmentMapper>();
         }
     }
 }

@@ -10,7 +10,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers
     {
         public Department Map(DbDepartment value)
         {
-
             if (value == null)
             {
                 throw new ArgumentNullException();

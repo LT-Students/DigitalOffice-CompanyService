@@ -12,12 +12,12 @@ namespace LT.DigitalOffice.CompanyService.Business
     {
         private readonly IDepartmentRepository _repository;
         private readonly IDepartmentMapper _mapper;
-        private ILogger<GetDepartmentByIdCommand> _logger;
+        private readonly ILogger<IGetDepartmentByIdCommand> _logger;
 
         public GetDepartmentByIdCommand(
-            [FromServices] ILogger<GetDepartmentByIdCommand> logger,
-            [FromServices] IDepartmentRepository repository,
-            [FromServices] IDepartmentMapper mapper)
+            ILogger<IGetDepartmentByIdCommand> logger,
+            IDepartmentRepository repository,
+            IDepartmentMapper mapper)
         {
             _logger = logger;
             _repository = repository;
