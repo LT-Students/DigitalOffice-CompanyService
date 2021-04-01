@@ -1,4 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers;
+using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
@@ -26,9 +28,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            mapperDbPositionToPosition = new PositionMapper();
-            mapperEditPositionRequestToDbPosition = new PositionMapper();
-            mapperAddPositionRequest = new PositionMapper();
+            mapperDbPositionToPosition = new ResponsesMappers.PositionMapper();
+            mapperEditPositionRequestToDbPosition = new RequestMappers.DbPositionMapper();
+            mapperAddPositionRequest = new RequestMappers.DbPositionMapper();
         }
 
         [SetUp]
