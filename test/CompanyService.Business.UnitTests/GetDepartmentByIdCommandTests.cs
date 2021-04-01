@@ -8,10 +8,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
@@ -58,18 +54,22 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         [Test]
         public void ShouldThrowExceptionIfRepositoryThrowsIt()
         {
-            _repositoryMock.Setup(x => x.GetDepartment(It.IsAny<Guid>())).Throws(new Exception());
+            _repositoryMock
+                .Setup(x => x.GetDepartment(It.IsAny<Guid>()))
+                .Throws(new ArgumentNullException());
 
-            Assert.Throws<Exception>(() => _command.Execute(_dbDepartmentId));
+            Assert.Throws<ArgumentNullException>(() => _command.Execute(_dbDepartmentId));
             _repositoryMock.Verify(repository => repository.GetDepartment(It.IsAny<Guid>()), Times.Once);
         }
 
         [Test]
         public void ShouldThrowExceptionIfMapperThrowsIt()
         {
-            _mapperMock.Setup(x => x.Map(It.IsAny<DbDepartment>())).Throws(new Exception());
+            _mapperMock
+                .Setup(x => x.Map(It.IsAny<DbDepartment>()))
+                .Throws(new ArgumentNullException());
 
-            Assert.Throws<Exception>(() => _command.Execute(_dbDepartmentId));
+            Assert.Throws<ArgumentNullException>(() => _command.Execute(_dbDepartmentId));
             _repositoryMock.Verify(repository => repository.GetDepartment(It.IsAny<Guid>()), Times.Once);
         }
 

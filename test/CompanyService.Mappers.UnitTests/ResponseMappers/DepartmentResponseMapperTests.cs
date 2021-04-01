@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
                 Users = null
             };
 
-            _expectedDepartment = new Department
+            _expectedDepartment = new Department()
             {
                 Id = _newDbDepartment.Id,
                 Name = _newDbDepartment.Name,
