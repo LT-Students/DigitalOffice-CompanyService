@@ -10,8 +10,8 @@ namespace LT.DigitalOffice.CompanyService.Business
 {
     public class GetDepartmentByIdCommand : IGetDepartmentByIdCommand
     {
-        private readonly IDepartmentRepository repository;
-        private readonly IDepartmentMapper mapper;
+        private readonly IDepartmentRepository _repository;
+        private readonly IDepartmentMapper _mapper;
         private ILogger<GetDepartmentByIdCommand> _logger;
 
         public GetDepartmentByIdCommand(
@@ -20,12 +20,12 @@ namespace LT.DigitalOffice.CompanyService.Business
             [FromServices] IDepartmentMapper mapper)
         {
             _logger = logger;
-            this.repository = repository;
-            this.mapper = mapper;
+            _repository = repository;
+            _mapper = mapper;
         }
         public Department Execute(Guid departmentId)
         {
-            return mapper.Map(repository.GetDepartment(departmentId));
+            return _mapper.Map(_repository.GetDepartment(departmentId));
         }
     }
 }
