@@ -43,7 +43,6 @@ namespace LT.DigitalOffice.CompanyService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
             services.AddHttpContextAccessor();
 
             string connStr = Environment.GetEnvironmentVariable("ConnectionString");
