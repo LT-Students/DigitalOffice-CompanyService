@@ -1,5 +1,6 @@
 using CompanyService.Mappers.RequestMappers;
 using FluentValidation;
+using HealthChecks.UI.Client;
 using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Business;
@@ -22,6 +23,7 @@ using LT.DigitalOffice.Kernel.Middlewares.Token;
 using MassTransit;
 using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -41,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
+            services.AddHttpContextAccessor();
 
             string connStr = Environment.GetEnvironmentVariable("ConnectionString");
             if (string.IsNullOrEmpty(connStr))
@@ -57,6 +59,9 @@ namespace LT.DigitalOffice.CompanyService
             });
 
             services.AddControllers();
+
+            services.AddHealthChecks()
+                .AddSqlServer(connStr);
 
             services.AddKernelExtensions();
 
@@ -114,8 +119,6 @@ namespace LT.DigitalOffice.CompanyService
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseHealthChecks("/api/healthcheck");
-
             app.UseExceptionHandler(tempApp => tempApp.Run(CustomExceptionHandler.HandleCustomException));
 
             UpdateDatabase(app);
@@ -136,9 +139,19 @@ namespace LT.DigitalOffice.CompanyService
                     .AllowAnyHeader()
                     .AllowAnyMethod());
 
+            var rabbitMqConfig = Configuration
+                .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
+                .Get<RabbitMqConfig>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHealthChecks($"/{rabbitMqConfig.Password}/hc", new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
 
