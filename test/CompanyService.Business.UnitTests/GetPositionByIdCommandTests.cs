@@ -1,6 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     class GetPositionByIdCommandTests
     {
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<DbPosition, PositionResponse>> mapperMock;
+        private Mock<IPositionMapper> mapperMock;
         private IGetPositionByIdCommand command;
 
         private DbDepartmentUser dbUsersIds;
@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         public void SetUp()
         {
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<DbPosition, PositionResponse>>();
+            mapperMock = new Mock<IPositionMapper>();
             command = new GetPositionByIdCommand(repositoryMock.Object, mapperMock.Object);
 
             companyId = Guid.NewGuid();

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
@@ -16,13 +16,13 @@ namespace LT.DigitalOffice.CompanyService.Business
     {
         private readonly IDepartmentRepository repository;
         private readonly IValidator<NewDepartmentRequest> validator;
-        private readonly IMapper<NewDepartmentRequest, DbDepartment> mapper;
+        private readonly IDbDepartmentMapper mapper;
         private readonly IAccessValidator accessValidator;
 
         public CreateDepartmentCommand(
             [FromServices] IDepartmentRepository repository,
             [FromServices] IValidator<NewDepartmentRequest> validator,
-            [FromServices] IMapper<NewDepartmentRequest, DbDepartment> mapper,
+            [FromServices] IDbDepartmentMapper mapper,
             [FromServices] IAccessValidator accessValidator)
         {
             this.repository = repository;

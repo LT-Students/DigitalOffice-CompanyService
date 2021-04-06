@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
@@ -15,12 +15,12 @@ namespace LT.DigitalOffice.CompanyService.Business
     {
         private readonly IValidator<Position> validator;
         private readonly IPositionRepository repository;
-        private readonly IMapper<Position, DbPosition> mapper;
+        private readonly IDbPositionMapper mapper;
 
         public CreatePositionCommand(
             [FromServices] IValidator<Position> validator,
             [FromServices] IPositionRepository repository,
-            [FromServices] IMapper<Position, DbPosition> mapper)
+            [FromServices] IDbPositionMapper mapper)
         {
             this.validator = validator;
             this.repository = repository;
