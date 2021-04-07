@@ -195,6 +195,7 @@ namespace LT.DigitalOffice.CompanyService
             services.AddTransient<IDbPositionMapper, DbPositionMapper>();
             services.AddTransient<IDepartmentMapper, DepartmentMapper>();
             services.AddTransient<IDbDepartmentMapper, DbDepartmentMapper>();
+            services.AddTransient<IPositionMapper, PositionMapper>();
         }
     }
 }

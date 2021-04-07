@@ -2,7 +2,7 @@
 using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using Moq;
@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     {
         private Mock<IValidator<Position>> validatorMock;
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<Position, DbPosition>> mapperMock;
+        private Mock<IDbPositionMapper> mapperMock;
 
         private IEditPositionCommand command;
         private Position request;
@@ -47,7 +47,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         {
             validatorMock = new Mock<IValidator<Position>>();
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<Position, DbPosition>>();
+            mapperMock = new Mock<IDbPositionMapper>();
 
             command = new EditPositionCommand(validatorMock.Object, repositoryMock.Object, mapperMock.Object);
         }

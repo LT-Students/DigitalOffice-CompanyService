@@ -1,6 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     public class GetRightsListCommandTests
     {
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<DbPosition, PositionResponse>> mapperMock;
+        private Mock<IPositionMapper> mapperMock;
         private IGetPositionsListCommand command;
         private List<PositionResponse> positionsList;
         private List<DbPosition> dbPositionsList;
@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         public void SetUp()
         {
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<DbPosition, PositionResponse>>();
+            mapperMock = new Mock<IPositionMapper>();
             command = new GetPositionsListCommand(repositoryMock.Object, mapperMock.Object);
 
             var dbPosition = new DbPosition

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private Mock<IDepartmentRepository> _repositoryMock;
         private Mock<IAccessValidator> _accessValidatorMock;
         private Mock<IValidator<NewDepartmentRequest>> _validatorMock;
-        private Mock<IMapper<NewDepartmentRequest, DbDepartment>> _mapperMock;
+        private Mock<IDbDepartmentMapper> _mapperMock;
 
         private ICreateDepartmentCommand _command;
         private NewDepartmentRequest _request;
@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             _repositoryMock = new Mock<IDepartmentRepository>();
             _accessValidatorMock = new Mock<IAccessValidator>();
             _validatorMock = new Mock<IValidator<NewDepartmentRequest>>();
-            _mapperMock = new Mock<IMapper<NewDepartmentRequest, DbDepartment>>();
+            _mapperMock = new Mock<IDbDepartmentMapper>();
 
             _command = new CreateDepartmentCommand(
                 _repositoryMock.Object,

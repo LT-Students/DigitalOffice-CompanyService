@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -9,13 +8,14 @@ using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using FluentValidation.Results;
 using System.Collections.Generic;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
     class CreatePositionCommandTests
     {
         private Mock<IPositionRepository> repositoryMock;
-        private Mock<IMapper<Position, DbPosition>> mapperMock;
+        private Mock<IDbPositionMapper> mapperMock;
         private Mock<IValidator<Position>> validatorMock;
 
         private ICreatePositionCommand command;
@@ -44,7 +44,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         {
             validatorMock = new Mock<IValidator<Position>>();
             repositoryMock = new Mock<IPositionRepository>();
-            mapperMock = new Mock<IMapper<Position, DbPosition>>();
+            mapperMock = new Mock<IDbPositionMapper>();
 
             command = new CreatePositionCommand(validatorMock.Object, repositoryMock.Object, mapperMock.Object);
         }
