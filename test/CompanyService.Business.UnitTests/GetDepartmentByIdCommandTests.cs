@@ -16,7 +16,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private Mock<IDepartmentRepository> _repositoryMock;
         private Mock<IDepartmentMapper> _mapperMock;
         private IGetDepartmentByIdCommand _command;
-        private Mock<ILogger<IGetDepartmentByIdCommand>> _loggerMock;
 
         private DbDepartment _dbDepartment;
         private Department _expectedDepartment;
@@ -28,8 +27,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         {
             _repositoryMock = new Mock<IDepartmentRepository>();
             _mapperMock = new Mock<IDepartmentMapper>();
-            _loggerMock = new Mock<ILogger<IGetDepartmentByIdCommand>>();
-            _command = new GetDepartmentByIdCommand(_loggerMock.Object, _repositoryMock.Object, _mapperMock.Object);
+            _command = new GetDepartmentByIdCommand(_repositoryMock.Object, _mapperMock.Object);
 
             _dbDepartmentId = Guid.NewGuid();
             _dbDepartment = new DbDepartment()
