@@ -9,6 +9,7 @@ using FluentValidation.Results;
 using System.Collections.Generic;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
@@ -16,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     {
         private Mock<IPositionRepository> repositoryMock;
         private Mock<IDbPositionMapper> mapperMock;
-        private Mock<IValidator<Position>> validatorMock;
+        private Mock<IPositionValidator> validatorMock;
 
         private ICreatePositionCommand command;
         private Position request;
@@ -42,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            validatorMock = new Mock<IValidator<Position>>();
+            validatorMock = new Mock<IPositionValidator>();
             repositoryMock = new Mock<IPositionRepository>();
             mapperMock = new Mock<IDbPositionMapper>();
 

@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Validation
 {
-    public class DepartmentRequestValidator : AbstractValidator<NewDepartmentRequest>
+    public class DepartmentRequestValidator : AbstractValidator<NewDepartmentRequest>, IDepartmentRequestValidator
     {
         public DepartmentRequestValidator()
         {
@@ -15,7 +16,6 @@ namespace LT.DigitalOffice.CompanyService.Validation
                     {
                         user.NotEmpty().SetValidator(new DepartmentUserValidator());
                     });
-
             });
 
             RuleFor(request => request.Info)

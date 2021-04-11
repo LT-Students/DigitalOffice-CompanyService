@@ -1,6 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business
@@ -10,7 +9,7 @@ namespace LT.DigitalOffice.CompanyService.Business
     {
         private readonly IPositionRepository repository;
 
-        public DisablePositionByIdCommand([FromServices] IPositionRepository repository)
+        public DisablePositionByIdCommand(IPositionRepository repository)
         {
             this.repository = repository;
         }

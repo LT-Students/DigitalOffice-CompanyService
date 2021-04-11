@@ -1,26 +1,24 @@
-﻿using FluentValidation;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
-using Microsoft.AspNetCore.Mvc;
+﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
     /// <inheritdoc cref="IAddPositionCommand"/>
     public class CreatePositionCommand : ICreatePositionCommand
     {
-        private readonly IValidator<Position> validator;
+        private readonly IPositionValidator validator;
         private readonly IPositionRepository repository;
         private readonly IDbPositionMapper mapper;
 
         public CreatePositionCommand(
-            [FromServices] IValidator<Position> validator,
-            [FromServices] IPositionRepository repository,
-            [FromServices] IDbPositionMapper mapper)
+            IPositionValidator validator,
+            IPositionRepository repository,
+            IDbPositionMapper mapper)
         {
             this.validator = validator;
             this.repository = repository;

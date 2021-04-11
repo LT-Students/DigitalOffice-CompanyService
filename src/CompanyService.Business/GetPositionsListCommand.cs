@@ -1,7 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -16,8 +14,8 @@ namespace LT.DigitalOffice.CompanyService.Business
         private readonly IPositionMapper mapper;
 
         public GetPositionsListCommand(
-            [FromServices] IPositionRepository repository,
-            [FromServices] IPositionMapper mapper)
+            IPositionRepository repository,
+            IPositionMapper mapper)
         {
             this.repository = repository;
             this.mapper = mapper;

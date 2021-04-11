@@ -4,7 +4,6 @@ using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
@@ -12,7 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     {
         private readonly IPositionRepository repository;
 
-        public GetUserPositionConsumer([FromServices] IPositionRepository repository)
+        public GetUserPositionConsumer(IPositionRepository repository)
         {
             this.repository = repository;
         }

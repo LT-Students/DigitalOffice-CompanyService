@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Attributes;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +9,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     /// Represents the repository pattern.
     /// Provides methods for working with the database of CompanyService.
     /// </summary>
+    [AutoInject]
     public interface IPositionRepository
     {
         /// <summary>

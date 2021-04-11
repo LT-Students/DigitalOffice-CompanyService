@@ -5,6 +5,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -14,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
     public class EditPositionCommandTests
     {
-        private Mock<IValidator<Position>> validatorMock;
+        private Mock<IPositionValidator> validatorMock;
         private Mock<IPositionRepository> repositoryMock;
         private Mock<IDbPositionMapper> mapperMock;
 
@@ -45,7 +46,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            validatorMock = new Mock<IValidator<Position>>();
+            validatorMock = new Mock<IPositionValidator>();
             repositoryMock = new Mock<IPositionRepository>();
             mapperMock = new Mock<IDbPositionMapper>();
 

@@ -1,49 +1,64 @@
-using CompanyService.Mappers.RequestMappers;
-using FluentValidation;
 using HealthChecks.UI.Client;
-using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
-using LT.DigitalOffice.CompanyService.Business;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Configuration;
-using LT.DigitalOffice.CompanyService.Data;
-using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.CompanyService.Mappers.RequestMappers;
-using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.CompanyService.Validation;
-using LT.DigitalOffice.Kernel;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.CompanyService.Models.Dto.Configuration;
+using LT.DigitalOffice.Kernel.Configurations;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.Token;
 using MassTransit;
 using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService
 {
     public class Startup
     {
+        private readonly RabbitMqConfig _rabbitMqConfig;
+        private readonly BaseServiceInfoConfig _serviceInfoConfig;
+        private readonly ILogger<Startup> _logger;
+
         private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            _rabbitMqConfig = Configuration
+                .GetSection(BaseRabbitMqConfig.SectionName)
+                .Get<RabbitMqConfig>();
+
+            _serviceInfoConfig = Configuration
+                .GetSection(BaseServiceInfoConfig.SectionName)
+                .Get<BaseServiceInfoConfig>();
+
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddFilter("LT.DigitalOffice.CompanyService.Startup", LogLevel.Trace)
+                    .AddConsole();
+            });
+
+            _logger = loggerFactory.CreateLogger<Startup>();
         }
+
+        #region public methods
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<TokenConfiguration>(Configuration.GetSection("CheckTokenMiddleware"));
+            services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
+            services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
+
             services.AddHttpContextAccessor();
+            services.AddControllers();
 
             string connStr = Environment.GetEnvironmentVariable("ConnectionString");
             if (string.IsNullOrEmpty(connStr))
@@ -51,75 +66,23 @@ namespace LT.DigitalOffice.CompanyService
                 connStr = Configuration.GetConnectionString("SQLConnectionString");
             }
 
-            Console.WriteLine(connStr);
-
             services.AddDbContext<CompanyServiceDbContext>(options =>
             {
                 options.UseSqlServer(connStr);
             });
 
-            services.AddControllers();
-
             services.AddHealthChecks()
-                .AddSqlServer(connStr);
+                .AddSqlServer(connStr)
+                .AddRabbitMqCheck();
 
-            services.AddKernelExtensions();
+            services.AddBusinessObjects(_logger);
 
-            ConfigureCommands(services);
-            ConfigureRepositories(services);
-            ConfigureValidators(services);
-            ConfigureMappers(services);
             ConfigureMassTransit(services);
         }
 
-        private void ConfigureMassTransit(IServiceCollection services)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<RabbitMqConfig>();
-
-            services.AddMassTransit(x =>
-            {
-                x.AddConsumer<GetUserPositionConsumer>();
-                x.AddConsumer<GetDepartmentConsumer>();
-
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host(rabbitMqConfig.Host, "/", hst =>
-                    {
-                        hst.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
-                        hst.Password(rabbitMqConfig.Password);
-                    });
-
-                    ConfigureEndpoints(context, cfg, rabbitMqConfig);
-                });
-
-                x.AddRequestClient<ICheckTokenRequest>(
-                    new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.ValidateTokenEndpoint}"));
-
-                x.ConfigureKernelMassTransit(rabbitMqConfig);
-            });
-
-            services.AddMassTransitHostedService();
-        }
-
-        private void ConfigureEndpoints(
-            IBusRegistrationContext context,
-            IRabbitMqBusFactoryConfigurator cfg,
-            RabbitMqConfig rabbitMqConfig)
-        {
-            cfg.ReceiveEndpoint(rabbitMqConfig.GetUserPositionEndpoint, ep =>
-            {
-                ep.ConfigureConsumer<GetUserPositionConsumer>(context);
-            });
-
-            cfg.ReceiveEndpoint(rabbitMqConfig.GetDepartmentEndpoint, ep =>
-            {
-                ep.ConfigureConsumer<GetDepartmentConsumer>(context);
-            });
-        }
-
-        public void Configure(IApplicationBuilder app)
-        {
-            app.UseExceptionHandler(tempApp => tempApp.Run(CustomExceptionHandler.HandleCustomException));
+            app.UseExceptionsHandler(loggerFactory);
 
             UpdateDatabase(app);
 
@@ -139,19 +102,64 @@ namespace LT.DigitalOffice.CompanyService
                     .AllowAnyHeader()
                     .AllowAnyMethod());
 
-            var rabbitMqConfig = Configuration
-                .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
-                .Get<RabbitMqConfig>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
 
-                endpoints.MapHealthChecks($"/{rabbitMqConfig.Password}/hc", new HealthCheckOptions
+                endpoints.MapHealthChecks($"/{_serviceInfoConfig.Id}/hc", new HealthCheckOptions
                 {
-                    Predicate = _ => true,
+                    ResultStatusCodes = new Dictionary<HealthStatus, int>
+                    {
+                        { HealthStatus.Unhealthy, 200 },
+                        { HealthStatus.Healthy, 200 },
+                        { HealthStatus.Degraded, 200 },
+                    },
+                    Predicate = check => check.Name != "masstransit-bus",
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
+            });
+        }
+
+        #endregion
+
+        #region private methods
+
+        private void ConfigureMassTransit(IServiceCollection services)
+        {
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<GetUserPositionConsumer>();
+                x.AddConsumer<GetDepartmentConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(_rabbitMqConfig.Host, "/", host =>
+                    {
+                        host.Username($"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}");
+                        host.Password(_serviceInfoConfig.Id);
+                    });
+
+                    ConfigureEndpoints(context, cfg);
+                });
+
+                x.AddRequestClients(_rabbitMqConfig, _logger);
+            });
+
+            services.AddMassTransitHostedService();
+        }
+
+        private void ConfigureEndpoints(
+            IBusRegistrationContext context,
+            IRabbitMqBusFactoryConfigurator cfg)
+        {
+            cfg.ReceiveEndpoint(_rabbitMqConfig.GetUserPositionEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetUserPositionConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.GetDepartmentEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetDepartmentConsumer>(context);
             });
         }
 
@@ -164,38 +172,6 @@ namespace LT.DigitalOffice.CompanyService
             context.Database.Migrate();
         }
 
-        private void ConfigureCommands(IServiceCollection services)
-        {
-            services.AddTransient<ICreatePositionCommand, CreatePositionCommand>();
-            services.AddTransient<IGetPositionByIdCommand, GetPositionByIdCommand>();
-            services.AddTransient<IGetPositionsListCommand, GetPositionsListCommand>();
-            services.AddTransient<IEditPositionCommand, EditPositionCommand>();
-            services.AddTransient<IDisablePositionByIdCommand, DisablePositionByIdCommand>();
-            services.AddTransient<IGetDepartmentByIdCommand, GetDepartmentByIdCommand>();
-            services.AddTransient<ICreateDepartmentCommand, CreateDepartmentCommand>();
-        }
-
-        private void ConfigureRepositories(IServiceCollection services)
-        {
-            services.AddTransient<IDataProvider, CompanyServiceDbContext>();
-
-            services.AddTransient<IDepartmentRepository, DepartmentRepository>();
-            services.AddTransient<IPositionRepository, PositionRepository>();
-        }
-
-        private void ConfigureValidators(IServiceCollection services)
-        {
-            services.AddTransient<IValidator<Position>, PositionValidator>();
-
-            services.AddTransient<IValidator<NewDepartmentRequest>, DepartmentRequestValidator>();
-        }
-
-        private void ConfigureMappers(IServiceCollection services)
-        {
-            services.AddTransient<IDbPositionMapper, DbPositionMapper>();
-            services.AddTransient<IDepartmentMapper, DepartmentMapper>();
-            services.AddTransient<IDbDepartmentMapper, DbDepartmentMapper>();
-            services.AddTransient<IPositionMapper, PositionMapper>();
-        }
+        #endregion
     }
 }

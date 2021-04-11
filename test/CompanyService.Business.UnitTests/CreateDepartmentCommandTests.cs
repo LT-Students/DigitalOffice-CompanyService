@@ -5,8 +5,9 @@ using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
-using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -18,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
     {
         private Mock<IDepartmentRepository> _repositoryMock;
         private Mock<IAccessValidator> _accessValidatorMock;
-        private Mock<IValidator<NewDepartmentRequest>> _validatorMock;
+        private Mock<IDepartmentRequestValidator> _validatorMock;
         private Mock<IDbDepartmentMapper> _mapperMock;
 
         private ICreateDepartmentCommand _command;
@@ -30,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         {
             _repositoryMock = new Mock<IDepartmentRepository>();
             _accessValidatorMock = new Mock<IAccessValidator>();
-            _validatorMock = new Mock<IValidator<NewDepartmentRequest>>();
+            _validatorMock = new Mock<IDepartmentRequestValidator>();
             _mapperMock = new Mock<IDbDepartmentMapper>();
 
             _command = new CreateDepartmentCommand(
