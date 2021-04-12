@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Kernel.Attributes;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
@@ -6,6 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
     /// Represents the command pattern.
     /// Provides method for editing a position.
     /// </summary>
+    [AutoInject]
     public interface IEditPositionCommand
     {
         /// <summary>

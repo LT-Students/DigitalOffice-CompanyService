@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Kernel.Attributes;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
@@ -7,6 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
     /// Represents the command pattern.
     /// Provides method for getting department model by id.
     /// </summary>
+    [AutoInject]
     public interface IGetDepartmentByIdCommand
     {
         /// <summary>

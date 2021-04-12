@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.Kernel.Attributes;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
@@ -7,6 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Interfaces
     /// Represents the command pattern.
     /// Provides method for getting position model by id.
     /// </summary>
+    [AutoInject]
     public interface IGetPositionByIdCommand
     {
         /// <summary>

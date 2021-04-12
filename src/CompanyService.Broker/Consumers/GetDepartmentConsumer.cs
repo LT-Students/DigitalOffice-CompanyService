@@ -3,7 +3,6 @@ using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using MassTransit;
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
@@ -19,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             return IGetDepartmentResponse.CreateObj(dbDepartment.Id, dbDepartment.Name);
         }
 
-        public GetDepartmentConsumer([FromServices] IDepartmentRepository repository)
+        public GetDepartmentConsumer(IDepartmentRepository repository)
         {
             _repository = repository;
         }

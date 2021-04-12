@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Validation
 {
-    public class DepartmentValidator : AbstractValidator<Department>
+    public class DepartmentValidator : AbstractValidator<Department>, IDepartmentValidator
     {
         public DepartmentValidator()
         {

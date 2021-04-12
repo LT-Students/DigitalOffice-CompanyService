@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.Kernel.Exceptions;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers

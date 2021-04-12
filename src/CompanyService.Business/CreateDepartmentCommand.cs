@@ -1,13 +1,12 @@
-﻿using FluentValidation;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
-using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
-using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business
@@ -15,15 +14,15 @@ namespace LT.DigitalOffice.CompanyService.Business
     public class CreateDepartmentCommand : ICreateDepartmentCommand
     {
         private readonly IDepartmentRepository repository;
-        private readonly IValidator<NewDepartmentRequest> validator;
+        private readonly IDepartmentRequestValidator validator;
         private readonly IDbDepartmentMapper mapper;
         private readonly IAccessValidator accessValidator;
 
         public CreateDepartmentCommand(
-            [FromServices] IDepartmentRepository repository,
-            [FromServices] IValidator<NewDepartmentRequest> validator,
-            [FromServices] IDbDepartmentMapper mapper,
-            [FromServices] IAccessValidator accessValidator)
+            IDepartmentRepository repository,
+            IDepartmentRequestValidator validator,
+            IDbDepartmentMapper mapper,
+            IAccessValidator accessValidator)
         {
             this.repository = repository;
             this.validator = validator;
@@ -33,9 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Business
 
         public Guid Execute(NewDepartmentRequest request)
         {
-            const int rightId = 4;
-
-            if (!(accessValidator.IsAdmin() || accessValidator.HasRights(rightId)))
+            if (!(accessValidator.IsAdmin() || accessValidator.HasRights(Rights.AddEditRemoveDepartments)))
             {
                 throw new ForbiddenException("Not enough rights.");
             }

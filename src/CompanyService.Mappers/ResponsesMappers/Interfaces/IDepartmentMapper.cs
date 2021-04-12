@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Kernel.Attributes;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces
 {
@@ -8,6 +9,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces
     /// Represents mapper. Provides methods for converting an object of <see cref="DbDepartment"/>
     /// type into an object of <see cref="Department"/> type according to some rule.
     /// </summary>
+    [AutoInject]
     public interface IDepartmentMapper : IMapper<DbDepartment, Department>
     {
     }
