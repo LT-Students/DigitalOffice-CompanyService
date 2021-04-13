@@ -2,7 +2,9 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -37,6 +39,11 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             return result;
+        }
+
+        public List<DbDepartment> FindDepartments()
+        {
+            return provider.Departments.Include(x => x.Users).ToList();
         }
     }
 }

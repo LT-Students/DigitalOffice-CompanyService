@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
@@ -22,5 +23,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// Get <see cref="DbDepartment"/>.
         /// </summary>
         DbDepartment GetDepartment(Guid id);
+
+        /// <summary>
+        /// Find departments in database.
+        /// </summary>
+        /// <returns>Found departments.</returns>
+        List<DbDepartment> FindDepartments();
     }
 }

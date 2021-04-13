@@ -1,8 +1,10 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
 {
@@ -24,6 +26,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromQuery] Guid id)
         {
             return command.Execute(id);
+        }
+
+        [HttpGet("find")]
+        public List<DepartmentResponse> FindDepartments(
+            [FromServices] IFindDepartmentsCommand command)
+        {
+            return command.Execute();
         }
     }
 }

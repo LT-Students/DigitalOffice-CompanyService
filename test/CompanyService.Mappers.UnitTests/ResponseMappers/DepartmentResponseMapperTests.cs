@@ -2,40 +2,62 @@
 using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
 {
     class DepartmentResponseMapperTests
     {
-        private IDepartmentMapper _mapper;
+        private IDepartmentResponseMapper _mapper;
 
-        private Department _expectedDepartment;
-        private DbDepartment _newDbDepartment;
+        private DepartmentResponse _expectedDepartment;
+        private DbDepartment _dbDepartment;
+        private User _director;
+        private User _worker;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _mapper = new DepartmentMapper();
+            _mapper = new DepartmentResponseMapper();
 
-            _newDbDepartment = new DbDepartment()
+            var directorGuid = Guid.NewGuid();
+            var workerGuid = Guid.NewGuid();
+
+            _dbDepartment = new DbDepartment()
             {
                 Id = Guid.NewGuid(),
                 Name = "Name",
                 Description = "TestDescription",
-                DirectorUserId = Guid.NewGuid(),
+                DirectorUserId = directorGuid,
                 IsActive = true,
                 Users = null
             };
 
-            _expectedDepartment = new Department()
+            _director = new User
             {
-                Id = _newDbDepartment.Id,
-                Name = _newDbDepartment.Name,
-                Description = _newDbDepartment.Description,
-                DirectorUserId = _newDbDepartment.DirectorUserId
+                FirstName = "Spartak",
+                LastName = "Ryabtsev",
+                MiddleName = "Alexandrovich"
+            };
+
+            _worker = new User
+            {
+                FirstName = "Pavel",
+                LastName = "Kostin",
+                MiddleName = "Alexandrovich"
+            };
+
+            _expectedDepartment = new DepartmentResponse()
+            {
+                Id = _dbDepartment.Id,
+                Name = _dbDepartment.Name,
+                Description = _dbDepartment.Description,
+                Director = _director,
+                Users = new List<User> { _director, _worker }
             };
         }
 
@@ -44,13 +66,13 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
         {
             DbDepartment request = null;
 
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(request));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(request, _director, new List<User> { _director, _worker }));
         }
         [Test]
         public void ShouldReturnDepartmentSuccessfully()
         {
-            DbDepartment dbDepartment = _newDbDepartment;
-            SerializerAssert.AreEqual(_expectedDepartment, _mapper.Map(dbDepartment));
+            DbDepartment dbDepartment = _dbDepartment;
+            SerializerAssert.AreEqual(_expectedDepartment, _mapper.Map(dbDepartment, _director, new List<User> { _director, _worker }));
         }
     }
 }

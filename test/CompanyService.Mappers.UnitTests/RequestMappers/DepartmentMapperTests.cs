@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests
+namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.RequestMappers
 {
     internal class DepartmentMapperTests
     {

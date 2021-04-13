@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CompanyService.Data.UnitTests
 {
@@ -24,7 +25,7 @@ namespace CompanyService.Data.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            CreateMemoryDb();
+            CreateInMemoryDb();
 
             _departmentToAdd = new DbDepartment
             {
@@ -61,7 +62,7 @@ namespace CompanyService.Data.UnitTests
             };
         }
 
-        public void CreateMemoryDb()
+        public void CreateInMemoryDb()
         {
             _dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
                    .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
@@ -79,13 +80,15 @@ namespace CompanyService.Data.UnitTests
         }
 
         [TearDown]
-        public void CleanDb()
+        public void CleanInMemoryDb()
         {
             if (_provider.IsInMemory())
             {
                 _provider.EnsureDeleted();
             }
         }
+
+        #region CreateDepartment
 
         [Test]
         public void ShouldAddDepartmentInDb()
@@ -95,6 +98,10 @@ namespace CompanyService.Data.UnitTests
             Assert.AreEqual(_departmentToAdd.Id, guidOfAddedDepartment);
             Assert.AreEqual(_departmentToAdd, _provider.Departments.Find(_departmentToAdd.Id));
         }
+
+        #endregion
+
+        #region GetDepartment
 
         [Test]
         public void ShouldNotFoundExceptionWhenDepartmentIdNotFound()
@@ -116,5 +123,19 @@ namespace CompanyService.Data.UnitTests
 
             SerializerAssert.AreEqual(_dbDepartment, dbDepartment);
         }
+
+        #endregion
+
+        #region FindDepartments
+
+        [Test]
+        public void ShouldFindDepartmentsSuccessfully()
+        {
+            var dbDepartments = _repository.FindDepartments();
+
+            SerializerAssert.AreEqual(_dbDepartment, dbDepartments.First());
+        }
+
+        #endregion
     }
 }
