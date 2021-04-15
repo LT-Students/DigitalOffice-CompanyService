@@ -29,7 +29,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private Mock<IUserMapper> _userMapperMock;
 
         private Mock<IRequestClient<IGetUsersDataRequest>> _requestClientMock;
-        private Mock<Request<IRequestClient<IGetUsersDataRequest>>> _requestMock;
 
         private Mock<IGetUsersDataResponse> _responseMock;
         private Mock<IOperationResult<IGetUsersDataResponse>> _operationResultMock;
@@ -160,19 +159,19 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 
             _requestClientMock = new Mock<IRequestClient<IGetUsersDataRequest>>();
             _requestClientMock
-                .Setup(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(_brokerResponseMock.Object));
-
-            _requestMock = new Mock<Request<IRequestClient<IGetUsersDataRequest>>>();
-            _requestMock
-                .Setup(x => x.Task)
-                .Returns(Task.FromResult(_requestClientMock.Object));
+                .Setup(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default).Result)
+                .Returns(_brokerResponseMock.Object).Verifiable();
         }
 
         [Test]
         public void ShouldReturnDepartmentListSuccessfully()
         {
-            SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
+            _command.Execute();
+            //SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
+
+            _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default), Times.Once);
+            _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default).Result, Times.Once);
+
         }
 
         [Test]
