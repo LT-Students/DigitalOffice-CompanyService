@@ -1,6 +1,6 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
+﻿using LT.DigitalOffice.Broker.Models;
+using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.UserService.Models.Broker.Models;
 using System;
 
 namespace CompanyService.Mappers.RequestMappers

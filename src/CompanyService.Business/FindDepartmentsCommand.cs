@@ -1,19 +1,18 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
-using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using System;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
-using System.Linq;
-using MassTransit;
+﻿using LT.DigitalOffice.Broker.Models;
 using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Broker.Responses;
+using LT.DigitalOffice.CompanyService.Business.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
-using LT.DigitalOffice.UserService.Models.Broker.Models;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
+using LT.DigitalOffice.Kernel.Broker;
+using MassTransit;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {

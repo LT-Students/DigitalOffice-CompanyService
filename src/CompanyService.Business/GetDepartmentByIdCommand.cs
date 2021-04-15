@@ -3,7 +3,6 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using System;
 using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {

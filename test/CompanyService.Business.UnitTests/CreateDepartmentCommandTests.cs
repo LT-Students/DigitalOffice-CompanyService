@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using LT.DigitalOffice.CompanyService.Business.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;

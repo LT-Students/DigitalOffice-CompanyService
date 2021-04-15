@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
+﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Attributes;
