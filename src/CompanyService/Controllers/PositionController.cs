@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PositionController : ControllerBase
     {

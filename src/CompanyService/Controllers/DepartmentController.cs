@@ -6,7 +6,7 @@ using System;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class DepartmentController : ControllerBase
     {
