@@ -11,7 +11,7 @@ namespace CompanyService.Mappers.RequestMappers
         {
             if (value == null)
             {
-                throw new ArgumentException("UserData is null");
+                throw new ArgumentNullException(nameof(value));
             }
 
             return new User

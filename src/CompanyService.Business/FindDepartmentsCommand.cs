@@ -47,20 +47,19 @@ namespace LT.DigitalOffice.CompanyService.Business
                 try
                 {
                     List<Guid> usersIds = new();
-
-                    usersIds.AddRange(department.Users.Select(x => x.Id));
-
-                    if (department.DirectorUserId != null)
-                    {
-                        usersIds.Add((Guid)department.DirectorUserId);
-                    }
+                    usersIds.AddRange(department.Users.Select(x => x.UserId));
 
                     var usersDataResponse = _requestClient.GetResponse<IOperationResult<IGetUsersDataResponse>>(
                         IGetUsersDataRequest.CreateObj(usersIds)).Result;
 
                     if (usersDataResponse.Message.IsSuccess)
                     {
-                        var director = _userMapper.Map(usersDataResponse.Message.Body.UsersData.First(x => x.Id == department.DirectorUserId));
+                        User director = new();
+
+                        if (department.DirectorUserId != null)
+                        {
+                            director = _userMapper.Map(usersDataResponse.Message.Body.UsersData.First(x => x.Id == department.DirectorUserId));
+                        }
 
                         var users = usersDataResponse.Message.Body.UsersData.Select(x => _userMapper.Map(x)).ToList();
 

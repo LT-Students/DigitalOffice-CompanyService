@@ -19,7 +19,7 @@ namespace CompanyService.Data.UnitTests
         private IDepartmentRepository _repository;
 
         private DbDepartment _departmentToAdd;
-        private DbDepartment _dbDepartment;
+        private DbDepartment _expectedDbDepartment;
         private DbContextOptions<CompanyServiceDbContext> _dbOptions;
 
         [OneTimeSetUp]
@@ -44,7 +44,7 @@ namespace CompanyService.Data.UnitTests
                 }
             };
 
-            _dbDepartment = new DbDepartment
+            _expectedDbDepartment = new DbDepartment
             {
                 Id = Guid.NewGuid(),
                 Name = "Digital solution",
@@ -75,7 +75,7 @@ namespace CompanyService.Data.UnitTests
             _provider = new CompanyServiceDbContext(_dbOptions);
             _repository = new DepartmentRepository(_provider);
 
-            _provider.Departments.Add(_dbDepartment);
+            _provider.Departments.Add(_expectedDbDepartment);
             _provider.Save();
         }
 
@@ -114,14 +114,14 @@ namespace CompanyService.Data.UnitTests
         [Test]
         public void ShouldGetDepartmenByIdSuccessfully()
         {
-            var dbDepartment = _repository.GetDepartment(_dbDepartment.Id);
+            var dbDepartment = _repository.GetDepartment(_expectedDbDepartment.Id);
 
             foreach (var user in dbDepartment.Users)
             {
                 user.Department = null;
             }
 
-            SerializerAssert.AreEqual(_dbDepartment, dbDepartment);
+            SerializerAssert.AreEqual(_expectedDbDepartment, dbDepartment);
         }
 
         #endregion
@@ -131,9 +131,13 @@ namespace CompanyService.Data.UnitTests
         [Test]
         public void ShouldFindDepartmentsSuccessfully()
         {
-            var dbDepartments = _repository.FindDepartments();
+            var dbDepartment = _repository.FindDepartments().First();
 
-            SerializerAssert.AreEqual(_dbDepartment, dbDepartments.First());
+            _expectedDbDepartment.Users.First().Department = null;
+            dbDepartment.Users.First().Department = null;
+
+            SerializerAssert.AreEqual(_expectedDbDepartment, dbDepartment);
+
         }
 
         #endregion

@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers
         {
             if (value == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(value));
             }
 
             return new Department

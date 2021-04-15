@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.Broker.Requests;
+using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
@@ -6,6 +7,7 @@ using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
+using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.UnitTestKernel;
 using LT.DigitalOffice.UserService.Models.Broker.Models;
 using MassTransit;
@@ -15,6 +17,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 {
@@ -24,7 +27,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private Mock<IDepartmentRepository> _repositoryMock;
         private Mock<IDepartmentResponseMapper> _departmentMapperMock;
         private Mock<IUserMapper> _userMapperMock;
-        private Mock<IRequestClient<IGetUsersDataRequest>> _requestClient;
+
+        private Mock<IRequestClient<IGetUsersDataRequest>> _requestClientMock;
+        private Mock<Request<IRequestClient<IGetUsersDataRequest>>> _requestMock;
+
+        private Mock<IGetUsersDataResponse> _responseMock;
+        private Mock<IOperationResult<IGetUsersDataResponse>> _operationResultMock;
+        private Mock<Response<IOperationResult<IGetUsersDataResponse>>> _brokerResponseMock;
 
         private Guid _directorGuid;
         private Guid _workerGuid;
@@ -35,16 +44,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private List<DbDepartment> _dbDepartments;
         private List<DepartmentResponse> _expectedDepartments;
 
-        private Guid _dbDepartmentId;
-
         [SetUp]
         public void SetUp()
         {
             _repositoryMock = new Mock<IDepartmentRepository>();
             _departmentMapperMock = new Mock<IDepartmentResponseMapper>();
             _userMapperMock = new Mock<IUserMapper>();
-            _requestClient = new Mock<IRequestClient<IGetUsersDataRequest>>();
-            _command = new FindDepartmentsCommand(_repositoryMock.Object, _departmentMapperMock.Object, _userMapperMock.Object, _requestClient.Object, null);
 
             _directorGuid = Guid.NewGuid();
             _workerGuid = Guid.NewGuid();
@@ -87,6 +92,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 MiddleName = "Alexandrovich"
             };
 
+            BrokerSetUp();
+
             _director = new User
             {
                 FirstName = _directorData.FirstName,
@@ -124,8 +131,99 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             _departmentMapperMock
                 .Setup(x => x.Map(_dbDepartments.First(), _director, _expectedDepartments.First().Users))
                 .Returns(_expectedDepartments.First());
+
+            _command = new FindDepartmentsCommand(_repositoryMock.Object, _departmentMapperMock.Object, _userMapperMock.Object, _requestClientMock.Object, null);
         }
 
-        // TODO
+        private void BrokerSetUp()
+        {
+            _responseMock = new Mock<IGetUsersDataResponse>();
+            _responseMock
+                .Setup(x => x.UsersData)
+                .Returns(new List<UserData> { _directorData, _workerData });
+
+            _operationResultMock = new Mock<IOperationResult<IGetUsersDataResponse>>();
+            _operationResultMock
+                .Setup(x => x.Body)
+                .Returns(_responseMock.Object);
+            _operationResultMock
+                .Setup(x => x.IsSuccess)
+                .Returns(true);
+            _operationResultMock
+                .Setup(x => x.Errors)
+                .Returns(new List<string>());
+
+            _brokerResponseMock = new Mock<Response<IOperationResult<IGetUsersDataResponse>>>();
+            _brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(_operationResultMock.Object);
+
+            _requestClientMock = new Mock<IRequestClient<IGetUsersDataRequest>>();
+            _requestClientMock
+                .Setup(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(_brokerResponseMock.Object));
+
+            _requestMock = new Mock<Request<IRequestClient<IGetUsersDataRequest>>>();
+            _requestMock
+                .Setup(x => x.Task)
+                .Returns(Task.FromResult(_requestClientMock.Object));
+        }
+
+        [Test]
+        public void ShouldReturnDepartmentListSuccessfully()
+        {
+            SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenRepositoryThrowsException()
+        {
+            _repositoryMock
+                .Setup(repository => repository.FindDepartments())
+                .Throws(new Exception());
+
+            Assert.Throws<Exception>(() => _command.Execute());
+        }
+
+        [Test]
+        public void ShouldReturnDataWhenRequestClientThrowsException()
+        {
+            _requestClientMock
+                .Setup(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+                    It.IsAny<object>(), default, default))
+                .Throws(new Exception());
+
+            Assert.True(_command.Execute().Count != 0);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenUserMapperThrowsExceptionOnDirector()
+        {
+            _userMapperMock
+                .Setup(x => x.Map(_directorData))
+                .Throws(new Exception());
+
+            Assert.Throws<Exception>(() => _command.Execute());
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenUserMapperThrowsExceptionOnWorker()
+        {
+            _userMapperMock
+                .Setup(x => x.Map(_workerData))
+                .Throws(new Exception());
+
+            Assert.Throws<Exception>(() => _command.Execute());
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenDepartmentMapperThrowsException()
+        {
+            _departmentMapperMock
+                .Setup(x => x.Map(It.IsAny<DbDepartment>(), It.IsAny<User>(), It.IsAny<List<User>>()))
+                .Throws(new Exception());
+
+            Assert.Throws<Exception>(() => _command.Execute());
+        }
     }
 }
