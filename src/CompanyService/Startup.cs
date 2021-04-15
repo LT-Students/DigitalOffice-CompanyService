@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Dto.Configuration;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.Kernel.Middlewares.Token;
 using MassTransit;
 using MassTransit.RabbitMqTransport;
@@ -19,11 +20,12 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService
 {
-    public class Startup
+    public class Startup : BaseApiInfo
     {
+        public const string CorsPolicyName = "LtDoCorsPolicy";
+
         private readonly RabbitMqConfig _rabbitMqConfig;
         private readonly BaseServiceInfoConfig _serviceInfoConfig;
-        private readonly ILogger<Startup> _logger;
 
         private IConfiguration Configuration { get; }
 
@@ -39,20 +41,35 @@ namespace LT.DigitalOffice.CompanyService
                 .GetSection(BaseServiceInfoConfig.SectionName)
                 .Get<BaseServiceInfoConfig>();
 
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                    .AddFilter("LT.DigitalOffice.CompanyService.Startup", LogLevel.Trace)
-                    .AddConsole();
-            });
-
-            _logger = loggerFactory.CreateLogger<Startup>();
+            Version = "1.3.2";
+            Description = "CompanyService is an API that intended to work with positions and departments.";
+            StartTime = DateTime.UtcNow;
+            ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
         }
 
         #region public methods
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    CorsPolicyName,
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins(
+                                "https://*.ltdo.xyz",
+                                "http://*.ltdo.xyz",
+                                "http://ltdo.xyz",
+                                "http://ltdo.xyz:9802",
+                                "http://localhost:4200",
+                                "http://localhost:4500")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
+
             services.Configure<TokenConfiguration>(Configuration.GetSection("CheckTokenMiddleware"));
             services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
             services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
@@ -75,36 +92,30 @@ namespace LT.DigitalOffice.CompanyService
                 .AddSqlServer(connStr)
                 .AddRabbitMqCheck();
 
-            services.AddBusinessObjects(_logger);
+            services.AddBusinessObjects();
 
             ConfigureMassTransit(services);
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseExceptionsHandler(loggerFactory);
-
             UpdateDatabase(app);
 
-            app.UseMiddleware<TokenMiddleware>();
+            app.UseForwardedHeaders();
 
-#if RELEASE
-            app.UseHttpsRedirection();
-#endif
+            app.UseExceptionsHandler(loggerFactory);
+
+            app.UseApiInformation();
 
             app.UseRouting();
 
-            string corsUrl = Configuration.GetSection("Settings")["CorsUrl"];
+            app.UseMiddleware<TokenMiddleware>();
 
-            app.UseCors(builder =>
-                builder
-                    .WithOrigins(corsUrl)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod());
+            app.UseCors(CorsPolicyName);
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireCors(CorsPolicyName);
 
                 endpoints.MapHealthChecks($"/{_serviceInfoConfig.Id}/hc", new HealthCheckOptions
                 {
@@ -142,7 +153,7 @@ namespace LT.DigitalOffice.CompanyService
                     ConfigureEndpoints(context, cfg);
                 });
 
-                x.AddRequestClients(_rabbitMqConfig, _logger);
+                x.AddRequestClients(_rabbitMqConfig);
             });
 
             services.AddMassTransitHostedService();
@@ -168,7 +179,9 @@ namespace LT.DigitalOffice.CompanyService
             using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
+
             using var context = serviceScope.ServiceProvider.GetService<CompanyServiceDbContext>();
+
             context.Database.Migrate();
         }
 
