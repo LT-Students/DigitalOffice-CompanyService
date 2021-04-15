@@ -12,6 +12,8 @@ using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
+using LT.DigitalOffice.UserService.Models.Broker.Models;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
@@ -36,6 +38,33 @@ namespace LT.DigitalOffice.CompanyService.Business
             _requestClient = requestClient;
             _logger = logger;
         }
+
+        private List<UserData> GetUsers(List<Guid> usersIds)
+        {
+            List<UserData> users = new();
+
+            try
+            {
+                var usersDataResponse = _requestClient.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+                    IGetUsersDataRequest.CreateObj(usersIds)).Result;
+
+                if (usersDataResponse.Message.IsSuccess)
+                {
+                    users = usersDataResponse.Message.Body.UsersData;
+                }
+                else
+                {
+                    _logger.LogWarning($"Can not get users. Reason: '{string.Join(',', usersDataResponse.Message.Errors)}'");
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger?.LogError(exc, "Exception on get user information.");
+            }
+
+            return users;
+        }
+
         public List<DepartmentResponse> Execute()
         {
             var departments = _repository.FindDepartments();
@@ -44,32 +73,15 @@ namespace LT.DigitalOffice.CompanyService.Business
 
             foreach (var department in departments)
             {
-                try
+                User director = null;
+                var users = GetUsers(department.Users.Select(x => x.UserId).ToList());
+
+                if (department.DirectorUserId != null && users.Any())
                 {
-                    List<Guid> usersIds = new();
-                    usersIds.AddRange(department.Users.Select(x => x.UserId));
-
-                    var usersDataResponse = _requestClient.GetResponse<IOperationResult<IGetUsersDataResponse>>(
-                        IGetUsersDataRequest.CreateObj(usersIds)).Result;
-
-                    if (usersDataResponse.Message.IsSuccess)
-                    {
-                        User director = new();
-
-                        if (department.DirectorUserId != null)
-                        {
-                            director = _userMapper.Map(usersDataResponse.Message.Body.UsersData.First(x => x.Id == department.DirectorUserId));
-                        }
-
-                        var users = usersDataResponse.Message.Body.UsersData.Select(x => _userMapper.Map(x)).ToList();
-
-                        departmentsList.Add(_departmentMapper.Map(department, director, users));
-                    }
+                    director = _userMapper.Map(users.First(x => x.Id == department.DirectorUserId));
                 }
-                catch (Exception exc)
-                {
-                    _logger?.LogError(exc, "Exception on get user information.");
-                }
+
+                departmentsList.Add(_departmentMapper.Map(department, director, users.Select( _userMapper.Map).ToList()));
             }
 
             return departmentsList;

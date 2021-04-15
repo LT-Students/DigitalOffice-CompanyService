@@ -71,11 +71,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 
             _repositoryMock
                 .Setup(x => x.FindDepartments())
-                .Returns(_dbDepartments);
+                .Returns(_dbDepartments)
+                .Verifiable();
 
             _directorData = new UserData
             {
-                Id = Guid.NewGuid(),
+                Id = _directorGuid,
                 IsActive = true,
                 FirstName = "Spartak",
                 LastName = "Ryabtsev",
@@ -84,11 +85,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 
             _workerData = new UserData
             {
-                Id = Guid.NewGuid(),
+                Id = _workerGuid,
                 IsActive = true,
-                FirstName = "Pavel",
-                LastName = "Kostin",
-                MiddleName = "Alexandrovich"
+                FirstName = "Alexandr",
+                LastName = "Ryabtsev",
+                MiddleName = "Spartakovich"
             };
 
             BrokerSetUp();
@@ -109,11 +110,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 
             _userMapperMock
                 .Setup(x => x.Map(_directorData))
-                .Returns(_director);
+                .Returns(_director)
+                .Verifiable();
 
             _userMapperMock
                 .Setup(x => x.Map(_workerData))
-                .Returns(_worker);
+                .Returns(_worker)
+                .Verifiable();
 
             _expectedDepartments = new List<DepartmentResponse>
             {
@@ -129,7 +132,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
 
             _departmentMapperMock
                 .Setup(x => x.Map(_dbDepartments.First(), _director, _expectedDepartments.First().Users))
-                .Returns(_expectedDepartments.First());
+                .Returns(_expectedDepartments.First())
+                .Verifiable();
 
             _command = new FindDepartmentsCommand(_repositoryMock.Object, _departmentMapperMock.Object, _userMapperMock.Object, _requestClientMock.Object, null);
         }
@@ -160,18 +164,19 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
             _requestClientMock = new Mock<IRequestClient<IGetUsersDataRequest>>();
             _requestClientMock
                 .Setup(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default).Result)
-                .Returns(_brokerResponseMock.Object).Verifiable();
+                .Returns(_brokerResponseMock.Object)
+                .Verifiable();
         }
 
         [Test]
         public void ShouldReturnDepartmentListSuccessfully()
         {
-            _command.Execute();
-            //SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
+            SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
 
+            _repositoryMock.Verify(x => x.FindDepartments(), Times.Once);
             _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default), Times.Once);
-            _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default).Result, Times.Once);
-
+            _departmentMapperMock.Verify(x => x.Map(It.IsAny<DbDepartment>(), It.IsAny<User>(), It.IsAny<List<User>>()), Times.Once);
+            _userMapperMock.Verify(x => x.Map(It.IsAny<UserData>()), Times.Exactly(3));
         }
 
         [Test]
@@ -182,6 +187,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute());
+            _repositoryMock.Verify(x => x.FindDepartments(), Times.Once);
+            _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default), Times.Never);
+            _departmentMapperMock.Verify(x => x.Map(It.IsAny<DbDepartment>(), It.IsAny<User>(), It.IsAny<List<User>>()), Times.Never);
+            _userMapperMock.Verify(x => x.Map(It.IsAny<UserData>()), Times.Never);
         }
 
         [Test]
@@ -192,24 +201,24 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                     It.IsAny<object>(), default, default))
                 .Throws(new Exception());
 
-            Assert.True(_command.Execute().Count != 0);
+            _expectedDepartments.First().Director = null;
+            _expectedDepartments.First().Users = null;
+
+            _departmentMapperMock
+                .Setup(x => x.Map(_dbDepartments.First(), null, new List<User>()))
+                .Returns(_expectedDepartments.First());
+
+            SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
+            _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default), Times.Once);
+            _departmentMapperMock.Verify(x => x.Map(It.IsAny<DbDepartment>(), It.IsAny<User>(), It.IsAny<List<User>>()), Times.Once);
+            _userMapperMock.Verify(x => x.Map(It.IsAny<UserData>()), Times.Never);
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenUserMapperThrowsExceptionOnDirector()
+        public void ShouldThrowExceptionWhenUserMapperThrowsException()
         {
             _userMapperMock
                 .Setup(x => x.Map(_directorData))
-                .Throws(new Exception());
-
-            Assert.Throws<Exception>(() => _command.Execute());
-        }
-
-        [Test]
-        public void ShouldThrowExceptionWhenUserMapperThrowsExceptionOnWorker()
-        {
-            _userMapperMock
-                .Setup(x => x.Map(_workerData))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute());
