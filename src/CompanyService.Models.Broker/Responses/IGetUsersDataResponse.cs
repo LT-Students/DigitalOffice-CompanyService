@@ -5,7 +5,7 @@ namespace LT.DigitalOffice.Broker.Responses
 {
     public interface IGetUsersDataResponse
     {
-        List<UserData> UsersData { get; set; }
+        List<UserData> UsersData { get; }
 
         static object CreateObj(List<UserData> usersData)
         {

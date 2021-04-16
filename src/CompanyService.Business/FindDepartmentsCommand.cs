@@ -53,7 +53,7 @@ namespace LT.DigitalOffice.CompanyService.Business
                 }
                 else
                 {
-                    _logger.LogWarning($"Can not get users. Reason: '{string.Join(',', usersDataResponse.Message.Errors)}'");
+                    _logger?.LogWarning($"Can not get users. Reason: '{string.Join(',', usersDataResponse.Message.Errors)}'");
                 }
             }
             catch (Exception exc)
