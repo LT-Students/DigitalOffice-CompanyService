@@ -46,10 +46,12 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
 
             Assert.Throws<ArgumentNullException>(() => _mapper.Map(request));
         }
+
         [Test]
         public void ShouldReturnDepartmentSuccessfully()
         {
             DbDepartment dbDepartment = _newDbDepartment;
+
             SerializerAssert.AreEqual(_expectedDepartment, _mapper.Map(dbDepartment));
         }
     }

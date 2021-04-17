@@ -31,6 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.BrokerMappers
 
             _expectedUser = new User
             {
+                Id = _userData.Id,
                 FirstName = _userData.FirstName,
                 LastName = _userData.LastName,
                 MiddleName = _userData.MiddleName

@@ -16,6 +16,7 @@ namespace CompanyService.Mappers.RequestMappers
 
             return new User
             {
+                Id = value.Id,
                 FirstName = value.FirstName,
                 LastName = value.LastName,
                 MiddleName = value.MiddleName
