@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Business
         }
         public Department Execute(Guid departmentId)
         {
-            return _mapper.Map(_repository.GetDepartment(departmentId));
+            return _mapper.Map(_repository.GetDepartment(departmentId, null));
         }
     }
 }

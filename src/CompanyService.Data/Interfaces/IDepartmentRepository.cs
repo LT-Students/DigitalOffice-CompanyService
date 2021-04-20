@@ -21,6 +21,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// <summary>
         /// Get <see cref="DbDepartment"/>.
         /// </summary>
-        DbDepartment GetDepartment(Guid id);
+        DbDepartment GetDepartment(Guid? departmentId, Guid? userId);
     }
 }

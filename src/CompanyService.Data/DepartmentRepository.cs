@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 
@@ -27,16 +28,23 @@ namespace LT.DigitalOffice.CompanyService.Data
         }
 
         /// <inheritdoc />
-        public DbDepartment GetDepartment(Guid id)
+        public DbDepartment GetDepartment(Guid? departmentId, Guid? userId)
         {
-            var result = provider.Departments.FirstOrDefault(d => d.Id == id);
+            DbDepartment result = null;
 
-            if (result == null)
+            if (departmentId.HasValue)
             {
-                throw new NotFoundException($"Department with id: '{id}' was not found.");
+                return provider.Departments.FirstOrDefault(d => d.Id == departmentId.Value);
             }
 
-            return result;
+            if (userId.HasValue)
+            {
+                return provider.Departments
+                    .Include(d => d.Users.Where(du => du.UserId == userId.Value))
+                    .FirstOrDefault();
+            }
+
+            throw new BadRequestException("You must specify 'departmentId' or 'userId'.");
         }
     }
 }
