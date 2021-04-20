@@ -2,7 +2,6 @@
 using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
 using System;
@@ -14,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
     {
         private IDepartmentResponseMapper _mapper;
 
-        private DepartmentResponse _expectedDepartment;
+        private DepartmentInfo _expectedDepartment;
         private DbDepartment _dbDepartment;
         private User _director;
         private User _worker;
@@ -51,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
                 MiddleName = "Alexandrovich"
             };
 
-            _expectedDepartment = new DepartmentResponse()
+            _expectedDepartment = new DepartmentInfo()
             {
                 Id = _dbDepartment.Id,
                 Name = _dbDepartment.Name,

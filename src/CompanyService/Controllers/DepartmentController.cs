@@ -4,7 +4,6 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
 {
@@ -29,7 +28,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public List<DepartmentResponse> FindDepartments(
+        public DepartmentsResponse FindDepartments(
             [FromServices] IFindDepartmentsCommand command)
         {
             return command.Execute();

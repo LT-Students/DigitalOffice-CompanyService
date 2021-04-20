@@ -1,10 +1,9 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace LT.DigitalOffice.CompanyService.Models.Dto.Responses
+namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
 {
-    public class DepartmentResponse
+    public class DepartmentInfo
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

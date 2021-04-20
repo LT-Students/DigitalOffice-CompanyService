@@ -38,9 +38,10 @@ namespace LT.DigitalOffice.CompanyService.Business
             _logger = logger;
         }
 
-        private List<UserData> GetUsers(List<Guid> usersIds)
+        private List<UserData> GetUsers(List<Guid> usersIds, List<string> errors)
         {
             List<UserData> users = new();
+            string errorMessage = $"Can not get users info for users '{usersIds}'. Please try again later.";
 
             try
             {
@@ -53,27 +54,34 @@ namespace LT.DigitalOffice.CompanyService.Business
                 }
                 else
                 {
-                    _logger?.LogWarning($"Can not get users. Reason: '{string.Join(',', usersDataResponse.Message.Errors)}'");
+                    _logger?.LogWarning(
+                        $"Can not get users. Reason:{Environment.NewLine}{string.Join('\n', usersDataResponse.Message.Errors)}.");
+
+                    errors.Add(errorMessage);
                 }
             }
             catch (Exception exc)
             {
-                _logger?.LogError(exc, "Exception on get user information.");
+                _logger?.LogError(exc, errorMessage);
+
+                errors.Add(errorMessage);
             }
 
             return users;
         }
 
-        public List<DepartmentResponse> Execute()
+        public DepartmentsResponse Execute()
         {
+            List<string> errors = new();
+
             var departments = _repository.FindDepartments();
 
-            List<DepartmentResponse> departmentsList = new();
+            List<DepartmentInfo> departmentsList = new();
 
             foreach (var department in departments)
             {
                 User director = null;
-                var users = GetUsers(department.Users.Select(x => x.UserId).ToList());
+                var users = GetUsers(department.Users.Select(x => x.UserId).ToList(), errors);
 
                 if (department.DirectorUserId != null && users.Any())
                 {
@@ -83,7 +91,12 @@ namespace LT.DigitalOffice.CompanyService.Business
                 departmentsList.Add(_departmentMapper.Map(department, director, users.Select( _userMapper.Map).ToList()));
             }
 
-            return departmentsList;
+            return new DepartmentsResponse
+            {
+                TotalCount = departments.Count,
+                Departments = departmentsList,
+                Errors = errors
+            };
         }
     }
 }

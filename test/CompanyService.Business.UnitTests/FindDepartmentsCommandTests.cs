@@ -39,7 +39,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         private User _director;
         private User _worker;
         private List<DbDepartment> _dbDepartments;
-        private List<DepartmentResponse> _expectedDepartments;
+        private List<DepartmentInfo> _expectedDepartments;
+        private DepartmentsResponse _expectedResponse;
 
         [SetUp]
         public void SetUp()
@@ -116,9 +117,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Returns(_worker)
                 .Verifiable();
 
-            _expectedDepartments = new List<DepartmentResponse>
+            _expectedDepartments = new List<DepartmentInfo>
             {
-                new DepartmentResponse
+                new DepartmentInfo
                 {
                     Id = _dbDepartments.First().Id,
                     Name = _dbDepartments.First().Name,
@@ -134,6 +135,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Verifiable();
 
             _command = new FindDepartmentsCommand(_repositoryMock.Object, _departmentMapperMock.Object, _userMapperMock.Object, _requestClientMock.Object, null);
+
+            _expectedResponse = new DepartmentsResponse
+            {
+                TotalCount = 1,
+                Departments = _expectedDepartments,
+                Errors = new()
+            };
         }
 
         private void BrokerSetUp()
@@ -169,7 +177,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
         [Test]
         public void ShouldReturnDepartmentListSuccessfully()
         {
-            SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
+            SerializerAssert.AreEqual(_expectedResponse, _command.Execute());
 
             _repositoryMock.Verify(x => x.FindDepartments(), Times.Once);
             _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default), Times.Once);
@@ -206,7 +214,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests
                 .Setup(x => x.Map(_dbDepartments.First(), null, new List<User>()))
                 .Returns(_expectedDepartments.First());
 
-            SerializerAssert.AreEqual(_expectedDepartments, _command.Execute());
+            var result = _command.Execute();
+            _expectedResponse.Errors = result.Errors;
+
+            SerializerAssert.AreEqual(_expectedResponse, result);
             _requestClientMock.Verify(x => x.GetResponse<IOperationResult<IGetUsersDataResponse>>(It.IsAny<object>(), default, default), Times.Once);
             _departmentMapperMock.Verify(x => x.Map(It.IsAny<DbDepartment>(), It.IsAny<User>(), It.IsAny<List<User>>()), Times.Once);
             _userMapperMock.Verify(x => x.Map(It.IsAny<UserData>()), Times.Never);

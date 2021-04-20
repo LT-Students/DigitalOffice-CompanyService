@@ -1,10 +1,11 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
-using System.Collections.Generic;
+using LT.DigitalOffice.Kernel.Attributes;
 
 namespace LT.DigitalOffice.CompanyService.Business.Interfaces
 {
+    [AutoInject]
     public interface IFindDepartmentsCommand
     {
-        List<DepartmentResponse> Execute();
+        DepartmentsResponse Execute();
     }
 }
