@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CompanyService.Data.UnitTests
 {
@@ -18,13 +19,13 @@ namespace CompanyService.Data.UnitTests
         private IDepartmentRepository _repository;
 
         private DbDepartment _departmentToAdd;
-        private DbDepartment _dbDepartment;
+        private DbDepartment _expectedDbDepartment;
         private DbContextOptions<CompanyServiceDbContext> _dbOptions;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            CreateMemoryDb();
+            CreateInMemoryDb();
 
             _departmentToAdd = new DbDepartment
             {
@@ -43,7 +44,7 @@ namespace CompanyService.Data.UnitTests
                 }
             };
 
-            _dbDepartment = new DbDepartment
+            _expectedDbDepartment = new DbDepartment
             {
                 Id = Guid.NewGuid(),
                 Name = "Digital solution",
@@ -61,7 +62,7 @@ namespace CompanyService.Data.UnitTests
             };
         }
 
-        public void CreateMemoryDb()
+        public void CreateInMemoryDb()
         {
             _dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
                    .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
@@ -74,18 +75,20 @@ namespace CompanyService.Data.UnitTests
             _provider = new CompanyServiceDbContext(_dbOptions);
             _repository = new DepartmentRepository(_provider);
 
-            _provider.Departments.Add(_dbDepartment);
+            _provider.Departments.Add(_expectedDbDepartment);
             _provider.Save();
         }
 
         [TearDown]
-        public void CleanDb()
+        public void CleanInMemoryDb()
         {
             if (_provider.IsInMemory())
             {
                 _provider.EnsureDeleted();
             }
         }
+
+        #region CreateDepartment
 
         [Test]
         public void ShouldAddDepartmentInDb()
@@ -95,6 +98,10 @@ namespace CompanyService.Data.UnitTests
             Assert.AreEqual(_departmentToAdd.Id, guidOfAddedDepartment);
             Assert.AreEqual(_departmentToAdd, _provider.Departments.Find(_departmentToAdd.Id));
         }
+
+        #endregion
+
+        #region GetRepartment
 
         // TODO fix
         //[Test]
@@ -108,14 +115,32 @@ namespace CompanyService.Data.UnitTests
         [Test]
         public void ShouldGetDepartmenByIdSuccessfully()
         {
-            var dbDepartment = _repository.GetDepartment(_dbDepartment.Id, null);
+            var dbDepartment = _repository.GetDepartment(_expectedDbDepartment.Id, null);
 
             foreach (var user in dbDepartment.Users)
             {
                 user.Department = null;
             }
 
-            SerializerAssert.AreEqual(_dbDepartment, dbDepartment);
+            SerializerAssert.AreEqual(_expectedDbDepartment, dbDepartment);
         }
+
+        #endregion
+
+        #region FindDepartments
+
+        [Test]
+        public void ShouldFindDepartmentsSuccessfully()
+        {
+            var dbDepartment = _repository.FindDepartments().First();
+
+            _expectedDbDepartment.Users.First().Department = null;
+            dbDepartment.Users.First().Department = null;
+
+            SerializerAssert.AreEqual(_expectedDbDepartment, dbDepartment);
+
+        }
+
+        #endregion
     }
 }

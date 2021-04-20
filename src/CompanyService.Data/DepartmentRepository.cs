@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -45,6 +46,12 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             throw new BadRequestException("You must specify 'departmentId' or 'userId'.");
+        }
+
+        /// <inheritdoc />
+        public List<DbDepartment> FindDepartments()
+        {
+            return provider.Departments.Include(x => x.Users).ToList();
         }
     }
 }

@@ -4,7 +4,6 @@ using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
