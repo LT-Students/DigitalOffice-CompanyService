@@ -15,7 +15,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object FindDepartment(string departmentName)
         {
-            var dbDepartments = _repository.FindDepartments().FindAll(d => d.Name.Contains(departmentName)).Select(d => d.Id).ToList();
+            var dbDepartments = _repository
+                .FindDepartments()
+                .FindAll(d => d.Name.ToUpper().Contains(departmentName.ToUpper()))
+                .Select(d => d.Id).ToList();
 
             return IDepartmentsResponse.CreateObj(dbDepartments);
         }
