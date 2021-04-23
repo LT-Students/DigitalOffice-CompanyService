@@ -16,20 +16,19 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object FindDepartmentNames(IList<Guid> ids)
         {
-            var pairs = new Dictionary<Guid, string>();
+            var departmentNames = new Dictionary<Guid, string>();
 
             var dbDepartments = _repository.FindDepartments().FindAll(d => ids.Contains(d.Id));
 
             foreach (var department in dbDepartments)
             {
-                pairs.Add(department.Id, department.Name);
+                departmentNames.Add(department.Id, department.Name);
             }
 
-            return IGetDepartmentsNamesResponse.CreateObj(pairs);
+            return IGetDepartmentsNamesResponse.CreateObj(departmentNames);
         }
 
-        public GetDepartmentsNamesConsumer(
-            IDepartmentRepository repository)
+        public GetDepartmentsNamesConsumer(IDepartmentRepository repository)
         {
             _repository = repository;
         }

@@ -3,7 +3,6 @@ using LT.DigitalOffice.Kernel.Attributes;
 
 namespace LT.DigitalOffice.Broker.Requests
 {
-    [AutoInjectRequest(nameof(RabbitMqConfig.FindDepartmentEndpoint))]
     public interface IFindDepartmentsRequest
     {
         string DepartmentName { get; }

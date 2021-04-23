@@ -175,7 +175,7 @@ namespace LT.DigitalOffice.CompanyService
                 ep.ConfigureConsumer<GetDepartmentConsumer>(context);
             });
 
-            cfg.ReceiveEndpoint(_rabbitMqConfig.FindDepartmentEndpoint, ep =>
+            cfg.ReceiveEndpoint(_rabbitMqConfig.FindDepartmentsEndpoint, ep =>
             {
                 ep.ConfigureConsumer<FindDepartmentsConsumer>(context);
             });

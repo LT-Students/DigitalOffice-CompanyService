@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.Broker.Responses
 {
-    public interface IDepartmentsResponse
+    public interface IGetDepartmentsResponse
     {
         IDictionary<Guid, string> IdNamePairs { get; }
 

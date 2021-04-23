@@ -86,7 +86,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             {
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
-                var response = await _requestClient.GetResponse<IOperationResult<IDepartmentsResponse>>(
+                var response = await _requestClient.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
                     IFindDepartmentsRequest.CreateObj(_requiredName));
 
                 var expectedDict = new Dictionary<Guid, string>();
@@ -96,7 +96,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 {
                     IsSuccess = true,
                     Errors = null as List<string>,
-                    Body = IDepartmentsResponse.CreateObj(expectedDict)
+                    Body = IGetDepartmentsResponse.CreateObj(expectedDict)
                 };
 
                 SerializerAssert.AreEqual(expected, response.Message);
@@ -116,7 +116,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             {
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
-                var response = await _requestClient.GetResponse<IOperationResult<IDepartmentsResponse>>(
+                var response = await _requestClient.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
                     IFindDepartmentsRequest.CreateObj(_dontExistName));
 
                 Assert.IsTrue(response.Message.IsSuccess);
@@ -142,7 +142,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
-                var response = await _requestClient.GetResponse<IOperationResult<IDepartmentsResponse>>(
+                var response = await _requestClient.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
                     IFindDepartmentsRequest.CreateObj(_dontExistName));
 
                 Assert.IsFalse(response.Message.IsSuccess);

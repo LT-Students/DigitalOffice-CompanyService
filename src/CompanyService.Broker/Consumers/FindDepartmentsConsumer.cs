@@ -21,14 +21,14 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 .FindDepartments()
                 .FindAll(d => d.Name.ToUpper().Contains(departmentName.ToUpper()));
 
-            var pairs = new Dictionary<Guid, string>();
+            var departmentNames = new Dictionary<Guid, string>();
 
             foreach (var department in dbDepartments)
             {
-                pairs.Add(department.Id, department.Name);
+                departmentNames.Add(department.Id, department.Name);
             }
 
-            return IDepartmentsResponse.CreateObj(pairs);
+            return IGetDepartmentsResponse.CreateObj(departmentNames);
         }
 
         public FindDepartmentsConsumer(
@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         {
             var departmentId = OperationResultWrapper.CreateResponse(FindDepartment, context.Message.DepartmentName);
 
-            await context.RespondAsync<IOperationResult<IDepartmentsResponse>>(departmentId);
+            await context.RespondAsync<IOperationResult<IGetDepartmentsResponse>>(departmentId);
         }
     }
 }
