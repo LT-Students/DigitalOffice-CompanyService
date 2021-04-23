@@ -4,6 +4,8 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using MassTransit;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,10 +19,16 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         {
             var dbDepartments = _repository
                 .FindDepartments()
-                .FindAll(d => d.Name.ToUpper().Contains(departmentName.ToUpper()))
-                .Select(d => d.Id).ToList();
+                .FindAll(d => d.Name.ToUpper().Contains(departmentName.ToUpper()));
 
-            return IDepartmentsResponse.CreateObj(dbDepartments);
+            var pairs = new Dictionary<Guid, string>();
+
+            foreach (var department in dbDepartments)
+            {
+                pairs.Add(department.Id, department.Name);
+            }
+
+            return IDepartmentsResponse.CreateObj(pairs);
         }
 
         public FindDepartmentsConsumer(

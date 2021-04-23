@@ -5,13 +5,13 @@ namespace LT.DigitalOffice.Broker.Responses
 {
     public interface IDepartmentsResponse
     {
-        IList<Guid> DepartmentIds { get; }
+        IDictionary<Guid, string> IdNamePairs { get; }
 
-        static object CreateObj(IList<Guid> departmentIds)
+        static object CreateObj(IDictionary<Guid, string> idNamePairs)
         {
             return new
             {
-                DepartmentIds = departmentIds
+                IdNamePairs = idNamePairs
             };
         }
     }

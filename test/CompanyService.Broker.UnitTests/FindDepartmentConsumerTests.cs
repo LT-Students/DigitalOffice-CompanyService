@@ -89,11 +89,14 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 var response = await _requestClient.GetResponse<IOperationResult<IDepartmentsResponse>>(
                     IFindDepartmentsRequest.CreateObj(_requiredName));
 
+                var expectedDict = new Dictionary<Guid, string>();
+                expectedDict.Add(_expectedDepartmentId, _requiredName);
+
                 var expected = new
                 {
                     IsSuccess = true,
                     Errors = null as List<string>,
-                    Body = IDepartmentsResponse.CreateObj(new List<Guid> { _expectedDepartmentId })
+                    Body = IDepartmentsResponse.CreateObj(expectedDict)
                 };
 
                 SerializerAssert.AreEqual(expected, response.Message);
@@ -117,7 +120,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     IFindDepartmentsRequest.CreateObj(_dontExistName));
 
                 Assert.IsTrue(response.Message.IsSuccess);
-                Assert.IsEmpty(response.Message.Body.DepartmentIds);
+                Assert.IsEmpty(response.Message.Body.IdNamePairs);
                 Assert.IsNull(response.Message.Errors);
             }
             finally
