@@ -23,8 +23,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
         private List<DbDepartment> _departments;
 
-        private const string _dontExistName = "dontExistName";
-        private const string _requiredName = "RequiredName";
+        private const string DontExistName = "dontExistName";
+        private const string RequiredName = "RequiredName";
         private Guid _expectedDepartmentId;
 
         [SetUp]
@@ -59,7 +59,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 new DbDepartment
                 {
                     Id = _expectedDepartmentId,
-                    Name = _requiredName,
+                    Name = RequiredName,
                     Description = "Description",
                     IsActive = true,
                     DirectorUserId = Guid.NewGuid()
@@ -87,10 +87,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(_requiredName));
+                    IFindDepartmentsRequest.CreateObj(RequiredName));
 
                 var expectedDict = new Dictionary<Guid, string>();
-                expectedDict.Add(_expectedDepartmentId, _requiredName);
+                expectedDict.Add(_expectedDepartmentId, RequiredName);
 
                 var expected = new
                 {
@@ -117,7 +117,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(_dontExistName));
+                    IFindDepartmentsRequest.CreateObj(DontExistName));
 
                 Assert.IsTrue(response.Message.IsSuccess);
                 Assert.IsEmpty(response.Message.Body.IdNamePairs);
@@ -143,7 +143,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(_dontExistName));
+                    IFindDepartmentsRequest.CreateObj(DontExistName));
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsNull(response.Message.Body);
