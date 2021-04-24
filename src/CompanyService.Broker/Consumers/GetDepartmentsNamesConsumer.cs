@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         public async Task Consume(ConsumeContext<IGetDepartmentsNamesRequest> context)
         {
-            var pairs = OperationResultWrapper.CreateResponse(FindDepartmentNames, context.Message.Ids);
+            var pairs = OperationResultWrapper.CreateResponse(FindDepartmentNames, context.Message.DepartmentIds);
 
             await context.RespondAsync<IOperationResult<IGetDepartmentsNamesResponse>>(pairs);
         }
