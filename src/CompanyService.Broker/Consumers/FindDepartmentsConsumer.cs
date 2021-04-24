@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 departmentNames.Add(department.Id, department.Name);
             }
 
-            return IGetDepartmentsResponse.CreateObj(departmentNames);
+            return IFindDepartmentsResponse.CreateObj(departmentNames);
         }
 
         public FindDepartmentsConsumer(
@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         {
             var departmentId = OperationResultWrapper.CreateResponse(FindDepartment, context.Message.DepartmentName);
 
-            await context.RespondAsync<IOperationResult<IGetDepartmentsResponse>>(departmentId);
+            await context.RespondAsync<IOperationResult<IFindDepartmentsResponse>>(departmentId);
         }
     }
 }
