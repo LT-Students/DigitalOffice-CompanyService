@@ -12,18 +12,18 @@ namespace LT.DigitalOffice.CompanyService.Data
     /// <inheritdoc />
     public class DepartmentRepository : IDepartmentRepository
     {
-        private readonly IDataProvider provider;
+        private readonly IDataProvider _provider;
 
         public DepartmentRepository(IDataProvider provider)
         {
-            this.provider = provider;
+            _provider = provider;
         }
 
         /// <inheritdoc />
         public Guid CreateDepartment(DbDepartment department)
         {
-            provider.Departments.Add(department);
-            provider.Save();
+            _provider.Departments.Add(department);
+            _provider.Save();
 
             return department.Id;
         }
@@ -35,12 +35,12 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (departmentId.HasValue)
             {
-                return provider.Departments.FirstOrDefault(d => d.Id == departmentId.Value);
+                return _provider.Departments.FirstOrDefault(d => d.Id == departmentId.Value);
             }
 
             if (userId.HasValue)
             {
-                return provider.Departments
+                return _provider.Departments
                     .Include(d => d.Users.Where(du => du.UserId == userId.Value))
                     .FirstOrDefault();
             }
@@ -51,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         /// <inheritdoc />
         public List<DbDepartment> FindDepartments()
         {
-            return provider.Departments.Include(x => x.Users).ToList();
+            return _provider.Departments.Include(x => x.Users).ToList();
         }
     }
 }

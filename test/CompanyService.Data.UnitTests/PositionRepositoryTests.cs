@@ -12,13 +12,13 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 {
     internal class PositionRepositoryTests
     {
-        private IDataProvider provider;
-        private IPositionRepository repository;
+        private IDataProvider _provider;
+        private IPositionRepository _repository;
 
-        private DbPosition dbPosition;
-        private Guid positionId;
-        private DbPosition newPosition;
-        private DbPosition dbPositionToAdd;
+        private DbPosition _dbPosition;
+        private Guid _positionId;
+        private DbPosition _newPosition;
+        private DbPosition _dbPositionToAdd;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -27,36 +27,36 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 .UseInMemoryDatabase("InMemoryDatabase")
                 .Options;
 
-            provider = new CompanyServiceDbContext(dbOptions);
+            _provider = new CompanyServiceDbContext(dbOptions);
 
-            repository = new PositionRepository(provider);
+            _repository = new PositionRepository(_provider);
         }
 
         [SetUp]
         public void SetUp()
         {
-            positionId = Guid.NewGuid();
+            _positionId = Guid.NewGuid();
 
-            dbPosition = new DbPosition
+            _dbPosition = new DbPosition
             {
-                Id = positionId,
+                Id = _positionId,
                 Description = "Description",
                 Name = "Name"
             };
-            dbPosition.Users.Add(new DbDepartmentUser
+            _dbPosition.Users.Add(new DbDepartmentUser
             {
                 Id = Guid.NewGuid(),
-                PositionId = positionId,
+                PositionId = _positionId,
                 UserId = Guid.NewGuid(),
                 DepartmentId = Guid.NewGuid(),
                 IsActive = true,
                 StartTime = DateTime.Now.AddDays(-1)
             });
 
-            provider.Positions.Add(dbPosition);
-            provider.Save();
+            _provider.Positions.Add(_dbPosition);
+            _provider.Save();
 
-            dbPositionToAdd = new DbPosition
+            _dbPositionToAdd = new DbPosition
             {
                 Id = Guid.NewGuid(),
                 Name = "Position",
@@ -67,29 +67,29 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [TearDown]
         public void CleanDb()
         {
-            if (provider.IsInMemory())
+            if (_provider.IsInMemory())
             {
-                provider.EnsureDeleted();
+                _provider.EnsureDeleted();
             }
         }
 
-        #region GetPositionById
+        #region GetPosition
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExist()
         {
-            Assert.Throws<NotFoundException>(() => repository.GetPositionById(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => _repository.GetPosition(Guid.NewGuid()));
         }
 
         [Test]
         public void ShouldReturnSimplePositionInfoSuccessfully()
         {
-            var result = repository.GetPositionById(dbPosition.Id);
+            var result = _repository.GetPosition(_dbPosition.Id);
 
             var expected = new DbPosition
             {
-                Id = dbPosition.Id,
-                Name = dbPosition.Name,
-                Description = dbPosition.Description
+                Id = _dbPosition.Id,
+                Name = _dbPosition.Name,
+                Description = _dbPosition.Description
             };
 
             Assert.AreEqual(expected.Id, result.Id);
@@ -98,11 +98,11 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         }
         #endregion
 
-        #region GetPositionsList
+        #region FindPositions
         [Test]
-        public void GetPositionsListSuccessfully()
+        public void FindPositionsSuccessfully()
         {
-            Assert.IsNotEmpty(repository.GetPositionsList());
+            Assert.IsNotEmpty(_repository.FindPositions());
         }
         #endregion
 
@@ -110,20 +110,20 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenUserIdEmpty()
         {
-            Assert.Throws<NotFoundException>(() => repository.GetUserPosition(Guid.Empty));
+            Assert.Throws<NotFoundException>(() => _repository.GetUserPosition(Guid.Empty));
         }
 
         [Test]
         public void ShouldReturnUserPosition()
         {
-            var userId = dbPosition.Users.First().UserId;
+            var userId = _dbPosition.Users.First().UserId;
 
-            var result = repository.GetUserPosition(userId);
+            var result = _repository.GetUserPosition(userId);
 
-            Assert.AreEqual(dbPosition.Id, result.Id);
-            Assert.AreEqual(dbPosition.Description, result.Description);
-            Assert.AreEqual(dbPosition.Name, result.Name);
-            Assert.That(provider.Positions, Is.EquivalentTo(new[] { dbPosition }));
+            Assert.AreEqual(_dbPosition.Id, result.Id);
+            Assert.AreEqual(_dbPosition.Description, result.Description);
+            Assert.AreEqual(_dbPosition.Name, result.Name);
+            Assert.That(_provider.Positions, Is.EquivalentTo(new[] { _dbPosition }));
         }
         #endregion
 
@@ -131,12 +131,12 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldAddNewPositionSuccessfully()
         {
-            var expected = dbPositionToAdd.Id;
+            var expected = _dbPositionToAdd.Id;
 
-            var result = repository.CreatePosition(dbPositionToAdd);
+            var result = _repository.CreatePosition(_dbPositionToAdd);
 
             Assert.AreEqual(expected, result);
-            Assert.NotNull(provider.Positions.Find(dbPositionToAdd.Id));
+            Assert.NotNull(_provider.Positions.Find(_dbPositionToAdd.Id));
         }
         #endregion
 
@@ -144,43 +144,43 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldEditPositionSuccessfully()
         {
-            newPosition = new DbPosition
+            _newPosition = new DbPosition
             {
-                Id = positionId,
+                Id = _positionId,
                 Name = "abracadabra",
                 Description = "bluhbluh"
             };
 
-            var result = repository.EditPosition(newPosition);
+            var result = _repository.EditPosition(_newPosition);
 
-            DbPosition updatedPosition = provider.Positions.FirstOrDefault(p => p.Id == positionId);
+            DbPosition updatedPosition = _provider.Positions.FirstOrDefault(p => p.Id == _positionId);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(newPosition.Id, updatedPosition.Id);
-            Assert.AreEqual(newPosition.Name, updatedPosition.Name);
-            Assert.AreEqual(newPosition.Description, updatedPosition.Description);
+            Assert.AreEqual(_newPosition.Id, updatedPosition.Id);
+            Assert.AreEqual(_newPosition.Name, updatedPosition.Name);
+            Assert.AreEqual(_newPosition.Description, updatedPosition.Description);
         }
         #endregion
 
-        #region DisablePositionById
+        #region DisablePosition
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExistWhileDisablingPosition()
         {
-            Assert.Throws<NotFoundException>(() => repository.DisablePositionById(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => _repository.DisablePosition(Guid.NewGuid()));
         }
 
         [Test]
         public void ShouldDisablePositionSuccessfully()
         {
-            repository.DisablePositionById(positionId);
+            _repository.DisablePosition(_positionId);
 
-            Assert.IsFalse(provider.Positions.Find(positionId).IsActive);
+            Assert.IsFalse(_provider.Positions.Find(_positionId).IsActive);
         }
 
         [Test]
         public void ShouldThrowExceptionIfPositionIdNullWhileDisablingPosition()
         {
-            Assert.Throws<NotFoundException>(() => repository.DisablePositionById(Guid.Empty));
+            Assert.Throws<NotFoundException>(() => _repository.DisablePosition(Guid.Empty));
         }
         #endregion
     }

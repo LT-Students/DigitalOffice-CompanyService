@@ -17,13 +17,13 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Position with specified id.</returns>
-        DbPosition GetPositionById(Guid positionId);
+        DbPosition GetPosition(Guid positionId);
 
         /// <summary>
         /// Returns a list of all added positions to the database.
         /// </summary>
         /// <returns>List of all added positions.</returns>
-        List<DbPosition> GetPositionsList();
+        List<DbPosition> FindPositions();
 
         /// <summary>
         /// Returns the position of user.
@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Nothing if the position was disabled, otherwise Exception.</returns>
-        void DisablePositionById(Guid positionId);
+        void DisablePosition(Guid positionId);
 
         /// <summary>
         /// Adds new position to the database. Returns its Id.
