@@ -31,10 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                     .FindAll(d => d.Name.ToUpper().Contains(request.DepartmentName.ToUpper()));
             }
 
-            foreach (var department in dbDepartments)
-            {
-                departmentNames.Add(department.Id, department.Name);
-            }
+            departmentNames = dbDepartments.ToDictionary(x => x.Id, x => x.Name);
 
             return IFindDepartmentsResponse.CreateObj(departmentNames);
         }
