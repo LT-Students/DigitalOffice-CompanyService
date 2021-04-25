@@ -22,6 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private Mock<IDepartmentRepository> _repositoryMock;
 
         private List<DbDepartment> _departments;
+        private List<Guid> _departmentsGuids;
 
         private const string DontExistName = "dontExistName";
         private const string RequiredName = "RequiredName";
@@ -66,6 +67,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 }
             );
 
+            _departmentsGuids = new List<Guid> { _departments[0].Id, _departments[1].Id };
+
             _repositoryMock = new Mock<IDepartmentRepository>();
             _repositoryMock
                 .Setup(x => x.FindDepartments())
@@ -78,7 +81,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         }
 
         [Test]
-        public async Task ShouldReturnGuidOfExistsDepartment()
+        public async Task ShouldReturnGuidOfExistsDepartmentByName()
         {
             await _harness.Start();
 
@@ -87,7 +90,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(RequiredName));
+                    IFindDepartmentsRequest.CreateObj(RequiredName, null));
 
                 var expectedDict = new Dictionary<Guid, string>();
                 expectedDict.Add(_expectedDepartmentId, RequiredName);
@@ -117,7 +120,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(DontExistName));
+                    IFindDepartmentsRequest.CreateObj(DontExistName, null));
 
                 Assert.IsTrue(response.Message.IsSuccess);
                 Assert.IsEmpty(response.Message.Body.IdNamePairs);
@@ -130,7 +133,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         }
 
         [Test]
-        public async Task ShouldReturnAnUnsuccessfulResponseWhenRepositoryThrowExc()
+        public async Task ShouldReturnAnUnsuccessfulResponseByNameWhenRepositoryThrowExc()
         {
             await _harness.Start();
 
@@ -143,11 +146,42 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(DontExistName));
+                    IFindDepartmentsRequest.CreateObj(DontExistName, null));
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsNull(response.Message.Body);
                 Assert.IsNotNull(response.Message.Errors);
+            }
+            finally
+            {
+                await _harness.Stop();
+            }
+        }
+
+        [Test]
+        public async Task ShouldReturnSuccessfulResponseByIds()
+        {
+            await _harness.Start();
+
+            try
+            {
+                _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
+
+                var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
+                    IFindDepartmentsRequest.CreateObj(null, _departmentsGuids));
+
+                var expectedBody = new Dictionary<Guid, string>();
+                expectedBody.Add(_departments[0].Id, _departments[0].Name);
+                expectedBody.Add(_departments[1].Id, _departments[1].Name);
+
+                var expected = new
+                {
+                    IsSuccess = true,
+                    Errors = null as List<string>,
+                    Body = IFindDepartmentsResponse.CreateObj(expectedBody)
+                };
+
+                SerializerAssert.AreEqual(expected, response.Message);
             }
             finally
             {

@@ -1,8 +1,8 @@
 ﻿using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Broker;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using MassTransit;
 using System;
 using System.Collections.Generic;
@@ -15,13 +15,21 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     {
         private readonly IDepartmentRepository _repository;
 
-        private object FindDepartment(string departmentName)
+        private object FindDepartment(IFindDepartmentsRequest request)
         {
-            var dbDepartments = _repository
-                .FindDepartments()
-                .FindAll(d => d.Name.ToUpper().Contains(departmentName.ToUpper()));
-
             var departmentNames = new Dictionary<Guid, string>();
+            List<DbDepartment> dbDepartments = new();
+
+            if (request.DepartmentIds != null && request.DepartmentIds.Any())
+            {
+                dbDepartments = _repository.FindDepartments().FindAll(d => request.DepartmentIds.Contains(d.Id));
+            }
+            else if (!string.IsNullOrEmpty(request.DepartmentName))
+            {
+                dbDepartments = _repository
+                    .FindDepartments()
+                    .FindAll(d => d.Name.ToUpper().Contains(request.DepartmentName.ToUpper()));
+            }
 
             foreach (var department in dbDepartments)
             {
@@ -39,7 +47,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         public async Task Consume(ConsumeContext<IFindDepartmentsRequest> context)
         {
-            var departmentId = OperationResultWrapper.CreateResponse(FindDepartment, context.Message.DepartmentName);
+            var departmentId = OperationResultWrapper.CreateResponse(FindDepartment, context.Message);
 
             await context.RespondAsync<IOperationResult<IFindDepartmentsResponse>>(departmentId);
         }
