@@ -1,5 +1,8 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business
@@ -7,16 +10,26 @@ namespace LT.DigitalOffice.CompanyService.Business
     /// <inheritdoc cref="IDisablePositionByIdCommand"/>
     public class DisablePositionByIdCommand : IDisablePositionByIdCommand
     {
-        private readonly IPositionRepository repository;
+        private readonly IPositionRepository _repository;
+        private readonly IAccessValidator _accessValidator;
 
-        public DisablePositionByIdCommand(IPositionRepository repository)
+        public DisablePositionByIdCommand(
+            IPositionRepository repository,
+            IAccessValidator accessValidator)
         {
-            this.repository = repository;
+            _repository = repository;
+            _accessValidator = accessValidator;
         }
 
         public void Execute(Guid positionId)
         {
-            repository.DisablePositionById(positionId);
+            if (!(_accessValidator.IsAdmin() ||
+                  _accessValidator.HasRights(Rights.AddEditRemovePositions)))
+            {
+                throw new ForbiddenException("Not enough rights.");
+            }
+
+            _repository.DisablePositionById(positionId);
         }
     }
 }

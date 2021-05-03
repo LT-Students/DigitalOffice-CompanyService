@@ -4,33 +4,45 @@ using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
+using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 
 namespace LT.DigitalOffice.CompanyService.Business
 {
     /// <inheritdoc cref="IEditPositionCommand"/>
     public class EditPositionCommand : IEditPositionCommand
     {
-        private readonly IPositionValidator validator;
-        private readonly IPositionRepository repository;
-        private readonly IDbPositionMapper mapper;
+        private readonly IPositionValidator _validator;
+        private readonly IPositionRepository _repository;
+        private readonly IDbPositionMapper _mapper;
+        private readonly IAccessValidator _accessValidator;
 
         public EditPositionCommand(
             IPositionValidator validator,
             IPositionRepository repository,
-            IDbPositionMapper mapper)
+            IDbPositionMapper mapper,
+            IAccessValidator accessValidator)
         {
-            this.validator = validator;
-            this.repository = repository;
-            this.mapper = mapper;
+            _validator = validator;
+            _repository = repository;
+            _mapper = mapper;
+            _accessValidator = accessValidator;
         }
 
         public bool Execute(Position request)
         {
-            validator.ValidateAndThrowCustom(request);
+            if (!(_accessValidator.IsAdmin() ||
+                  _accessValidator.HasRights(Rights.AddEditRemovePositions)))
+            {
+                throw new ForbiddenException("Not enough rights.");
+            }
 
-            var position = mapper.Map(request);
+            _validator.ValidateAndThrowCustom(request);
 
-            return repository.EditPosition(position);
+            var position = _mapper.Map(request);
+
+            return _repository.EditPosition(position);
         }
     }
 }
