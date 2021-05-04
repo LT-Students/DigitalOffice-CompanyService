@@ -12,16 +12,16 @@ namespace LT.DigitalOffice.CompanyService.Data
     /// <inheritdoc cref="IPositionRepository"/>
     public class PositionRepository : IPositionRepository
     {
-        private readonly IDataProvider provider;
+        private readonly IDataProvider _provider;
 
         public PositionRepository(IDataProvider provider)
         {
-            this.provider = provider;
+            _provider = provider;
         }
 
-        public DbPosition GetPositionById(Guid positionId)
+        public DbPosition GetPosition(Guid positionId)
         {
-            var dbPosition = provider.Positions.FirstOrDefault(position => position.Id == positionId);
+            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId);
 
             if (dbPosition == null)
             {
@@ -31,14 +31,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             return dbPosition;
         }
 
-        public List<DbPosition> GetPositionsList()
+        public List<DbPosition> FindPositions()
         {
-            return provider.Positions.ToList();
+            return _provider.Positions.ToList();
         }
 
         public DbPosition GetUserPosition(Guid userId)
         {
-            var dbCompanyUser = provider.DepartmentsUsers
+            var dbCompanyUser = _provider.DepartmentsUsers
                 .Include(u => u.Position)
                 .FirstOrDefault(du => du.UserId == userId);
 
@@ -47,12 +47,12 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new NotFoundException($"User with id: '{userId}' was not found.");
             }
 
-            return provider.Positions.Find(dbCompanyUser.PositionId);
+            return _provider.Positions.Find(dbCompanyUser.PositionId);
         }
 
-        public void DisablePositionById(Guid positionId)
+        public void DisablePosition(Guid positionId)
         {
-            var dbPosition = provider.Positions.FirstOrDefault(position => position.Id == positionId);
+            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId);
 
             if (dbPosition == null)
             {
@@ -60,21 +60,21 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             dbPosition.IsActive = false;
-            provider.Positions.Update(dbPosition);
-            provider.Save();
+            _provider.Positions.Update(dbPosition);
+            _provider.Save();
         }
 
         public Guid CreatePosition(DbPosition newPosition)
         {
-            provider.Positions.Add(newPosition);
-            provider.Save();
+            _provider.Positions.Add(newPosition);
+            _provider.Save();
 
             return newPosition.Id;
         }
 
         public bool EditPosition(DbPosition newPosition)
         {
-            var dbPosition = provider.Positions.FirstOrDefault(position => position.Id == newPosition.Id);
+            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == newPosition.Id);
 
             if (dbPosition == null)
             {
@@ -83,8 +83,8 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             dbPosition.Name = newPosition.Name;
             dbPosition.Description = newPosition.Description;
-            provider.Positions.Update(dbPosition);
-            provider.Save();
+            _provider.Positions.Update(dbPosition);
+            _provider.Save();
 
             return true;
         }

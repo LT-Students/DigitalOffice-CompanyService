@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     public class DepartmentController : ControllerBase
     {
         [HttpPost("create")]
-        public Guid AddDepartment(
+        public Guid Create(
             [FromServices] ICreateDepartmentCommand command,
             [FromBody] NewDepartmentRequest department)
         {
@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("get")]
-        public Department GetDepartmentById(
+        public DepartmentInfo Get(
             [FromServices] IGetDepartmentByIdCommand command,
             [FromQuery] Guid id)
         {
@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public DepartmentsResponse FindDepartments(
+        public DepartmentsResponse Find(
             [FromServices] IFindDepartmentsCommand command)
         {
             return command.Execute();

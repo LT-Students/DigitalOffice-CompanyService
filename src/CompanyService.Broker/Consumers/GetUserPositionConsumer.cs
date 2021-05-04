@@ -9,11 +9,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
     public class GetUserPositionConsumer : IConsumer<IGetUserPositionRequest>
     {
-        private readonly IPositionRepository repository;
+        private readonly IPositionRepository _repository;
 
         public GetUserPositionConsumer(IPositionRepository repository)
         {
-            this.repository = repository;
+            _repository = repository;
         }
 
         public async Task Consume(ConsumeContext<IGetUserPositionRequest> context)
@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object GetUserPosition(IGetUserPositionRequest request)
         {
-            var dbUserPosition = repository.GetUserPosition(request.UserId);
+            var dbUserPosition = _repository.GetUserPosition(request.UserId);
 
             return new
             {

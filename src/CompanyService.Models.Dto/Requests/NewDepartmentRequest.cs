@@ -5,7 +5,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
 {
     public class NewDepartmentRequest
     {
-        public Department Info { get; set; }
-        public IEnumerable<DepartmentUser> Users { get; set; }
+        public BaseDepartmentInfo Info { get; set; }
+        public IEnumerable<DepartmentUserInfo> Users { get; set; }
     }
 }

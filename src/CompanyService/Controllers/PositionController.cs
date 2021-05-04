@@ -1,6 +1,7 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,32 +12,32 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     [ApiController]
     public class PositionController : ControllerBase
     {
-        [HttpGet("getPositionById")]
-        public PositionResponse GetPositionById([FromServices] IGetPositionByIdCommand command, [FromQuery] Guid positionId)
+        [HttpGet("get")]
+        public PositionResponse Get([FromServices] IGetPositionByIdCommand command, [FromQuery] Guid positionId)
         {
             return command.Execute(positionId);
         }
 
-        [HttpGet("getPositionsList")]
-        public List<PositionResponse> GetPositionsList([FromServices] IGetPositionsListCommand command)
+        [HttpGet("find")]
+        public List<PositionResponse> Find([FromServices] IFindPositionsCommand command)
         {
             return command.Execute();
         }
 
         [HttpPost("create")]
-        public Guid CreatePosition([FromServices] ICreatePositionCommand command, [FromBody] Position request)
+        public Guid Create([FromServices] ICreatePositionCommand command, [FromBody] CreatePositionRequest request)
         {
             return command.Execute(request);
         }
 
-        [HttpDelete("disablePositionById")]
-        public void DisablePositionById([FromServices] IDisablePositionByIdCommand command, [FromQuery] Guid positionId)
+        [HttpDelete("disable")]
+        public void Disable([FromServices] IDisablePositionByIdCommand command, [FromQuery] Guid positionId)
         {
             command.Execute(positionId);
         }
 
-        [HttpPost("editPosition")]
-        public bool EditPosition([FromServices] IEditPositionCommand command, [FromBody] Position request)
+        [HttpPost("edit")]
+        public bool Edit([FromServices] IEditPositionCommand command, [FromBody] PositionInfo request)
         {
             return command.Execute(request);
         }
