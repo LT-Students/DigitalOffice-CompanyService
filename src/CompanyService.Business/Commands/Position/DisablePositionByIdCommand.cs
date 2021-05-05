@@ -11,15 +11,24 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
     public class DisablePositionByIdCommand : IDisablePositionByIdCommand
     {
         private readonly IPositionRepository _repository;
+        private readonly IAccessValidator _accessValidator;
 
         public DisablePositionByIdCommand(
-            IPositionRepository repository)
+            IPositionRepository repository,
+            IAccessValidator accessValidator)
         {
             _repository = repository;
+            _accessValidator = accessValidator;
         }
 
         public void Execute(Guid positionId)
         {
+            if (!(_accessValidator.IsAdmin() ||
+                  _accessValidator.HasRights(Rights.AddEditRemovePositions)))
+            {
+                throw new ForbiddenException("Not enough rights.");
+            }
+
             _repository.DisablePosition(positionId);
         }
     }

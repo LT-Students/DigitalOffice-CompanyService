@@ -8,6 +8,8 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -21,6 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         private Mock<IPositionInfoValidator> _validatorMock;
         private Mock<IPositionRepository> _repositoryMock;
         private Mock<IDbPositionMapper> _mapperMock;
+        private Mock<IAccessValidator> _accessValidatorMock;
 
         private PositionInfo _request;
         private DbPosition _newPosition;
@@ -51,8 +54,36 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _validatorMock = new Mock<IPositionInfoValidator>();
             _repositoryMock = new Mock<IPositionRepository>();
             _mapperMock = new Mock<IDbPositionMapper>();
+            _accessValidatorMock = new Mock<IAccessValidator>();
 
-            _command = new EditPositionCommand(_validatorMock.Object, _repositoryMock.Object, _mapperMock.Object);
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(true);
+
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemovePositions))
+                .Returns(true);
+
+            _command = new EditPositionCommand(
+                _validatorMock.Object,
+                _repositoryMock.Object,
+                _mapperMock.Object,
+                _accessValidatorMock.Object);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenNotEnoughRights()
+        {
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemovePositions))
+                .Returns(false);
+
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(false);
+
+            Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
+            _repositoryMock.Verify(repository => repository.EditPosition(It.IsAny<DbPosition>()), Times.Never);
         }
 
         [Test]

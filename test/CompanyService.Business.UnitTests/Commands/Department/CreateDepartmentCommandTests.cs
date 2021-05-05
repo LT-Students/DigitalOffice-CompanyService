@@ -99,6 +99,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _accessValidatorMock.Reset();
             _validatorMock.Reset();
             _mapperMock.Reset();
+
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(true);
         }
 
         [Test]
@@ -119,10 +123,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenDepartmentRequestIsNull()
         {
-            _accessValidatorMock
-                .Setup(x => x.IsAdmin(null))
-                .Returns(true);
-
             _mapperMock
                 .Setup(x => x.Map(_request))
                 .Throws(new ArgumentNullException());
@@ -134,10 +134,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         [Test]
         public void ShouldAddNewDepartmentSuccessfully()
         {
-            _accessValidatorMock
-                .Setup(x => x.IsAdmin(null))
-                .Returns(true);
-
             _validatorMock
                 .Setup(x => x.Validate(It.IsAny<NewDepartmentRequest>()).IsValid)
                 .Returns(true);
