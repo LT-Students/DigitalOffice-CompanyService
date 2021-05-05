@@ -2,6 +2,8 @@
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -12,6 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
     {
         private IDisablePositionByIdCommand _command;
         private Mock<IPositionRepository> _repositoryMock;
+        private Mock<IAccessValidator> _accessValidatorMock;
 
         private Guid _positionId;
 
@@ -19,9 +22,36 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         public void SetUp()
         {
             _repositoryMock = new Mock<IPositionRepository>();
-            _command = new DisablePositionByIdCommand(_repositoryMock.Object);
+            _accessValidatorMock = new Mock<IAccessValidator>();
+
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(true);
+
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemovePositions))
+                .Returns(true);
+
+            _command = new DisablePositionByIdCommand(
+                _repositoryMock.Object,
+                _accessValidatorMock.Object);
 
             _positionId = Guid.NewGuid();
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenNotEnoughRights()
+        {
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemovePositions))
+                .Returns(false);
+
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(false);
+
+            Assert.Throws<ForbiddenException>(() => _command.Execute(_positionId));
+            _repositoryMock.Verify(repository => repository.DisablePosition(It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]
