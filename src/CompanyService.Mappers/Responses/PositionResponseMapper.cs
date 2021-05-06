@@ -20,6 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers
             {
                 Info = new PositionInfo
                 {
+                    Id = value.Id,
                     Name = value.Name,
                     Description = value.Description,
                     IsActive = value.IsActive
