@@ -65,6 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Responses
             {
                 Info = new PositionInfo
                 {
+                    Id = _expectedDbPosition.Id,
                     Name = _expectedDbPosition.Name,
                     Description = _expectedDbPosition.Description,
                     IsActive = _expectedDbPosition.IsActive
