@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             _accessValidator = accessValidator;
         }
 
-        public Guid Execute(NewDepartmentRequest request)
+        public Guid Execute(CreateDepartmentRequest request)
         {
             if (!(_accessValidator.IsAdmin() || _accessValidator.HasRights(Rights.AddEditRemoveDepartments)))
             {

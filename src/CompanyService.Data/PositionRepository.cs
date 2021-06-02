@@ -38,9 +38,9 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public DbPosition GetUserPosition(Guid userId)
         {
-            var dbCompanyUser = _provider.DepartmentsUsers
+            var dbCompanyUser = _provider.PositionUsers
                 .Include(u => u.Position)
-                .FirstOrDefault(du => du.UserId == userId);
+                .FirstOrDefault(pu => pu.UserId == userId);
 
             if (dbCompanyUser == null)
             {

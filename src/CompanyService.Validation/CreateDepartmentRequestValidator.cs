@@ -4,18 +4,14 @@ using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Validation
 {
-    public class NewDepartmentRequestValidator : AbstractValidator<NewDepartmentRequest>, INewDepartmentRequestValidator
+    public class CreateDepartmentRequestValidator : AbstractValidator<CreateDepartmentRequest>, INewDepartmentRequestValidator
     {
-        public NewDepartmentRequestValidator()
+        public CreateDepartmentRequestValidator()
         {
             When(request => request.Users != null, () =>
             {
-                RuleFor(request => request.Users)
-                    .NotEmpty()
-                    .ForEach(user =>
-                    {
-                        user.NotEmpty().SetValidator(new DepartmentUserInfoValidator());
-                    });
+                RuleForEach(request => request.Users)
+                    .NotEmpty();
             });
 
             RuleFor(request => request.Info)

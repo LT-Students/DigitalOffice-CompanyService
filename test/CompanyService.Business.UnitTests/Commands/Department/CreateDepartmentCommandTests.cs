@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         private Mock<INewDepartmentRequestValidator> _validatorMock;
         private Mock<IDbDepartmentMapper> _mapperMock;
 
-        private NewDepartmentRequest _request;
+        private CreateDepartmentRequest _request;
         private DbDepartment _dbDepartment;
 
         [OneTimeSetUp]
@@ -48,21 +48,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 DirectorUserId = Guid.NewGuid()
             };
 
-            var newUsers = new List<DepartmentUserInfo>
+            var newUsers = new List<Guid>
             {
-                new DepartmentUserInfo
-                {
-                    UserId = Guid.NewGuid(),
-                    PositionId = Guid.NewGuid()
-                },
-                new DepartmentUserInfo
-                {
-                    UserId = Guid.NewGuid(),
-                    PositionId = Guid.NewGuid()
-                }
+                Guid.NewGuid(),
+                Guid.NewGuid()
             };
 
-            _request = new NewDepartmentRequest
+            _request = new CreateDepartmentRequest
             {
                 Info = newDepartment,
                 Users = newUsers
@@ -77,14 +69,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 Users = new List<DbDepartmentUser>()
             };
 
-            foreach (var newUser in newUsers)
+            foreach (var userId in newUsers)
             {
                 _dbDepartment.Users.Add(
                     new DbDepartmentUser
                     {
                         Id = Guid.NewGuid(),
-                        UserId = newUser.UserId,
-                        PositionId = newUser.PositionId,
+                        UserId = userId,
                         DepartmentId = _dbDepartment.Id,
                         StartTime = DateTime.UtcNow,
                         IsActive = true
@@ -135,7 +126,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         public void ShouldAddNewDepartmentSuccessfully()
         {
             _validatorMock
-                .Setup(x => x.Validate(It.IsAny<NewDepartmentRequest>()).IsValid)
+                .Setup(x => x.Validate(It.IsAny<CreateDepartmentRequest>()).IsValid)
                 .Returns(true);
 
             _mapperMock

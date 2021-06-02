@@ -8,5 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
         public string GetUsersDataEndpoint { get; set; }
         public string GetDepartmentEndpoint { get; set; }
         public string FindDepartmentsEndpoint { get; set; }
+        public string ChangeUserDepartmentEndpoint { get; set; }
+        public string ChangeUserPositionEndpoint { get; set; }
     }
 }

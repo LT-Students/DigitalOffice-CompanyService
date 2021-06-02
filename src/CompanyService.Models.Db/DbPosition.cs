@@ -14,15 +14,14 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public string Description { get; set; }
         public bool IsActive { get; set; }
 
-        public ICollection<DbDepartmentUser> Users { get; set; }
-
+        public ICollection<DbPositionUser> Users { get; set; }
         public DbPosition()
         {
-            Users = new HashSet<DbDepartmentUser>();
+            Users = new HashSet<DbPositionUser>();
         }
     }
 
-    public class DbPositionUserConfiguration : IEntityTypeConfiguration<DbPosition>
+    public class DbPositionConfiguration : IEntityTypeConfiguration<DbPosition>
     {
         public void Configure(EntityTypeBuilder<DbPosition> builder)
         {

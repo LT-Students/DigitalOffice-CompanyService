@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         private Mock<IPositionRepository> _repositoryMock;
         private Mock<IPositionResponseMapper> _mapperMock;
 
-        private DbDepartmentUser _dbDepartmentUser;
+        private DbPositionUser _dbPositionUser;
         private DbPosition _position;
 
         private Guid _positionId;
@@ -37,10 +37,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _companyId = Guid.NewGuid();
             _userId = Guid.NewGuid();
             _positionId = Guid.NewGuid();
-            _dbDepartmentUser = new DbDepartmentUser
+            _dbPositionUser = new DbPositionUser
             {
+                Id = Guid.NewGuid(),
                 UserId = _userId,
-                DepartmentId = _companyId,
                 PositionId = _positionId,
                 IsActive = true,
                 StartTime = new DateTime()
@@ -50,14 +50,16 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 Id = _positionId,
                 Name = "Position",
                 Description = "Description",
-                Users = new List<DbDepartmentUser> { _dbDepartmentUser }
+                Users = new List<DbPositionUser> { _dbPositionUser }
             };
         }
 
         [Test]
         public void ShouldThrowExceptionIfRepositoryThrowsIt()
         {
-            _repositoryMock.Setup(x => x.GetPosition(It.IsAny<Guid>())).Throws(new Exception());
+            _repositoryMock
+                .Setup(x => x.GetPosition(It.IsAny<Guid>()))
+                .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_positionId));
             _repositoryMock.Verify(repository => repository.GetPosition(It.IsAny<Guid>()), Times.Once);
@@ -66,7 +68,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         [Test]
         public void ShouldThrowExceptionIfMapperThrowsIt()
         {
-            _mapperMock.Setup(x => x.Map(It.IsAny<DbPosition>())).Throws(new Exception());
+            _mapperMock
+                .Setup(x => x.Map(It.IsAny<DbPosition>()))
+                .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_positionId));
             _repositoryMock.Verify(repository => repository.GetPosition(It.IsAny<Guid>()), Times.Once);

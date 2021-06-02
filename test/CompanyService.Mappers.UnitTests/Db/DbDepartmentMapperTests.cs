@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
     {
         private IDbDepartmentMapper _mapper;
 
-        private NewDepartmentRequest _request;
+        private CreateDepartmentRequest _request;
         private BaseDepartmentInfo _newDepartment;
         private DbDepartment _expectedDbDepartment;
 
@@ -31,21 +31,13 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 DirectorUserId = Guid.NewGuid()
             };
 
-            var newUsers = new List<DepartmentUserInfo>
+            var newUsers = new List<Guid>
             {
-                new DepartmentUserInfo
-                {
-                    UserId = Guid.NewGuid(),
-                    PositionId = Guid.NewGuid()
-                },
-                new DepartmentUserInfo
-                {
-                    UserId = Guid.NewGuid(),
-                    PositionId = Guid.NewGuid()
-                }
+                Guid.NewGuid(),
+                Guid.NewGuid()
             };
 
-            _request = new NewDepartmentRequest
+            _request = new CreateDepartmentRequest
             {
                 Info = _newDepartment,
                 Users = newUsers
@@ -59,13 +51,12 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 DirectorUserId = _newDepartment.DirectorUserId
             };
 
-            foreach (var newUser in newUsers)
+            foreach (var userId in newUsers)
             {
                 _expectedDbDepartment.Users.Add(
                     new DbDepartmentUser
                     {
-                        UserId = newUser.UserId,
-                        PositionId = newUser.PositionId,
+                        UserId = userId,
                         IsActive = true
                     });
             }
@@ -74,7 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
-            NewDepartmentRequest request = null;
+            CreateDepartmentRequest request = null;
 
             Assert.Throws<ArgumentNullException>(() => _mapper.Map(request));
         }
@@ -82,7 +73,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         [Test]
         public void ShouldReturnDbDepartmentWithoutUserSuccessfully()
         {
-            var newDepartment = new NewDepartmentRequest
+            var newDepartment = new CreateDepartmentRequest
             {
                 Info = _newDepartment
             };
@@ -102,7 +93,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
 
             SerializerAssert.AreEqual(expectedDbDepartment, dbDepartment);
         }
-            [Test]
+
+        [Test]
         public void ShouldReturnDbDepartmentSuccessfully()
         {
             var dbDepartment = _mapper.Map(_request);

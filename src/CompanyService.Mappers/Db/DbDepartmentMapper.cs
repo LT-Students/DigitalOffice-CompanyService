@@ -1,6 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using System;
 using System.Linq;
@@ -9,7 +8,7 @@ namespace CompanyService.Mappers.Db
 {
     public class DbDepartmentMapper : IDbDepartmentMapper
     {
-        public DbDepartment Map(NewDepartmentRequest value)
+        public DbDepartment Map(CreateDepartmentRequest value)
         {
             if (value == null)
             {
@@ -32,14 +31,13 @@ namespace CompanyService.Mappers.Db
             return dbDepartment;
         }
 
-        private DbDepartmentUser GetDbDepartmentUser(Guid departmentId, DepartmentUserInfo user)
+        private DbDepartmentUser GetDbDepartmentUser(Guid departmentId, Guid userId)
         {
             return new DbDepartmentUser
             {
                 Id = Guid.NewGuid(),
                 DepartmentId = departmentId,
-                UserId = user.UserId,
-                PositionId = user.PositionId,
+                UserId = userId,
                 IsActive = true,
                 StartTime = DateTime.UtcNow
             };

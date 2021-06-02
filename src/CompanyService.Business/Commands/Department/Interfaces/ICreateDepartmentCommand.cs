@@ -17,6 +17,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department.Interface
         /// <param name="request">Department data.</param>
         /// <returns>Id of the added department.</returns>
         /// <exception cref="ValidationException">Thrown when department data is incorrect.</exception>
-        Guid Execute(NewDepartmentRequest request);
+        Guid Execute(CreateDepartmentRequest request);
     }
 }

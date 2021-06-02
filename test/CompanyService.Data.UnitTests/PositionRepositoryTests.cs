@@ -43,12 +43,11 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Description = "Description",
                 Name = "Name"
             };
-            _dbPosition.Users.Add(new DbDepartmentUser
+            _dbPosition.Users.Add(new DbPositionUser
             {
                 Id = Guid.NewGuid(),
                 PositionId = _positionId,
                 UserId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
                 IsActive = true,
                 StartTime = DateTime.Now.AddDays(-1)
             });
