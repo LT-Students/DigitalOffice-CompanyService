@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             if (positionId.HasValue)
             {
                 return _provider.Positions.FirstOrDefault(d => d.Id == positionId.Value)
-                    ?? throw new NotFoundException($"There are not position with id {positionId}");
+                    ?? throw new NotFoundException($"There is not position with id {positionId}");
             }
 
             if (userId.HasValue)
@@ -32,7 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 return _provider.Positions
                     .Include(d => d.Users.Where(du => du.UserId == userId.Value))
                     .FirstOrDefault()
-                    ?? throw new NotFoundException($"There is no position on which the user with id {userId} works");
+                    ?? throw new NotFoundException($"there is not position on which the user with id {userId} works");
             }
 
             throw new BadRequestException("You must specify 'positionId' or 'userId'.");
