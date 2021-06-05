@@ -135,6 +135,7 @@ namespace LT.DigitalOffice.CompanyService
             {
                 x.AddConsumer<GetUserPositionConsumer>();
                 x.AddConsumer<GetDepartmentConsumer>();
+                x.AddConsumer<GetUserDepartmentConsumer>();
                 x.AddConsumer<FindDepartmentsConsumer>();
                 x.AddConsumer<ChangeUserDepartmentConsumer>();
                 x.AddConsumer<ChangeUserPositionConsumer>();
@@ -168,6 +169,11 @@ namespace LT.DigitalOffice.CompanyService
             cfg.ReceiveEndpoint(_rabbitMqConfig.GetDepartmentEndpoint, ep =>
             {
                 ep.ConfigureConsumer<GetDepartmentConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.GetUserDepartmentEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetUserDepartmentConsumer>(context);
             });
 
             cfg.ReceiveEndpoint(_rabbitMqConfig.FindDepartmentsEndpoint, ep =>

@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         private ICreateDepartmentCommand _command;
         private Mock<IDepartmentRepository> _repositoryMock;
         private Mock<IAccessValidator> _accessValidatorMock;
-        private Mock<INewDepartmentRequestValidator> _validatorMock;
+        private Mock<ICreateDepartmentRequestValidator> _validatorMock;
         private Mock<IDbDepartmentMapper> _mapperMock;
 
         private CreateDepartmentRequest _request;
@@ -32,7 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         {
             _repositoryMock = new Mock<IDepartmentRepository>();
             _accessValidatorMock = new Mock<IAccessValidator>();
-            _validatorMock = new Mock<INewDepartmentRequestValidator>();
+            _validatorMock = new Mock<ICreateDepartmentRequestValidator>();
             _mapperMock = new Mock<IDbDepartmentMapper>();
 
             _command = new CreateDepartmentCommand(

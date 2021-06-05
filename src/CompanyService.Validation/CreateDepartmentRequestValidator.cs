@@ -4,7 +4,7 @@ using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Validation
 {
-    public class CreateDepartmentRequestValidator : AbstractValidator<CreateDepartmentRequest>, INewDepartmentRequestValidator
+    public class CreateDepartmentRequestValidator : AbstractValidator<CreateDepartmentRequest>, ICreateDepartmentRequestValidator
     {
         public CreateDepartmentRequestValidator()
         {

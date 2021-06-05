@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
 
         public DbSet<DbPosition> Positions { get; set; }
         public DbSet<DbDepartment> Departments { get; set; }
-        public DbSet<DbDepartmentUser> DepartmentsUsers { get; set; }
+        public DbSet<DbDepartmentUser> DepartmentUsers { get; set; }
         public DbSet<DbPositionUser> PositionUsers { get; set; }
 
         // Fluent API is written here.

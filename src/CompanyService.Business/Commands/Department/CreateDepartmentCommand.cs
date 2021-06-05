@@ -14,13 +14,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     public class CreateDepartmentCommand : ICreateDepartmentCommand
     {
         private readonly IDepartmentRepository _repository;
-        private readonly INewDepartmentRequestValidator _validator;
+        private readonly ICreateDepartmentRequestValidator _validator;
         private readonly IDbDepartmentMapper _mapper;
         private readonly IAccessValidator _accessValidator;
 
         public CreateDepartmentCommand(
             IDepartmentRepository repository,
-            INewDepartmentRequestValidator validator,
+            ICreateDepartmentRequestValidator validator,
             IDbDepartmentMapper mapper,
             IAccessValidator accessValidator)
         {

@@ -14,6 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object ChangeDepartment(IChangeUserDepartmentRequest request)
         {
+            _repository.Remove(request.UserId);
             bool isSuccess = _repository.Add(_mapper.Map(request.DepartmentId, request.UserId));
 
             return isSuccess;
