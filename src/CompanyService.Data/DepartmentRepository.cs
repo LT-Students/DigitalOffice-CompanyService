@@ -53,5 +53,16 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return _provider.Departments.Include(x => x.Users).ToList();
         }
+
+        public IEnumerable<Guid> FindUsers(Guid departmentId, int skipCount, int takeCount, out int totalCount)
+        {
+            var dbDepartmentUser = _provider.DepartmentsUsers.AsQueryable();
+
+            dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == departmentId);
+
+            totalCount = dbDepartmentUser.Count();
+
+            return dbDepartmentUser.Skip(skipCount * takeCount).Take(takeCount).Select(x => x.UserId).ToList();
+        }
     }
 }

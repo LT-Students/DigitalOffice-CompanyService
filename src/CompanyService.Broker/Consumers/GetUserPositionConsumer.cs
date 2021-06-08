@@ -1,13 +1,14 @@
-﻿using System.Threading.Tasks;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
+﻿using System;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Responses.Company;
 using MassTransit;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-    public class GetUserPositionConsumer : IConsumer<IGetUserPositionRequest>
+    public class GetUserPositionConsumer : IConsumer<IGetPositionRequest>
     {
         private readonly IPositionRepository _repository;
 
@@ -16,21 +17,18 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             _repository = repository;
         }
 
-        public async Task Consume(ConsumeContext<IGetUserPositionRequest> context)
+        public async Task Consume(ConsumeContext<IGetPositionRequest> context)
         {
             var response = OperationResultWrapper.CreateResponse(GetUserPosition, context.Message);
 
             await context.RespondAsync<IOperationResult<IUserPositionResponse>>(response);
         }
 
-        private object GetUserPosition(IGetUserPositionRequest request)
+        private object GetUserPosition(IGetPositionRequest request)
         {
-            var dbUserPosition = _repository.GetUserPosition(request.UserId);
+            var dbUserPosition = _repository.GetUserPosition((Guid)request.UserId);
 
-            return new
-            {
-                UserPositionName = dbUserPosition.Name
-            };
+            return IUserPositionResponse.CreateObj(dbUserPosition.Name);
         }
     }
 }

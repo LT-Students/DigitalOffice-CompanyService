@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Responses.Company;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
 using MassTransit.Testing;
@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private InMemoryTestHarness harness;
         private Mock<IPositionRepository> repository;
 
-        private IRequestClient<IGetUserPositionRequest> requestClient;
+        private IRequestClient<IGetPositionRequest> requestClient;
 
         [SetUp]
         public void SetUp()
@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             try
             {
-                requestClient = await harness.ConnectRequestClient<IGetUserPositionRequest>();
+                requestClient = await harness.ConnectRequestClient<IGetPositionRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<IUserPositionResponse>>(new
                 {
@@ -81,7 +81,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             try
             {
-                requestClient = await harness.ConnectRequestClient<IGetUserPositionRequest>();
+                requestClient = await harness.ConnectRequestClient<IGetPositionRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<IUserPositionResponse>>(new
                 {

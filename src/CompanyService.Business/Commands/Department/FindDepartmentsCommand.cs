@@ -1,12 +1,12 @@
-﻿using LT.DigitalOffice.Broker.Models;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
-using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Models.Broker.Models;
+using LT.DigitalOffice.Models.Broker.Requests.User;
+using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using System;

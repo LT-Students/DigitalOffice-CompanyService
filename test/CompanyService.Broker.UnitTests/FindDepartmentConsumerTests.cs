@@ -1,9 +1,9 @@
-﻿using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
-using LT.DigitalOffice.CompanyService.Broker.Consumers;
+﻿using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Responses.Company;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
 using MassTransit.Testing;
