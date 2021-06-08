@@ -19,16 +19,23 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider = provider;
         }
 
-        public DbPosition GetPosition(Guid positionId)
+        public DbPosition GetPosition(Guid? positionId, Guid? userId)
         {
-            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId);
-
-            if (dbPosition == null)
+            if (positionId.HasValue)
             {
-                throw new NotFoundException($"Position with this id: '{positionId}' was not found.");
+                return _provider.Positions.FirstOrDefault(d => d.Id == positionId.Value)
+                    ?? throw new NotFoundException($"There is not position with id {positionId}");
             }
 
-            return dbPosition;
+            if (userId.HasValue)
+            {
+                return _provider.Positions
+                    .Include(d => d.Users.Where(du => du.UserId == userId.Value))
+                    .FirstOrDefault()
+                    ?? throw new NotFoundException($"there is not position on which the user with id {userId} works");
+            }
+
+            throw new BadRequestException("You must specify 'positionId' or 'userId'.");
         }
 
         public List<DbPosition> FindPositions()

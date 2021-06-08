@@ -4,9 +4,19 @@ using System;
 
 namespace LT.DigitalOffice.Broker.Requests
 {
-    [AutoInjectRequest(nameof(RabbitMqConfig.GetUserPositionEndpoint))]
-    public interface IGetUserPositionRequest
+    [AutoInjectRequest(nameof(RabbitMqConfig.GetPositionEndpoint))]
+    public interface IGetPositionRequest
     {
-        Guid UserId { get; }
+        Guid? UserId { get; }
+        Guid? PositionId { get; set; }
+
+        static object CreateObj(Guid? userId, Guid? positionId)
+        {
+            return new
+            {
+                UserId = userId,
+                PositionId = positionId
+            };
+        }
     }
 }

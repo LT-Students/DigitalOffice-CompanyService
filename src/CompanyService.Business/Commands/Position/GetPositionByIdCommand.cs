@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
         public PositionResponse Execute(Guid positionId)
         {
-            var dbPosition = _repository.GetPosition(positionId);
+            var dbPosition = _repository.GetPosition(positionId, null);
             return _mapper.Map(dbPosition);
         }
     }
