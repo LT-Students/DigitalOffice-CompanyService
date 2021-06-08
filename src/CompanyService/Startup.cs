@@ -133,7 +133,7 @@ namespace LT.DigitalOffice.CompanyService
         {
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<GetUserPositionConsumer>();
+                x.AddConsumer<GetPositionConsumer>();
                 x.AddConsumer<GetDepartmentConsumer>();
                 x.AddConsumer<FindDepartmentsConsumer>();
 
@@ -158,9 +158,9 @@ namespace LT.DigitalOffice.CompanyService
             IBusRegistrationContext context,
             IRabbitMqBusFactoryConfigurator cfg)
         {
-            cfg.ReceiveEndpoint(_rabbitMqConfig.GetUserPositionEndpoint, ep =>
+            cfg.ReceiveEndpoint(_rabbitMqConfig.GetPositionEndpoint, ep =>
             {
-                ep.ConfigureConsumer<GetUserPositionConsumer>(context);
+                ep.ConfigureConsumer<GetPositionConsumer>(context);
             });
 
             cfg.ReceiveEndpoint(_rabbitMqConfig.GetDepartmentEndpoint, ep =>

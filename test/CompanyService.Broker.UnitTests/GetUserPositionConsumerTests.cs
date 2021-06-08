@@ -18,12 +18,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
     internal class GetUserPositionConsumerTests
     {
         private readonly string userPositionName = "Software Engineer";
-        private ConsumerTestHarness<GetUserPositionConsumer> consumerHarness;
+        private ConsumerTestHarness<GetPositionConsumer> consumerHarness;
 
         private InMemoryTestHarness harness;
         private Mock<IPositionRepository> repository;
 
-        private IRequestClient<IGetUserPositionRequest> requestClient;
+        private IRequestClient<IGetPositionRequest> requestClient;
 
         [SetUp]
         public void SetUp()
@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             repository = new Mock<IPositionRepository>();
 
             harness = new InMemoryTestHarness();
-            consumerHarness = harness.Consumer(() => new GetUserPositionConsumer(repository.Object));
+            consumerHarness = harness.Consumer(() => new GetPositionConsumer(repository.Object));
         }
 
         [Test]
@@ -40,12 +40,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.GetUserPosition(It.IsAny<Guid>()))
+                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
                 .Returns(new DbPosition {Name = userPositionName});
 
             try
             {
-                requestClient = await harness.ConnectRequestClient<IGetUserPositionRequest>();
+                requestClient = await harness.ConnectRequestClient<IGetPositionRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<IUserPositionResponse>>(new
                 {
@@ -76,12 +76,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.GetUserPosition(It.IsAny<Guid>()))
+                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
                 .Throws(new Exception("Position not found."));
 
             try
             {
-                requestClient = await harness.ConnectRequestClient<IGetUserPositionRequest>();
+                requestClient = await harness.ConnectRequestClient<IGetPositionRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<IUserPositionResponse>>(new
                 {

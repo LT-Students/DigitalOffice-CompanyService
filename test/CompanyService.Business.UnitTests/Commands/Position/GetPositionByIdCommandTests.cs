@@ -57,10 +57,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         [Test]
         public void ShouldThrowExceptionIfRepositoryThrowsIt()
         {
-            _repositoryMock.Setup(x => x.GetPosition(It.IsAny<Guid>())).Throws(new Exception());
+            _repositoryMock.Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>())).Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_positionId));
-            _repositoryMock.Verify(repository => repository.GetPosition(It.IsAny<Guid>()), Times.Once);
+            _repositoryMock.Verify(repository => repository.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()), Times.Once);
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _mapperMock.Setup(x => x.Map(It.IsAny<DbPosition>())).Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_positionId));
-            _repositoryMock.Verify(repository => repository.GetPosition(It.IsAny<Guid>()), Times.Once);
+            _repositoryMock.Verify(repository => repository.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()), Times.Once);
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             };
 
             _repositoryMock
-                .Setup(x => x.GetPosition(It.IsAny<Guid>()))
+                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
                 .Returns(_position);
             _mapperMock
                 .Setup(x => x.Map(It.IsAny<DbPosition>()))
