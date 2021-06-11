@@ -109,6 +109,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     IChangeUserDepartmentRequest.CreateObj(userId, departmentId));
 
                 Assert.IsFalse(response.Message.IsSuccess);
+                Assert.IsFalse(response.Message.Body);
                 Assert.IsNotEmpty(response.Message.Errors);
             }
             finally

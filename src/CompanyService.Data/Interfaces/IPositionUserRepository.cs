@@ -7,8 +7,10 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     [AutoInject]
     public interface IPositionUserRepository
     {
-        public bool Add(DbPositionUser positionUser);
-        public DbPositionUser Get(Guid userId, bool includePosition);
-        public void Remove(Guid userId);
+        bool Add(DbPositionUser positionUser);
+
+        DbPositionUser Get(Guid userId, bool includePosition);
+        
+        void Remove(Guid userId);
     }
 }

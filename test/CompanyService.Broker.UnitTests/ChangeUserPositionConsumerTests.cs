@@ -110,6 +110,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     IChangeUserPositionRequest.CreateObj(userId, positionId));
 
                 Assert.IsFalse(response.Message.IsSuccess);
+                Assert.IsFalse(response.Message.Body);
                 Assert.IsNotEmpty(response.Message.Errors);
             }
             finally

@@ -43,20 +43,6 @@ namespace LT.DigitalOffice.CompanyService.Data
             return _provider.Positions.ToList();
         }
 
-        public DbPosition GetUserPosition(Guid userId)
-        {
-            var dbCompanyUser = _provider.PositionUsers
-                .Include(u => u.Position)
-                .FirstOrDefault(pu => pu.UserId == userId);
-
-            if (dbCompanyUser == null)
-            {
-                throw new NotFoundException($"User with id: '{userId}' was not found.");
-            }
-
-            return _provider.Positions.Find(dbCompanyUser.PositionId);
-        }
-
         public void DisablePosition(Guid positionId)
         {
             var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId);
