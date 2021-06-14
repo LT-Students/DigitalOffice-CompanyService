@@ -10,17 +10,17 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
     public class FindDepartmentUsersConsumer : IConsumer<IGetDepartmentUsersRequest>
     {
-        private readonly IDepartmentRepository _repository;
+        private readonly IDepartmentUserRepository _repository;
 
         private object FindUsers(IGetDepartmentUsersRequest request)
         {
-            var userIds = _repository.FindUsers(request.DepartmentId, request.SkipCount, request.TakeCount, out int totalCount).ToList();
+            var userIds = _repository.Find(request.DepartmentId, request.SkipCount, request.TakeCount, out int totalCount).ToList();
 
             return IGetDepartmentUsersResponse.CreateObj(userIds, totalCount);
         }
 
         public FindDepartmentUsersConsumer(
-           IDepartmentRepository repository)
+           IDepartmentUserRepository repository)
         {
             _repository = repository;
         }

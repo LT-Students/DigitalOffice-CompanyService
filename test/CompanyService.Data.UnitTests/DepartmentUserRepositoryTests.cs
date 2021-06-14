@@ -19,7 +19,8 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         private IDataProvider _provider;
         private IDepartmentUserRepository _repository;
 
-        private DbDepartmentUser _userToAdd;
+        private Guid _departmentId;
+        private List<DbDepartmentUser> _usersToAdd;
         private DbDepartmentUser _expectedDbDepartmentUser;
         private DbContextOptions<CompanyServiceDbContext> _dbOptions;
 
@@ -28,13 +29,25 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         {
             CreateInMemoryDb();
 
-            _userToAdd = new DbDepartmentUser
+            _departmentId = Guid.NewGuid();
+            _usersToAdd = new List<DbDepartmentUser>
             {
-                Id = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                StartTime = DateTime.UtcNow,
-                IsActive = true
+                new DbDepartmentUser
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.NewGuid(),
+                    DepartmentId = _departmentId,
+                    StartTime = DateTime.UtcNow,
+                    IsActive = true
+                },
+                new DbDepartmentUser
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.NewGuid(),
+                    DepartmentId = _departmentId,
+                    StartTime = DateTime.UtcNow,
+                    IsActive = true
+                }
             };
 
             _expectedDbDepartmentUser = new DbDepartmentUser
@@ -76,8 +89,8 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldAddUserSuccessful()
         {
-            Assert.IsTrue(_repository.Add(_userToAdd));
-            Assert.IsTrue(_provider.DepartmentUsers.Contains(_userToAdd));
+            Assert.IsTrue(_repository.Add(_usersToAdd[0]));
+            Assert.IsTrue(_provider.DepartmentUsers.Contains(_usersToAdd[0]));
         }
 
         [Test]
@@ -104,6 +117,23 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             _repository.Remove(_expectedDbDepartmentUser.UserId);
             Assert.IsTrue(_provider.DepartmentUsers.Contains(_expectedDbDepartmentUser));
             Assert.IsFalse(_expectedDbDepartmentUser.IsActive);
+        }
+
+        [Test]
+        public void ShouldFindUserIdsByDepartmentId()
+        {
+            int totalCount;
+            var userIds = new List<Guid>
+            {
+                _usersToAdd[0].UserId,
+                _usersToAdd[1].UserId
+            };
+
+            _provider.DepartmentUsers.AddRange(_usersToAdd);
+            _provider.Save();
+
+            SerializerAssert.AreEqual(userIds, _repository.Find(_departmentId, skipCount: 0, takeCount: userIds.Count(), out totalCount));
+            Assert.AreEqual(userIds.Count, totalCount);
         }
     }
 }

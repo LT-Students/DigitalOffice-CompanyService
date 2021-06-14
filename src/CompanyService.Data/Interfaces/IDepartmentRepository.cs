@@ -29,7 +29,5 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <returns>Found departments.</returns>
         List<DbDepartment> FindDepartments();
-
-        IEnumerable<Guid> FindUsers(Guid departmentId, int skipCount, int takeCount, out int totalCount);
     }
 }

@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private Guid _departmentId;
         private List<Guid> _userIds;
 
-        private Mock<IDepartmentRepository> _repository;
+        private Mock<IDepartmentUserRepository> _repository;
 
         [SetUp]
         public void SetUp()
@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             _departmentId = Guid.NewGuid();
             _userIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
-            _repository = new Mock<IDepartmentRepository>();
+            _repository = new Mock<IDepartmentUserRepository>();
 
             _harness = new InMemoryTestHarness();
             _consumerTestHarness = _harness.Consumer(() =>
@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             int totalCount = takeCount;
 
             _repository
-                .Setup(x => x.FindUsers(_departmentId, skipCount, takeCount, out totalCount))
+                .Setup(x => x.Find(_departmentId, skipCount, takeCount, out totalCount))
                 .Returns(_userIds);
 
             await _harness.Start();
@@ -70,7 +70,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 SerializerAssert.AreEqual(expectedResult, response.Message);
                 Assert.True(_consumerTestHarness.Consumed.Select<IGetDepartmentUsersRequest>().Any());
                 Assert.True(_harness.Sent.Select<IOperationResult<IGetDepartmentUsersResponse>>().Any());
-                _repository.Verify(x => x.FindUsers(_departmentId, skipCount, takeCount, out totalCount), Times.Once);
+                _repository.Verify(x => x.Find(_departmentId, skipCount, takeCount, out totalCount), Times.Once);
             }
             finally
             {

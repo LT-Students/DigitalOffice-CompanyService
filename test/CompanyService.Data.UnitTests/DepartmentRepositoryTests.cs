@@ -39,12 +39,6 @@ namespace CompanyService.Data.UnitTests
                         UserId  = Guid.NewGuid(),
                         IsActive = true,
                         StartTime = DateTime.UtcNow
-                    },
-                    new DbDepartmentUser
-                    {
-                        UserId  = Guid.NewGuid(),
-                        IsActive = true,
-                        StartTime = DateTime.UtcNow
                     }
                 }
             };
@@ -144,27 +138,6 @@ namespace CompanyService.Data.UnitTests
 
             SerializerAssert.AreEqual(_expectedDbDepartment, dbDepartment);
 
-        }
-
-        #endregion
-
-        #region FindUsers
-
-        [Test]
-        public void ShouldFindUserIdsByDepartmentId()
-        {
-            int totalCount;
-            var userIds = new List<Guid>
-            {
-                _departmentToAdd.Users.ElementAt(0).UserId,
-                _departmentToAdd.Users.ElementAt(1).UserId
-            };
-
-            _provider.Departments.Add(_departmentToAdd);
-            _provider.Save();
-
-            SerializerAssert.AreEqual(userIds, _repository.FindUsers(_departmentToAdd.Id, skipCount: 0, takeCount: userIds.Count(), out totalCount));
-            Assert.AreEqual(userIds.Count, totalCount);
         }
 
         #endregion

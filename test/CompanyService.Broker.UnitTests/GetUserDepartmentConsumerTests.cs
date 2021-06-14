@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
-using LT.DigitalOffice.CompanyService.Broker.Consumers;
+﻿using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Responses.Company;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
 using MassTransit.Testing;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 {
@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private InMemoryTestHarness _harness;
         private Mock<IDepartmentUserRepository> _repository;
 
-        private IRequestClient<IGetUserDepartmentRequest> _requestClient;
+        private IRequestClient<IGetDepartmentUserRequest> _requestClient;
 
         [SetUp]
         public void SetUp()
@@ -59,19 +59,24 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             try
             {
-                _requestClient = await _harness.ConnectRequestClient<IGetUserDepartmentRequest>();
+                _requestClient = await _harness.ConnectRequestClient<IGetDepartmentUserRequest>();
 
-                var response = await _requestClient.GetResponse<IOperationResult<IGetUserDepartmentResponse>>(
-                    IGetUserDepartmentRequest.CreateObj(userId));
+                var response = await _requestClient.GetResponse<IOperationResult<IGetDepartmentUserResponse>>(
+                    IGetDepartmentUserRequest.CreateObj(userId));
 
                 var expectedResponse = new
                 {
                     IsSuccess = true,
                     Errors = null as List<string>,
-                    Body = IGetUserDepartmentResponse.CreateObj(departmentId, user.Department.Name, user.StartTime)
+                    Body = new
+                    {
+                        DepartmentId = user.Department.Id,
+                        Name = user.Department.Name,
+                        StartWorkingAt = user.StartTime
+                    }
                 };
 
-                SerializerAssert.AreEqual(expectedResponse, response.Message);
+                SerializerAssert.AreEqual(expectedResponse.Body, response.Message.Body);
             }
             finally
             {
@@ -93,10 +98,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             try
             {
-                _requestClient = await _harness.ConnectRequestClient<IGetUserDepartmentRequest>();
+                _requestClient = await _harness.ConnectRequestClient<IGetDepartmentUserRequest>();
 
-                var response = await _requestClient.GetResponse<IOperationResult<IGetUserDepartmentResponse>>(
-                    IGetUserDepartmentRequest.CreateObj(userId));
+                var response = await _requestClient.GetResponse<IOperationResult<IGetDepartmentUserResponse>>(
+                    IGetDepartmentUserRequest.CreateObj(userId));
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsNotEmpty(response.Message.Errors);
