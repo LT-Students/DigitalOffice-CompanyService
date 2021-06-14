@@ -1,15 +1,11 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Db;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
 {

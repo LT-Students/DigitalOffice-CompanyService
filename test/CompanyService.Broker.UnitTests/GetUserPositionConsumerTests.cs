@@ -55,7 +55,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 var expectedResponse = new
                 {
                     IsSuccess = true,
-                    Errors = null as List,
+                    Errors = null as List<string>,
                     Body = new
                     {
                         UserPositionName = userPositionName

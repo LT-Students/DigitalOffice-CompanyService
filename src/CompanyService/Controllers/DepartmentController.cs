@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         [HttpPost("create")]
         public Guid Create(
             [FromServices] ICreateDepartmentCommand command,
-            [FromBody] NewDepartmentRequest department)
+            [FromBody] CreateDepartmentRequest department)
         {
             return command.Execute(department);
         }

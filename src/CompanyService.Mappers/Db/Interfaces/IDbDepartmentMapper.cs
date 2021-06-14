@@ -11,6 +11,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
     [AutoInject]
     public interface IDbDepartmentMapper
     {
-        DbDepartment Map(NewDepartmentRequest newDepartmentRequest);
+        DbDepartment Map(CreateDepartmentRequest newDepartmentRequest);
     }
 }
