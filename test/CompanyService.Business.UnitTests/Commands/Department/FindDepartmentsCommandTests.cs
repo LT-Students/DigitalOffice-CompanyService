@@ -1,7 +1,4 @@
-﻿using LT.DigitalOffice.Broker.Models;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
-using LT.DigitalOffice.CompanyService.Business.Commands.Department;
+﻿using LT.DigitalOffice.CompanyService.Business.Commands.Department;
 using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
@@ -16,6 +13,9 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LT.DigitalOffice.Models.Broker.Requests.User;
+using LT.DigitalOffice.Models.Broker.Responses.User;
+using LT.DigitalOffice.Models.Broker.Models;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 {
@@ -72,23 +72,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns(_dbDepartments)
                 .Verifiable();
 
-            _directorData = new UserData
-            {
-                Id = _directorGuid,
-                IsActive = true,
-                FirstName = "Spartak",
-                LastName = "Ryabtsev",
-                MiddleName = "Alexandrovich"
-            };
+            _directorData = new UserData(_directorGuid, "Ivan", "Ivanovich", "Ivanov", true);
 
-            _workerData = new UserData
-            {
-                Id = _workerGuid,
-                IsActive = true,
-                FirstName = "Alexandr",
-                LastName = "Ryabtsev",
-                MiddleName = "Spartakovich"
-            };
+            _workerData = new UserData(_workerGuid, "Arsen", "Arsenovich", "Ivanov", true);
 
             BrokerSetUp();
 

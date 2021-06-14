@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         bool Add(DbPositionUser positionUser);
 
         DbPositionUser Get(Guid userId, bool includePosition);
-        
+
         void Remove(Guid userId);
     }
 }

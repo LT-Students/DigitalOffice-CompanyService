@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -50,6 +51,17 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             return user;
+        }
+
+        public IEnumerable<Guid> Find(Guid departmentId, int skipCount, int takeCount, out int totalCount)
+        {
+            var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
+
+            dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == departmentId);
+
+            totalCount = dbDepartmentUser.Count();
+
+            return dbDepartmentUser.Skip(skipCount * takeCount).Take(takeCount).Select(x => x.UserId).ToList();
         }
 
         public void Remove(Guid userId)

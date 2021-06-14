@@ -1,10 +1,10 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
-using LT.DigitalOffice.Broker.Models;
 using NUnit.Framework;
 using System;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models;
+using LT.DigitalOffice.Models.Broker.Models;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
 {
@@ -20,14 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         {
             _mapper = new UserInfoMapper();
 
-            _userData = new UserData()
-            {
-                Id = Guid.NewGuid(),
-                FirstName = "Spartak",
-                LastName = "Ryabtsev",
-                MiddleName = "Alexandrovich",
-                IsActive = true
-            };
+            _userData = new UserData(Guid.NewGuid(), "Ivan", "Ivanovich", "Ivanov", true);
 
             _expectedUser = new UserInfo
             {
