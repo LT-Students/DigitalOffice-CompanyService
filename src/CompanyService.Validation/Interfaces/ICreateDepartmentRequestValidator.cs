@@ -5,7 +5,7 @@ using LT.DigitalOffice.Kernel.Attributes;
 namespace LT.DigitalOffice.CompanyService.Validation.Interfaces
 {
     [AutoInject]
-    public interface INewDepartmentRequestValidator : IValidator<NewDepartmentRequest>
+    public interface ICreateDepartmentRequestValidator : IValidator<CreateDepartmentRequest>
     {
     }
 }

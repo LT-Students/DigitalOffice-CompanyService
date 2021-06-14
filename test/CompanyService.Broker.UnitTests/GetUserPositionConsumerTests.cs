@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
     internal class GetUserPositionConsumerTests
     {
         private readonly string userPositionName = "Software Engineer";
-        private ConsumerTestHarness<GetUserPositionConsumer> consumerHarness;
+        private ConsumerTestHarness<GetPositionConsumer> consumerHarness;
 
         private InMemoryTestHarness harness;
         private Mock<IPositionRepository> repository;
@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             repository = new Mock<IPositionRepository>();
 
             harness = new InMemoryTestHarness();
-            consumerHarness = harness.Consumer(() => new GetUserPositionConsumer(repository.Object));
+            consumerHarness = harness.Consumer(() => new GetPositionConsumer(repository.Object));
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.GetUserPosition(It.IsAny<Guid>()))
+                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
                 .Returns(new DbPosition {Name = userPositionName});
 
             try
@@ -55,7 +55,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 var expectedResponse = new
                 {
                     IsSuccess = true,
-                    Errors = null as List,
+                    Errors = null as List<string>,
                     Body = new
                     {
                         UserPositionName = userPositionName
@@ -76,7 +76,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.GetUserPosition(It.IsAny<Guid>()))
+                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
                 .Throws(new Exception("Position not found."));
 
             try

@@ -14,13 +14,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     public class CreateDepartmentCommand : ICreateDepartmentCommand
     {
         private readonly IDepartmentRepository _repository;
-        private readonly INewDepartmentRequestValidator _validator;
+        private readonly ICreateDepartmentRequestValidator _validator;
         private readonly IDbDepartmentMapper _mapper;
         private readonly IAccessValidator _accessValidator;
 
         public CreateDepartmentCommand(
             IDepartmentRepository repository,
-            INewDepartmentRequestValidator validator,
+            ICreateDepartmentRequestValidator validator,
             IDbDepartmentMapper mapper,
             IAccessValidator accessValidator)
         {
@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             _accessValidator = accessValidator;
         }
 
-        public Guid Execute(NewDepartmentRequest request)
+        public Guid Execute(CreateDepartmentRequest request)
         {
             if (!(_accessValidator.IsAdmin() || _accessValidator.HasRights(Rights.AddEditRemoveDepartments)))
             {

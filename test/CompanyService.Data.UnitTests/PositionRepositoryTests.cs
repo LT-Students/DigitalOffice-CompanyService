@@ -43,12 +43,11 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Description = "Description",
                 Name = "Name"
             };
-            _dbPosition.Users.Add(new DbDepartmentUser
+            _dbPosition.Users.Add(new DbPositionUser
             {
                 Id = Guid.NewGuid(),
                 PositionId = _positionId,
                 UserId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
                 IsActive = true,
                 StartTime = DateTime.Now.AddDays(-1)
             });
@@ -77,13 +76,13 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExist()
         {
-            Assert.Throws<NotFoundException>(() => _repository.GetPosition(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => _repository.GetPosition(Guid.NewGuid(), null));
         }
 
         [Test]
         public void ShouldReturnSimplePositionInfoSuccessfully()
         {
-            var result = _repository.GetPosition(_dbPosition.Id);
+            var result = _repository.GetPosition(_dbPosition.Id, null);
 
             var expected = new DbPosition
             {
@@ -107,18 +106,13 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         #endregion
 
         #region GetUserPosition
-        [Test]
-        public void ShouldThrowExceptionWhenUserIdEmpty()
-        {
-            Assert.Throws<NotFoundException>(() => _repository.GetUserPosition(Guid.Empty));
-        }
 
         [Test]
         public void ShouldReturnUserPosition()
         {
             var userId = _dbPosition.Users.First().UserId;
 
-            var result = _repository.GetUserPosition(userId);
+            var result = _repository.GetPosition(null, userId);
 
             Assert.AreEqual(_dbPosition.Id, result.Id);
             Assert.AreEqual(_dbPosition.Description, result.Description);

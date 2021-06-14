@@ -31,8 +31,6 @@ namespace LT.DigitalOffice.CompanyService.Data
         /// <inheritdoc />
         public DbDepartment GetDepartment(Guid? departmentId, Guid? userId)
         {
-            DbDepartment result = null;
-
             if (departmentId.HasValue)
             {
                 return _provider.Departments.FirstOrDefault(d => d.Id == departmentId.Value);
