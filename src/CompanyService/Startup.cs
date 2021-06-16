@@ -140,6 +140,7 @@ namespace LT.DigitalOffice.CompanyService
                 x.AddConsumer<ChangeUserDepartmentConsumer>();
                 x.AddConsumer<ChangeUserPositionConsumer>();
                 x.AddConsumer<FindDepartmentUsersConsumer>();
+                x.AddConsumer<SearchDepartmentsConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -195,6 +196,11 @@ namespace LT.DigitalOffice.CompanyService
             cfg.ReceiveEndpoint(_rabbitMqConfig.ChangeUserPositionEndpoint, ep =>
             {
                 ep.ConfigureConsumer<ChangeUserPositionConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.SearchDepartmentEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<SearchDepartmentsConsumer>(context);
             });
         }
 
