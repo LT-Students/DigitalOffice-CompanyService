@@ -75,10 +75,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             try
             {
-                var requestClient = await _harness.ConnectRequestClient<ISearchDepartmentsRequests>();
+                var requestClient = await _harness.ConnectRequestClient<ISearchDepartmentsRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<ISearchResponse>>(
-                    ISearchDepartmentsRequests.CreateObj(ExistName), default, default);
+                    ISearchDepartmentsRequest.CreateObj(ExistName), default, default);
 
                 var expectedResult = new
                 {
@@ -91,7 +91,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 };
 
                 SerializerAssert.AreEqual(expectedResult, response.Message);
-                Assert.True(_consumerTestHarness.Consumed.Select<ISearchDepartmentsRequests>().Any());
+                Assert.True(_consumerTestHarness.Consumed.Select<ISearchDepartmentsRequest>().Any());
                 Assert.True(_harness.Sent.Select<IOperationResult<ISearchResponse>>().Any());
                 _repository.Verify(x => x.Search(ExistName), Times.Once);
             }
@@ -112,10 +112,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             try
             {
-                var requestClient = await _harness.ConnectRequestClient<ISearchDepartmentsRequests>();
+                var requestClient = await _harness.ConnectRequestClient<ISearchDepartmentsRequest>();
 
                 var response = await requestClient.GetResponse<IOperationResult<ISearchResponse>>(
-                    ISearchDepartmentsRequests.CreateObj(ExistName), default, default);
+                    ISearchDepartmentsRequest.CreateObj(ExistName), default, default);
 
                 var expectedResult = new
                 {
@@ -125,7 +125,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsNotEmpty(response.Message.Errors);
-                Assert.True(_consumerTestHarness.Consumed.Select<ISearchDepartmentsRequests>().Any());
+                Assert.True(_consumerTestHarness.Consumed.Select<ISearchDepartmentsRequest>().Any());
                 Assert.True(_harness.Sent.Select<IOperationResult<ISearchResponse>>().Any());
                 _repository.Verify(x => x.Search(ExistName), Times.Once);
             }

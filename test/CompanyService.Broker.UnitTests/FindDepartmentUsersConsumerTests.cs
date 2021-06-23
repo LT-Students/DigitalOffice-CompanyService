@@ -53,23 +53,23 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             try
             {
-                var requestClient = await _harness.ConnectRequestClient<IGetDepartmentUsersRequest>();
+                var requestClient = await _harness.ConnectRequestClient<IFindDepartmentUsersRequest>();
 
-                var response = await requestClient.GetResponse<IOperationResult<IGetDepartmentUsersResponse>>(
-                    IGetDepartmentUsersRequest.CreateObj(_departmentId, skipCount, takeCount), default, default);
+                var response = await requestClient.GetResponse<IOperationResult<IFindDepartmentUsersResponse>>(
+                    IFindDepartmentUsersRequest.CreateObj(_departmentId, skipCount, takeCount), default, default);
 
                 var expectedResult = new
                 {
                     IsSuccess = true,
                     Errors = null as List<string>,
-                    Body = IGetDepartmentUsersResponse.CreateObj(_userIds, totalCount)
+                    Body = IFindDepartmentUsersResponse.CreateObj(_userIds, totalCount)
                 };
 
                 Assert.True(response.Message.IsSuccess);
                 Assert.AreEqual(null, response.Message.Errors);
                 SerializerAssert.AreEqual(expectedResult, response.Message);
-                Assert.True(_consumerTestHarness.Consumed.Select<IGetDepartmentUsersRequest>().Any());
-                Assert.True(_harness.Sent.Select<IOperationResult<IGetDepartmentUsersResponse>>().Any());
+                Assert.True(_consumerTestHarness.Consumed.Select<IFindDepartmentUsersRequest>().Any());
+                Assert.True(_harness.Sent.Select<IOperationResult<IFindDepartmentUsersResponse>>().Any());
                 _repository.Verify(x => x.Find(_departmentId, skipCount, takeCount, out totalCount), Times.Once);
             }
             finally

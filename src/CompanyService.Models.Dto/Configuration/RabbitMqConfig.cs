@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
         [AutoInjectRequest(typeof(IGetUsersDataRequest))]
         public string GetPositionEndpoint { get; set; }
 
-        [AutoInjectRequest(typeof(ISearchDepartmentsRequests))]
+        [AutoInjectRequest(typeof(ISearchDepartmentsRequest))]
         public string SearchDepartmentEndpoint { get; set; }
     }
 }

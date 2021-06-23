@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-    public class SearchDepartmentsConsumer : IConsumer<ISearchDepartmentsRequests>
+    public class SearchDepartmentsConsumer : IConsumer<ISearchDepartmentsRequest>
     {
         private IDepartmentRepository _repository;
 
@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             _repository = repository;
         }
 
-        public async Task Consume(ConsumeContext<ISearchDepartmentsRequests> context)
+        public async Task Consume(ConsumeContext<ISearchDepartmentsRequest> context)
         {
             var response = OperationResultWrapper.CreateResponse(SearchDepartment, context.Message.Value);
 

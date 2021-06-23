@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-    public class FindDepartmentUsersConsumer : IConsumer<IGetDepartmentUsersRequest>
+    public class FindDepartmentUsersConsumer : IConsumer<IFindDepartmentUsersRequest>
     {
         private readonly IDepartmentUserRepository _repository;
 
-        private object FindUsers(IGetDepartmentUsersRequest request)
+        private object FindUsers(IFindDepartmentUsersRequest request)
         {
             var userIds = _repository.Find(request.DepartmentId, request.SkipCount, request.TakeCount, out int totalCount).ToList();
 
-            return IGetDepartmentUsersResponse.CreateObj(userIds, totalCount);
+            return IFindDepartmentUsersResponse.CreateObj(userIds, totalCount);
         }
 
         public FindDepartmentUsersConsumer(
@@ -25,11 +25,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             _repository = repository;
         }
 
-        public async Task Consume(ConsumeContext<IGetDepartmentUsersRequest> context)
+        public async Task Consume(ConsumeContext<IFindDepartmentUsersRequest> context)
         {
             var departmentId = OperationResultWrapper.CreateResponse(FindUsers, context.Message);
 
-            await context.RespondAsync<IOperationResult<IGetDepartmentUsersResponse>>(departmentId);
+            await context.RespondAsync<IOperationResult<IFindDepartmentUsersResponse>>(departmentId);
         }
     }
 }
