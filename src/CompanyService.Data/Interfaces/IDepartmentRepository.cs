@@ -29,5 +29,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <returns>Found departments.</returns>
         List<DbDepartment> FindDepartments();
+
+        List<DbDepartment> Search(string text);
     }
 }

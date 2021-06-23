@@ -51,5 +51,10 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return _provider.Departments.Include(x => x.Users).ToList();
         }
+
+        public List<DbDepartment> Search(string text)
+        {
+            return _provider.Departments.ToList().Where(d => d.Name.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
     }
 }
