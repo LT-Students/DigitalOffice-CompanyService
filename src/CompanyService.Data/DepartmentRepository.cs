@@ -54,7 +54,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public List<DbDepartment> Search(string text)
         {
-            return _provider.Departments.Where(d => d.Name.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
+            return _provider.Departments.ToList().Where(d => d.Name.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
         }
     }
 }
