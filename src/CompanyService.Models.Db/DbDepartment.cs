@@ -10,11 +10,13 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public const string TableName = "Departments";
 
         public Guid Id { get; set; }
+        public Guid CompanyId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public Guid? DirectorUserId { get; set; }
         public bool IsActive { get; set; }
 
+        public DbCompany Company { get; set; }
         public ICollection<DbDepartmentUser> Users { get; set; }
 
         public DbDepartment()
@@ -36,6 +38,11 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
             builder
                 .HasMany(d => d.Users)
                 .WithOne(u => u.Department);
+
+            builder
+                .HasOne(d => d.Company)
+                .WithMany(c => c.Departments)
+                .HasForeignKey(d => d.CompanyId);
         }
     }
 }
