@@ -79,12 +79,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         }
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
-        {/*
+        {
             if (!_accessValidator.IsAdmin())
             {
                 throw new ForbiddenException("Not enough rights.");
             }
-            */
+
             _validator.ValidateAndThrowCustom(request);
 
             List<string> errors = new();
