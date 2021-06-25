@@ -28,13 +28,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly IDbCompanyMapper _mapper;
         private readonly IRequestClient<IAddImageRequest> _rcAddImage;
         private readonly ILogger<CreateCompanyCommand> _logger;
-        private readonly HttpContext _httpContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICreateCompanyRequestValidator _validator;
         private readonly ICompanyRepository _repository;
 
         private Guid? AddImage(AddImageRequest image, List<string> errors)
         {
-            Guid creatorId = Guid.NewGuid();//_httpContext.GetUserId();
+            Guid creatorId = _httpContextAccessor.HttpContext.GetUserId();
             string logMessage = "Cannot add image: name - {name}, context - {context}, extension - {extension}, creatorId - {creatorId}";
             string errorMessage = "Cannot add company logo. Please try later.";
 
@@ -73,7 +73,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             _mapper = mapper;
             _rcAddImage = rcAddImage;
             _logger = logger;
-            _httpContext = accessor.HttpContext;
+            _httpContextAccessor = accessor;
             _validator = validator;
             _repository = repository;
         }
