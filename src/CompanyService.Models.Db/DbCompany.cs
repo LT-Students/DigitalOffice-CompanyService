@@ -7,13 +7,15 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
 {
     public class DbCompany
     {
-        public const string TableName = "Company";
+        public const string TableName = "Companies";
 
         public Guid Id { get; set; }
+        public Guid? LogoId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Tagline { get; set; }
-        public Guid? LogoId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public bool IsActive { get; set; }
 
         public ICollection<DbDepartment> Departments { get; set; }
         public ICollection<DbPosition> Positions { get; set; }

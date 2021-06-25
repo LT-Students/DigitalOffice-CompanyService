@@ -18,6 +18,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
         public DbSet<DbDepartment> Departments { get; set; }
         public DbSet<DbDepartmentUser> DepartmentUsers { get; set; }
         public DbSet<DbPositionUser> PositionUsers { get; set; }
+        public DbSet<DbCompany> Companies { get; set; }
+        public DbSet<DbOffice> Offices { get; set; }
 
         // Fluent API is written here.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
