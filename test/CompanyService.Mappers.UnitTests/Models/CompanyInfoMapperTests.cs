@@ -65,6 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true,
                 LogoId = Guid.NewGuid(),
+                SiteUrl = "siteUrl",
                 Departments = new List<DbDepartment>
                 {
                     departament
@@ -127,10 +128,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
             CompanyInfo expected = new()
             {
                 Id = company.Id,
-                Name = "Name",
-                Tagline = "Tagline",
-                Description = "Description",
+                Name = company.Name,
+                Tagline = company.Tagline,
+                Description = company.Description,
                 Logo = imageInfo,
+                SiteUrl = company.SiteUrl,
                 Departments = new List<ShortDepartmentInfo> { expectedDepartament },
                 Positions = new List<PositionInfo> { expectedPosition },
                 Offices = new List<OfficeInfo> { expectedOffice },

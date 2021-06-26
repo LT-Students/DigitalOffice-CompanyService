@@ -57,11 +57,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         public GetCompanyCommand(
             ICompanyRepository repository,
             ILogger<GetCompanyCommand> logger,
-            ICompanyInfoMapper mapper)
+            ICompanyInfoMapper mapper,
+            IRequestClient<IGetFileRequest> requestClient)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            _rcGetFile = requestClient;
         }
 
         public CompanyResponse Execute()

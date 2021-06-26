@@ -21,6 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 Name = request.Name,
                 Description = request.Description,
                 Tagline = request.Tagline,
+                SiteUrl = request.SiteUrl,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };

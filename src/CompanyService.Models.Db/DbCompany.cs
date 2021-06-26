@@ -14,6 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public string Name { get; set; }
         public string Description { get; set; }
         public string Tagline { get; set; }
+        public string SiteUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
 
@@ -38,6 +39,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
 
             builder
                 .Property(c => c.Name)
+                .IsRequired();
+
+            builder
+                .Property(c => c.SiteUrl)
                 .IsRequired();
 
             builder

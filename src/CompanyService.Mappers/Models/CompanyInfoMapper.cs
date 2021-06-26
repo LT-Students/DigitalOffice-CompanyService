@@ -36,6 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 Description = company.Description,
                 Logo = image,
                 Tagline = company.Tagline,
+                SiteUrl = company.SiteUrl,
                 Departments = company?.Departments.Select(d => _departmentMapper.Map(d)).ToList(),
                 Offices = company?.Offices.Select(o => _officeMapper.Map(o)).ToList(),
                 Positions = company?.Positions.Select(p => _positionMapper.Map(p)).ToList()

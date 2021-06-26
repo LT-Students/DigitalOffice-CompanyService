@@ -10,6 +10,9 @@ namespace LT.DigitalOffice.CompanyService.Validation
         {
             RuleFor(request => request.Name)
                 .NotEmpty();
+
+            RuleFor(request => request.SiteUrl)
+                .NotEmpty();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Tagline = table.Column<string>(nullable: true),
+                    SiteUrl = table.Column<string>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false)
                 },

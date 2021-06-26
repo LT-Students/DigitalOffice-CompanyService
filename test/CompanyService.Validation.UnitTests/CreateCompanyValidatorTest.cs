@@ -27,14 +27,19 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         public void ShouldNotThrowValidationException()
         {
             _validator.ShouldNotHaveValidationErrorFor(x => x.Name, "Name");
+
             _validator.ShouldNotHaveValidationErrorFor(x => x.Logo, null as AddImageRequest);
             _validator.ShouldNotHaveValidationErrorFor(x => x.Logo, new AddImageRequest());
+
             _validator.ShouldNotHaveValidationErrorFor(x => x.Description, "");
             _validator.ShouldNotHaveValidationErrorFor(x => x.Description, null as string);
             _validator.ShouldNotHaveValidationErrorFor(x => x.Description, "description");
+
             _validator.ShouldNotHaveValidationErrorFor(x => x.Tagline, "tagline");
             _validator.ShouldNotHaveValidationErrorFor(x => x.Tagline, "");
             _validator.ShouldNotHaveValidationErrorFor(x => x.Tagline, null as string);
+
+            _validator.ShouldNotHaveValidationErrorFor(x => x.SiteUrl, "siteurl");
         }
 
         [Test]
@@ -42,6 +47,9 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         {
             _validator.ShouldHaveValidationErrorFor(x => x.Name, "");
             _validator.ShouldHaveValidationErrorFor(x => x.Name, null as string);
+
+            _validator.ShouldHaveValidationErrorFor(x => x.SiteUrl, "");
+            _validator.ShouldHaveValidationErrorFor(x => x.SiteUrl, null as string);
         }
     }
 }

@@ -10,28 +10,53 @@ using LT.DigitalOffice.Models.Broker.Requests.File;
 using LT.DigitalOffice.Models.Broker.Responses.File;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 using Moq;
-using Moq.AutoMock;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 {
     public class GetCompanyCommandTests
     {
-        private AutoMocker _mocker;
+        private Mock<ICompanyRepository> _repositoryMock;
+        private Mock<ILogger<GetCompanyCommand>> _loggerMock;
+        private Mock<ICompanyInfoMapper> _mapperMock;
+        private Mock<IRequestClient<IGetFileRequest>> _rcMock;
         private IGetCompanyCommand _command;
 
         [SetUp]
         public void SetUp()
         {
-            _mocker = new();
-            _command = _mocker.CreateInstance<GetCompanyCommand>();
+            _repositoryMock = new();
+            _loggerMock = new();
+            _mapperMock = new();
+            _rcMock = new();
+            _command = new GetCompanyCommand(
+                _repositoryMock.Object,
+                _loggerMock.Object,
+                _mapperMock.Object,
+                _rcMock.Object);
         }
 
         [Test]
         public void ShouldThrowExceptionWhenRepositoryThrow()
+        {
+            _repositoryMock
+                .Setup(x => x.Get())
+                .Throws(new Exception());
+
+            Assert.Throws<Exception>(() => _command.Execute());
+            _repositoryMock.Verify(x => x.Get(), Times.Once);
+            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+                       It.IsAny<object>(), default, default).Result.Message, Times.Never);
+            _mapperMock.Verify(x => x.Map(It.IsAny<DbCompany>(), It.IsAny<ImageInfo>()), Times.Never);
+        }
+
+        [Test]
+        public void ShouldGetCompanyWithoutImage()
         {
             var response = new Mock<IOperationResult<IGetFileResponse>>();
             response
@@ -42,158 +67,135 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 .Setup(x => x.Errors)
                 .Returns(new List<string> { "some error" });
 
-            _mocker
-               .Setup<IRequestClient<IGetFileRequest>, IOperationResult<IGetFileResponse>>(
-                   x => x.GetResponse<IOperationResult<IGetFileResponse>>(
-                       It.IsAny<object>(), default, RequestTimeout.Default).Result.Message)
-               .Returns(response.Object);
+            var brokerResponseMock = new Mock<Response<IOperationResult<IGetFileResponse>>>();
+            brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(response.Object);
 
-            _mocker
-                .Setup<ICompanyRepository, DbCompany>(x => x.Get())
-                .Throws(new Exception());
+            _rcMock
+               .Setup(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+                       It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(brokerResponseMock.Object));
 
-            Assert.Throws<Exception>(() => _command.Execute());
-            _mocker.Verify<ICompanyRepository, DbCompany>(x => x.Get(), Times.Once);
-            _mocker.Verify<IRequestClient<IGetFileRequest>, IOperationResult<IGetFileResponse>>(
-                   x => x.GetResponse<IOperationResult<IGetFileResponse>>(
-                       It.IsAny<object>(), default, RequestTimeout.Default).Result.Message, Times.Never);
-            _mocker.Verify<ICompanyInfoMapper, CompanyInfo>(x => x.Map(It.IsAny<DbCompany>(), It.IsAny<ImageInfo>()), Times.Never);
+            var dbCompany = new DbCompany()
+            {
+                Id = Guid.NewGuid(),
+                LogoId = Guid.NewGuid(),
+                Name = "name",
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true,
+                Description = "desc",
+                Tagline = "tag"
+            };
+
+            var companyInfo = new CompanyInfo
+            {
+                Id = dbCompany.Id,
+                Logo = null,
+                Name = dbCompany.Name,
+                Description = dbCompany.Description,
+                Tagline = dbCompany.Tagline
+            };
+
+            var expected = new CompanyResponse
+            {
+                Company = companyInfo,
+                Errors = new List<string> { $"Cannot get image with id: {dbCompany.LogoId}. Please try later." }
+            };
+
+            _repositoryMock
+                .Setup(x => x.Get())
+                .Returns(dbCompany);
+
+            _mapperMock
+                .Setup(x => x.Map(dbCompany, null))
+                .Returns(companyInfo);
+
+            SerializerAssert.AreEqual(expected, _command.Execute());
+            _repositoryMock.Verify(x => x.Get(), Times.Once);
+            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+                       It.IsAny<object>(), default, default).Result.Message, Times.Once);
+            _mapperMock.Verify(x => x.Map(dbCompany, null), Times.Once);
         }
 
-        //[Test]
-        //public void ShouldGetCompanyWithoutImage()
-        //{
-        //    var response = new Mock<IOperationResult<IGetFileResponse>>();
-        //    response
-        //        .Setup(x => x.IsSuccess)
-        //        .Returns(false);
+        [Test]
+        public void ShouldGetCompanySuccessfuly()
+        {
 
-        //    response
-        //        .Setup(x => x.Errors)
-        //        .Returns(new List<string> { "some error" });
+            var response = new Mock<IOperationResult<IGetFileResponse>>();
+            response
+                .Setup(x => x.IsSuccess)
+                .Returns(true);
 
-        //    _mocker
-        //       .Setup<IRequestClient<IGetFileRequest>, IOperationResult<IGetFileResponse>>(
-        //           x => x.GetResponse<IOperationResult<IGetFileResponse>>(
-        //               It.IsAny<object>(), default, RequestTimeout.Default).Result.Message)
-        //       .Returns(response.Object);
+            string content = "content";
+            string extension = "extension";
+            Guid fileId = Guid.NewGuid();
 
-        //    var dbCompany = new DbCompany()
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        LogoId = Guid.NewGuid(),
-        //        Name = "name",
-        //        CreatedAt = DateTime.UtcNow,
-        //        IsActive = true,
-        //        Description = "desc",
-        //        Tagline = "tag"
-        //    };
+            response
+                .Setup(x => x.Body.Content)
+                .Returns(content);
+            response
+                .Setup(x => x.Body.Extension)
+                .Returns(extension);
+            response
+                .Setup(x => x.Body.FileId)
+                .Returns(fileId);
 
-        //    var companyInfo = new CompanyInfo
-        //    {
-        //        Id = dbCompany.Id,
-        //        Logo = null,
-        //        Name = dbCompany.Name,
-        //        Description = dbCompany.Description,
-        //        Tagline = dbCompany.Tagline
-        //    };
+            var brokerResponseMock = new Mock<Response<IOperationResult<IGetFileResponse>>>();
+            brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(response.Object);
 
-        //    var expected = new CompanyResponse
-        //    {
-        //        Company = companyInfo,
-        //        Errors = new List<string> { $"Cannot get image with id: {dbCompany.LogoId}. Please try later." }
-        //    };
+            _rcMock
+               .Setup(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+                       It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(brokerResponseMock.Object));
 
-        //    _mocker
-        //        .Setup<ICompanyRepository, DbCompany>(x => x.Get())
-        //        .Returns(dbCompany);
+            var dbCompany = new DbCompany()
+            {
+                Id = Guid.NewGuid(),
+                LogoId = Guid.NewGuid(),
+                Name = "name",
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true,
+                Description = "desc",
+                Tagline = "tag"
+            };
 
-        //    _mocker
-        //        .Setup<ICompanyInfoMapper, CompanyInfo>(x => x.Map(dbCompany, null))
-        //        .Returns(companyInfo);
+            var companyInfo = new CompanyInfo
+            {
+                Id = dbCompany.Id,
+                Logo = new ImageInfo
+                {
+                    Id = fileId,
+                    Content = content,
+                    Extension = extension,
+                    ParentId = null
+                },
+                Name = dbCompany.Name,
+                Description = dbCompany.Description,
+                Tagline = dbCompany.Tagline
+            };
 
-        //    SerializerAssert.AreEqual(expected, _command.Execute());
-        //    _mocker.Verify<ICompanyRepository, DbCompany>(x => x.Get(), Times.Once);
-        //    _mocker.Verify<IRequestClient<IGetFileRequest>, IOperationResult<IGetFileResponse>>(
-        //           x => x.GetResponse<IOperationResult<IGetFileResponse>>(
-        //               It.IsAny<object>(), default, RequestTimeout.Default).Result.Message, Times.Once);
-        //    _mocker.Verify<ICompanyInfoMapper, CompanyInfo>(x => x.Map(It.IsAny<DbCompany>(), It.IsAny<ImageInfo>()), Times.Once);
-        //}
+            var expected = new CompanyResponse
+            {
+                Company = companyInfo,
+                Errors = new()
+            };
 
-        //[Test]
-        //public void ShouldGetCompanySuccessfuly()
-        //{
-        //    var response = new Mock<IOperationResult<IGetFileResponse>>();
-        //    response
-        //        .Setup(x => x.IsSuccess)
-        //        .Returns(true);
+            _repositoryMock
+                .Setup(x => x.Get())
+                .Returns(dbCompany);
 
-        //    string content = "content";
-        //    string extension = "extension";
-        //    Guid fileId = Guid.NewGuid();
+            _mapperMock
+                .Setup(x => x.Map(dbCompany, It.IsAny<ImageInfo>()))
+                .Returns(companyInfo);
 
-        //    response
-        //        .Setup(x => x.Body.Content)
-        //        .Returns(content);
-        //    response
-        //        .Setup(x => x.Body.Extension)
-        //        .Returns(extension);
-        //    response
-        //        .Setup(x => x.Body.FileId)
-        //        .Returns(fileId);
-
-        //    _mocker
-        //       .Setup<IRequestClient<IGetFileRequest>, IOperationResult<IGetFileResponse>>(
-        //           x => x.GetResponse<IOperationResult<IGetFileResponse>>(
-        //               It.IsAny<object>(), default, RequestTimeout.Default).Result.Message)
-        //       .Returns(response.Object);
-
-        //    var dbCompany = new DbCompany()
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        LogoId = Guid.NewGuid(),
-        //        Name = "name",
-        //        CreatedAt = DateTime.UtcNow,
-        //        IsActive = true,
-        //        Description = "desc",
-        //        Tagline = "tag"
-        //    };
-
-        //    var companyInfo = new CompanyInfo
-        //    {
-        //        Id = dbCompany.Id,
-        //        Logo = new ImageInfo
-        //        {
-        //            Id = fileId,
-        //            Content = content,
-        //            Extension = extension,
-        //            ParentId = null
-        //        },
-        //        Name = dbCompany.Name,
-        //        Description = dbCompany.Description,
-        //        Tagline = dbCompany.Tagline
-        //    };
-
-        //    var expected = new CompanyResponse
-        //    {
-        //        Company = companyInfo,
-        //        Errors = new List<string> { $"Cannot get image with id: {dbCompany.LogoId}. Please try later." }
-        //    };
-
-        //    _mocker
-        //        .Setup<ICompanyRepository, DbCompany>(x => x.Get())
-        //        .Returns(dbCompany);
-
-        //    _mocker
-        //        .Setup<ICompanyInfoMapper, CompanyInfo>(x => x.Map(dbCompany, It.IsAny<ImageInfo>()))
-        //        .Returns(companyInfo);
-
-        //    SerializerAssert.AreEqual(expected, _command.Execute());
-        //    _mocker.Verify<ICompanyRepository, DbCompany>(x => x.Get(), Times.Once);
-        //    _mocker.Verify<IRequestClient<IGetFileRequest>, IOperationResult<IGetFileResponse>>(
-        //           x => x.GetResponse<IOperationResult<IGetFileResponse>>(
-        //               It.IsAny<object>(), default, RequestTimeout.Default).Result.Message, Times.Once);
-        //    _mocker.Verify<ICompanyInfoMapper, CompanyInfo>(x => x.Map(It.IsAny<DbCompany>(), It.IsAny<ImageInfo>()), Times.Once);
-        //}
+            SerializerAssert.AreEqual(expected, _command.Execute());
+            _repositoryMock.Verify(x => x.Get(), Times.Once);
+            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+                       It.IsAny<object>(), default, default).Result.Message, Times.Once);
+            _mapperMock.Verify(x => x.Map(dbCompany, It.IsAny<ImageInfo>()), Times.Once);
+        }
     }
 }
