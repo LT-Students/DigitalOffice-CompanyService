@@ -18,10 +18,13 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         private CreateDepartmentRequest _request;
         private BaseDepartmentInfo _newDepartment;
         private DbDepartment _expectedDbDepartment;
+        private Guid _companyId;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            _companyId = Guid.NewGuid();
+
             _mapper = new DbDepartmentMapper();
 
             _newDepartment = new BaseDepartmentInfo()
@@ -46,6 +49,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             _expectedDbDepartment = new DbDepartment
             {
                 Name = _newDepartment.Name,
+                CompanyId = _companyId,
                 Description = _newDepartment.Description,
                 IsActive = true,
                 DirectorUserId = _newDepartment.DirectorUserId
@@ -67,7 +71,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         {
             CreateDepartmentRequest request = null;
 
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(request));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(request, _companyId));
         }
 
         [Test]
@@ -81,13 +85,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             var expectedDbDepartment = new DbDepartment
             {
                 Name = _newDepartment.Name,
+                CompanyId = _companyId,
                 Description = _newDepartment.Description,
                 IsActive = true,
                 DirectorUserId = _newDepartment.DirectorUserId,
                 Users = null
             };
 
-            var dbDepartment = _mapper.Map(newDepartment);
+            var dbDepartment = _mapper.Map(newDepartment, _companyId);
 
             expectedDbDepartment.Id = dbDepartment.Id;
 
@@ -97,7 +102,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         [Test]
         public void ShouldReturnDbDepartmentSuccessfully()
         {
-            var dbDepartment = _mapper.Map(_request);
+            var dbDepartment = _mapper.Map(_request, _companyId);
 
             _expectedDbDepartment.Id = dbDepartment.Id;
 

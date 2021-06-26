@@ -20,18 +20,21 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
     {
         private ICreatePositionCommand _command;
         private Mock<IPositionRepository> _repositoryMock;
+        private Mock<ICompanyRepository> _companyRepositoryMock;
         private Mock<IDbPositionMapper> _mapperMock;
         private Mock<ICreatePositionRequestValidator> _validatorMock;
         private Mock<IAccessValidator> _accessValidatorMock;
         private CreatePositionRequest _request;
 
+        private Guid _companyId;
         private DbPosition _createdPosition;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _request = new CreatePositionRequest
+            _companyId = Guid.NewGuid();
 
+            _request = new CreatePositionRequest
             {
                 Name = "Position",
                 Description = "Description"
@@ -40,6 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _createdPosition = new DbPosition
             {
                 Id = Guid.NewGuid(),
+                CompanyId = _companyId,
                 Name = _request.Name,
                 Description = _request.Description
             };
@@ -52,6 +56,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _repositoryMock = new Mock<IPositionRepository>();
             _mapperMock = new Mock<IDbPositionMapper>();
             _accessValidatorMock = new Mock<IAccessValidator>();
+            _companyRepositoryMock = new();
 
             _accessValidatorMock
                 .Setup(x => x.IsAdmin(null))
@@ -64,6 +69,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _command = new CreatePositionCommand(
                 _validatorMock.Object,
                 _repositoryMock.Object,
+                _companyRepositoryMock.Object,
                 _mapperMock.Object,
                 _accessValidatorMock.Object);
         }
@@ -81,6 +87,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Never);
+            _companyRepositoryMock.Verify(repository => repository.Get(false), Times.Never);
         }
 
         [Test]
@@ -92,6 +99,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Never);
+            _companyRepositoryMock.Verify(repository => repository.Get(false), Times.Never);
         }
 
         [Test]
@@ -102,15 +110,16 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                  .Returns(true);
 
             _mapperMock
-                .Setup(x => x.Map(It.IsAny<PositionInfo>()))
+                .Setup(x => x.Map(It.IsAny<PositionInfo>(), _companyId))
                 .Returns(_createdPosition);
 
-            _repositoryMock
-                .Setup(x => x.CreatePosition(It.IsAny<DbPosition>()))
+            _companyRepositoryMock
+                .Setup(x => x.Get(false))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_request));
-            _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Once);
+            _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Never);
+            _companyRepositoryMock.Verify(repository => repository.Get(false), Times.Once);
         }
 
         [Test]
@@ -120,8 +129,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                  .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                  .Returns(true);
 
+            _companyRepositoryMock
+                .Setup(x => x.Get(false))
+                .Returns(new DbCompany { Id = _companyId });
+
             _mapperMock
-                .Setup(x => x.Map(It.IsAny<PositionInfo>()))
+                .Setup(x => x.Map(It.IsAny<PositionInfo>(), _companyId))
                 .Returns(_createdPosition);
 
             _repositoryMock
@@ -130,6 +143,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 
             Assert.AreEqual(_createdPosition.Id, _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Once);
+            _companyRepositoryMock.Verify(repository => repository.Get(false), Times.Once);
         }
     }
 }

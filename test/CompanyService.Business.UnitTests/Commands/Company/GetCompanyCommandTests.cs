@@ -45,11 +45,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         public void ShouldThrowExceptionWhenRepositoryThrow()
         {
             _repositoryMock
-                .Setup(x => x.Get())
+                .Setup(x => x.Get(true))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute());
-            _repositoryMock.Verify(x => x.Get(), Times.Once);
+            _repositoryMock.Verify(x => x.Get(true), Times.Once);
             _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
                        It.IsAny<object>(), default, default).Result.Message, Times.Never);
             _mapperMock.Verify(x => x.Map(It.IsAny<DbCompany>(), It.IsAny<ImageInfo>()), Times.Never);
@@ -104,7 +104,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             };
 
             _repositoryMock
-                .Setup(x => x.Get())
+                .Setup(x => x.Get(true))
                 .Returns(dbCompany);
 
             _mapperMock
@@ -112,7 +112,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 .Returns(companyInfo);
 
             SerializerAssert.AreEqual(expected, _command.Execute());
-            _repositoryMock.Verify(x => x.Get(), Times.Once);
+            _repositoryMock.Verify(x => x.Get(true), Times.Once);
             _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
                        It.IsAny<object>(), default, default).Result.Message, Times.Once);
             _mapperMock.Verify(x => x.Map(dbCompany, null), Times.Once);
@@ -184,7 +184,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             };
 
             _repositoryMock
-                .Setup(x => x.Get())
+                .Setup(x => x.Get(true))
                 .Returns(dbCompany);
 
             _mapperMock
@@ -192,7 +192,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 .Returns(companyInfo);
 
             SerializerAssert.AreEqual(expected, _command.Execute());
-            _repositoryMock.Verify(x => x.Get(), Times.Once);
+            _repositoryMock.Verify(x => x.Get(true), Times.Once);
             _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
                        It.IsAny<object>(), default, default).Result.Message, Times.Once);
             _mapperMock.Verify(x => x.Map(dbCompany, It.IsAny<ImageInfo>()), Times.Once);

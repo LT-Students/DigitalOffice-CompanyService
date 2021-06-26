@@ -68,7 +68,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
         public CompanyResponse Execute()
         {
-            DbCompany company = _repository.Get();
+            DbCompany company = _repository.Get(true);
 
             List<string> errors = new();
             ImageInfo image = null;

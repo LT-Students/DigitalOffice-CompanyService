@@ -7,7 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
     public class DbOfficeMapper : IDbOfficeMapper
     {
-        public DbOffice Map(CreateOfficeRequest request)
+        public DbOffice Map(CreateOfficeRequest request, Guid companyId)
         {
             if (request == null)
             {
@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
             return new DbOffice
             {
                 Id = Guid.NewGuid(),
-                CompanyId = request.CompanyId,
+                CompanyId = companyId,
                 Name = request.Name,
                 City = request.City,
                 Address = request.Address,

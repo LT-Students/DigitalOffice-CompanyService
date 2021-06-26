@@ -16,17 +16,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
     {
         private readonly IAccessValidator _accessValidator;
         private readonly IOfficeRepository _officeRepository;
+        private readonly ICompanyRepository _companyRepository;
         private readonly IDbOfficeMapper _mapper;
         private readonly ICreateOfficeRequestValidator _validator;
 
         public CreateOfficeCommand(
             IAccessValidator accessValidator,
             IOfficeRepository officeRepository,
+            ICompanyRepository companyRepository,
             IDbOfficeMapper mapper,
             ICreateOfficeRequestValidator validator)
         {
             _accessValidator = accessValidator;
             _officeRepository = officeRepository;
+            _companyRepository = companyRepository;
             _mapper = mapper;
             _validator = validator;
         }
@@ -40,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 
             _validator.ValidateAndThrowCustom(request);
 
-            DbOffice office = _mapper.Map(request);
+            DbOffice office = _mapper.Map(request, _companyRepository.Get(false).Id);
             _officeRepository.Add(office);
 
             return new OperationResultResponse<Guid>

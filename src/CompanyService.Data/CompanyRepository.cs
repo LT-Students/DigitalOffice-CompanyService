@@ -34,18 +34,23 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider.Save();
         }
 
-        public DbCompany Get()
+        public DbCompany Get(bool full)
         {
             if (!_provider.Companies.Any())
             {
                 throw new NotFoundException("Company doesn't exist");
             }
 
-            return _provider.Companies
+            if (full)
+            {
+                return _provider.Companies
                                 .Include(c => c.Departments)
                                 .Include(c => c.Positions)
                                 .Include(c => c.Offices)
                                 .First();
+            }
+
+            return _provider.Companies.First();
         }
     }
 }

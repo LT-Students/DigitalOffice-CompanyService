@@ -43,8 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 Id = office.Id,
                 Name = "Name",
                 Address = "address",
-                City = "company",
-                CompanyId = office.CompanyId
+                City = "company"
             };
 
             SerializerAssert.AreEqual(expected, _mapper.Map(office));

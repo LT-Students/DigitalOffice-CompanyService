@@ -71,7 +71,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 Id = dbOffice1.Id,
                 Address = dbOffice1.Address,
                 City = dbOffice1.City,
-                CompanyId = dbOffice1.CompanyId,
                 Name = dbOffice1.Name
             };
 
@@ -80,7 +79,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 Id = dbOffice2.Id,
                 Address = dbOffice2.Address,
                 City = dbOffice2.City,
-                CompanyId = dbOffice2.CompanyId,
                 Name = dbOffice2.Name
             };
 

@@ -7,13 +7,8 @@ namespace LT.DigitalOffice.CompanyService.Validation
 {
     public class CreateOfficeRequestValidator : AbstractValidator<CreateOfficeRequest>, ICreateOfficeRequestValidator
     {
-        public CreateOfficeRequestValidator(
-            ICompanyRepository companyRepository)
+        public CreateOfficeRequestValidator()
         {
-            RuleFor(request => request.CompanyId)
-                .Must(id => companyRepository.Get().Id == id)
-                .WithMessage("Wrong company id");
-
             RuleFor(request => request.City)
                 .NotEmpty();
 

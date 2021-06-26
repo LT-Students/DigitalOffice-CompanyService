@@ -95,13 +95,13 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             _provider.Companies.Add(company);
             _provider.Save();
 
-            Assert.AreEqual(company, _repository.Get());
+            Assert.AreEqual(company, _repository.Get(false));
         }
 
         [Test]
         public void ShouldThrowExceptionWhetCompanyDoesNotExist()
         {
-            Assert.Throws<NotFoundException>(() => _repository.Get());
+            Assert.Throws<NotFoundException>(() => _repository.Get(false));
         }
 
         #endregion

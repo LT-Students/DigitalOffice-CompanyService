@@ -101,8 +101,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 Id = office.Id,
                 City = office.City,
                 Address = office.Address,
-                Name = office.Name,
-                CompanyId = office.CompanyId
+                Name = office.Name
             };
 
             _mocker

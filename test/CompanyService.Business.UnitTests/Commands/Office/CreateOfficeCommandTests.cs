@@ -19,6 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
     {
         private Mock<IAccessValidator> _accessValidatorMock;
         private Mock<IOfficeRepository> _repositoryMock;
+        private Mock<ICompanyRepository> _companyRepositoryMock;
         private Mock<IDbOfficeMapper> _mapperMock;
         private Mock<ICreateOfficeRequestValidator> _validatorMock;
         private ICreateOfficeCommand _command;
@@ -33,8 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             {
                 Name = "name",
                 Address = "address",
-                City = "City",
-                CompanyId = Guid.NewGuid()
+                City = "City"
             };
 
             _office = new DbOffice
@@ -44,7 +44,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true,
                 City = _request.City,
-                CompanyId = _request.CompanyId,
+                CompanyId = Guid.NewGuid(),
                 Name = _request.Name
             };
         }
@@ -55,11 +55,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             _accessValidatorMock = new();
             _mapperMock = new();
             _repositoryMock = new();
+            _companyRepositoryMock = new();
             _validatorMock = new();
 
             _command = new CreateOfficeCommand(
                 _accessValidatorMock.Object,
                 _repositoryMock.Object,
+                _companyRepositoryMock.Object,
                 _mapperMock.Object,
                 _validatorMock.Object);
 
@@ -82,8 +84,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(It.IsAny<DbOffice>()), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(false), Times.Never);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Never);
-            _mapperMock.Verify(x => x.Map(It.IsAny<CreateOfficeRequest>()), Times.Never);
+            _mapperMock.Verify(x => x.Map(It.IsAny<CreateOfficeRequest>(), It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]
@@ -96,33 +99,35 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(It.IsAny<DbOffice>()), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(false), Times.Never);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-            _mapperMock.Verify(x => x.Map(It.IsAny<CreateOfficeRequest>()), Times.Never);
+            _mapperMock.Verify(x => x.Map(It.IsAny<CreateOfficeRequest>(), It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]
         public void ShouldThrowExceptionWhenRepositoryThrow()
         {
             _mapperMock
-                .Setup(x => x.Map(_request))
+                .Setup(x => x.Map(_request, _office.CompanyId))
                 .Returns(_office);
 
-            _repositoryMock
-                .Setup(x => x.Add(_office))
+            _companyRepositoryMock
+                .Setup(x => x.Get(false))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
-            _repositoryMock.Verify(x => x.Add(_office), Times.Once);
+            _repositoryMock.Verify(x => x.Add(_office), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(false), Times.Once);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-            _mapperMock.Verify(x => x.Map(_request), Times.Once);
+            _mapperMock.Verify(x => x.Map(_request, _office.CompanyId), Times.Never);
         }
 
         [Test]
         public void ShouldAddOfficeSuccessfuly()
         {
             _mapperMock
-                .Setup(x => x.Map(_request))
+                .Setup(x => x.Map(_request, _office.CompanyId))
                 .Returns(_office);
 
             var expected = new OperationResultResponse<Guid>
@@ -131,11 +136,16 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 Status = Kernel.Enums.OperationResultStatusType.FullSuccess
             };
 
+            _companyRepositoryMock
+                .Setup(x => x.Get(false))
+                .Returns(new DbCompany { Id = _office.CompanyId });
+
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(_office), Times.Once);
+            _companyRepositoryMock.Verify(x => x.Get(false), Times.Once);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-            _mapperMock.Verify(x => x.Map(_request), Times.Once);
+            _mapperMock.Verify(x => x.Map(_request, _office.CompanyId), Times.Once);
         }
     }
 }

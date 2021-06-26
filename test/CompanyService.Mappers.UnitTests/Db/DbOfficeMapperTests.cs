@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null, Guid.NewGuid()));
         }
 
         [Test]
@@ -30,8 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             {
                 Name = "Name",
                 City = "City",
-                Address = "Address",
-                CompanyId = Guid.NewGuid()
+                Address = "Address"
             };
 
             DbOffice expected = new()
@@ -39,11 +38,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 Name = request.Name,
                 City = "City",
                 Address = "Address",
-                CompanyId = request.CompanyId,
+                CompanyId = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow
             };
 
-            var response = _mapper.Map(request);
+            var response = _mapper.Map(request, expected.CompanyId);
 
             Assert.AreNotEqual(Guid.Empty, response.Id);
             Assert.AreEqual(expected.Name, response.Name);

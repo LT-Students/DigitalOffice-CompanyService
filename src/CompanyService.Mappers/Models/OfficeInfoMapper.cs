@@ -17,7 +17,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
             return new OfficeInfo
             {
                 Id = office.Id,
-                CompanyId = office.CompanyId,
                 Name = office.Name,
                 City = office.City,
                 Address = office.Address
