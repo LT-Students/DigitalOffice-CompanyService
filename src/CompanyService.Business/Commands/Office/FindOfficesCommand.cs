@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
         {
             return new OfficesResponse
             {
-                Office = _officeRepository.Find().Select(o => _mapper.Map(o)).ToList()
+                Offices = _officeRepository.Find().Select(o => _mapper.Map(o)).ToList()
             };
         }
     }

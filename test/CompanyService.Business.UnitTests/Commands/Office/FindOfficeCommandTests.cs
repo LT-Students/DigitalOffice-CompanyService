@@ -98,7 +98,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
 
             var expected = new OfficesResponse
             {
-                Office = new List<OfficeInfo>
+                Offices = new List<OfficeInfo>
                 {
                     officeInfo1,
                     officeInfo2

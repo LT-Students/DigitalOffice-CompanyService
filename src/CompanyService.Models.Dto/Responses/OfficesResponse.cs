@@ -5,6 +5,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Responses
 {
     public class OfficesResponse
     {
-        public List<OfficeInfo> Office { get; set; }
+        public List<OfficeInfo> Offices { get; set; }
     }
 }
