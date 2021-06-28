@@ -18,8 +18,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     {
         private readonly ICompanyRepository _repository;
         private readonly ILogger<GetCompanyCommand> _logger;
-        private readonly ICompanyInfoMapper _mapper;
-        private readonly IRequestClient<IGetFileRequest> _rcGetFile;
+        private readonly ICompanyInfoMapper _companyInfoMapper;
+        private readonly IImageInfoMapper _imageInfoMapper;
+        private readonly IRequestClient<IGetImageRequest> _rcGetFile;
 
         private ImageInfo GetImage(Guid imageId, List<string> errors)
         {
@@ -28,18 +29,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
             try
             {
-                var response = _rcGetFile.GetResponse<IOperationResult<IGetFileResponse>>(
-                                                IGetFileRequest.CreateObj(imageId)).Result.Message;
+                var response = _rcGetFile.GetResponse<IOperationResult<IGetImageResponse>>(
+                                                IGetImageRequest.CreateObj(imageId)).Result.Message;
 
                 if (response.IsSuccess)
                 {
-                    return new ImageInfo
-                    {
-                        Id = response.Body.FileId,
-                        ParentId = response.Body.ParentId,
-                        Content = response.Body.Content,
-                        Extension = response.Body.Extension
-                    };
+                    return _imageInfoMapper.Map(response.Body);
                 }
 
                 _logger.LogWarning(logMessage, imageId);
@@ -58,11 +53,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             ICompanyRepository repository,
             ILogger<GetCompanyCommand> logger,
             ICompanyInfoMapper mapper,
-            IRequestClient<IGetFileRequest> requestClient)
+            IImageInfoMapper imageInfoMapper,
+            IRequestClient<IGetImageRequest> requestClient)
         {
             _repository = repository;
             _logger = logger;
-            _mapper = mapper;
+            _companyInfoMapper = mapper;
+            _imageInfoMapper = imageInfoMapper;
             _rcGetFile = requestClient;
         }
 
@@ -79,7 +76,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
             return new CompanyResponse
             {
-                Company = _mapper.Map(company, image),
+                Company = _companyInfoMapper.Map(company, image),
                 Errors = errors
             };
         }

@@ -24,7 +24,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         private Mock<ICompanyRepository> _repositoryMock;
         private Mock<ILogger<GetCompanyCommand>> _loggerMock;
         private Mock<ICompanyInfoMapper> _mapperMock;
-        private Mock<IRequestClient<IGetFileRequest>> _rcMock;
+        private Mock<IImageInfoMapper> _imageInfoMapper;
+        private Mock<IRequestClient<IGetImageRequest>> _rcMock;
         private IGetCompanyCommand _command;
 
         [SetUp]
@@ -33,11 +34,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             _repositoryMock = new();
             _loggerMock = new();
             _mapperMock = new();
+            _imageInfoMapper = new();
             _rcMock = new();
             _command = new GetCompanyCommand(
                 _repositoryMock.Object,
                 _loggerMock.Object,
                 _mapperMock.Object,
+                _imageInfoMapper.Object,
                 _rcMock.Object);
         }
 
@@ -50,15 +53,16 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             Assert.Throws<Exception>(() => _command.Execute());
             _repositoryMock.Verify(x => x.Get(true), Times.Once);
-            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetImageResponse>>(
                        It.IsAny<object>(), default, default).Result.Message, Times.Never);
             _mapperMock.Verify(x => x.Map(It.IsAny<DbCompany>(), It.IsAny<ImageInfo>()), Times.Never);
+            _imageInfoMapper.Verify(x => x.Map(It.IsAny<IGetImageResponse>()), Times.Never);
         }
 
         [Test]
         public void ShouldGetCompanyWithoutImage()
         {
-            var response = new Mock<IOperationResult<IGetFileResponse>>();
+            var response = new Mock<IOperationResult<IGetImageResponse>>();
             response
                 .Setup(x => x.IsSuccess)
                 .Returns(false);
@@ -67,13 +71,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 .Setup(x => x.Errors)
                 .Returns(new List<string> { "some error" });
 
-            var brokerResponseMock = new Mock<Response<IOperationResult<IGetFileResponse>>>();
+            var brokerResponseMock = new Mock<Response<IOperationResult<IGetImageResponse>>>();
             brokerResponseMock
                 .Setup(x => x.Message)
                 .Returns(response.Object);
 
             _rcMock
-               .Setup(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+               .Setup(x => x.GetResponse<IOperationResult<IGetImageResponse>>(
                        It.IsAny<object>(), default, default))
                .Returns(Task.FromResult(brokerResponseMock.Object));
 
@@ -113,23 +117,26 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             SerializerAssert.AreEqual(expected, _command.Execute());
             _repositoryMock.Verify(x => x.Get(true), Times.Once);
-            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetImageResponse>>(
                        It.IsAny<object>(), default, default).Result.Message, Times.Once);
             _mapperMock.Verify(x => x.Map(dbCompany, null), Times.Once);
+            _imageInfoMapper.Verify(x => x.Map(It.IsAny<IGetImageResponse>()), Times.Never);
         }
 
         [Test]
         public void ShouldGetCompanySuccessfuly()
         {
 
-            var response = new Mock<IOperationResult<IGetFileResponse>>();
+            var response = new Mock<IOperationResult<IGetImageResponse>>();
             response
                 .Setup(x => x.IsSuccess)
                 .Returns(true);
 
+            string name = "name";
             string content = "content";
             string extension = "extension";
-            Guid fileId = Guid.NewGuid();
+            Guid imageId = Guid.NewGuid();
+            Guid parentId = Guid.NewGuid();
 
             response
                 .Setup(x => x.Body.Content)
@@ -138,18 +145,35 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 .Setup(x => x.Body.Extension)
                 .Returns(extension);
             response
-                .Setup(x => x.Body.FileId)
-                .Returns(fileId);
+                .Setup(x => x.Body.ImageId)
+                .Returns(imageId);
+            response
+                .Setup(x => x.Body.ParentId)
+                .Returns(parentId);
+            response
+                .Setup(x => x.Body.Name)
+                .Returns(name);
 
-            var brokerResponseMock = new Mock<Response<IOperationResult<IGetFileResponse>>>();
+            var brokerResponseMock = new Mock<Response<IOperationResult<IGetImageResponse>>>();
             brokerResponseMock
                 .Setup(x => x.Message)
                 .Returns(response.Object);
 
             _rcMock
-               .Setup(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+               .Setup(x => x.GetResponse<IOperationResult<IGetImageResponse>>(
                        It.IsAny<object>(), default, default))
                .Returns(Task.FromResult(brokerResponseMock.Object));
+
+            _imageInfoMapper
+                .Setup(x => x.Map(It.Is<IGetImageResponse>(x => x.ImageId == imageId)))
+                .Returns(new ImageInfo
+                {
+                    Id = imageId,
+                    ParentId = parentId,
+                    Content = content,
+                    Extension = extension,
+                    Name = name
+                });
 
             var dbCompany = new DbCompany()
             {
@@ -167,10 +191,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 Id = dbCompany.Id,
                 Logo = new ImageInfo
                 {
-                    Id = fileId,
+                    Id = imageId,
+                    Name = name,
                     Content = content,
                     Extension = extension,
-                    ParentId = null
+                    ParentId = parentId
                 },
                 Name = dbCompany.Name,
                 Description = dbCompany.Description,
@@ -193,9 +218,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             SerializerAssert.AreEqual(expected, _command.Execute());
             _repositoryMock.Verify(x => x.Get(true), Times.Once);
-            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetFileResponse>>(
+            _rcMock.Verify(x => x.GetResponse<IOperationResult<IGetImageResponse>>(
                        It.IsAny<object>(), default, default).Result.Message, Times.Once);
             _mapperMock.Verify(x => x.Map(dbCompany, It.IsAny<ImageInfo>()), Times.Once);
+            _imageInfoMapper.Verify(x => x.Map(It.Is<IGetImageResponse>(x => x.ImageId == imageId)), Times.Once);
         }
     }
 }
