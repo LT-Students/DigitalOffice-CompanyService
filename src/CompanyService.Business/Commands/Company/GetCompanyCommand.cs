@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             try
             {
                 var response = _rcGetFile.GetResponse<IOperationResult<IGetImageResponse>>(
-                                                IGetImageRequest.CreateObj(imageId)).Result.Message;
+                    IGetImageRequest.CreateObj(imageId)).Result.Message;
 
                 if (response.IsSuccess)
                 {

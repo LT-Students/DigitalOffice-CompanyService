@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             try
             {
                 var response = _rcAddImage.GetResponse<IOperationResult<IAddImageResponse>>(
-                                                IAddImageRequest.CreateObj(image.Name, image.Content, image.Extension, creatorId)).Result.Message;
+                    IAddImageRequest.CreateObj(image.Name, image.Content, image.Extension, creatorId)).Result.Message;
 
                 if (response.IsSuccess)
                 {
