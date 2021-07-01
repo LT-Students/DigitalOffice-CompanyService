@@ -6,6 +6,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface
     [AutoInject]
     public interface IFindOfficesCommand
     {
-        OfficesResponse Execute();
+        OfficesResponse Execute(int skipCount, int takeCount);
     }
 }

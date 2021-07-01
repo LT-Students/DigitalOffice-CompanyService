@@ -105,7 +105,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             _provider.Offices.Add(office2);
             _provider.Save();
 
-            SerializerAssert.AreEqual(new List<DbOffice>() { office1 }, _repository.Find());
+            SerializerAssert.AreEqual(new List<DbOffice>() { office1 }, _repository.Find(0, 2));
         }
 
         #endregion

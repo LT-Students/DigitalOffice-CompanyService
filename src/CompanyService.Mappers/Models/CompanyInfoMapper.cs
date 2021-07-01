@@ -32,7 +32,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
             return new CompanyInfo
             {
                 Id = company.Id,
-                Name = company.Name,
+                PortalName = company.PortalName,
+                CompanyName = company.CompanyName,
                 Description = company.Description,
                 Logo = image,
                 Tagline = company.Tagline,

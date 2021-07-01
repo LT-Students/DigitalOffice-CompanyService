@@ -2,102 +2,113 @@
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
-using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
-using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.File;
-using LT.DigitalOffice.Models.Broker.Responses.File;
+using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
     public class CreateCompanyCommand : ICreateCompanyCommand
     {
-        private readonly IAccessValidator _accessValidator;
         private readonly IDbCompanyMapper _mapper;
-        private readonly IRequestClient<IAddImageRequest> _rcAddImage;
-        private readonly ILogger<CreateCompanyCommand> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<ICreateCompanyCommand> _logger;
         private readonly ICreateCompanyRequestValidator _validator;
         private readonly ICompanyRepository _repository;
+        private readonly IRequestClient<ICreateSMTPRequest> _rcCreateSMTP;
+        private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
 
-        private Guid? AddImage(AddImageRequest image, List<string> errors)
+        private void CreateSMTP(SMTPInfo info)
         {
-            Guid creatorId = _httpContextAccessor.HttpContext.GetUserId();
-            string logMessage = "Cannot add image: name - {name}, context - {context}, extension - {extension}, creatorId - {creatorId}";
-            string errorMessage = "Cannot add company logo. Please try later.";
+            string message = "Can not create smtp.";
 
             try
             {
-                var response = _rcAddImage.GetResponse<IOperationResult<IAddImageResponse>>(
-                    IAddImageRequest.CreateObj(image.Name, image.Content, image.Extension, creatorId)).Result.Message;
+                var response = _rcCreateSMTP.GetResponse<IOperationResult<bool>>(
+                    ICreateSMTPRequest.CreateObj(info.Host, info.Port, info.EnableSsl, info.Email, info.Password)).Result.Message;
 
-                if (response.IsSuccess)
+                if (response.IsSuccess && response.Body)
                 {
-                    return response.Body.Id;
+                    return;
                 }
+            }
+            catch(Exception exc)
+            {
+                _logger.LogError(exc, message);
 
-                _logger.LogWarning(logMessage, image.Name, image.Content, image.Extension, creatorId);
+                throw;
+            }
+            _logger.LogError(message);
+
+            throw new InternalServerException(message);
+        }
+
+        private void CreateAdmin(AdminInfo info)
+        {
+            string message = "Can not create admin.";
+
+            try
+            {
+                var response = _rcCreateAdmin.GetResponse<IOperationResult<bool>>(
+                    ICreateAdminRequest.CreateObj(info.FirstName, info.MiddleName, info.LastName, info.Email, info.Login, info.Password)).Result.Message;
+
+                if (response.IsSuccess && response.Body)
+                {
+                    return;
+                }
             }
             catch (Exception exc)
             {
-                _logger.LogWarning(exc, logMessage, image.Name, image.Content, image.Extension, creatorId);
+                _logger.LogError(exc, message);
+
+                throw;
             }
+            _logger.LogError(message);
 
-            errors.Add(errorMessage);
-
-            return null;
+            throw new InternalServerException(message);
         }
 
+
         public CreateCompanyCommand(
-            IAccessValidator accessValidator,
             IDbCompanyMapper mapper,
-            IRequestClient<IAddImageRequest> rcAddImage,
-            ILogger<CreateCompanyCommand> logger,
-            IHttpContextAccessor accessor,
+            ILogger<ICreateCompanyCommand> logger,
             ICreateCompanyRequestValidator validator,
-            ICompanyRepository repository)
+            ICompanyRepository repository,
+            IRequestClient<ICreateSMTPRequest> rcCreateSMTP,
+            IRequestClient<ICreateAdminRequest> rcCreateAdmin)
         {
-            _accessValidator = accessValidator;
             _mapper = mapper;
-            _rcAddImage = rcAddImage;
             _logger = logger;
-            _httpContextAccessor = accessor;
             _validator = validator;
             _repository = repository;
+            _rcCreateAdmin = rcCreateAdmin;
+            _rcCreateSMTP = rcCreateSMTP;
         }
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
         {
-            if (!_accessValidator.IsAdmin())
-            {
-                throw new ForbiddenException("Not enough rights.");
-            }
-
             _validator.ValidateAndThrowCustom(request);
 
-            List<string> errors = new();
+            CreateSMTP(request.SMTP);
+            CreateAdmin(request.AdminInfo);
 
-            DbCompany company = _mapper.Map(request, request.Logo == null ? null : AddImage(request.Logo, errors));
+            DbCompany company = _mapper.Map(request);
 
             _repository.Add(company);
 
             return new OperationResultResponse<Guid>
             {
-                Status = errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess,
-                Body = company.Id,
-                Errors = errors
+                Status = OperationResultStatusType.FullSuccess,
+                Body = company.Id
             };
         }
     }

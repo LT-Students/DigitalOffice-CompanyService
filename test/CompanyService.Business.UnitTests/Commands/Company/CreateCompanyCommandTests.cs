@@ -4,20 +4,18 @@ using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
-using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.File;
-using LT.DigitalOffice.Models.Broker.Responses.File;
+using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.User;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Moq.AutoMock;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -27,11 +25,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 {
     public class CreateCompanyCommandTests
     {
-        private Mock<IAccessValidator> _accessValidatorMock;
         private Mock<IDbCompanyMapper> _mapperMock;
-        private Mock<IRequestClient<IAddImageRequest>> _rcAddImageMock;
-        private Mock<ILogger<CreateCompanyCommand>> _loggerMock;
-        private Mock<IHttpContextAccessor> _httpContextAccessorMock;
+        private Mock<IRequestClient<ICreateSMTPRequest>> _rcCreateSMTPMock;
+        private Mock<IRequestClient<ICreateAdminRequest>> _rcCreateAdminMock;
+        private Mock<ILogger<ICreateCompanyCommand>> _loggerMock;
         private Mock<ICreateCompanyRequestValidator> _validatorMock;
         private Mock<ICompanyRepository> _repositoryMock;
         private ICreateCompanyCommand _command;
@@ -39,39 +36,46 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         private CreateCompanyRequest _request;
         private DbCompany _company;
         private Guid _authorId;
-        private Guid _imageId;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _accessValidatorMock = new();
             _mapperMock = new();
-            _rcAddImageMock = new();
+            _rcCreateSMTPMock = new();
+            _rcCreateAdminMock = new();
             _loggerMock = new();
-            _httpContextAccessorMock = new();
             _validatorMock = new();
             _repositoryMock = new();
             _command = new CreateCompanyCommand(
-                _accessValidatorMock.Object,
                 _mapperMock.Object,
-                _rcAddImageMock.Object,
                 _loggerMock.Object,
-                _httpContextAccessorMock.Object,
                 _validatorMock.Object,
-                _repositoryMock.Object);
+                _repositoryMock.Object,
+                _rcCreateSMTPMock.Object,
+                _rcCreateAdminMock.Object);
 
             _request = new()
             {
-                Name = "Name",
-                Description = "Description",
-                Logo = new AddImageRequest
+                PortalName = "PortalName",
+                CompanyName = "Name",
+                SiteUrl = "siteurl",
+                AdminInfo = new AdminInfo
                 {
-                    Name = "Name",
-                    Content = "Content",
-                    Extension = "Extension"
+                    FirstName = "Name",
+                    MiddleName = null,
+                    LastName = "LastName",
+                    Email = "email@email.com",
+                    Login = "MyLogin",
+                    Password = "MyPassword"
                 },
-                Tagline = "tagline",
-                SiteUrl = "siteurl"
+                SMTP = new()
+                {
+                    Host = "host",
+                    Port = 123,
+                    Email = "email@email.ru",
+                    EnableSsl = true,
+                    Password = "password"
+                }
             };
 
             _company = new DbCompany
@@ -79,10 +83,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 Id = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true,
-                Name = _request.Name,
-                Description = _request.Description,
-                LogoId = _imageId,
-                Tagline = _request.Tagline,
+                PortalName = _request.PortalName,
+                CompanyName = _request.CompanyName,
+                Description = null,
+                LogoId = null,
+                Tagline = null,
                 SiteUrl = _request.SiteUrl
             };
         }
@@ -90,45 +95,18 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         [SetUp]
         public void SetUp()
         {
-            _accessValidatorMock.Reset();
             _mapperMock.Reset();
-            _rcAddImageMock.Reset();
-            _httpContextAccessorMock.Reset();
+            _rcCreateAdminMock.Reset();
+            _rcCreateSMTPMock.Reset();
             _validatorMock.Reset();
             _repositoryMock.Reset();
             _loggerMock.Reset();
 
-            _accessValidatorMock
-                .Setup(x => x.IsAdmin(null))
-                .Returns(true);
-
             _authorId = Guid.NewGuid();
-            _imageId = Guid.NewGuid();
-
-            IDictionary<object, object> _items = new Dictionary<object, object>();
-            _items.Add("UserId", _authorId);
-            _httpContextAccessorMock
-                .Setup(x => x.HttpContext.Items)
-                .Returns(_items);
 
             _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(true);
-        }
-
-        [Test]
-        public void ShouldThrowForbiddenException()
-        {
-            _accessValidatorMock
-                .Setup(x => x.IsAdmin(null))
-                .Returns(false);
-
-            Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
-            _repositoryMock.Verify(x => x.Add(It.IsAny<DbCompany>()), Times.Never);
-            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Never);
-            _mapperMock.Verify(x => x.Map(It.IsAny<CreateCompanyRequest>(), It.IsAny<Guid?>()), Times.Never);
-            _rcAddImageMock.Verify( x => x.GetResponse<IOperationResult<IAddImageResponse>>(
-                It.IsAny<object>(), default, default).Result.Message, Times.Never);
         }
 
         [Test]
@@ -141,15 +119,17 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
             _repositoryMock.Verify(x => x.Add(It.IsAny<DbCompany>()), Times.Never);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-            _mapperMock.Verify(x => x.Map(It.IsAny<CreateCompanyRequest>(), It.IsAny<Guid?>()), Times.Never);
-            _rcAddImageMock.Verify(x => x.GetResponse<IOperationResult<IAddImageResponse>>(
+            _mapperMock.Verify(x => x.Map(It.IsAny<CreateCompanyRequest>()), Times.Never);
+            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
+               It.IsAny<object>(), default, default).Result.Message, Times.Never);
+            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
                It.IsAny<object>(), default, default).Result.Message, Times.Never);
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenRepositoryThrow()
+        public void ShouldThrowExceptionWhenCreateSMTPResponseIsNotSuccessfuly()
         {
-            var response = new Mock<IOperationResult<IAddImageResponse>>();
+            var response = new Mock<IOperationResult<bool>>();
             response
                 .Setup(x => x.IsSuccess)
                 .Returns(false);
@@ -158,18 +138,120 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 .Setup(x => x.Errors)
                 .Returns(new List<string> { "some error" });
 
-            var brokerResponseMock = new Mock<Response<IOperationResult<IAddImageResponse>>>();
+            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
             brokerResponseMock
                 .Setup(x => x.Message)
                 .Returns(response.Object);
 
-            _rcAddImageMock
-               .Setup(x => x.GetResponse<IOperationResult<IAddImageResponse>>(
+            _rcCreateSMTPMock
+               .Setup(x => x.GetResponse<IOperationResult<bool>>(
+                       It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(brokerResponseMock.Object));
+
+            Assert.Throws<InternalServerException>(() => _command.Execute(_request));
+            _repositoryMock.Verify(x => x.Add(_company), Times.Never);
+            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
+            _mapperMock.Verify(x => x.Map(_request), Times.Never);
+            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
+               It.IsAny<object>(), default, default).Result.Message, Times.Once);
+            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
+               It.IsAny<object>(), default, default).Result.Message, Times.Never);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenCreateAdminResponseIsNotSuccessfuly()
+        {
+            var response = new Mock<IOperationResult<bool>>();
+            response
+                .Setup(x => x.IsSuccess)
+                .Returns(true);
+
+            response
+                .Setup(x => x.Body)
+                .Returns(true);
+
+            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
+            brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(response.Object);
+
+            _rcCreateSMTPMock
+               .Setup(x => x.GetResponse<IOperationResult<bool>>(
+                       It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(brokerResponseMock.Object));
+
+            response = new Mock<IOperationResult<bool>>();
+            response
+                .Setup(x => x.IsSuccess)
+                .Returns(false);
+
+            response
+                .Setup(x => x.Errors)
+                .Returns(new List<string> { "some error" });
+
+            brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
+            brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(response.Object);
+
+            _rcCreateAdminMock
+               .Setup(x => x.GetResponse<IOperationResult<bool>>(
+                       It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(brokerResponseMock.Object));
+
+            Assert.Throws<InternalServerException>(() => _command.Execute(_request));
+            _repositoryMock.Verify(x => x.Add(_company), Times.Never);
+            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
+            _mapperMock.Verify(x => x.Map(_request), Times.Never);
+            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
+               It.IsAny<object>(), default, default).Result.Message, Times.Once);
+            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
+               It.IsAny<object>(), default, default).Result.Message, Times.Once);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenRepositoryThrow()
+        {
+            var response = new Mock<IOperationResult<bool>>();
+            response
+                .Setup(x => x.IsSuccess)
+                .Returns(true);
+
+            response
+                .Setup(x => x.Body)
+                .Returns(true);
+
+            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
+            brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(response.Object);
+
+            _rcCreateSMTPMock
+               .Setup(x => x.GetResponse<IOperationResult<bool>>(
+                       It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(brokerResponseMock.Object));
+
+            response = new Mock<IOperationResult<bool>>();
+            response
+                .Setup(x => x.IsSuccess)
+                .Returns(true);
+
+            response
+                .Setup(x => x.Body)
+                .Returns(true);
+
+            brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
+            brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(response.Object);
+
+            _rcCreateAdminMock
+               .Setup(x => x.GetResponse<IOperationResult<bool>>(
                        It.IsAny<object>(), default, default))
                .Returns(Task.FromResult(brokerResponseMock.Object));
 
             _mapperMock
-                .Setup(x => x.Map(_request, It.IsAny<Guid?>()))
+                .Setup(x => x.Map(_request))
                 .Returns(_company);
 
             _repositoryMock
@@ -179,35 +261,56 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             Assert.Throws<Exception>(() => _command.Execute(_request));
             _repositoryMock.Verify(x => x.Add(_company), Times.Once);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-            _mapperMock.Verify(x => x.Map(_request, null), Times.Once);
-            _rcAddImageMock.Verify(x => x.GetResponse<IOperationResult<IAddImageResponse>>(
+            _mapperMock.Verify(x => x.Map(_request), Times.Once);
+            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
+               It.IsAny<object>(), default, default).Result.Message, Times.Once);
+            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
                It.IsAny<object>(), default, default).Result.Message, Times.Once);
         }
 
         [Test]
         public void ShouldCreateCompanySuccessfuly()
         {
-            var response = new Mock<IOperationResult<IAddImageResponse>>();
+            var response = new Mock<IOperationResult<bool>>();
             response
                 .Setup(x => x.IsSuccess)
                 .Returns(true);
 
             response
-                .Setup(x => x.Body.Id)
-                .Returns(_imageId);
+                .Setup(x => x.Body)
+                .Returns(true);
 
-            var brokerResponseMock = new Mock<Response<IOperationResult<IAddImageResponse>>>();
+            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
             brokerResponseMock
                 .Setup(x => x.Message)
                 .Returns(response.Object);
 
-            _rcAddImageMock
-               .Setup(x => x.GetResponse<IOperationResult<IAddImageResponse>>(
+            _rcCreateSMTPMock
+               .Setup(x => x.GetResponse<IOperationResult<bool>>(
+                       It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(brokerResponseMock.Object));
+
+            response = new Mock<IOperationResult<bool>>();
+            response
+                .Setup(x => x.IsSuccess)
+                .Returns(true);
+
+            response
+                .Setup(x => x.Body)
+                .Returns(true);
+
+            brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
+            brokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(response.Object);
+
+            _rcCreateAdminMock
+               .Setup(x => x.GetResponse<IOperationResult<bool>>(
                        It.IsAny<object>(), default, default))
                .Returns(Task.FromResult(brokerResponseMock.Object));
 
             _mapperMock
-                .Setup(x => x.Map(_request, _imageId))
+                .Setup(x => x.Map(_request))
                 .Returns(_company);
 
             var expected = new OperationResultResponse<Guid>
@@ -219,8 +322,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
             _repositoryMock.Verify(x => x.Add(_company), Times.Once);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-            _mapperMock.Verify(x => x.Map(_request, _imageId), Times.Once);
-            _rcAddImageMock.Verify(x => x.GetResponse<IOperationResult<IAddImageResponse>>(
+            _mapperMock.Verify(x => x.Map(_request), Times.Once);
+            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
+               It.IsAny<object>(), default, default).Result.Message, Times.Once);
+            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
                It.IsAny<object>(), default, default).Result.Message, Times.Once);
         }
     }

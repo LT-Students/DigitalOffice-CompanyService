@@ -5,6 +5,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
@@ -48,7 +49,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 
             return new OperationResultResponse<Guid>
             {
-                Status = Kernel.Enums.OperationResultStatusType.FullSuccess,
+                Status = OperationResultStatusType.FullSuccess,
                 Body = office.Id
             };
         }

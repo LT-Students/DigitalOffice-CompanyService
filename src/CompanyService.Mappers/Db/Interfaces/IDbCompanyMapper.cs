@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
     [AutoInject]
     public interface IDbCompanyMapper
     {
-        DbCompany Map(CreateCompanyRequest request, Guid? logoId);
+        DbCompany Map(CreateCompanyRequest request);
     }
 }

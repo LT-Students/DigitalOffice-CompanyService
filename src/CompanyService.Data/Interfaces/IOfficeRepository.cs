@@ -8,6 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     public interface IOfficeRepository
     {
         void Add(DbOffice office);
-        List<DbOffice> Find();
+
+        List<DbOffice> Find(int skipCount, int takeCount);
     }
 }

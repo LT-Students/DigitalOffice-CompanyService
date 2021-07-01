@@ -63,7 +63,8 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 IsActive = true,
                 Description = "Desc",
                 LogoId = Guid.NewGuid(),
-                Name = "Name",
+                CompanyName = "Name",
+                PortalName = "PortalName",
                 Tagline = "tagline"
             };
 

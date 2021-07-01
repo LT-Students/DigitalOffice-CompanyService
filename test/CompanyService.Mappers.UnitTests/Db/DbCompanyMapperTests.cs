@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null, null));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
         }
 
         [Test]
@@ -28,29 +28,29 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         {
             CreateCompanyRequest request = new CreateCompanyRequest
             {
-                Name = "Name",
-                Description = "Description",
-                Logo = new AddImageRequest(),
-                Tagline = "Tagline",
+                PortalName = "PortalName",
+                CompanyName = "Name",
+                AdminInfo = new(),
+                SMTP = new(),
                 SiteUrl = "siteurl"
             };
 
-            Guid imageId = Guid.NewGuid();
-
             DbCompany expected = new()
             {
-                Name = request.Name,
-                Description = request.Description,
-                LogoId = imageId,
-                Tagline = request.Tagline,
+                PortalName = request.PortalName,
+                CompanyName = request.CompanyName,
+                Description = null,
+                LogoId = null,
+                Tagline = null,
                 CreatedAt = DateTime.UtcNow,
                 SiteUrl = request.SiteUrl
             };
 
-            var response = _mapper.Map(request, imageId);
+            var response = _mapper.Map(request);
 
             Assert.AreNotEqual(Guid.Empty, response.Id);
-            Assert.AreEqual(expected.Name, response.Name);
+            Assert.AreEqual(expected.PortalName, response.PortalName);
+            Assert.AreEqual(expected.CompanyName, response.CompanyName);
             Assert.AreEqual(expected.Description, response.Description);
             Assert.AreEqual(expected.LogoId, response.LogoId);
             Assert.AreEqual(expected.Tagline, response.Tagline);

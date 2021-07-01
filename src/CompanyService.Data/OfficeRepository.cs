@@ -28,9 +28,9 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider.Save();
         }
 
-        public List<DbOffice> Find()
+        public List<DbOffice> Find(int skipCount, int takeCount)
         {
-            return _provider.Offices.Where(o => o.IsActive).ToList();
+            return _provider.Offices.Skip(skipCount * takeCount).Take(takeCount).Where(o => o.IsActive).ToList();
         }
     }
 }

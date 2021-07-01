@@ -17,7 +17,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     LogoId = table.Column<Guid?>(nullable: true),
-                    Name = table.Column<string>(nullable: false),
+                    PortalName = table.Column<string>(nullable: false),
+                    CompanyName = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Tagline = table.Column<string>(nullable: true),
                     SiteUrl = table.Column<string>(nullable: false),

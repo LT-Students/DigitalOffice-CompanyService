@@ -7,7 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
     public class DbCompanyMapper : IDbCompanyMapper
     {
-        public DbCompany Map(CreateCompanyRequest request, Guid? logoId)
+        public DbCompany Map(CreateCompanyRequest request)
         {
             if (request == null)
             {
@@ -17,10 +17,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
             return new DbCompany
             {
                 Id = Guid.NewGuid(),
-                LogoId = logoId,
-                Name = request.Name,
-                Description = request.Description,
-                Tagline = request.Tagline,
+                PortalName = request.PortalName ?? "DigitalOffice",
+                CompanyName = request.CompanyName,
                 SiteUrl = request.SiteUrl,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true

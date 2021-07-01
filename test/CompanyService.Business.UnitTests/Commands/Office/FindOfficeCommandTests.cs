@@ -6,6 +6,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.UnitTestKernel;
+using Moq;
 using Moq.AutoMock;
 using NUnit.Framework;
 using System;
@@ -29,15 +30,18 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         public void ShouldThrowExceptionWhenRepositoryThrow()
         {
             _mocker
-                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find())
+                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(It.IsAny<int>(), It.IsAny<int>()))
                 .Throws(new Exception());
 
-            Assert.Throws<Exception>(() => _command.Execute());
+            Assert.Throws<Exception>(() => _command.Execute(0, 10));
         }
 
         [Test]
         public void ShouldFindOfficesSuccessfuly()
         {
+            int skipCount = 0;
+            int takeCount = 10;
+
             var dbOffice1 = new DbOffice
             {
                 Id = Guid.NewGuid(),
@@ -83,7 +87,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             };
 
             _mocker
-                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find())
+                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(skipCount, takeCount))
                 .Returns(dbOffices);
 
             _mocker
@@ -103,7 +107,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 }
             };
 
-            SerializerAssert.AreEqual(expected, _command.Execute());
+            SerializerAssert.AreEqual(expected, _command.Execute(skipCount, takeCount));
         }
     }
 }

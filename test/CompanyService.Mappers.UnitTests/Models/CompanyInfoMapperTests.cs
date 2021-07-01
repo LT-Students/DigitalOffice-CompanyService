@@ -59,7 +59,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
             DbCompany company = new()
             {
                 Id = Guid.NewGuid(),
-                Name = "Name",
+                PortalName = "PortalName",
+                CompanyName = "Name",
                 Tagline = "Tagline",
                 Description = "Description",
                 CreatedAt = DateTime.UtcNow,
@@ -127,7 +128,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
             CompanyInfo expected = new()
             {
                 Id = company.Id,
-                Name = company.Name,
+                PortalName = company.PortalName,
+                CompanyName = company.CompanyName,
                 Tagline = company.Tagline,
                 Description = company.Description,
                 Logo = imageInfo,

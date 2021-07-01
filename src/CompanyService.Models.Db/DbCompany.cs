@@ -11,7 +11,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
 
         public Guid Id { get; set; }
         public Guid? LogoId { get; set; }
-        public string Name { get; set; }
+        public string PortalName { get; set; }
+        public string CompanyName { get; set; }
         public string Description { get; set; }
         public string Tagline { get; set; }
         public string SiteUrl { get; set; }
@@ -38,7 +39,11 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
                 .ToTable(DbCompany.TableName);
 
             builder
-                .Property(c => c.Name)
+                .Property(c => c.PortalName)
+                .IsRequired();
+
+            builder
+                .Property(c => c.CompanyName)
                 .IsRequired();
 
             builder

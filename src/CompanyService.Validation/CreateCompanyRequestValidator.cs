@@ -8,7 +8,13 @@ namespace LT.DigitalOffice.CompanyService.Validation
     {
         public CreateCompanyRequestValidator()
         {
-            RuleFor(request => request.Name)
+            When(request => request.PortalName != null, () =>
+            {
+                RuleFor(request => request.PortalName)
+                    .NotEmpty();
+            });
+
+            RuleFor(request => request.CompanyName)
                 .NotEmpty();
 
             RuleFor(request => request.SiteUrl)
