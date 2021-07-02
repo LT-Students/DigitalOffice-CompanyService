@@ -36,12 +36,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
         }
 
         public OperationResultResponse<Guid> Execute(CreateOfficeRequest request)
-        {/*
+        {
             if (!_accessValidator.IsAdmin())
             {
                 throw new ForbiddenException("Not enouth rights.");
             }
-            */
+
             _validator.ValidateAndThrowCustom(request);
 
             DbOffice office = _mapper.Map(request, _companyRepository.Get(false).Id);
