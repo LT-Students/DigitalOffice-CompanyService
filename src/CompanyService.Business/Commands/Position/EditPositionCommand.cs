@@ -15,17 +15,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
     {
         private readonly IPositionInfoValidator _validator;
         private readonly IPositionRepository _repository;
+        private readonly ICompanyRepository _companyRepository;
         private readonly IDbPositionMapper _mapper;
         private readonly IAccessValidator _accessValidator;
 
         public EditPositionCommand(
             IPositionInfoValidator validator,
             IPositionRepository repository,
+            ICompanyRepository companyRepository,
             IDbPositionMapper mapper,
             IAccessValidator accessValidator)
         {
             _validator = validator;
             _repository = repository;
+            _companyRepository = companyRepository;
             _mapper = mapper;
             _accessValidator = accessValidator;
         }
@@ -40,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             _validator.ValidateAndThrowCustom(request);
 
-            var position = _mapper.Map(request);
+            var position = _mapper.Map(request, _companyRepository.Get(false).Id);
 
             return _repository.EditPosition(position);
         }

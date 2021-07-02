@@ -16,10 +16,13 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         private PositionInfo _positionInfo;
         private CreatePositionRequest _createPositionRequest;
         private DbPosition _expectedDbPosition;
+        private Guid _companyId;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            _companyId = Guid.NewGuid();
+
             _mapper = new DbPositionMapper();
         }
 
@@ -41,6 +44,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             };
             _expectedDbPosition = new DbPosition
             {
+                CompanyId = _companyId,
                 Name = _createPositionRequest.Name,
                 Description = _createPositionRequest.Description,
                 IsActive = true
@@ -52,12 +56,12 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         public void ShouldThrowExceptionIfArgumentIsNullAddPositionRequestToDbPosition()
         {
             CreatePositionRequest createPositionRequest = null;
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(createPositionRequest));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(createPositionRequest, _companyId));
         }
 
         public void ShouldMapAddPositionRequestToDbPositionSuccessfully()
         {
-            var resultDbPosition = _mapper.Map(_createPositionRequest);
+            var resultDbPosition = _mapper.Map(_createPositionRequest, _companyId);
 
             _expectedDbPosition.Id = resultDbPosition.Id;
 
@@ -71,17 +75,18 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         public void ShouldThrowExceptionIfArgumentIsNullEditPositionRequestToDbPosition()
         {
             PositionInfo positionInfo = null;
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(positionInfo));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(positionInfo, _companyId));
         }
 
         [Test]
         public void ShouldReturnPositionModelSuccessfullyEditPositionRequestToDbPosition()
         {
-            var result = _mapper.Map(_positionInfo);
+            var result = _mapper.Map(_positionInfo, _companyId);
 
             var expected = new DbPosition
             {
                 Id = result.Id,
+                CompanyId = _companyId,
                 Name = _positionInfo.Name,
                 Description = _positionInfo.Description,
                 IsActive = true

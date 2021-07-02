@@ -20,12 +20,15 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
     {
         private ICreateDepartmentCommand _command;
         private Mock<IDepartmentRepository> _repositoryMock;
+        private Mock<ICompanyRepository> _companyRepositoryMock;
         private Mock<IAccessValidator> _accessValidatorMock;
         private Mock<ICreateDepartmentRequestValidator> _validatorMock;
         private Mock<IDbDepartmentMapper> _mapperMock;
 
         private CreateDepartmentRequest _request;
         private DbDepartment _dbDepartment;
+
+        private Guid _companyId;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -34,12 +37,16 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _accessValidatorMock = new Mock<IAccessValidator>();
             _validatorMock = new Mock<ICreateDepartmentRequestValidator>();
             _mapperMock = new Mock<IDbDepartmentMapper>();
+            _companyRepositoryMock = new();
 
             _command = new CreateDepartmentCommand(
                 _repositoryMock.Object,
+                _companyRepositoryMock.Object,
                 _validatorMock.Object,
                 _mapperMock.Object,
                 _accessValidatorMock.Object);
+
+            _companyId = Guid.NewGuid();
 
             var newDepartment = new BaseDepartmentInfo()
             {
@@ -63,6 +70,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _dbDepartment = new DbDepartment
             {
                 Id = Guid.NewGuid(),
+                CompanyId = _companyId,
                 Name = newDepartment.Name,
                 Description = newDepartment.Description,
                 IsActive = true,
@@ -90,6 +98,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _accessValidatorMock.Reset();
             _validatorMock.Reset();
             _mapperMock.Reset();
+            _companyRepositoryMock.Reset();
 
             _accessValidatorMock
                 .Setup(x => x.IsAdmin(null))
@@ -108,17 +117,24 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns(false);
 
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
-            _mapperMock.Verify(x => x.Map(_request), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<bool>()), Times.Never);
+            _repositoryMock.Verify(x => x.CreateDepartment(It.IsAny<DbDepartment>()), Times.Never);
         }
 
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenDepartmentRequestIsNull()
         {
+
+            _companyRepositoryMock
+                .Setup(x => x.Get(false))
+                .Returns(new DbCompany { Id = _companyId });
+
             _mapperMock
-                .Setup(x => x.Map(_request))
+                .Setup(x => x.Map(null, _companyId))
                 .Throws(new ArgumentNullException());
 
-            Assert.Throws<ArgumentNullException>(() => _command.Execute(_request));
+            Assert.Throws<ArgumentNullException>(() => _command.Execute(null));
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<bool>()), Times.Once);
             _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Never);
         }
 
@@ -129,8 +145,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Setup(x => x.Validate(It.IsAny<CreateDepartmentRequest>()).IsValid)
                 .Returns(true);
 
+            _companyRepositoryMock
+                .Setup(x => x.Get(false))
+                .Returns(new DbCompany { Id = _companyId });
+
             _mapperMock
-                .Setup(x => x.Map(_request))
+                .Setup(x => x.Map(_request, _companyId))
                 .Returns(_dbDepartment);
 
             _repositoryMock
@@ -139,6 +159,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
 
             Assert.AreEqual(_dbDepartment.Id, _command.Execute(_request));
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<bool>()), Times.Once);
+            _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Once);
         }
     }
 }

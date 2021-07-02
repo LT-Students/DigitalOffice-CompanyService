@@ -13,5 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider
         DbSet<DbDepartment> Departments { get; set; }
         DbSet<DbDepartmentUser> DepartmentUsers { get; set; }
         DbSet<DbPositionUser> PositionUsers { get; set; }
+        DbSet<DbCompany> Companies { get; set; }
+        DbSet<DbOffice> Offices { get; set; }
     }
 }

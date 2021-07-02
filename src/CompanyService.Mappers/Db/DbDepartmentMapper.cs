@@ -8,7 +8,7 @@ namespace CompanyService.Mappers.Db
 {
     public class DbDepartmentMapper : IDbDepartmentMapper
     {
-        public DbDepartment Map(CreateDepartmentRequest value)
+        public DbDepartment Map(CreateDepartmentRequest value, Guid companyId)
         {
             if (value == null)
             {
@@ -20,6 +20,7 @@ namespace CompanyService.Mappers.Db
             var dbDepartment = new DbDepartment
             {
                 Id = departmentId,
+                CompanyId = companyId,
                 Name = value.Info.Name,
                 Description = value.Info.Description,
                 DirectorUserId = value.Info.DirectorUserId,

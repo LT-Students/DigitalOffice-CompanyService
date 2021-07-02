@@ -15,16 +15,19 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     {
         private readonly IDepartmentRepository _repository;
         private readonly ICreateDepartmentRequestValidator _validator;
+        private readonly ICompanyRepository _companyRepository;
         private readonly IDbDepartmentMapper _mapper;
         private readonly IAccessValidator _accessValidator;
 
         public CreateDepartmentCommand(
             IDepartmentRepository repository,
+            ICompanyRepository companyRepository,
             ICreateDepartmentRequestValidator validator,
             IDbDepartmentMapper mapper,
             IAccessValidator accessValidator)
         {
             _repository = repository;
+            _companyRepository = companyRepository;
             _validator = validator;
             _mapper = mapper;
             _accessValidator = accessValidator;
@@ -39,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             _validator.ValidateAndThrowCustom(request);
 
-            return _repository.CreateDepartment(_mapper.Map(request));
+            return _repository.CreateDepartment(_mapper.Map(request, _companyRepository.Get(false).Id));
         }
     }
 }

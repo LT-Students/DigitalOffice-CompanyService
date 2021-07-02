@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Attributes;
+using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
 {
@@ -12,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
     [AutoInject]
     public interface IDbPositionMapper
     {
-        DbPosition Map(CreatePositionRequest positionInfo);
-        DbPosition Map(PositionInfo positionInfo);
+        DbPosition Map(CreatePositionRequest positionInfo, Guid companyId);
+        DbPosition Map(PositionInfo positionInfo, Guid companyId);
     }
 }

@@ -10,11 +10,14 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public const string TableName = "Positions";
 
         public Guid Id { get; set; }
+        public Guid CompanyId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
 
+        public DbCompany Company { get; set; }
         public ICollection<DbPositionUser> Users { get; set; }
+
         public DbPosition()
         {
             Users = new HashSet<DbPositionUser>();
@@ -34,6 +37,11 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
             builder
                 .HasMany(p => p.Users)
                 .WithOne(u => u.Position);
+
+            builder
+                .HasOne(p => p.Company)
+                .WithMany(c => c.Positions)
+                .HasForeignKey(p => p.CompanyId);
         }
     }
 }

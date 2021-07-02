@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Attributes;
+using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
 {
@@ -11,6 +12,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
     [AutoInject]
     public interface IDbDepartmentMapper
     {
-        DbDepartment Map(CreateDepartmentRequest newDepartmentRequest);
+        DbDepartment Map(CreateDepartmentRequest newDepartmentRequest, Guid companyId);
     }
 }
