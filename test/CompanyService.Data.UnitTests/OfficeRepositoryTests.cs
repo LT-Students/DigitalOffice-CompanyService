@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -106,6 +107,12 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             _provider.Save();
 
             SerializerAssert.AreEqual(new List<DbOffice>() { office1 }, _repository.Find(0, 2));
+        }
+
+        [Test]
+        public void ShouldThrowBadRequestExceptionWhenTakeCountLessThan1()
+        {
+            Assert.Throws<BadRequestException>(() => _repository.Find(0, 0));
         }
 
         #endregion

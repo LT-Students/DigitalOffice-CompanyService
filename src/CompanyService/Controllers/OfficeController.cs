@@ -1,10 +1,11 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
@@ -32,7 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public OfficesResponse Find(
+        public OperationResultResponse<List<OfficeInfo>> Find(
             [FromServices] IFindOfficesCommand command,
             [FromQuery] int skipCount,
             [FromQuery] int takeCount)

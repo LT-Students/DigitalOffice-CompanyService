@@ -103,7 +103,7 @@ namespace LT.DigitalOffice.CompanyService
 
             app.UseRouting();
 
-            app.UseMiddleware<TokenMiddleware>();
+            //app.UseMiddleware<TokenMiddleware>();
 
             app.UseCors(CorsPolicyName);
 

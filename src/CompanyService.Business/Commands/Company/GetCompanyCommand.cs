@@ -3,7 +3,8 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -20,11 +21,15 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             _companyInfoMapper = mapper;
         }
 
-        public CompanyInfo Execute()
+        public OperationResultResponse<CompanyInfo> Execute()
         {
             DbCompany company = _repository.Get(true);
 
-            return _companyInfoMapper.Map(company, null);
+            return new OperationResultResponse<CompanyInfo>
+            {
+                Status = OperationResultStatusType.FullSuccess,
+                Body = _companyInfoMapper.Map(company, null)
+            };
         }
     }
 }
