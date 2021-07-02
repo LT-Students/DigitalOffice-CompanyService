@@ -4,7 +4,8 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using Moq.AutoMock;
@@ -98,9 +99,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 .Setup<IOfficeInfoMapper, OfficeInfo>(x => x.Map(dbOffice2))
                 .Returns(officeInfo2);
 
-            var expected = new OfficesResponse
+            var expected = new OperationResultResponse<List<OfficeInfo>>
             {
-                Offices = new List<OfficeInfo>
+                Status = OperationResultStatusType.FullSuccess,
+                Body = new List<OfficeInfo>
                 {
                     officeInfo1,
                     officeInfo2

@@ -5,6 +5,8 @@ using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using NUnit.Framework;
@@ -65,6 +67,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 Tagline = dbCompany.Tagline
             };
 
+            var expected = new OperationResultResponse<CompanyInfo>
+            {
+                Status = OperationResultStatusType.FullSuccess,
+                Body = companyInfo
+            };
+
             _repositoryMock
                 .Setup(x => x.Get(true))
                 .Returns(dbCompany);
@@ -73,7 +81,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 .Setup(x => x.Map(dbCompany, It.IsAny<ImageInfo>()))
                 .Returns(companyInfo);
 
-            SerializerAssert.AreEqual(companyInfo, _command.Execute());
+            SerializerAssert.AreEqual(expected, _command.Execute());
             _repositoryMock.Verify(x => x.Get(true), Times.Once);
             _mapperMock.Verify(x => x.Map(dbCompany, It.IsAny<ImageInfo>()), Times.Once);
         }
