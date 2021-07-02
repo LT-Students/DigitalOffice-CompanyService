@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.UnitTestKernel;
@@ -20,9 +21,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         private AutoMocker _mocker;
         private IFindOfficesCommand _command;
 
+        private int _totalCount;
+
         [SetUp]
         public void SetUp()
         {
+            _totalCount = 5;
+
             _mocker = new();
             _command = _mocker.CreateInstance<FindOfficesCommand>();
         }
@@ -31,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         public void ShouldThrowExceptionWhenRepositoryThrow()
         {
             _mocker
-                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(It.IsAny<int>(), It.IsAny<int>()))
+                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(It.IsAny<int>(), It.IsAny<int>(), out _totalCount))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(0, 10));
@@ -88,7 +93,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             };
 
             _mocker
-                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(skipCount, takeCount))
+                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(skipCount, takeCount, out _totalCount))
                 .Returns(dbOffices);
 
             _mocker
@@ -99,10 +104,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 .Setup<IOfficeInfoMapper, OfficeInfo>(x => x.Map(dbOffice2))
                 .Returns(officeInfo2);
 
-            var expected = new OperationResultResponse<List<OfficeInfo>>
+            var expected = new FindOfficesResponse
             {
-                Status = OperationResultStatusType.FullSuccess,
-                Body = new List<OfficeInfo>
+                TotalCount = _totalCount,
+                Offices = new List<OfficeInfo>
                 {
                     officeInfo1,
                     officeInfo2

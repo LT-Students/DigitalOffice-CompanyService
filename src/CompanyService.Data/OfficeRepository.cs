@@ -29,12 +29,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider.Save();
         }
 
-        public List<DbOffice> Find(int skipCount, int takeCount)
+        public List<DbOffice> Find(int skipCount, int takeCount, out int totalCount)
         {
             if (takeCount <= 0)
             {
                 throw new BadRequestException("Take count can't be equal or less than 0.");
             }
+
+            totalCount = _provider.Offices.Count(x => x.IsActive);
 
             return _provider.Offices.Skip(skipCount * takeCount).Take(takeCount).Where(o => o.IsActive).ToList();
         }

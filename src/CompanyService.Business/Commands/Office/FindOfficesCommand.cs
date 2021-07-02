@@ -1,10 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.Kernel.Enums;
-using LT.DigitalOffice.Kernel.Responses;
-using System.Collections.Generic;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
@@ -22,12 +19,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
             _mapper = mapper;
         }
 
-        public OperationResultResponse<List<OfficeInfo>> Execute(int skipCount, int takeCount)
+        public FindOfficesResponse Execute(int skipCount, int takeCount)
         {
-            return new OperationResultResponse<List<OfficeInfo>>
+            return new FindOfficesResponse
             {
-                Status = OperationResultStatusType.FullSuccess,
-                Body = _officeRepository.Find(skipCount, takeCount).Select(o => _mapper.Map(o)).ToList()
+                Offices = _officeRepository.Find(skipCount, takeCount, out int totalCount).Select(o => _mapper.Map(o)).ToList(),
+                TotalCount = totalCount
             };
         }
     }

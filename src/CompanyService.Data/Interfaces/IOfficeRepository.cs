@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     {
         void Add(DbOffice office);
 
-        List<DbOffice> Find(int skipCount, int takeCount);
+        List<DbOffice> Find(int skipCount, int takeCount, out int totalCount);
     }
 }
