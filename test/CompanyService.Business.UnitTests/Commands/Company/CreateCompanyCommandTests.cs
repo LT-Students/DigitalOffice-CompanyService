@@ -127,7 +127,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenCreateSMTPResponseIsNotSuccessfuly()
+        public void ShouldReturnFailedResponseWhenCreateSMTPResponseIsNotSuccessfuly()
         {
             var response = new Mock<IOperationResult<bool>>();
             response
@@ -148,7 +148,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                        It.IsAny<object>(), default, default))
                .Returns(Task.FromResult(brokerResponseMock.Object));
 
-            Assert.Throws<InternalServerException>(() => _command.Execute(_request));
+            var expected = new OperationResultResponse<Guid>
+            {
+                Status = Kernel.Enums.OperationResultStatusType.Failed,
+                Errors = new List<string> { "Can not create smtp." }
+            };
+
+            SerializerAssert.AreEqual(expected, _command.Execute(_request));
             _repositoryMock.Verify(x => x.Add(_company), Times.Never);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
             _mapperMock.Verify(x => x.Map(_request), Times.Never);
@@ -159,7 +165,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenCreateAdminResponseIsNotSuccessfuly()
+        public void ShouldReturnFailedResponseWhenCreateAdminResponseIsNotSuccessfuly()
         {
             var response = new Mock<IOperationResult<bool>>();
             response
@@ -199,7 +205,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                        It.IsAny<object>(), default, default))
                .Returns(Task.FromResult(brokerResponseMock.Object));
 
-            Assert.Throws<InternalServerException>(() => _command.Execute(_request));
+            var expected = new OperationResultResponse<Guid>
+            {
+                Status = Kernel.Enums.OperationResultStatusType.Failed,
+                Errors = new List<string> { "Can not create admin." }
+            };
+
+            SerializerAssert.AreEqual(expected, _command.Execute(_request));
             _repositoryMock.Verify(x => x.Add(_company), Times.Never);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
             _mapperMock.Verify(x => x.Map(_request), Times.Never);

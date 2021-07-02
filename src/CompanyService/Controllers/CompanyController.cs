@@ -26,9 +26,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromBody] CreateCompanyRequest request,
             [FromServices] ICreateCompanyCommand command)
         {
-            _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+            var result = command.Execute(request);
+            if (result.Status != Kernel.Enums.OperationResultStatusType.Failed)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+            }
 
-            return command.Execute(request);
+            return result;
         }
 
         [HttpGet("get")]

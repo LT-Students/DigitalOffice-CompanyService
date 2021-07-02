@@ -7,7 +7,6 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
@@ -15,6 +14,7 @@ using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -27,7 +27,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly IRequestClient<ICreateSMTPRequest> _rcCreateSMTP;
         private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
 
-        private void CreateSMTP(SMTPInfo info)
+        private bool CreateSMTP(SMTPInfo info, List<string> errors)
         {
             string message = "Can not create smtp.";
 
@@ -38,21 +38,24 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
                 if (response.IsSuccess && response.Body)
                 {
-                    return;
+                    return true;
                 }
+
+                errors.Add(message);
+
+                _logger.LogWarning(message, string.Join("\n", response.Errors));
             }
             catch(Exception exc)
             {
                 _logger.LogError(exc, message);
 
-                throw;
+                errors.Add(message);
             }
-            _logger.LogError(message);
 
-            throw new InternalServerException(message);
+            return false;
         }
 
-        private void CreateAdmin(AdminInfo info)
+        private bool CreateAdmin(AdminInfo info, List<string> errors)
         {
             string message = "Can not create admin.";
 
@@ -63,18 +66,21 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
                 if (response.IsSuccess && response.Body)
                 {
-                    return;
+                    return true;
                 }
+
+                errors.Add(message);
+
+                _logger.LogWarning(message, string.Join("\n", response.Errors));
             }
             catch (Exception exc)
             {
                 _logger.LogError(exc, message);
 
-                throw;
+                errors.Add(message);
             }
-            _logger.LogError(message);
 
-            throw new InternalServerException(message);
+            return false;
         }
 
 
@@ -96,10 +102,19 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
         {
+            List<string> errors = new();
+
             _validator.ValidateAndThrowCustom(request);
 
-            CreateSMTP(request.SMTP);
-            CreateAdmin(request.AdminInfo);
+            if(!(CreateSMTP(request.SMTP, errors)
+                && CreateAdmin(request.AdminInfo, errors)))
+            {
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = errors
+                };
+            }
 
             DbCompany company = _mapper.Map(request);
 

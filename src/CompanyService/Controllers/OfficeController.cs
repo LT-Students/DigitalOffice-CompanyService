@@ -27,9 +27,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromServices] ICreateOfficeCommand command,
             [FromBody] CreateOfficeRequest request)
         {
-            _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+            var result = command.Execute(request);
+            if (result.Status != Kernel.Enums.OperationResultStatusType.Failed)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+            }
 
-            return command.Execute(request);
+            return result;
         }
 
         [HttpGet("find")]
