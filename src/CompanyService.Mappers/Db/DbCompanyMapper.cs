@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
             return new DbCompany
             {
                 Id = Guid.NewGuid(),
-                PortalName = request.PortalName ?? "DigitalOffice",
+                PortalName = request.PortalName,
                 CompanyName = request.CompanyName,
                 SiteUrl = request.SiteUrl,
                 CreatedAt = DateTime.UtcNow,
