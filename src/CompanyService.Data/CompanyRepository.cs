@@ -36,21 +36,16 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public DbCompany Get(bool full)
         {
-            if (!_provider.Companies.Any())
-            {
-                return null;
-            }
-
             if (full)
             {
                 return _provider.Companies
                                 .Include(c => c.Departments)
                                 .Include(c => c.Positions)
                                 .Include(c => c.Offices)
-                                .First();
+                                .FirstOrDefault();
             }
 
-            return _provider.Companies.First();
+            return _provider.Companies.FirstOrDefault();
         }
     }
 }
