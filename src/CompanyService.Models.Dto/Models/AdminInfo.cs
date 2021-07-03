@@ -1,6 +1,6 @@
 ﻿namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
 {
-    public class AdminInfo
+    public record AdminInfo
     {
         public string FirstName { get; set; }
         public string MiddleName { get; set; }

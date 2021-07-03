@@ -2,7 +2,7 @@
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
 {
-    public class CreateOfficeRequest
+    public record CreateOfficeRequest
     {
         public string Name { get; set; }
         public string City { get; set; }

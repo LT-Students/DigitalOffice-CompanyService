@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
 {
-    public class DepartmentInfo
+    public record DepartmentInfo
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
