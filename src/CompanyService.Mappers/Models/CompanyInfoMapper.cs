@@ -26,7 +26,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
         {
             if (company == null)
             {
-                throw new ArgumentNullException(nameof(company));
+                return null;
             }
 
             return new CompanyInfo
