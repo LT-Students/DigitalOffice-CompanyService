@@ -102,7 +102,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhetCompanyDoesNotExist()
         {
-            Assert.Throws<NotFoundException>(() => _repository.Get(false));
+            Assert.IsNull(_repository.Get(false));
         }
 
         #endregion

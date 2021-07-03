@@ -38,7 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             if (!_provider.Companies.Any())
             {
-                throw new NotFoundException("Company doesn't exist");
+                return null;
             }
 
             if (full)

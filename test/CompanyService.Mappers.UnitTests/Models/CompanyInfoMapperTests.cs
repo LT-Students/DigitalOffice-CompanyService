@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null, null));
+            Assert.IsNull(_mapper.Map(null, null));
         }
 
         [Test]
