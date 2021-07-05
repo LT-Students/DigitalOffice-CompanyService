@@ -1,6 +1,6 @@
 ﻿namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
 {
-    public class SMTPInfo
+    public record SMTPInfo
     {
         public string Host { get; set; }
         public int Port { get; set; }
