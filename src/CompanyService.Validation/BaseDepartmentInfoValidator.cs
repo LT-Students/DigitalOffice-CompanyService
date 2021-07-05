@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Validation
                 .MaximumLength(100)
                 .WithMessage("Department name is too long.");
 
-            When(request => !string.IsNullOrEmpty(request.Description), () =>
+            When(request => request.Description != null, () =>
             {
                 RuleFor(request => request.Description)
                     .NotEmpty()

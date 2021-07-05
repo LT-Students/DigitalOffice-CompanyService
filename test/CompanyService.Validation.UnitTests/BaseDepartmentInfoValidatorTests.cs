@@ -25,13 +25,13 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         }
 
         [Test]
-        public void SuccessfulCompanyValidationWhenDescriptionIsEmpty()
+        public void SuccessfulCompanyValidationWhenDescriptionIsNull()
         {
             var request = new BaseDepartmentInfo
             {
                 DirectorUserId = Guid.NewGuid(),
                 Name = "Department A",
-                Description = ""
+                Description = null
             };
 
             _validator.TestValidate(request).ShouldNotHaveAnyValidationErrors();
