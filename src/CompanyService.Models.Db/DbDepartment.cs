@@ -37,7 +37,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
 
             builder
                 .HasMany(d => d.Users)
-                .WithOne(u => u.Department);
+                .WithOne(u => u.Department)
+                .HasForeignKey(k => k.DepartmentId);
 
             builder
                 .HasOne(d => d.Company)
