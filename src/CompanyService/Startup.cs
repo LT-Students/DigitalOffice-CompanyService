@@ -17,6 +17,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -69,7 +70,14 @@ namespace LT.DigitalOffice.CompanyService
             services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
 
             services.AddHttpContextAccessor();
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                })
+                .AddNewtonsoftJson();
+
 
             string connStr = Environment.GetEnvironmentVariable("ConnectionString");
             if (string.IsNullOrEmpty(connStr))
@@ -142,6 +150,7 @@ namespace LT.DigitalOffice.CompanyService
                 x.AddConsumer<FindDepartmentUsersConsumer>();
                 x.AddConsumer<SearchDepartmentsConsumer>();
                 x.AddConsumer<ChangeUserOfficeConsumer>();
+                x.AddConsumer<GetSmtpCredentialsConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -207,6 +216,11 @@ namespace LT.DigitalOffice.CompanyService
             cfg.ReceiveEndpoint(_rabbitMqConfig.ChangeUserOfficeEndpoint, ep =>
             {
                 ep.ConfigureConsumer<ChangeUserOfficeConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.GetSmtpCredentialsEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
             });
         }
 

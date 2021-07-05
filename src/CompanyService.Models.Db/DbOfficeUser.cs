@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public void Configure(EntityTypeBuilder<DbOfficeUser> builder)
         {
             builder
-                .ToTable(DbPositionUser.TableName);
+                .ToTable(DbOfficeUser.TableName);
 
             builder
                 .HasKey(p => p.Id);
