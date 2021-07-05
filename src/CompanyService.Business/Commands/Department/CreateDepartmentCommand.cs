@@ -10,6 +10,7 @@ using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -48,7 +49,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             if (companyId == null)
             {
-                throw new BadRequestException("Company does not exist");
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new List<string> () { "Company does not exist" }
+                };
             }
 
             return new OperationResultResponse<Guid>
