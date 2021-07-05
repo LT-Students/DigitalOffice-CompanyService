@@ -68,7 +68,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                     Login = "MyLogin",
                     Password = "MyPassword"
                 },
-                SMTP = new()
+                Smtp = new()
                 {
                     Host = "host",
                     Port = 123,

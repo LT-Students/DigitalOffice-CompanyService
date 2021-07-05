@@ -17,6 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
         public string FindDepartmentsEndpoint { get; set; }
         public string ChangeUserDepartmentEndpoint { get; set; }
         public string ChangeUserPositionEndpoint { get; set; }
+        public string GetSmtpCredentialsEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(IGetUsersDataRequest))]
         public string GetPositionEndpoint { get; set; }
@@ -29,9 +30,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 
         [AutoInjectRequest(typeof(IGetImageRequest))]
         public string GetImageEndpoint { get; set; }
-
-        [AutoInjectRequest(typeof(ICreateSMTPRequest))]
-        public string CreateSMTPEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(ICreateAdminRequest))]
         public string CreateAdminEndpoint { get; set; }

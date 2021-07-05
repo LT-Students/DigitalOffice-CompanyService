@@ -16,18 +16,25 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public string Description { get; set; }
         public string Tagline { get; set; }
         public string SiteUrl { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public bool EnableSsl { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
 
         public ICollection<DbDepartment> Departments { get; set; }
         public ICollection<DbPosition> Positions { get; set; }
         public ICollection<DbOffice> Offices { get; set; }
+        public ICollection<DbCompanyChanges> Changes { get; set; }
 
         public DbCompany()
         {
             Departments = new HashSet<DbDepartment>();
             Positions = new HashSet<DbPosition>();
             Offices = new HashSet<DbOffice>();
+            Changes = new HashSet<DbCompanyChanges>();
         }
     }
 
@@ -47,6 +54,18 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
                 .IsRequired();
 
             builder
+                .Property(c => c.Host)
+                .IsRequired();
+
+            builder
+                .Property(c => c.Email)
+                .IsRequired();
+
+            builder
+                .Property(c => c.Password)
+                .IsRequired();
+
+            builder
                 .Property(c => c.SiteUrl)
                 .IsRequired();
 
@@ -61,6 +80,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
             builder
                 .HasMany(c => c.Positions)
                 .WithOne(d => d.Company);
+
+            builder
+                .HasMany(c => c.Changes)
+                .WithOne(ch => ch.Company);
         }
     }
 }

@@ -3,6 +3,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 
@@ -21,9 +22,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             _companyInfoMapper = mapper;
         }
 
-        public OperationResultResponse<CompanyInfo> Execute()
+        public OperationResultResponse<CompanyInfo> Execute(GetCompanyFilter filter)
         {
-            DbCompany company = _repository.Get(true);
+            DbCompany company = _repository.Get(filter);
 
             return new OperationResultResponse<CompanyInfo>
             {

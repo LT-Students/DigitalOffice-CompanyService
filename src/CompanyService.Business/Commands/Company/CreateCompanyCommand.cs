@@ -7,9 +7,9 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -24,36 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly ILogger<ICreateCompanyCommand> _logger;
         private readonly ICreateCompanyRequestValidator _validator;
         private readonly ICompanyRepository _repository;
-        private readonly IRequestClient<ICreateSMTPRequest> _rcCreateSMTP;
         private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
-
-        private bool CreateSMTP(SMTPInfo info, List<string> errors)
-        {
-            string message = "Can not create smtp.";
-
-            try
-            {
-                var response = _rcCreateSMTP.GetResponse<IOperationResult<bool>>(
-                    ICreateSMTPRequest.CreateObj(info.Host, info.Port, info.EnableSsl, info.Email, info.Password)).Result.Message;
-
-                if (response.IsSuccess && response.Body)
-                {
-                    return true;
-                }
-
-                errors.Add(message);
-
-                _logger.LogWarning(message, string.Join("\n", response.Errors));
-            }
-            catch(Exception exc)
-            {
-                _logger.LogError(exc, message);
-
-                errors.Add(message);
-            }
-
-            return false;
-        }
 
         private bool CreateAdmin(AdminInfo info, List<string> errors)
         {
@@ -89,7 +60,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             ILogger<ICreateCompanyCommand> logger,
             ICreateCompanyRequestValidator validator,
             ICompanyRepository repository,
-            IRequestClient<ICreateSMTPRequest> rcCreateSMTP,
             IRequestClient<ICreateAdminRequest> rcCreateAdmin)
         {
             _mapper = mapper;
@@ -97,17 +67,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             _validator = validator;
             _repository = repository;
             _rcCreateAdmin = rcCreateAdmin;
-            _rcCreateSMTP = rcCreateSMTP;
         }
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
         {
             List<string> errors = new();
 
+            if (_repository.Get() != null)
+            {
+                throw new BadRequestException("Company already exists");
+            }
+
             _validator.ValidateAndThrowCustom(request);
 
-            if(!(CreateSMTP(request.SMTP, errors)
-                && CreateAdmin(request.AdminInfo, errors)))
+            if(!CreateAdmin(request.AdminInfo, errors))
             {
                 return new OperationResultResponse<Guid>
                 {

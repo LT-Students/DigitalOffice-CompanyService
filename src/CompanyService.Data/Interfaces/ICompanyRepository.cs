@@ -1,5 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.Kernel.Attributes;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
@@ -8,6 +10,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     {
         void Add(DbCompany company);
 
-        DbCompany Get(bool full);
+        DbCompany Get(GetCompanyFilter filter = null);
+
+        void Edit(JsonPatchDocument<DbCompany> request);
     }
 }

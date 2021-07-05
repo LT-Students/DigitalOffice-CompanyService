@@ -44,7 +44,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 
             _validator.ValidateAndThrowCustom(request);
 
-            DbOffice office = _mapper.Map(request, _companyRepository.Get(false).Id);
+            DbOffice office = _mapper.Map(request, _companyRepository.Get().Id);
             _officeRepository.Add(office);
 
             return new OperationResultResponse<Guid>

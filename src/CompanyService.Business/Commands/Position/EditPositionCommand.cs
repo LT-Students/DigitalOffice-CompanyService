@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             _validator.ValidateAndThrowCustom(request);
 
-            var position = _mapper.Map(request, _companyRepository.Get(false).Id);
+            var position = _mapper.Map(request, _companyRepository.Get().Id);
 
             return _repository.EditPosition(position);
         }

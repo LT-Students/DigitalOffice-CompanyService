@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             _validator.ValidateAndThrowCustom(request);
 
-            return _repository.CreateDepartment(_mapper.Map(request, _companyRepository.Get(false).Id));
+            return _repository.CreateDepartment(_mapper.Map(request, _companyRepository.Get().Id));
         }
     }
 }
