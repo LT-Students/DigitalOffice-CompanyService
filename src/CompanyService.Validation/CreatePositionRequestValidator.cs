@@ -12,9 +12,12 @@ namespace LT.DigitalOffice.CompanyService.Validation
                 .NotEmpty()
                 .MaximumLength(80);
 
-            RuleFor(position => position.Description)
-                .NotEmpty()
-                .MaximumLength(350);
+            When(position => !string.IsNullOrEmpty(position.Description), () =>
+            {
+                RuleFor(position => position.Description)
+                    .NotEmpty()
+                    .MaximumLength(350);
+            });
         }
     }
 }

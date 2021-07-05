@@ -25,6 +25,19 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         }
 
         [Test]
+        public void SuccessfulCompanyValidationWhenDescriptionIsEmpty()
+        {
+            var request = new BaseDepartmentInfo
+            {
+                DirectorUserId = Guid.NewGuid(),
+                Name = "Department A",
+                Description = ""
+            };
+
+            _validator.TestValidate(request).ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Test]
         public void SuccessfulCompanyValidation()
         {
             _validator.TestValidate(_request).ShouldNotHaveAnyValidationErrors();
@@ -43,14 +56,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         {
             var name = "Department" + new string('a', 100);
             _validator.ShouldHaveValidationErrorFor(x => x.Name, name);
-        }
-
-        [Test]
-        public void FailValidationEmptyDescription()
-        {
-            var description = string.Empty;
-
-            _validator.ShouldHaveValidationErrorFor(x => x.Description, description);
         }
 
         [Test]
