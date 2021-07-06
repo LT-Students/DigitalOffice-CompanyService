@@ -89,7 +89,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             return new OperationResultResponse<CompanyInfo>
             {
                 Status = errors.Any() ? OperationResultStatusType.PartialSuccess :  OperationResultStatusType.FullSuccess,
-                Body = _companyInfoMapper.Map(company, GetImage(company.LogoId, errors))
+                Body = _companyInfoMapper.Map(company, GetImage(company?.LogoId, errors), filter)
             };
         }
     }

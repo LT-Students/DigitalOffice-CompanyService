@@ -13,8 +13,12 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters
         [FromQuery(Name = "includeoffices")]
         public bool? IncludeOffices { get; set; }
 
+        [FromQuery(Name = "includesmtpcredentials")]
+        public bool? IncludeCmtpCredentials { get; set; }
+
         public bool IsIncludeDepartments => IncludeDepartments.HasValue && IncludeDepartments.Value;
         public bool IsIncludePositions => IncludePositions.HasValue && IncludePositions.Value;
         public bool IsIncludeOffices => IncludeOffices.HasValue && IncludeOffices.Value;
+        public bool IsIncludeSmtpCredentials => IncludeCmtpCredentials.HasValue && IncludeCmtpCredentials.Value;
     }
 }

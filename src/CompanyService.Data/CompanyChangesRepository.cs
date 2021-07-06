@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new ArgumentNullException(nameof(dbCompanyChanges));
             }
 
-            _provider.Changes.Add(dbCompanyChanges);
+            _provider.CompanyChanges.Add(dbCompanyChanges);
             _provider.Save();
         }
     }
