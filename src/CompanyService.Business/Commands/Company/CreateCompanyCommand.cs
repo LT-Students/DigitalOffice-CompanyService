@@ -137,10 +137,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
             _repository.Add(company);
 
-            //Task.Run(() => _companyChangesRepository.Add(
-            //    company.Id,
-            //    null,
-            //    CreateHistoryMessageHelper.Create(company)));
+            //TODO async
+            //Task.Run(() =>
+            _companyChangesRepository.Add(
+                company.Id,
+                null,
+                CreateHistoryMessageHelper.Create(company));
 
             return new OperationResultResponse<Guid>
             {

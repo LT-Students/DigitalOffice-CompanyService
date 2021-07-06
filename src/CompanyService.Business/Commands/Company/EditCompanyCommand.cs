@@ -163,13 +163,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
                 UpdateSmtp(company, errors);
             }
 
+            //TODO async
             //Task.Run(() =>
             //{
-            //    company ??= _companyRepository.Get();
-            //    _companyChangesRepository.Add(
-            //        company.Id,
-            //        _httpContextAccessor.HttpContext.GetUserId(),
-            //        CreateHistoryMessageHelper.Create(company, dbRequest));
+            company ??= _companyRepository.Get();
+            _companyChangesRepository.Add(
+                company.Id,
+                _httpContextAccessor.HttpContext.GetUserId(),
+                CreateHistoryMessageHelper.Create(company, dbRequest));
             //});
 
             return new OperationResultResponse<bool>
