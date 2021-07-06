@@ -10,16 +10,15 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
     public class RabbitMqConfig : BaseRabbitMqConfig
     {
         public string GetUserPositionEndpoint { get; set; }
-
-        [AutoInjectRequest(typeof(IGetUsersDataRequest))]
-        public string GetUsersDataEndpoint { get; set; }
-
         public string GetDepartmentEndpoint { get; set; }
         public string FindDepartmentUsersEndpoint { get; set; }
         public string GetDepartmentUserEndpoint { get; set; }
         public string FindDepartmentsEndpoint { get; set; }
         public string ChangeUserDepartmentEndpoint { get; set; }
         public string ChangeUserPositionEndpoint { get; set; }
+
+        [AutoInjectRequest(typeof(IGetUsersDataRequest))]
+        public string GetUsersDataEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(IGetPositionRequest))]
         public string GetPositionEndpoint { get; set; }
