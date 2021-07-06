@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Kernel.Responses;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
@@ -17,6 +18,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
         /// <param name="request">Position data.</param>
         /// <returns>New position Id.</returns>
         /// <exception cref="ValidationException">Thrown when position data is incorrect.</exception>
-        Guid Execute(CreatePositionRequest request);
+        OperationResultResponse<Guid> Execute(CreatePositionRequest request);
     }
 }
