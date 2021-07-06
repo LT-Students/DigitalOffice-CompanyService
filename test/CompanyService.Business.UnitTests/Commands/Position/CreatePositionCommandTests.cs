@@ -141,7 +141,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Setup(x => x.CreatePosition(It.IsAny<DbPosition>()))
                 .Returns(_createdPosition.Id);
 
-            Assert.AreEqual(_createdPosition.Id, _command.Execute(_request));
+            Assert.AreEqual(_createdPosition.Id, _command.Execute(_request).Body);
             _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Once);
             _companyRepositoryMock.Verify(repository => repository.Get(false), Times.Once);
         }
