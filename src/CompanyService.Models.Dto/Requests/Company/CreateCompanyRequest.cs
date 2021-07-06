@@ -2,7 +2,7 @@
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
 {
-    public class CreateCompanyRequest
+    public record CreateCompanyRequest
     {
         public string PortalName { get; set; }
         public SmtpInfo SmtpInfo { get; set; }
