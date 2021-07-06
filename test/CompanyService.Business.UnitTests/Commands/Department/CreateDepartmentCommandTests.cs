@@ -166,7 +166,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Setup(x => x.CreateDepartment(_dbDepartment))
                 .Returns(_dbDepartment.Id);
 
-
             Assert.AreEqual(expected.Body, _command.Execute(_request).Body);
             _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
             _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Once);

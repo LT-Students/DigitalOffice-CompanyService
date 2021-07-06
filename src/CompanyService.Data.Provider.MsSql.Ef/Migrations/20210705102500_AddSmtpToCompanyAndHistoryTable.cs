@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     CompanyId = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid?>(nullable: true),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     Changes = table.Column<string>(nullable: false)
                 },

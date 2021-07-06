@@ -8,6 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
 {
     public class DbCompany
     {
+        [JsonIgnore]
         public const string TableName = "Companies";
 
         public Guid Id { get; set; }
@@ -25,9 +26,13 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
 
+        [JsonIgnore]
         public ICollection<DbDepartment> Departments { get; set; }
+        [JsonIgnore]
         public ICollection<DbPosition> Positions { get; set; }
+        [JsonIgnore]
         public ICollection<DbOffice> Offices { get; set; }
+        [JsonIgnore]
         public ICollection<DbCompanyChanges> Changes { get; set; }
 
         public DbCompany()

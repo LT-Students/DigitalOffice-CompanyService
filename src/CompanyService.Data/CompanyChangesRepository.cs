@@ -14,14 +14,17 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider = provider;
         }
 
-        public void Add(DbCompanyChanges dbCompanyChanges)
+        public void Add(Guid companyId, Guid? changedBy, string changes)
         {
-            if (dbCompanyChanges == null)
-            {
-                throw new ArgumentNullException(nameof(dbCompanyChanges));
-            }
-
-            _provider.CompanyChanges.Add(dbCompanyChanges);
+            _provider.CompanyChanges.Add(
+                new DbCompanyChanges
+                {
+                    Id = Guid.NewGuid(),
+                    CompanyId = companyId,
+                    UserId = changedBy,
+                    ModifiedAt = DateTime.UtcNow,
+                    Changes = changes
+                });
             _provider.Save();
         }
     }

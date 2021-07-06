@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
+using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -23,6 +24,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -36,6 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly IEditCompanyRequestValidator _validator;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+        private readonly ICompanyChangesRepository _companyChangesRepository;
 
         private void UpdateSmtp(DbCompany company, List<string> errors)
         {
@@ -104,7 +107,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             IPatchDbCompanyMapper mapper,
             ICompanyRepository companyRepository,
             IEditCompanyRequestValidator validator,
-            IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp)
+            IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+            ICompanyChangesRepository companyChangesRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _accessValidator = accessValidator;
             _rcAddImage = rcAddImage;
@@ -113,6 +118,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             _companyRepository = companyRepository;
             _validator = validator;
             _rcUpdateSmtp = rcUpdateSmtp;
+            _companyChangesRepository = companyChangesRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<bool> Execute(JsonPatchDocument<EditCompanyRequest> request)
@@ -120,6 +127,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             if (!_accessValidator.IsAdmin())
             {
                 throw new ForbiddenException("Not enouth rights.");
+            }
+
+            if (_companyRepository.Get() == null)
+            {
+                throw new NotFoundException("Compan does not exist");
             }
 
             _validator.ValidateAndThrowCustom(request);
@@ -134,7 +146,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
                 imageId = GetImageId(JsonConvert.DeserializeObject<AddImageRequest>(imageOperation.value?.ToString()), errors);
             }
 
-            _companyRepository.Edit(_mapper.Map(request, imageId));
+            JsonPatchDocument<DbCompany> dbRequest = _mapper.Map(request, imageId);
+
+            _companyRepository.Edit(dbRequest);
+
+            DbCompany company = null;
 
             if (request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Host), StringComparison.OrdinalIgnoreCase)) != null
                 || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Port), StringComparison.OrdinalIgnoreCase)) != null
@@ -142,8 +158,19 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
                 || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Email), StringComparison.OrdinalIgnoreCase)) != null
                 || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Password), StringComparison.OrdinalIgnoreCase)) != null)
             {
-                UpdateSmtp(_companyRepository.Get(), errors);
+                company = _companyRepository.Get();
+
+                UpdateSmtp(company, errors);
             }
+
+            //Task.Run(() =>
+            //{
+            //    company ??= _companyRepository.Get();
+            //    _companyChangesRepository.Add(
+            //        company.Id,
+            //        _httpContextAccessor.HttpContext.GetUserId(),
+            //        CreateHistoryMessageHelper.Create(company, dbRequest));
+            //});
 
             return new OperationResultResponse<bool>
             {

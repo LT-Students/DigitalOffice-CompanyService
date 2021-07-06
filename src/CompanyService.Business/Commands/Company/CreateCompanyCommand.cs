@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
+using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -8,14 +9,17 @@ using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -27,6 +31,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly ICompanyRepository _repository;
         private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
         private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+        private readonly ICompanyChangesRepository _companyChangesRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private bool UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
         {
@@ -92,7 +98,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             ICreateCompanyRequestValidator validator,
             ICompanyRepository repository,
             IRequestClient<ICreateAdminRequest> rcCreateAdmin,
-            IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp)
+            IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+            ICompanyChangesRepository companyChangesRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _logger = logger;
@@ -100,6 +108,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             _repository = repository;
             _rcCreateAdmin = rcCreateAdmin;
             _rcUpdateSmtp = rcUpdateSmtp;
+            _companyChangesRepository = companyChangesRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
@@ -126,6 +136,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             DbCompany company = _mapper.Map(request);
 
             _repository.Add(company);
+
+            //Task.Run(() => _companyChangesRepository.Add(
+            //    company.Id,
+            //    null,
+            //    CreateHistoryMessageHelper.Create(company)));
 
             return new OperationResultResponse<Guid>
             {
