@@ -14,27 +14,27 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Host",
                 table: DbCompany.TableName,
-                nullable: false);
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "Port",
                 table: DbCompany.TableName,
-                nullable: false);
+                nullable: true);
 
             migrationBuilder.AddColumn<bool>(
                 name: "EnableSsl",
                 table: DbCompany.TableName,
-                nullable: false);
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Email",
                 table: DbCompany.TableName,
-                nullable: false);
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Password",
                 table: DbCompany.TableName,
-                nullable: false);
+                nullable: true);
         }
 
         private void AddCompanyChangesTable(MigrationBuilder migrationBuilder)
@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     CompanyId = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid?>(nullable: true),
+                    ModifiedBy = table.Column<Guid?>(nullable: true),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     Changes = table.Column<string>(nullable: false)
                 },

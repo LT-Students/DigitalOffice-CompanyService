@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 {
                     Id = Guid.NewGuid(),
                     CompanyId = companyId,
-                    UserId = changedBy,
+                    ModifiedBy = changedBy,
                     ModifiedAt = DateTime.UtcNow,
                     Changes = changes
                 });
