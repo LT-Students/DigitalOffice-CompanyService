@@ -20,8 +20,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
                     UserId = table.Column<Guid>(nullable: false),
                     CreatedBy = table.Column<Guid>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    RemovedBy = table.Column<Guid?>(nullable: true),
-                    RemovedAt = table.Column<DateTime?>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>

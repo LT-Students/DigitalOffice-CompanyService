@@ -14,8 +14,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public bool IsActive { get; set; }
         public Guid CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
-        public Guid? RemovedBy { get; set; }
-        public DateTime? RemovedAt { get; set; }
 
         public DbOffice Office { get; set; }
     }

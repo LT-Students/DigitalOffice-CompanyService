@@ -10,6 +10,7 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,37 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly ICreateCompanyRequestValidator _validator;
         private readonly ICompanyRepository _repository;
         private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
+        private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+
+        private bool UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
+        {
+            string message = "Can not update smtp credentials.";
+
+            try
+            {
+                var response = _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
+                    IUpdateSmtpCredentialsRequest.CreateObj(
+                        host: smtpInfo.Host,
+                        port: smtpInfo.Port,
+                        enableSsl: smtpInfo.EnableSsl,
+                        email: smtpInfo.Email,
+                        password: smtpInfo.Password)).Result.Message;
+
+                if (response.IsSuccess && response.Body)
+                {
+                    return true;
+                }
+
+                _logger.LogWarning(message, string.Join("\n", response.Errors));
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, message);
+            }
+            errors.Add(message);
+
+            return false;
+        }
 
         private bool CreateAdmin(AdminInfo info, List<string> errors)
         {
@@ -54,19 +86,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             return false;
         }
 
-
         public CreateCompanyCommand(
             IDbCompanyMapper mapper,
             ILogger<ICreateCompanyCommand> logger,
             ICreateCompanyRequestValidator validator,
             ICompanyRepository repository,
-            IRequestClient<ICreateAdminRequest> rcCreateAdmin)
+            IRequestClient<ICreateAdminRequest> rcCreateAdmin,
+            IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp)
         {
             _mapper = mapper;
             _logger = logger;
             _validator = validator;
             _repository = repository;
             _rcCreateAdmin = rcCreateAdmin;
+            _rcUpdateSmtp = rcUpdateSmtp;
         }
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
@@ -80,7 +113,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
             _validator.ValidateAndThrowCustom(request);
 
-            if(!CreateAdmin(request.AdminInfo, errors))
+            if (!(UpdateSmtp(request.SmtpInfo, errors) ||
+                CreateAdmin(request.AdminInfo, errors)))
             {
                 return new OperationResultResponse<Guid>
                 {

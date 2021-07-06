@@ -87,6 +87,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             request.ApplyTo(company);
+
             _provider.Save();
         }
     }

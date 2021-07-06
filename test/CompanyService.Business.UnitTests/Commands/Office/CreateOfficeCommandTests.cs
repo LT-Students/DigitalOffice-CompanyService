@@ -5,6 +5,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
@@ -84,7 +85,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(It.IsAny<DbOffice>()), Times.Never);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Never);
             _mapperMock.Verify(x => x.Map(It.IsAny<CreateOfficeRequest>(), It.IsAny<Guid>()), Times.Never);
         }
@@ -99,7 +100,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(It.IsAny<DbOffice>()), Times.Never);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
             _mapperMock.Verify(x => x.Map(It.IsAny<CreateOfficeRequest>(), It.IsAny<Guid>()), Times.Never);
         }
@@ -112,13 +113,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 .Returns(_office);
 
             _companyRepositoryMock
-                .Setup(x => x.Get(false))
+                .Setup(x => x.Get(null))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(_office), Times.Never);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Once);
+            _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
             _mapperMock.Verify(x => x.Map(_request, _office.CompanyId), Times.Never);
         }
@@ -137,13 +138,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             };
 
             _companyRepositoryMock
-                .Setup(x => x.Get(false))
+                .Setup(x => x.Get(null))
                 .Returns(new DbCompany { Id = _office.CompanyId });
 
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(_office), Times.Once);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Once);
+            _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
             _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
             _mapperMock.Verify(x => x.Map(_request, _office.CompanyId), Times.Once);
         }

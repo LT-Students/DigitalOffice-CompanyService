@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using System;
 using System.Linq;
 
@@ -27,30 +26,28 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider.Save();
         }
 
-        public DbOfficeUser Find(Guid userId)
+        public void ChangeOffice(Guid userId, Guid officeId, Guid changedBy)
         {
-            return _provider.OfficeUsers.FirstOrDefault(x => x.UserId == userId)
-                ?? throw new NotFoundException($"No OfficeUser with user with id '{userId}'");
-        }
+            var officeUser = _provider.OfficeUsers.FirstOrDefault(x => x.UserId == userId);
 
-        public DbOfficeUser Get(Guid id)
-        {
-            return _provider.OfficeUsers.FirstOrDefault(x => x.Id == id)
-                ?? throw new NotFoundException($"No OfficeUser with id '{id}'");
-        }
-
-        public void Remove(Guid userId, Guid removedBy)
-        {
-            var user = _provider.OfficeUsers.FirstOrDefault(x => x.UserId == userId);
-
-            if (user == null)
+            if (officeUser != null)
             {
+                officeUser.OfficeId = officeId;
+                _provider.Save();
+
                 return;
             }
 
-            user.RemovedBy = removedBy;
-            user.RemovedAt = DateTime.UtcNow;
-
+            _provider.OfficeUsers.Add(
+                new DbOfficeUser
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    OfficeId = officeId,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = changedBy,
+                    IsActive = true
+                });
             _provider.Save();
         }
     }

@@ -6,6 +6,7 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
@@ -90,7 +91,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.EditPosition(It.IsAny<DbPosition>()), Times.Never);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
         }
 
         [Test]
@@ -106,7 +107,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.EditPosition(It.IsAny<DbPosition>()), Times.Never);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
         }
 
         [Test]
@@ -117,12 +118,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                  .Returns(true);
 
             _companyRepositoryMock
-                .Setup(x => x.Get(false))
+                .Setup(x => x.Get(null))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.EditPosition(It.IsAny<DbPosition>()), Times.Never);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Once);
+            _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
         }
 
         [Test]
@@ -133,7 +134,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                  .Returns(true);
 
             _companyRepositoryMock
-                .Setup(x => x.Get(false))
+                .Setup(x => x.Get(null))
                 .Returns(new DbCompany { Id = _companyId });
 
             _mapperMock
@@ -146,7 +147,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 
             Assert.IsTrue(_command.Execute(_request));
             _repositoryMock.Verify(repository => repository.EditPosition(It.IsAny<DbPosition>()), Times.Once);
-            _companyRepositoryMock.Verify(x => x.Get(false), Times.Once);
+            _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
         }
     }
 }

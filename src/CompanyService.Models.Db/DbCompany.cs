@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace LT.DigitalOffice.CompanyService.Models.Db
 {

@@ -3,6 +3,10 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CompanyService.Data.Provider.MsSql.Ef\CompanyService.Data.Provider.MsSql.Ef.csproj" />
     <ProjectReference Include="..\CompanyService.Data.Provider\CompanyService.Data.Provider.csproj" />
     <ProjectReference Include="..\CompanyService.Models.Db\CompanyService.Models.Db.csproj" />
