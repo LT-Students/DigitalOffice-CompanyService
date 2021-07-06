@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelIsNull()
         {
-            Assert.IsNull(_mapper.Map(null, null));
+            Assert.IsNull(_mapper.Map(null, null, null));
         }
 
         [Test]
@@ -139,7 +139,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 Offices = new List<OfficeInfo> { expectedOffice },
             };
 
-            SerializerAssert.AreEqual(expected, _mapper.Map(company, imageInfo));
+            SerializerAssert.AreEqual(expected, _mapper.Map(company, imageInfo, new()));
         }
     }
 }
