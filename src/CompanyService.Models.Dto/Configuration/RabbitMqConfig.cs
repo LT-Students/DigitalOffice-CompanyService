@@ -16,12 +16,11 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
         public string FindDepartmentsEndpoint { get; set; }
         public string ChangeUserDepartmentEndpoint { get; set; }
         public string ChangeUserPositionEndpoint { get; set; }
+        public string GetPositionEndpoint { get; set; }
+
 
         [AutoInjectRequest(typeof(IGetUsersDataRequest))]
         public string GetUsersDataEndpoint { get; set; }
-
-        [AutoInjectRequest(typeof(IGetPositionRequest))]
-        public string GetPositionEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(ISearchDepartmentsRequest))]
         public string SearchDepartmentEndpoint { get; set; }

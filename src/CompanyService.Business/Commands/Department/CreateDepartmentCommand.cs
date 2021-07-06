@@ -45,9 +45,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             _validator.ValidateAndThrowCustom(request);
 
-            Guid? companyId = _companyRepository.Get(false)?.Id;
+            var company = _companyRepository.Get(false);
 
-            if (companyId == null)
+            if (company == null)
             {
                 return new OperationResultResponse<Guid>
                 {
@@ -59,7 +59,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             return new OperationResultResponse<Guid>
             {
                 Status = OperationResultStatusType.FullSuccess,
-                Body = _repository.CreateDepartment(_mapper.Map(request, (Guid)companyId))
+                Body = _repository.CreateDepartment(_mapper.Map(request, company.Id))
             };
         }
     }

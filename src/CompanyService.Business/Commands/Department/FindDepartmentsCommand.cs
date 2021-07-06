@@ -92,7 +92,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             return new DepartmentsResponse
             {
-                TotalCount = dbDepartments.Count,
                 Departments = departments,
                 Errors = errors
             };

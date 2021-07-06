@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         {
             var result = command.Execute(request);
 
-            if (result.Status != Kernel.Enums.OperationResultStatusType.Failed)
+            if (result.Status != OperationResultStatusType.Failed)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
             }
