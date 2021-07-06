@@ -5,9 +5,12 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
+using LT.DigitalOffice.Kernel.Responses;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -33,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             _accessValidator = accessValidator;
         }
 
-        public Guid Execute(CreateDepartmentRequest request)
+        public OperationResultResponse<Guid> Execute(CreateDepartmentRequest request)
         {
             if (!(_accessValidator.IsAdmin() || _accessValidator.HasRights(Rights.AddEditRemoveDepartments)))
             {
@@ -42,7 +45,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             _validator.ValidateAndThrowCustom(request);
 
-            return _repository.CreateDepartment(_mapper.Map(request, _companyRepository.Get(false).Id));
+            var company = _companyRepository.Get(false);
+
+            if (company == null)
+            {
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new List<string> () { "Company does not exist" }
+                };
+            }
+
+            return new OperationResultResponse<Guid>
+            {
+                Status = OperationResultStatusType.FullSuccess,
+                Body = _repository.CreateDepartment(_mapper.Map(request, company.Id))
+            };
         }
     }
 }

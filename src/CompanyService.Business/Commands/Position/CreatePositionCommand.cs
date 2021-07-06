@@ -8,6 +8,8 @@ using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Kernel.Enums;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
@@ -34,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
             _accessValidator = accessValidator;
         }
 
-        public Guid Execute(CreatePositionRequest request)
+        public OperationResultResponse<Guid> Execute(CreatePositionRequest request)
         {
             if (!(_accessValidator.IsAdmin() ||
                   _accessValidator.HasRights(Rights.AddEditRemovePositions)))
@@ -46,7 +48,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             var position = _mapper.Map(request, _companyRepository.Get(false).Id);
 
-            return _repository.CreatePosition(position);
+            return new OperationResultResponse<Guid>
+            {
+                Status = OperationResultStatusType.FullSuccess,
+                Body = _repository.CreatePosition(position)
+            };
         }
     }
 }

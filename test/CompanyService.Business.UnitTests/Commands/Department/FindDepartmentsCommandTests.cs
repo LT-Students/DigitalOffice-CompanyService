@@ -123,7 +123,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
             _expectedResponse = new DepartmentsResponse
             {
-                TotalCount = 1,
                 Departments = _expectedDepartments,
                 Errors = new()
             };
