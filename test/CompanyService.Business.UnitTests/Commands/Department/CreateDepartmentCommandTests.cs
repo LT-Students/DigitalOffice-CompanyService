@@ -9,7 +9,9 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Responses;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -142,6 +144,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         [Test]
         public void ShouldAddNewDepartmentSuccessfully()
         {
+            var expected = new OperationResultResponse<Guid>
+            {
+                Body = _dbDepartment.Id,
+                Status = OperationResultStatusType.FullSuccess,
+            };
+
             _validatorMock
                 .Setup(x => x.Validate(It.IsAny<CreateDepartmentRequest>()).IsValid)
                 .Returns(true);
@@ -159,7 +167,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns(_dbDepartment.Id);
 
 
-            Assert.AreEqual(_dbDepartment.Id, _command.Execute(_request));
+            Assert.AreEqual(expected.Body, _command.Execute(_request).Body);
             _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
             _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Once);
         }

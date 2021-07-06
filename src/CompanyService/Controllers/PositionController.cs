@@ -2,9 +2,13 @@
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
 {
@@ -12,6 +16,14 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     [ApiController]
     public class PositionController : ControllerBase
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public PositionController(
+            IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
         [HttpGet("get")]
         public PositionResponse Get([FromServices] IGetPositionByIdCommand command, [FromQuery] Guid positionId)
         {
@@ -25,9 +37,18 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpPost("create")]
-        public Guid Create([FromServices] ICreatePositionCommand command, [FromBody] CreatePositionRequest request)
+        public OperationResultResponse<Guid> Create(
+            [FromServices] ICreatePositionCommand command,
+            [FromBody] CreatePositionRequest request)
         {
-            return command.Execute(request);
+            var result = command.Execute(request);
+
+            if (result.Status != OperationResultStatusType.Failed)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+            }
+
+            return result;
         }
 
         [HttpDelete("disable")]
