@@ -12,6 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
         public string Tagline { get; set; }
         public string SiteUrl { get; set; }
         public ImageInfo Logo { get; set; }
+        public SmtpInfo SmtpInfo { get; set; }
         public List<ShortDepartmentInfo> Departments { get; set; }
         public List<PositionInfo> Positions { get; set; }
         public List<OfficeInfo> Offices { get; set; }

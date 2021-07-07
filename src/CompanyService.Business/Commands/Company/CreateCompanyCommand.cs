@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
+using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -7,14 +8,18 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -24,33 +29,37 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly ILogger<ICreateCompanyCommand> _logger;
         private readonly ICreateCompanyRequestValidator _validator;
         private readonly ICompanyRepository _repository;
-        //private readonly IRequestClient<ICreateSMTPRequest> _rcCreateSMTP;
         private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
+        private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+        private readonly ICompanyChangesRepository _companyChangesRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private bool CreateSMTP(SMTPInfo info, List<string> errors)
+        private bool UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
         {
-            string message = "Can not create smtp.";
+            string message = "Can not update smtp credentials.";
 
             /*try
             {
-                var response = _rcCreateSMTP.GetResponse<IOperationResult<bool>>(
-                    ICreateSMTPRequest.CreateObj(info.Host, info.Port, info.EnableSsl, info.Email, info.Password)).Result.Message;
+                var response = _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
+                    IUpdateSmtpCredentialsRequest.CreateObj(
+                        host: smtpInfo.Host,
+                        port: smtpInfo.Port,
+                        enableSsl: smtpInfo.EnableSsl,
+                        email: smtpInfo.Email,
+                        password: smtpInfo.Password)).Result.Message;
 
                 if (response.IsSuccess && response.Body)
                 {
                     return true;
                 }
 
-                errors.Add(message);
-
                 _logger.LogWarning(message, string.Join("\n", response.Errors));
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 _logger.LogError(exc, message);
-
-                errors.Add(message);
-            }*/
+            }
+            errors.Add(message);
 
             return false;
         }
@@ -83,31 +92,39 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             return false;
         }
 
-
         public CreateCompanyCommand(
             IDbCompanyMapper mapper,
             ILogger<ICreateCompanyCommand> logger,
             ICreateCompanyRequestValidator validator,
             ICompanyRepository repository,
-            //IRequestClient<ICreateSMTPRequest> rcCreateSMTP,
-            IRequestClient<ICreateAdminRequest> rcCreateAdmin)
+            IRequestClient<ICreateAdminRequest> rcCreateAdmin,
+            IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+            ICompanyChangesRepository companyChangesRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _logger = logger;
             _validator = validator;
             _repository = repository;
             _rcCreateAdmin = rcCreateAdmin;
-            //_rcCreateSMTP = rcCreateSMTP;
+            _rcUpdateSmtp = rcUpdateSmtp;
+            _companyChangesRepository = companyChangesRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
         {
             List<string> errors = new();
 
+            if (_repository.Get() != null)
+            {
+                throw new BadRequestException("Company already exists");
+            }
+
             _validator.ValidateAndThrowCustom(request);
 
-            if(!(CreateSMTP(request.SMTP, errors)
-                && CreateAdmin(request.AdminInfo, errors)))
+            if (!(UpdateSmtp(request.SmtpInfo, errors) ||
+                CreateAdmin(request.AdminInfo, errors)))
             {
                 return new OperationResultResponse<Guid>
                 {
@@ -119,6 +136,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             DbCompany company = _mapper.Map(request);
 
             _repository.Add(company);
+
+            //TODO async
+            //Task.Run(() =>
+            _companyChangesRepository.Add(
+                company.Id,
+                null,
+                CreateHistoryMessageHelper.Create(company));
 
             return new OperationResultResponse<Guid>
             {

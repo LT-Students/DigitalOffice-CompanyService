@@ -1,5 +1,4 @@
 ﻿using FluentValidation.TestHelper;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using Moq.AutoMock;
 using NUnit.Framework;
@@ -23,7 +22,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         {
             _validator.ShouldNotHaveValidationErrorFor(x => x.CompanyName, "Name");
 
-            _validator.ShouldNotHaveValidationErrorFor(x => x.PortalName, null as string);
             _validator.ShouldNotHaveValidationErrorFor(x => x.PortalName, "Name");
 
             _validator.ShouldNotHaveValidationErrorFor(x => x.SiteUrl, "siteurl");
@@ -33,6 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         public void ShouldThrowValidationException()
         {
             _validator.ShouldHaveValidationErrorFor(x => x.PortalName, "");
+            _validator.ShouldHaveValidationErrorFor(x => x.PortalName, null as string);
 
             _validator.ShouldHaveValidationErrorFor(x => x.CompanyName, "");
             _validator.ShouldHaveValidationErrorFor(x => x.CompanyName, null as string);

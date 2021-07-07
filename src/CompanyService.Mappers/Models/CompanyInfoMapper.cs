@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using System;
 using System.Linq;
 
@@ -22,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
             _officeMapper = officeMapper;
         }
 
-        public CompanyInfo Map(DbCompany company, ImageInfo image)
+        public CompanyInfo Map(DbCompany company, ImageInfo image, GetCompanyFilter filter)
         {
             if (company == null)
             {
@@ -38,6 +39,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 Logo = image,
                 Tagline = company.Tagline,
                 SiteUrl = company.SiteUrl,
+                SmtpInfo = filter.IsIncludeSmtpCredentials ? new SmtpInfo
+                {
+                    Port = company.Port,
+                    Host = company.Host,
+                    EnableSsl = company.EnableSsl,
+                    Email = company.Email,
+                    Password = company.Password
+                } : null,
                 Departments = company?.Departments.Select(d => _departmentMapper.Map(d)).ToList(),
                 Offices = company?.Offices.Select(o => _officeMapper.Map(o)).ToList(),
                 Positions = company?.Positions.Select(p => _positionMapper.Map(p)).ToList()

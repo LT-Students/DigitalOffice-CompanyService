@@ -40,5 +40,11 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             return _provider.Offices.Skip(skipCount * takeCount).Take(takeCount).Where(o => o.IsActive).ToList();
         }
+
+        public DbOffice Get(Guid officeId)
+        {
+            return _provider.Offices.FirstOrDefault(x => x.Id == officeId)
+                ?? throw new NotFoundException($"No office with id '{officeId}'");
+        }
     }
 }

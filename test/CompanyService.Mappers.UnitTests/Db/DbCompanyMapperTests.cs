@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 PortalName = "PortalName",
                 CompanyName = "Name",
                 AdminInfo = new(),
-                SMTP = new(),
+                SmtpInfo = new(),
                 SiteUrl = "siteurl"
             };
 
