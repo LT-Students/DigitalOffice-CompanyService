@@ -8,6 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     public interface IOfficeUserRepository
     {
         void Add(DbOfficeUser user);
+
         void ChangeOffice(Guid userId, Guid officeId, Guid changedBy);
     }
 }

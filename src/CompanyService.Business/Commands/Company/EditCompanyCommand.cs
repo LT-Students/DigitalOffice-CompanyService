@@ -71,8 +71,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
         private Guid? GetImageId(AddImageRequest logo, List<string> errors)
         {
-            string logMessage = "Cannot add image.";
-            string errorMessage = "Cannot change image now. Please try again later.";
+            string logMessage = "Cannot add image '{name}'.";
+            string errorMessage = $"Cannot change image '{logo.Name}' now. Please try again later.";
 
             try
             {
@@ -88,7 +88,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
                 errors.Add(errorMessage);
 
-                _logger.LogWarning(string.Join("\n", response.Errors));
+                _logger.LogWarning(logMessage +$" Reason: {string.Join("\n", response.Errors)}", logo.Name);
             }
             catch(Exception exc)
             {
