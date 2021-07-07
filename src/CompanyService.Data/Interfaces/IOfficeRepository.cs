@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Attributes;
+using System;
 using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
@@ -8,6 +9,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     public interface IOfficeRepository
     {
         void Add(DbOffice office);
+
+        DbOffice Get(Guid officeId);
 
         List<DbOffice> Find(int skipCount, int takeCount, out int totalCount);
     }

@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             _validator.ValidateAndThrowCustom(request);
 
-            var company = _companyRepository.Get(false);
+            var company = _companyRepository.Get();
 
             if (company == null)
             {

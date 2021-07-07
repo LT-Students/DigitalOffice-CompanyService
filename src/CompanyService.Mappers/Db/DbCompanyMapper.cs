@@ -21,6 +21,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 CompanyName = request.CompanyName,
                 SiteUrl = request.SiteUrl,
                 CreatedAt = DateTime.UtcNow,
+                Host = request.SmtpInfo.Host,
+                Port = request.SmtpInfo.Port,
+                EnableSsl = request.SmtpInfo.EnableSsl,
+                Email = request.SmtpInfo.Email,
+                Password = request.SmtpInfo.Password,
                 IsActive = true
             };
         }

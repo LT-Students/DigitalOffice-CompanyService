@@ -5,6 +5,7 @@ using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
@@ -119,7 +120,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns(false);
 
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
-            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<bool>()), Times.Never);
+            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
             _repositoryMock.Verify(x => x.CreateDepartment(It.IsAny<DbDepartment>()), Times.Never);
         }
 
@@ -128,7 +129,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         {
 
             _companyRepositoryMock
-                .Setup(x => x.Get(false))
+                .Setup(x => x.Get(null))
                 .Returns(new DbCompany { Id = _companyId });
 
             _mapperMock
@@ -136,7 +137,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Throws(new ArgumentNullException());
 
             Assert.Throws<ArgumentNullException>(() => _command.Execute(null));
-            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<bool>()), Times.Once);
+            _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
             _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Never);
         }
 
@@ -154,7 +155,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns(true);
 
             _companyRepositoryMock
-                .Setup(x => x.Get(false))
+                .Setup(x => x.Get(null))
                 .Returns(new DbCompany { Id = _companyId });
 
             _mapperMock
@@ -165,9 +166,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Setup(x => x.CreateDepartment(_dbDepartment))
                 .Returns(_dbDepartment.Id);
 
-
             Assert.AreEqual(expected.Body, _command.Execute(_request).Body);
-            _companyRepositoryMock.Verify(x => x.Get(It.IsAny<bool>()), Times.Once);
+            _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
             _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Once);
         }
     }

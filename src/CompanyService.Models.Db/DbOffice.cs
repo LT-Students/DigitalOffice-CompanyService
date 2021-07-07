@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Models.Db
 {
@@ -17,6 +18,12 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public bool IsActive { get; set; }
 
         public DbCompany Company { get; set; }
+        public ICollection<DbOfficeUser> Users { get; set; }
+
+        public DbOffice()
+        {
+            Users = new HashSet<DbOfficeUser>();
+        }
     }
 
     public class DbOfficeConfiguration : IEntityTypeConfiguration<DbOffice>
@@ -41,6 +48,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
                 .HasOne(o => o.Company)
                 .WithMany(c => c.Offices)
                 .HasForeignKey(o => o.CompanyId);
+
+            builder
+                .HasMany(o => o.Users)
+                .WithOne(u => u.Office);
         }
     }
 }

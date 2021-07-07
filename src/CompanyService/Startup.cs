@@ -17,6 +17,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -41,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService
                 .GetSection(BaseServiceInfoConfig.SectionName)
                 .Get<BaseServiceInfoConfig>();
 
-            Version = "1.4.1";
+            Version = "1.5.0";
             Description = "CompanyService is an API that intended to work with positions and departments.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
@@ -69,7 +70,14 @@ namespace LT.DigitalOffice.CompanyService
             services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
 
             services.AddHttpContextAccessor();
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                })
+                .AddNewtonsoftJson();
+
 
             string connStr = Environment.GetEnvironmentVariable("ConnectionString");
             if (string.IsNullOrEmpty(connStr))
@@ -141,6 +149,8 @@ namespace LT.DigitalOffice.CompanyService
                 x.AddConsumer<ChangeUserPositionConsumer>();
                 x.AddConsumer<FindDepartmentUsersConsumer>();
                 x.AddConsumer<SearchDepartmentsConsumer>();
+                x.AddConsumer<ChangeUserOfficeConsumer>();
+                x.AddConsumer<GetSmtpCredentialsConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -201,6 +211,16 @@ namespace LT.DigitalOffice.CompanyService
             cfg.ReceiveEndpoint(_rabbitMqConfig.SearchDepartmentEndpoint, ep =>
             {
                 ep.ConfigureConsumer<SearchDepartmentsConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.ChangeUserOfficeEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<ChangeUserOfficeConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.GetSmtpCredentialsEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
             });
         }
 
