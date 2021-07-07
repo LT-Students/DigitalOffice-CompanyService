@@ -24,14 +24,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         private readonly ILogger<ICreateCompanyCommand> _logger;
         private readonly ICreateCompanyRequestValidator _validator;
         private readonly ICompanyRepository _repository;
-        private readonly IRequestClient<ICreateSMTPRequest> _rcCreateSMTP;
+        //private readonly IRequestClient<ICreateSMTPRequest> _rcCreateSMTP;
         private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
 
         private bool CreateSMTP(SMTPInfo info, List<string> errors)
         {
             string message = "Can not create smtp.";
 
-            try
+            /*try
             {
                 var response = _rcCreateSMTP.GetResponse<IOperationResult<bool>>(
                     ICreateSMTPRequest.CreateObj(info.Host, info.Port, info.EnableSsl, info.Email, info.Password)).Result.Message;
@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
                 _logger.LogError(exc, message);
 
                 errors.Add(message);
-            }
+            }*/
 
             return false;
         }
@@ -89,7 +89,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             ILogger<ICreateCompanyCommand> logger,
             ICreateCompanyRequestValidator validator,
             ICompanyRepository repository,
-            IRequestClient<ICreateSMTPRequest> rcCreateSMTP,
+            //IRequestClient<ICreateSMTPRequest> rcCreateSMTP,
             IRequestClient<ICreateAdminRequest> rcCreateAdmin)
         {
             _mapper = mapper;
@@ -97,7 +97,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             _validator = validator;
             _repository = repository;
             _rcCreateAdmin = rcCreateAdmin;
-            _rcCreateSMTP = rcCreateSMTP;
+            //_rcCreateSMTP = rcCreateSMTP;
         }
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)

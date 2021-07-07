@@ -14,6 +14,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         IEnumerable<Guid> Find(Guid departmentId, int skipCount, int takeCount, out int totalCount);
 
+        List<DbDepartmentUser> Find(List<Guid> userIds);
+
         void Remove(Guid userId);
     }
 }

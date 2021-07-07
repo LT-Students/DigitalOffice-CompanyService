@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -50,6 +51,18 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             return user;
+        }
+
+        public List<DbPositionUser> Find(List<Guid> userIds)
+        {
+            var dbPositionsUsers = _provider.PositionUsers.AsQueryable();
+
+            foreach (Guid id in userIds)
+            {
+                dbPositionsUsers = dbPositionsUsers.Where(x => x.UserId == id).Include(x => x.Position);
+            }
+
+            return dbPositionsUsers.ToList();
         }
 
         public void Remove(Guid userId)
