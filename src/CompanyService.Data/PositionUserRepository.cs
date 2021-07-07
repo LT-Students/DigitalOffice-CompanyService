@@ -55,14 +55,10 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public List<DbPositionUser> Find(List<Guid> userIds)
         {
-            var dbPositionsUsers = _provider.PositionUsers.AsQueryable();
-
-            foreach (Guid id in userIds)
-            {
-                dbPositionsUsers = dbPositionsUsers.Where(x => x.UserId == id).Include(x => x.Position);
-            }
-
-            return dbPositionsUsers.ToList();
+            return _provider.PositionUsers
+                .Include(i => i.Position)
+                .Where(x => userIds.Contains(x.UserId))
+                .ToList();
         }
 
         public void Remove(Guid userId)

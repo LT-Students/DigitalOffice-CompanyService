@@ -38,7 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         {
             string message = "Can not update smtp credentials.";
 
-            /*try
+            try
             {
                 var response = _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
                     IUpdateSmtpCredentialsRequest.CreateObj(

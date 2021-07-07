@@ -66,14 +66,10 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public List<DbDepartmentUser> Find(List<Guid> userIds)
         {
-            var dbDepartmentsUsers = _provider.DepartmentUsers.AsQueryable();
-
-            foreach(Guid id in userIds)
-            {
-                dbDepartmentsUsers = dbDepartmentsUsers.Where(x => x.UserId == id).Include(x => x.Department);
-            }
-
-            return dbDepartmentsUsers.ToList();
+            return _provider.DepartmentUsers
+                .Include(i => i.Department)
+                .Where(x => userIds.Contains(x.UserId))
+                .ToList();
         }
 
         public void Remove(Guid userId)
