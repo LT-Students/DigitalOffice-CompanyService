@@ -1,12 +1,10 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
