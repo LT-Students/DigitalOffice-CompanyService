@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
 using LT.DigitalOffice.CompanyService.Validation.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Validation.Helper;
 using Microsoft.AspNetCore.JsonPatch.Operations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -23,12 +25,16 @@ namespace LT.DigitalOffice.CompanyService.Validation.Department
                 {
                     nameof(EditDepartmentRequest.Name),
                     nameof(EditDepartmentRequest.Description),
-                    nameof(EditDepartmentRequest.IsActive)
+                    nameof(EditDepartmentRequest.DirectorId),
+                    nameof(EditDepartmentRequest.IsActive),
+                    nameof(EditDepartmentRequest.User)
                 });
 
             AddСorrectOperations(nameof(EditDepartmentRequest.Name), new() { OperationType.Replace });
             AddСorrectOperations(nameof(EditDepartmentRequest.Description), new() { OperationType.Replace });
+            AddСorrectOperations(nameof(EditDepartmentRequest.DirectorId), new() { OperationType.Replace });
             AddСorrectOperations(nameof(EditDepartmentRequest.IsActive), new() { OperationType.Replace });
+            AddСorrectOperations(nameof(EditDepartmentRequest.User), new() { OperationType.Add });
 
             #endregion
 
@@ -76,6 +82,32 @@ namespace LT.DigitalOffice.CompanyService.Validation.Department
                 new()
                 {
                     { x => bool.TryParse(x.value.ToString(), out bool _), "Incorrect format of IsActive." },
+                });
+
+            #endregion
+
+            #region Users
+
+            AddFailureForPropertyIf(
+                nameof(EditDepartmentRequest.User),
+                x => x == OperationType.Add,
+                new()
+                {
+                    {
+                        x =>
+                        {
+                            try
+                            {
+                                _ = JsonConvert.DeserializeObject<List<Guid>>(x.value?.ToString());
+                                return true;
+                            }
+                            catch
+                            {
+                                return false;
+                            }
+                        },
+                        "Incorrect format users"
+                    }
                 });
 
             #endregion

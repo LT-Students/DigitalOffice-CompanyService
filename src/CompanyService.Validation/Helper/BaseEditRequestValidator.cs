@@ -15,10 +15,15 @@ namespace LT.DigitalOffice.CompanyService.Validation.Helper
 
         protected void AddСorrectPaths(List<string> paths)
         {
-            if (paths.FirstOrDefault(p => p.EndsWith(RequestedOperation.path[1..], StringComparison.OrdinalIgnoreCase)) == null)
+            foreach(string path in paths)
             {
-                Context.AddFailure(RequestedOperation.path, $"This path {RequestedOperation.path} is not available");
+                if (RequestedOperation.path.Contains(path, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
             }
+
+            Context.AddFailure(RequestedOperation.path, $"This path {RequestedOperation.path} is not available");
         }
 
         protected void AddСorrectOperations(

@@ -41,9 +41,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 throw new ForbiddenException("Not enough rights.");
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            //_validator.ValidateAndThrowCustom(request);
 
-            var result = _repository.Edit(departmentId, _mapper.Map(request));
+            var result = _repository.Edit(departmentId, _mapper.Map(request, departmentId));
 
             return new OperationResultResponse<bool>
             {
