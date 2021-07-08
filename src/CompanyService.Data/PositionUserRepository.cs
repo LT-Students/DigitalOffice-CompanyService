@@ -56,8 +56,8 @@ namespace LT.DigitalOffice.CompanyService.Data
         public List<DbPositionUser> Find(List<Guid> userIds)
         {
             return _provider.PositionUsers
-                .Include(i => i.Position)
-                .Where(x => userIds.Contains(x.UserId))
+                .Include(pu => pu.Position)
+                .Where(u => userIds.Contains(u.UserId))
                 .ToList();
         }
 

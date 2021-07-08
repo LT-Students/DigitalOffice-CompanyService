@@ -67,8 +67,8 @@ namespace LT.DigitalOffice.CompanyService.Data
         public List<DbDepartmentUser> Find(List<Guid> userIds)
         {
             return _provider.DepartmentUsers
-                .Include(i => i.Department)
-                .Where(x => userIds.Contains(x.UserId))
+                .Include(du => du.Department)
+                .Where(u => userIds.Contains(u.UserId))
                 .ToList();
         }
 

@@ -42,6 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                             new List<Guid>() { dbDepartmentUser.UserId }));
                 }
             }
+
             return response;
         }
 
