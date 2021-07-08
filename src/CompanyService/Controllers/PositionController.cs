@@ -1,6 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
@@ -26,7 +25,9 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("get")]
-        public PositionResponse Get([FromServices] IGetPositionByIdCommand command, [FromQuery] Guid positionId)
+        public PositionResponse Get(
+            [FromServices] IGetPositionByIdCommand command,
+            [FromQuery] Guid positionId)
         {
             return command.Execute(positionId);
         }
