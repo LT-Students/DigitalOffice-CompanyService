@@ -5,6 +5,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -51,6 +52,15 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromServices] IFindDepartmentsCommand command)
         {
             return command.Execute();
+        }
+
+        [HttpPatch("edit")]
+        public OperationResultResponse<bool> Edit(
+            [FromServices] IEditDepartmentCommand command,
+            [FromQuery] Guid departmentId,
+            [FromBody] JsonPatchDocument<EditDepartmentRequest> request)
+        {
+            return command.Execute(departmentId, request);
         }
     }
 }
