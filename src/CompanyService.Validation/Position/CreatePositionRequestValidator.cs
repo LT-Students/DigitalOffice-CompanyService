@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
+using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
 
-namespace LT.DigitalOffice.CompanyService.Validation
+namespace LT.DigitalOffice.CompanyService.Validation.Position
 {
     public class CreatePositionRequestValidator : AbstractValidator<CreatePositionRequest>, ICreatePositionRequestValidator
     {

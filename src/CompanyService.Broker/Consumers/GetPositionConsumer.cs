@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         {
             return new
             {
-                UserPositionName = _repository.GetPosition(request.PositionId, request.UserId).Name
+                UserPositionName = _repository.Get(request.PositionId, request.UserId).Name
             };
         }
 

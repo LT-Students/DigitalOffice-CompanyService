@@ -38,7 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             totalCount = _provider.Offices.Count(x => x.IsActive);
 
-            return _provider.Offices.Skip(skipCount * takeCount).Take(takeCount).Where(o => o.IsActive).ToList();
+            return _provider.Offices.Skip(skipCount * takeCount).Take(takeCount).ToList();
         }
 
         public DbOffice Get(Guid officeId)

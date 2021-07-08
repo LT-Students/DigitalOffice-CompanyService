@@ -5,15 +5,15 @@ using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
+using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 {
@@ -87,7 +87,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Returns(false);
 
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
-            _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Never);
+            _repositoryMock.Verify(repository => repository.Create(It.IsAny<DbPosition>()), Times.Never);
             _companyRepositoryMock.Verify(repository => repository.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
         }
 
@@ -99,7 +99,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Returns(false);
 
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
-            _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Never);
+            _repositoryMock.Verify(repository => repository.Create(It.IsAny<DbPosition>()), Times.Never);
             _companyRepositoryMock.Verify(repository => repository.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
         }
 
@@ -119,7 +119,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => _command.Execute(_request));
-            _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Never);
+            _repositoryMock.Verify(repository => repository.Create(It.IsAny<DbPosition>()), Times.Never);
             _companyRepositoryMock.Verify(repository => repository.Get(null), Times.Once);
         }
 
@@ -139,11 +139,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Returns(_createdPosition);
 
             _repositoryMock
-                .Setup(x => x.CreatePosition(It.IsAny<DbPosition>()))
+                .Setup(x => x.Create(It.IsAny<DbPosition>()))
                 .Returns(_createdPosition.Id);
 
             Assert.AreEqual(_createdPosition.Id, _command.Execute(_request).Body);
-            _repositoryMock.Verify(repository => repository.CreatePosition(It.IsAny<DbPosition>()), Times.Once);
+            _repositoryMock.Verify(repository => repository.Create(It.IsAny<DbPosition>()), Times.Once);
             _companyRepositoryMock.Verify(repository => repository.Get(null), Times.Once);
         }
     }

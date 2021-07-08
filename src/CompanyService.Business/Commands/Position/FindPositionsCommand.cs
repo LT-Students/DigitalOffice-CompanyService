@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
         public List<PositionResponse> Execute()
         {
-            return _repository.FindPositions().Select(position => _mapper.Map(position)).ToList();
+            return _repository.Find().Select(position => _mapper.Map(position)).ToList();
         }
     }
 }

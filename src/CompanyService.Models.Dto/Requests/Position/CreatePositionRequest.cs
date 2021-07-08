@@ -1,4 +1,4 @@
-﻿namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
+﻿namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position
 {
     public record CreatePositionRequest
     {

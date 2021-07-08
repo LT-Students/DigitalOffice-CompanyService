@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _positionsList = new List<PositionResponse> { position };
 
             _repositoryMock
-                .Setup(repository => repository.FindPositions())
+                .Setup(repository => repository.Find())
                 .Returns(_dbPositionsList);
 
             _mapperMock
@@ -66,7 +66,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         [Test]
         public void ShouldThrowExceptionWhenRepositoryThrowsException()
         {
-            _repositoryMock.Setup(repository => repository.FindPositions())
+            _repositoryMock.Setup(repository => repository.Find())
                 .Throws(new Exception());
 
             Assert.That(() => _command.Execute(), Throws.TypeOf<Exception>());
@@ -75,7 +75,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         [Test]
         public void ShouldThrowExceptionWhenMapperThrowsException()
         {
-            _repositoryMock.Setup(repository => repository.FindPositions())
+            _repositoryMock.Setup(repository => repository.Find())
                 .Returns(_dbPositionsList)
                 .Verifiable();
             _mapperMock.Setup(mapper => mapper.Map(It.IsAny<DbPosition>()))

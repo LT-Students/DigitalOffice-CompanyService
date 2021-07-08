@@ -1,39 +1,40 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.JsonPatch;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
+using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
+using System;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
     /// <inheritdoc cref="IEditPositionCommand"/>
     public class EditPositionCommand : IEditPositionCommand
     {
-        private readonly IPositionInfoValidator _validator;
+        private readonly IEditPositionRequestValidator _validator;
         private readonly IPositionRepository _repository;
-        private readonly ICompanyRepository _companyRepository;
-        private readonly IDbPositionMapper _mapper;
+        private readonly IPatchDbPositionMapper _mapper;
         private readonly IAccessValidator _accessValidator;
 
         public EditPositionCommand(
-            IPositionInfoValidator validator,
+            IEditPositionRequestValidator validator,
             IPositionRepository repository,
-            ICompanyRepository companyRepository,
-            IDbPositionMapper mapper,
+            IPatchDbPositionMapper mapper,
             IAccessValidator accessValidator)
         {
             _validator = validator;
             _repository = repository;
-            _companyRepository = companyRepository;
             _mapper = mapper;
             _accessValidator = accessValidator;
         }
 
-        public bool Execute(PositionInfo request)
+        public OperationResultResponse<bool> Execute(Guid positionId, JsonPatchDocument<EditPositionRequest> request)
         {
             if (!(_accessValidator.IsAdmin() ||
                   _accessValidator.HasRights(Rights.AddEditRemovePositions)))
@@ -43,9 +44,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             _validator.ValidateAndThrowCustom(request);
 
-            var position = _mapper.Map(request, _companyRepository.Get().Id);
+            var result = _repository.Edit(positionId, _mapper.Map(request));
 
-            return _repository.EditPosition(position);
+            return new OperationResultResponse<bool>
+            {
+                Status = result ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed,
+                Body = result
+            };
         }
     }
 }

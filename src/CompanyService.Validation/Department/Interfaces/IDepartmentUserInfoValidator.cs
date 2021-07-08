@@ -2,10 +2,10 @@
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.Attributes;
 
-namespace LT.DigitalOffice.CompanyService.Validation.Interfaces
+namespace LT.DigitalOffice.CompanyService.Validation.Department.Interfaces
 {
     [AutoInject]
-    public interface IBaseDepartmentInfoValidator : IValidator<BaseDepartmentInfo>
+    public interface IDepartmentUserInfoValidator : IValidator<DepartmentUserInfo>
     {
     }
 }

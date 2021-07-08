@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _validator = new PositionInfoValidator();
+            _validator = new EditPositionRequestValidator();
 
             _request = new PositionInfo
             {

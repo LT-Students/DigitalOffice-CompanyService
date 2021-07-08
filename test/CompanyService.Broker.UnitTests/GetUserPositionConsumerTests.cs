@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
+                .Setup(x => x.Get(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
                 .Returns(new DbPosition {Name = userPositionName});
 
             try
@@ -76,7 +76,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
+                .Setup(x => x.Get(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
                 .Throws(new Exception("Position not found."));
 
             try

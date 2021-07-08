@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
+using LT.DigitalOffice.CompanyService.Validation.Office.Interfaces;
 
-namespace LT.DigitalOffice.CompanyService.Validation
+namespace LT.DigitalOffice.CompanyService.Validation.Office
 {
     public class CreateOfficeRequestValidator : AbstractValidator<CreateOfficeRequest>, ICreateOfficeRequestValidator
     {

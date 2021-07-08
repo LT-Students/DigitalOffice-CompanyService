@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider = provider;
         }
 
-        public DbPosition GetPosition(Guid? positionId, Guid? userId)
+        public DbPosition Get(Guid? positionId, Guid? userId)
         {
             if (positionId.HasValue)
             {
@@ -38,12 +39,12 @@ namespace LT.DigitalOffice.CompanyService.Data
             throw new BadRequestException("You must specify 'positionId' or 'userId'.");
         }
 
-        public List<DbPosition> FindPositions()
+        public List<DbPosition> Find()
         {
             return _provider.Positions.ToList();
         }
 
-        public void DisablePosition(Guid positionId)
+        public void Disable(Guid positionId)
         {
             var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId);
 
@@ -57,7 +58,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider.Save();
         }
 
-        public Guid CreatePosition(DbPosition newPosition)
+        public Guid Create(DbPosition newPosition)
         {
             _provider.Positions.Add(newPosition);
             _provider.Save();
@@ -65,18 +66,12 @@ namespace LT.DigitalOffice.CompanyService.Data
             return newPosition.Id;
         }
 
-        public bool EditPosition(DbPosition newPosition)
+        public bool Edit(Guid positionId, JsonPatchDocument<DbPosition> request)
         {
-            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == newPosition.Id);
+            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId)
+                ?? throw new NotFoundException($"Position with this id: '{positionId}' was not found.");
 
-            if (dbPosition == null)
-            {
-                throw new NotFoundException($"Position with this id: '{newPosition.Id}' was not found.");
-            }
-
-            dbPosition.Name = newPosition.Name;
-            dbPosition.Description = newPosition.Description;
-            _provider.Positions.Update(dbPosition);
+            request.ApplyTo(dbPosition);
             _provider.Save();
 
             return true;
