@@ -69,31 +69,5 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             SerializerAssert.AreEqual(_expectedDbPosition, resultDbPosition);
         }
         #endregion
-
-        #region PositionInfo to DbPosition
-        [Test]
-        public void ShouldThrowExceptionIfArgumentIsNullEditPositionRequestToDbPosition()
-        {
-            PositionInfo positionInfo = null;
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(positionInfo, _companyId));
-        }
-
-        [Test]
-        public void ShouldReturnPositionModelSuccessfullyEditPositionRequestToDbPosition()
-        {
-            var result = _mapper.Map(_positionInfo, _companyId);
-
-            var expected = new DbPosition
-            {
-                Id = result.Id,
-                CompanyId = _companyId,
-                Name = _positionInfo.Name,
-                Description = _positionInfo.Description,
-                IsActive = true
-            };
-
-            SerializerAssert.AreEqual(expected, result);
-        }
-        #endregion
     }
 }

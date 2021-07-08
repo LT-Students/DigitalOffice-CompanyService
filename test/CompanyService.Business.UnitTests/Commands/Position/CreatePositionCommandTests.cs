@@ -111,7 +111,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                  .Returns(true);
 
             _mapperMock
-                .Setup(x => x.Map(It.IsAny<PositionInfo>(), _companyId))
+                .Setup(x => x.Map(It.IsAny<CreatePositionRequest>(), _companyId))
                 .Returns(_createdPosition);
 
             _companyRepositoryMock
@@ -135,7 +135,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Returns(new DbCompany { Id = _companyId });
 
             _mapperMock
-                .Setup(x => x.Map(It.IsAny<PositionInfo>(), _companyId))
+                .Setup(x => x.Map(It.IsAny<CreatePositionRequest>(), _companyId))
                 .Returns(_createdPosition);
 
             _repositoryMock

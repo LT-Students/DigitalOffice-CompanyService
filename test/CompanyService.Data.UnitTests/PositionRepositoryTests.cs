@@ -135,25 +135,6 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         #endregion
 
         #region EditPosition
-        [Test]
-        public void ShouldEditPositionSuccessfully()
-        {
-            _newPosition = new DbPosition
-            {
-                Id = _positionId,
-                Name = "abracadabra",
-                Description = "bluhbluh"
-            };
-
-            var result = _repository.Edit(_newPosition);
-
-            DbPosition updatedPosition = _provider.Positions.FirstOrDefault(p => p.Id == _positionId);
-
-            Assert.IsTrue(result);
-            Assert.AreEqual(_newPosition.Id, updatedPosition.Id);
-            Assert.AreEqual(_newPosition.Name, updatedPosition.Name);
-            Assert.AreEqual(_newPosition.Description, updatedPosition.Description);
-        }
         #endregion
 
         #region DisablePosition

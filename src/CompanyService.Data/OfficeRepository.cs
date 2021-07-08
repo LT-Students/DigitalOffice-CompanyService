@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new BadRequestException("Take count can't be equal or less than 0.");
             }
 
-            totalCount = _provider.Offices.Count(x => x.IsActive);
+            totalCount = _provider.Offices.Count();
 
             return _provider.Offices.Skip(skipCount * takeCount).Take(takeCount).ToList();
         }

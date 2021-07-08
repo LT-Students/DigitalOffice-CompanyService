@@ -79,7 +79,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         #region Find Tests
 
         [Test]
-        public void ShouldGetCompanySuccessfuly()
+        public void ShouldFindOfficeSuccessfuly()
         {
             DbOffice office1 = new()
             {
@@ -106,8 +106,8 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             _provider.Offices.Add(office2);
             _provider.Save();
 
-            SerializerAssert.AreEqual(new List<DbOffice>() { office1 }, _repository.Find(0, 2, out int totalCount));
-            Assert.AreEqual(1, totalCount);
+            SerializerAssert.AreEqual(new List<DbOffice>() { office1, office2 }, _repository.Find(0, 2, out int totalCount));
+            Assert.AreEqual(2, totalCount);
         }
 
         [Test]
