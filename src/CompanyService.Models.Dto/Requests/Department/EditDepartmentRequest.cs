@@ -2,7 +2,7 @@
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department
 {
-    public class EditDepartmentRequest
+    public record EditDepartmentRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }
