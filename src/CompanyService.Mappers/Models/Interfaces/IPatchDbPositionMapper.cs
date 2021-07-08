@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
     [AutoInject]
     public interface IPatchDbPositionMapper
     {
-        public JsonPatchDocument<DbPosition> Map(JsonPatchDocument<EditPositionRequest> request);
+        JsonPatchDocument<DbPosition> Map(JsonPatchDocument<EditPositionRequest> request);
     }
 }
