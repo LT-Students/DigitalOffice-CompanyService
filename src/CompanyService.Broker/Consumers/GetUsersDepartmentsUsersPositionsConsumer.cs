@@ -23,9 +23,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
             List<DbDepartmentUser> dbDepartmentUsers = _departmentUserRepository.Find(userIds);
 
+            UsersDepartment isInResponse = null;
+
             foreach (DbDepartmentUser dbDepartmentUser in dbDepartmentUsers)
             {
-                UsersDepartment isInResponse = response.FirstOrDefault(x => x.Id == dbDepartmentUser.DepartmentId);
+                isInResponse = response.FirstOrDefault(x => x.Id == dbDepartmentUser.DepartmentId);
 
                 if (isInResponse != null)
                 {
@@ -49,9 +51,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
             List<DbPositionUser> dbPositionsUsers = _positionUserRepository.Find(userIds);
 
+            UsersPosition IsInResponse = null;
+
             foreach (DbPositionUser dbPositionUser in dbPositionsUsers)
             {
-                UsersPosition IsInResponse = response.FirstOrDefault(x => x.Id == dbPositionUser.PositionId);
+                IsInResponse = response.FirstOrDefault(x => x.Id == dbPositionUser.PositionId);
 
                 if (IsInResponse != null)
                 {
