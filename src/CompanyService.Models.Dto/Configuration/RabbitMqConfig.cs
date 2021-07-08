@@ -19,6 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
         public string ChangeUserOfficeEndpoint { get; set; }
         public string GetSmtpCredentialsEndpoint { get; set; }
         public string GetPositionEndpoint { get; set; }
+        public string GetUsersDepartmentsUsersPositionsEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(IGetUsersDataRequest))]
         public string GetUsersDataEndpoint { get; set; }

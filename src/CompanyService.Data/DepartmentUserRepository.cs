@@ -64,6 +64,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             return dbDepartmentUser.Skip(skipCount * takeCount).Take(takeCount).Select(x => x.UserId).ToList();
         }
 
+        public List<DbDepartmentUser> Find(List<Guid> userIds)
+        {
+            return _provider.DepartmentUsers
+                .Include(du => du.Department)
+                .Where(u => userIds.Contains(u.UserId))
+                .ToList();
+        }
+
         public void Remove(Guid userId)
         {
             DbDepartmentUser user = _provider.DepartmentUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
