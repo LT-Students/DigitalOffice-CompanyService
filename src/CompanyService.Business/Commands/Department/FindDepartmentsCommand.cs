@@ -89,7 +89,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 UserInfo director = null;
                 if (department.DirectorUserId != null && usersData.Any())
                 {
-                    director = _userMapper.Map(usersData.FirstOrDefault(x => x.Id == department.DirectorUserId));
+                    var directorUserData = usersData.FirstOrDefault(x => x.Id == department.DirectorUserId);
+                    director = directorUserData == null ? null : _userMapper.Map(directorUserData);
                 }
 
                 List<UserInfo> usersInfo = new();
