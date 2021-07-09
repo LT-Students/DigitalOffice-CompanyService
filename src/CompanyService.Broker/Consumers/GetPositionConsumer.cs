@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Responses.Company;
 using MassTransit;
@@ -9,17 +10,24 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
     public class GetPositionConsumer : IConsumer<IGetPositionRequest>
     {
-        private readonly IPositionRepository _repository;
+        private readonly IPositionUserRepository _repository;
 
         private object GetUserPosition(IGetPositionRequest request)
         {
-            return new
+            if (!request.UserId.HasValue)
             {
-                UserPositionName = _repository.GetPosition(request.PositionId, request.UserId).Name
-            };
+                throw new BadRequestException($"Request must contain '{nameof(request.UserId)}' value");
+            }
+
+            var positionUser = _repository.Get(request.UserId.Value, includePosition: true);
+
+            return IPositionResponse.CreateObj(
+                positionUser.PositionId,
+                positionUser.Position.Name,
+                positionUser.StartTime);
         }
 
-        public GetPositionConsumer(IPositionRepository repository)
+        public GetPositionConsumer(IPositionUserRepository repository)
         {
             _repository = repository;
         }
