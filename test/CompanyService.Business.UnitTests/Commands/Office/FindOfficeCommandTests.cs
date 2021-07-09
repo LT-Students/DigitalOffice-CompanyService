@@ -36,10 +36,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         public void ShouldThrowExceptionWhenRepositoryThrow()
         {
             _mocker
-                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(It.IsAny<int>(), It.IsAny<int>(), out _totalCount))
+                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool?>(), out _totalCount))
                 .Throws(new Exception());
 
-            Assert.Throws<Exception>(() => _command.Execute(0, 10));
+            Assert.Throws<Exception>(() => _command.Execute(0, 10, true));
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             };
 
             _mocker
-                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(skipCount, takeCount, out _totalCount))
+                .Setup<IOfficeRepository, List<DbOffice>>(x => x.Find(skipCount, takeCount, true, out _totalCount))
                 .Returns(dbOffices);
 
             _mocker
@@ -114,7 +114,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 }
             };
 
-            SerializerAssert.AreEqual(expected, _command.Execute(skipCount, takeCount));
+            SerializerAssert.AreEqual(expected, _command.Execute(skipCount, takeCount, true));
         }
     }
 }
