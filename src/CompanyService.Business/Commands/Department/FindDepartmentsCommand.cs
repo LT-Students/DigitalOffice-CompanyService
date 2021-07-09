@@ -79,9 +79,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             {
                 List<Guid> usersIds = department.Users.Select(x => x.UserId).ToList();
 
-                if (department.DirectorUserId != null)
+                if (department.DirectorUserId != null && !usersIds.Contains(department.DirectorUserId.Value))
                 {
-                    usersIds.Add((Guid)department.DirectorUserId);
+                    usersIds.Add((Guid)department.DirectorUserId.Value);
                 }
 
                 List<UserData> usersData = GetUsers(usersIds, response.Errors);
@@ -94,12 +94,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 }
 
                 List<UserInfo> usersInfo = new();
-                foreach(UserData userData in usersData)
+                foreach(UserData userData in usersData.Where(us => us != null))
                 {
-                    if (userData != null)
-                    {
-                        usersInfo.Add(_userMapper.Map(userData));
-                    }
+                    usersInfo.Add(_userMapper.Map(userData));
                 }
 
                 response.Departments.Add(_departmentMapper.Map(department, director, usersInfo));
