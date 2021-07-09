@@ -71,30 +71,40 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
         public DepartmentsResponse Execute()
         {
-            List<string> errors = new();
+            DepartmentsResponse response = new ();
 
             var dbDepartments = _repository.FindDepartments();
 
-            List<DepartmentInfo> departments = new();
-
             foreach (var department in dbDepartments)
             {
-                UserInfo director = null;
-                List<UserData> usersData = GetUsers(department.Users.Select(x => x.UserId).ToList(), errors);
+                List<Guid> usersIds = department.Users.Select(x => x.UserId).ToList();
 
+                if (department.DirectorUserId != null)
+                {
+                    usersIds.Add((Guid)department.DirectorUserId);
+                }
+
+                List<UserData> usersData = GetUsers(usersIds, response.Errors);
+
+                UserInfo director = null;
                 if (department.DirectorUserId != null && usersData.Any())
                 {
                     director = _userMapper.Map(usersData.FirstOrDefault(x => x.Id == department.DirectorUserId));
                 }
 
-                departments.Add(_departmentMapper.Map(department, director, usersData.Select( _userMapper.Map).ToList()));
+                List<UserInfo> usersInfo = new();
+                foreach(UserData userData in usersData)
+                {
+                    if (userData != null)
+                    {
+                        usersInfo.Add(_userMapper.Map(userData));
+                    }
+                }
+
+                response.Departments.Add(_departmentMapper.Map(department, director, usersInfo));
             }
 
-            return new DepartmentsResponse
-            {
-                Departments = departments,
-                Errors = errors
-            };
+            return response;
         }
     }
 }
