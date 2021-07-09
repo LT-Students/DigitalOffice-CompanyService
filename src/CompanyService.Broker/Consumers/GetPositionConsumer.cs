@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         {
             var response = OperationResultWrapper.CreateResponse(GetUserPosition, context.Message);
 
-            await context.RespondAsync<IOperationResult<IUserPositionResponse>>(response);
+            await context.RespondAsync<IOperationResult<IPositionResponse>>(response);
         }
     }
 }
