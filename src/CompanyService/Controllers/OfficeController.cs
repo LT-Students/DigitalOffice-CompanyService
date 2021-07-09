@@ -39,9 +39,10 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         public FindOfficesResponse Find(
             [FromServices] IFindOfficesCommand command,
             [FromQuery] int skipCount,
-            [FromQuery] int takeCount)
+            [FromQuery] int takeCount,
+            [FromQuery] bool? includeDeactivated)
         {
-            return command.Execute(skipCount, takeCount);
+            return command.Execute(skipCount, takeCount, includeDeactivated);
         }
     }
 }

@@ -29,16 +29,23 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider.Save();
         }
 
-        public List<DbOffice> Find(int skipCount, int takeCount, out int totalCount)
+        public List<DbOffice> Find(int skipCount, int takeCount, bool? includeDeactivated, out int totalCount)
         {
             if (takeCount <= 0)
             {
                 throw new BadRequestException("Take count can't be equal or less than 0.");
             }
 
-            totalCount = _provider.Offices.Count();
+            if (includeDeactivated.HasValue && includeDeactivated.Value)
+            {
+                totalCount = _provider.Offices.Count();
 
-            return _provider.Offices.Skip(skipCount * takeCount).Take(takeCount).ToList();
+                return _provider.Offices.Skip(skipCount).Take(takeCount).ToList();
+            }
+
+            totalCount = _provider.Offices.Count(o => o.IsActive);
+
+            return _provider.Offices.Where(o => o.IsActive).Skip(skipCount).Take(takeCount).ToList();
         }
 
         public DbOffice Get(Guid officeId)
