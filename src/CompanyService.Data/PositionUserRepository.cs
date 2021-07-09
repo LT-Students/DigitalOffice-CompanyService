@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -50,6 +51,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             return user;
+        }
+
+        public List<DbPositionUser> Find(List<Guid> userIds)
+        {
+            return _provider.PositionUsers
+                .Include(pu => pu.Position)
+                .Where(u => userIds.Contains(u.UserId))
+                .ToList();
         }
 
         public void Remove(Guid userId)

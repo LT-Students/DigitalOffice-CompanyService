@@ -84,9 +84,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
                 if (department.DirectorUserId != null && usersData.Any())
                 {
-                    UserData user = usersData.FirstOrDefault(x => x.Id == department.DirectorUserId);
-
-                    director = user == null ? null : _userMapper.Map(user);
+                    director = _userMapper.Map(usersData.FirstOrDefault(x => x.Id == department.DirectorUserId));
                 }
 
                 departments.Add(_departmentMapper.Map(department, director, usersData.Select( _userMapper.Map).ToList()));
