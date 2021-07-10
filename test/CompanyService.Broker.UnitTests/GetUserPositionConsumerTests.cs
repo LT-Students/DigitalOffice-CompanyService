@@ -21,14 +21,14 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private ConsumerTestHarness<GetPositionConsumer> consumerHarness;
 
         private InMemoryTestHarness harness;
-        private Mock<IPositionRepository> repository;
+        private Mock<IPositionUserRepository> repository;
 
         private IRequestClient<IGetPositionRequest> requestClient;
 
         [SetUp]
         public void SetUp()
         {
-            repository = new Mock<IPositionRepository>();
+            repository = new Mock<IPositionUserRepository>();
 
             harness = new InMemoryTestHarness();
             consumerHarness = harness.Consumer(() => new GetPositionConsumer(repository.Object));
@@ -39,17 +39,32 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         {
             await harness.Start();
 
+            var positionId = Guid.NewGuid();
+
+            var dbPositionUser = new DbPositionUser
+            {
+                Id = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
+                PositionId = positionId,
+                StartTime = DateTime.UtcNow,
+                Position = new DbPosition
+                {
+                    Id = positionId,
+                    Name = userPositionName
+                }
+            };
+
             repository
-                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
-                .Returns(new DbPosition {Name = userPositionName});
+                .Setup(x => x.Get(dbPositionUser.UserId, true))
+                .Returns(dbPositionUser);
 
             try
             {
                 requestClient = await harness.ConnectRequestClient<IGetPositionRequest>();
 
-                var response = await requestClient.GetResponse<IOperationResult<IUserPositionResponse>>(new
+                var response = await requestClient.GetResponse<IOperationResult<IPositionResponse>>(new
                 {
-                    UserId = Guid.NewGuid()
+                    UserId = dbPositionUser.UserId
                 });
 
                 var expectedResponse = new
@@ -58,7 +73,9 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     Errors = null as List<string>,
                     Body = new
                     {
-                        UserPositionName = userPositionName
+                        PositionId = dbPositionUser.PositionId,
+                        Name = userPositionName,
+                        ReceivedAt = dbPositionUser.StartTime
                     }
                 };
 
@@ -76,14 +93,14 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.GetPosition(It.IsAny<Guid?>(), It.IsAny<Guid?>()))
+                .Setup(x => x.Get(It.IsAny<Guid>(), It.IsAny<bool>()))
                 .Throws(new Exception("Position not found."));
 
             try
             {
                 requestClient = await harness.ConnectRequestClient<IGetPositionRequest>();
 
-                var response = await requestClient.GetResponse<IOperationResult<IUserPositionResponse>>(new
+                var response = await requestClient.GetResponse<IOperationResult<IPositionResponse>>(new
                 {
                     UserId = Guid.NewGuid()
                 });
