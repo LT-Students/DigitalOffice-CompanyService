@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,16 +37,20 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new BadRequestException("Take count can't be equal or less than 0.");
             }
 
-            if (includeDeactivated.HasValue && includeDeactivated.Value)
-            {
-                totalCount = _provider.Offices.Count();
+            IQueryable<DbOffice> dbOffices = _provider.Offices
+                .AsSingleQuery()
+                .AsQueryable();
 
-                return _provider.Offices.Skip(skipCount).Take(takeCount).ToList();
+            if (!(includeDeactivated.HasValue && includeDeactivated.Value))
+            {
+                dbOffices = dbOffices.Where(o => o.IsActive);
             }
+
+            dbOffices = dbOffices.Skip(skipCount).Take(takeCount);
 
             totalCount = _provider.Offices.Count(o => o.IsActive);
 
-            return _provider.Offices.Where(o => o.IsActive).Skip(skipCount).Take(takeCount).ToList();
+            return dbOffices.ToList();
         }
 
         public DbOffice Get(Guid officeId)

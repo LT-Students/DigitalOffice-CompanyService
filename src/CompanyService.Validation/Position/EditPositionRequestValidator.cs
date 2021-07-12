@@ -38,7 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Position
                 x => x == OperationType.Replace,
                 new()
                 {
-                    { x => !string.IsNullOrEmpty(x.value.ToString()), "Name is too short." },
+                    { x => !string.IsNullOrEmpty(x.value.ToString()), "Name should not be empty." },
                 });
 
             #endregion
@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Position
                 x => x == OperationType.Replace,
                 new()
                 {
-                    { x => !string.IsNullOrEmpty(x.value.ToString()), "Description is too short." },
+                    { x => !string.IsNullOrEmpty(x.value.ToString()), "Description should not be empty." },
                 });
 
             #endregion
