@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,17 @@ namespace LT.DigitalOffice.CompanyService.Data
         public List<DbDepartment> Search(string text)
         {
             return _provider.Departments.ToList().Where(d => d.Name.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        public bool Edit(Guid departmentId, JsonPatchDocument<DbDepartment> request)
+        {
+            var dbDepartment = _provider.Departments.FirstOrDefault(d => d.Id == departmentId)
+                ?? throw new NotFoundException($"Department with this id: '{departmentId}' was not found.");
+
+            request.ApplyTo(dbDepartment);
+            _provider.Save();
+
+            return true;
         }
     }
 }

@@ -17,13 +17,13 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         private readonly IDepartmentUserRepository _departmentUserRepository;
         private readonly IPositionUserRepository _positionUserRepository;
 
-        private List<UsersDepartment> GetDepartments(List<Guid> userIds)
+        private List<DepartmentData> GetDepartments(List<Guid> userIds)
         {
-            List<UsersDepartment> response = new ();
+            List<DepartmentData> response = new ();
 
             List<DbDepartmentUser> dbDepartmentUsers = _departmentUserRepository.Find(userIds);
 
-            UsersDepartment isInResponse = null;
+            DepartmentData isInResponse = null;
 
             foreach (DbDepartmentUser dbDepartmentUser in dbDepartmentUsers)
             {
@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 else
                 {
                     response.Add(
-                        new UsersDepartment(
+                        new DepartmentData(
                             dbDepartmentUser.DepartmentId,
                             dbDepartmentUser.Department.Name,
                             new List<Guid>() { dbDepartmentUser.UserId }));
@@ -46,13 +46,13 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             return response;
         }
 
-        private List<UsersPosition> GetPositions(List<Guid> userIds)
+        private List<PositionData> GetPositions(List<Guid> userIds)
         {
-            List<UsersPosition> response = new();
+            List<PositionData> response = new();
 
             List<DbPositionUser> dbPositionsUsers = _positionUserRepository.Find(userIds);
 
-            UsersPosition IsInResponse = null;
+            PositionData IsInResponse = null;
 
             foreach (DbPositionUser dbPositionUser in dbPositionsUsers)
             {
@@ -65,7 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 else
                 {
                     response.Add(
-                        new UsersPosition(
+                        new PositionData(
                             dbPositionUser.PositionId,
                             dbPositionUser.Position.Name,
                             new List<Guid>() { dbPositionUser.UserId }));
@@ -77,8 +77,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object GetResponse(IGetUsersDepartmentsUsersPositionsRequest request)
         {
-            List<UsersDepartment> usersDepartments = null;
-            List<UsersPosition> usersPositions = null;
+            List<DepartmentData> usersDepartments = null;
+            List<PositionData> usersPositions = null;
 
             if (request.IncludeDepartments)
             {

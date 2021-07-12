@@ -1,6 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.Kernel.Attributes;
 using System;
 
@@ -14,6 +13,5 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
     public interface IDbPositionMapper
     {
         DbPosition Map(CreatePositionRequest positionInfo, Guid companyId);
-        DbPosition Map(PositionInfo positionInfo, Guid companyId);
     }
 }

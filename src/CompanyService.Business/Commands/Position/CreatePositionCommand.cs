@@ -1,15 +1,15 @@
 ﻿using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
+using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
@@ -51,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
             return new OperationResultResponse<Guid>
             {
                 Status = OperationResultStatusType.FullSuccess,
-                Body = _repository.CreatePosition(position)
+                Body = _repository.Create(position)
             };
         }
     }

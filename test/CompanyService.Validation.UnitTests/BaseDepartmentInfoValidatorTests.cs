@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Validation.Department;
 using NUnit.Framework;
 using System;
 
