@@ -32,7 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 return _provider.Positions
                     .Include(d => d.Users.Where(du => du.UserId == userId.Value))
                     .FirstOrDefault()
-                    ?? throw new NotFoundException($"there is not position on which the user with id {userId} works");
+                    ?? throw new NotFoundException($"There is not position on which the user with id {userId} works");
             }
 
             throw new BadRequestException("You must specify 'positionId' or 'userId'.");

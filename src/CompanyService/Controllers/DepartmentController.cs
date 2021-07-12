@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
@@ -39,11 +40,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("get")]
-        public DepartmentInfo Get(
+        public OperationResultResponse<DepartmentResponse> Get(
             [FromServices] IGetDepartmentByIdCommand command,
-            [FromQuery] Guid id)
+            [FromQuery] GetDepartmentFilter filter)
         {
-            return command.Execute(id);
+            return command.Execute(filter);
         }
 
         [HttpGet("find")]

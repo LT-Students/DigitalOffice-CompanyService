@@ -6,8 +6,8 @@ using LT.DigitalOffice.Models.Broker.Models;
 namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
 {
     [AutoInject]
-    public interface IUserInfoMapper
+    public interface IDepartmentUserInfoMapper
     {
-        UserInfo Map(UserData userData);
+        DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image);
     }
 }

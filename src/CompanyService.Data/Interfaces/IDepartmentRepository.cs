@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Attributes;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// Get <see cref="DbDepartment"/>.
         /// </summary>
         DbDepartment GetDepartment(Guid? departmentId, Guid? userId);
+
+        DbDepartment GetDepartment(GetDepartmentFilter filter);
 
         /// <summary>
         /// Find departments in database.

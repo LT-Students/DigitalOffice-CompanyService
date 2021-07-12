@@ -1,0 +1,39 @@
+﻿using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Models.Broker.Models;
+
+namespace LT.DigitalOffice.CompanyService.Mappers.Models
+{
+    public class DepartmentUserInfoMapper : IDepartmentUserInfoMapper
+    {
+        private readonly IPositionInfoMapper _positionInfoMapper;
+
+        public DepartmentUserInfoMapper(IPositionInfoMapper positionInfoMapper)
+        {
+            _positionInfoMapper = positionInfoMapper;
+        }
+
+        public DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image)
+        {
+            return new DepartmentUserInfo
+            {
+                Id = userData.Id,
+                FirstName = userData.FirstName,
+                LastName = userData.LastName,
+                MiddleName = userData.MiddleName,
+                Rate = userData.Rate.Value,
+                IsActive = userData.IsActive,
+                Image = new ImageInfo
+                {
+                    Id = image.ImageId,
+                    Content = image.Content,
+                    Extension = image.Extension,
+                    Name = image.Name,
+                    ParentId = image.ParentId
+                },
+                Position = _positionInfoMapper.Map(dbPositionUser.Position)
+            };
+        }
+    }
+}

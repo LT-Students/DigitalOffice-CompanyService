@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -31,19 +32,49 @@ namespace LT.DigitalOffice.CompanyService.Data
         /// <inheritdoc />
         public DbDepartment GetDepartment(Guid? departmentId, Guid? userId)
         {
-            if (departmentId.HasValue)
+            DbDepartment dbDepartment = null;
+
+            if (!(departmentId.HasValue || userId.HasValue))
             {
-                return _provider.Departments.FirstOrDefault(d => d.Id == departmentId.Value);
+                throw new BadRequestException("You must specify 'departmentId' or 'userId'.");
             }
 
-            if (userId.HasValue)
+            if (departmentId.HasValue)
             {
-                return _provider.Departments
+                dbDepartment = _provider.Departments
+                    .Include(d => d.Users)
+                    .FirstOrDefault(d => d.Id == departmentId.Value);
+            }
+            else
+            {
+                dbDepartment = _provider.Departments
                     .Include(d => d.Users.Where(du => du.UserId == userId.Value))
                     .FirstOrDefault();
             }
 
-            throw new BadRequestException("You must specify 'departmentId' or 'userId'.");
+            if (dbDepartment == null)
+            {
+                string valueMessage = departmentId.HasValue ? $"department id: {departmentId.Value}" : $"user id: {userId.Value}";
+
+                throw new NotFoundException($"Department was not found by specific {valueMessage}");
+            }
+
+            return dbDepartment;
+        }
+
+        public DbDepartment GetDepartment(GetDepartmentFilter filter)
+        {
+            IQueryable<DbDepartment> dbDepartments = _provider.Departments.AsQueryable();
+
+            dbDepartments = dbDepartments.Where(d => d.Id == filter.DepartmentId);
+
+            if (filter.IsIncludeUsers)
+            {
+                dbDepartments = dbDepartments.Include(d => d.Users);
+            }
+
+            return dbDepartments.FirstOrDefault()
+                ?? throw new NotFoundException($"Department was not found by specific {filter.DepartmentId}");
         }
 
         /// <inheritdoc />
