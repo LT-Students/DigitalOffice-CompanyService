@@ -44,11 +44,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             if (!(includeDeactivated.HasValue && includeDeactivated.Value))
             {
                 dbOffices = dbOffices.Where(o => o.IsActive);
+                totalCount = _provider.Offices.Count(o => o.IsActive);
+            }
+            else
+            {
+                totalCount = _provider.Offices.Count();
             }
 
             dbOffices = dbOffices.Skip(skipCount).Take(takeCount);
-
-            totalCount = _provider.Offices.Count(o => o.IsActive);
 
             return dbOffices.ToList();
         }
