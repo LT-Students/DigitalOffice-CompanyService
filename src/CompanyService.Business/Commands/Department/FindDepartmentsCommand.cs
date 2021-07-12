@@ -71,30 +71,38 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
         public DepartmentsResponse Execute()
         {
-            List<string> errors = new();
+            DepartmentsResponse response = new ();
 
             var dbDepartments = _repository.FindDepartments();
 
-            List<DepartmentInfo> departments = new();
-
             foreach (var department in dbDepartments)
             {
-                UserInfo director = null;
-                List<UserData> usersData = GetUsers(department.Users.Select(x => x.UserId).ToList(), errors);
+                List<Guid> usersIds = department.Users.Select(x => x.UserId).ToList();
 
-                if (department.DirectorUserId != null && usersData.Any())
+                if (department.DirectorUserId != null && !usersIds.Contains(department.DirectorUserId.Value))
                 {
-                    director = _userMapper.Map(usersData.FirstOrDefault(x => x.Id == department.DirectorUserId));
+                    usersIds.Add((Guid)department.DirectorUserId.Value);
                 }
 
-                departments.Add(_departmentMapper.Map(department, director, usersData.Select( _userMapper.Map).ToList()));
+                List<UserData> usersData = GetUsers(usersIds, response.Errors);
+
+                UserInfo director = null;
+                if (department.DirectorUserId != null && usersData.Any())
+                {
+                    var directorUserData = usersData.FirstOrDefault(x => x.Id == department.DirectorUserId);
+                    director = directorUserData == null ? null : _userMapper.Map(directorUserData);
+                }
+
+                List<UserInfo> usersInfo = new();
+                foreach(UserData userData in usersData.Where(us => us != null))
+                {
+                    usersInfo.Add(_userMapper.Map(userData));
+                }
+
+                response.Departments.Add(_departmentMapper.Map(department, director, usersInfo));
             }
 
-            return new DepartmentsResponse
-            {
-                Departments = departments,
-                Errors = errors
-            };
+            return response;
         }
     }
 }
