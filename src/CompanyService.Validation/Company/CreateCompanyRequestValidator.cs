@@ -16,6 +16,12 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
 
             RuleFor(request => request.SiteUrl)
                 .NotEmpty();
+
+            RuleFor(request => request.AdminInfo)
+                .NotNull();
+
+            RuleFor(request => request.SmtpInfo)
+                .NotNull();
         }
     }
 }

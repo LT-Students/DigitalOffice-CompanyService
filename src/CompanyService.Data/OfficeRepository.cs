@@ -38,7 +38,6 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             IQueryable<DbOffice> dbOffices = _provider.Offices
-                .AsSingleQuery()
                 .AsQueryable();
 
             if (!(includeDeactivated.HasValue && includeDeactivated.Value))
