@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Models.Broker.Models;
+using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
@@ -16,6 +17,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
 
         public DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image)
         {
+            if (userData == null || dbPositionUser == null || image == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             return new DepartmentUserInfo
             {
                 Id = userData.Id,
