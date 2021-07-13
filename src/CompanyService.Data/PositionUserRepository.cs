@@ -69,7 +69,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             {
                 user.IsActive = false;
             }
-            
+
             _provider.Save();
         }
     }
