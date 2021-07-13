@@ -3,6 +3,7 @@ using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Requests.File;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Project;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
@@ -30,6 +31,12 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 
         [AutoInjectRequest(typeof(IAddImageRequest))]
         public string AddImageEndpoint { get; set; }
+
+        [AutoInjectRequest(typeof(IGetImagesRequest))]
+        public string GetImagesEndpoint { get; set; }
+
+        [AutoInjectRequest(typeof(IGetDepartmentProjectsRequest))]
+        public string GetDepartmentProjectsEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(IGetImageRequest))]
         public string GetImageEndpoint { get; set; }

@@ -1,13 +1,12 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Models.Broker.Models;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
 {
     [AutoInject]
-    public interface IUserInfoMapper
+    public interface IProjectInfoMapper
     {
-        UserInfo Map(UserData userData);
+        ProjectInfo Map(ProjectData projectInfo);
     }
 }

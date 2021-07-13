@@ -30,6 +30,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 return null;
             }
 
+            // TODO: add directors department to response
+
             return new CompanyInfo
             {
                 Id = company.Id,
@@ -47,7 +49,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                     Email = company.Email,
                     Password = company.Password
                 } : null,
-                Departments = company?.Departments.Select(d => _departmentMapper.Map(d)).ToList(),
+                Departments = company?.Departments.Select(d => _departmentMapper.Map(d, null)).ToList(),
                 Offices = company?.Offices.Select(o => _officeMapper.Map(o)).ToList(),
                 Positions = company?.Positions.Select(p => _positionMapper.Map(p)).ToList()
             };

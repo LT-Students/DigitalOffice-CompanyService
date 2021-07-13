@@ -6,8 +6,8 @@ using LT.DigitalOffice.Models.Broker.Models;
 namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
 {
     [AutoInject]
-    public interface IShortDepartmentInfoMapper
+    public interface IDepartmentUserInfoMapper
     {
-        ShortDepartmentInfo Map(DbDepartment department, UserData director);
+        DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image);
     }
 }

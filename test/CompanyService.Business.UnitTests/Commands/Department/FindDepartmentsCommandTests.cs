@@ -72,9 +72,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns(_dbDepartments)
                 .Verifiable();
 
-            _directorData = new UserData(_directorGuid, "Ivan", "Ivanovich", "Ivanov", true);
+            _directorData = new UserData(_directorGuid, "Ivan", "Ivanovich", "Ivanov", true, null, null);
 
-            _workerData = new UserData(_workerGuid, "Arsen", "Arsenovich", "Ivanov", true);
+            _workerData = new UserData(_workerGuid, "Arsen", "Arsenovich", "Ivanov", true, null, null);
 
             BrokerSetUp();
 

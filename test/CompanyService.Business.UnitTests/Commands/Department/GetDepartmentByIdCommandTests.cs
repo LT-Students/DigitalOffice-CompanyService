@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 {
-    class GetDepartmentByIdCommandTests
+    /*class GetDepartmentByIdCommandTests
     {
         private IGetDepartmentByIdCommand _command;
         private Mock<IDepartmentRepository> _repositoryMock;
@@ -86,5 +86,5 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
             SerializerAssert.AreEqual(_expectedDepartment, result);
         }
-    }
+    }*/
 }

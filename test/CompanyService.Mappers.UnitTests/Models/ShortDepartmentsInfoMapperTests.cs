@@ -2,7 +2,9 @@
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Models.Broker.Models;
 using LT.DigitalOffice.UnitTestKernel;
+using Moq;
 using NUnit.Framework;
 using System;
 
@@ -11,17 +13,30 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
     public class ShortDepartmentsInfoMapperTests
     {
         private IShortDepartmentInfoMapper _mapper;
+        private Mock<IUserInfoMapper> _userInfoMapperMock;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _userInfoMapperMock = new Mock<IUserInfoMapper>();
+        }
 
         [SetUp]
         public void SetUp()
         {
-            _mapper = new ShortDepartmentInfoMapper();
+            UserInfo userData = null;
+
+            _userInfoMapperMock
+                .Setup(x => x.Map(It.IsAny<UserData>()))
+                .Returns(userData);
+
+            _mapper = new ShortDepartmentInfoMapper(_userInfoMapperMock.Object);
         }
 
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null, null));
         }
 
         [Test]
@@ -44,7 +59,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 IsActive = true
             };
 
-            SerializerAssert.AreEqual(expected, _mapper.Map(department));
+            SerializerAssert.AreEqual(expected, _mapper.Map(department, null));
         }
     }
 }

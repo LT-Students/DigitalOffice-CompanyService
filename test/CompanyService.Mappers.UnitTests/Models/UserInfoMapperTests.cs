@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         {
             _mapper = new UserInfoMapper();
 
-            _userData = new UserData(Guid.NewGuid(), "Ivan", "Ivanovich", "Ivanov", true);
+            _userData = new UserData(Guid.NewGuid(), "Ivan", "Ivanovich", "Ivanov", true, null, null);
 
             _expectedUser = new UserInfo
             {
