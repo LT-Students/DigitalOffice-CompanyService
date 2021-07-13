@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         {
             UserData userData = null;
 
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(userData));
+            Assert.IsNull(_mapper.Map(userData));
         }
 
         [Test]

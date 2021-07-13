@@ -3,7 +3,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.Kernel.Attributes;
 using Microsoft.AspNetCore.JsonPatch;
 
-namespace LT.DigitalOffice.CompanyService.Validation.Interfaces
+namespace LT.DigitalOffice.CompanyService.Validation.Company.Interfaces
 {
     [AutoInject]
     public interface IEditCompanyRequestValidator : IValidator<JsonPatchDocument<EditCompanyRequest>>

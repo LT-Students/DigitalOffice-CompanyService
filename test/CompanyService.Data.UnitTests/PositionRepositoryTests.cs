@@ -76,13 +76,13 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExist()
         {
-            Assert.Throws<NotFoundException>(() => _repository.GetPosition(Guid.NewGuid(), null));
+            Assert.Throws<NotFoundException>(() => _repository.Get(Guid.NewGuid(), null));
         }
 
         [Test]
         public void ShouldReturnSimplePositionInfoSuccessfully()
         {
-            var result = _repository.GetPosition(_dbPosition.Id, null);
+            var result = _repository.Get(_dbPosition.Id, null);
 
             var expected = new DbPosition
             {
@@ -101,7 +101,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void FindPositionsSuccessfully()
         {
-            Assert.IsNotEmpty(_repository.FindPositions());
+            Assert.IsNotEmpty(_repository.Find());
         }
         #endregion
 
@@ -112,7 +112,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         {
             var userId = _dbPosition.Users.First().UserId;
 
-            var result = _repository.GetPosition(null, userId);
+            var result = _repository.Get(null, userId);
 
             Assert.AreEqual(_dbPosition.Id, result.Id);
             Assert.AreEqual(_dbPosition.Description, result.Description);
@@ -127,7 +127,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         {
             var expected = _dbPositionToAdd.Id;
 
-            var result = _repository.CreatePosition(_dbPositionToAdd);
+            var result = _repository.Create(_dbPositionToAdd);
 
             Assert.AreEqual(expected, result);
             Assert.NotNull(_provider.Positions.Find(_dbPositionToAdd.Id));
@@ -135,38 +135,19 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         #endregion
 
         #region EditPosition
-        [Test]
-        public void ShouldEditPositionSuccessfully()
-        {
-            _newPosition = new DbPosition
-            {
-                Id = _positionId,
-                Name = "abracadabra",
-                Description = "bluhbluh"
-            };
-
-            var result = _repository.EditPosition(_newPosition);
-
-            DbPosition updatedPosition = _provider.Positions.FirstOrDefault(p => p.Id == _positionId);
-
-            Assert.IsTrue(result);
-            Assert.AreEqual(_newPosition.Id, updatedPosition.Id);
-            Assert.AreEqual(_newPosition.Name, updatedPosition.Name);
-            Assert.AreEqual(_newPosition.Description, updatedPosition.Description);
-        }
         #endregion
 
         #region DisablePosition
         [Test]
         public void ShouldThrowExceptionIfPositionDoesNotExistWhileDisablingPosition()
         {
-            Assert.Throws<NotFoundException>(() => _repository.DisablePosition(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => _repository.Disable(Guid.NewGuid()));
         }
 
         [Test]
         public void ShouldDisablePositionSuccessfully()
         {
-            _repository.DisablePosition(_positionId);
+            _repository.Disable(_positionId);
 
             Assert.IsFalse(_provider.Positions.Find(_positionId).IsActive);
         }
@@ -174,7 +155,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionIfPositionIdNullWhileDisablingPosition()
         {
-            Assert.Throws<NotFoundException>(() => _repository.DisablePosition(Guid.Empty));
+            Assert.Throws<NotFoundException>(() => _repository.Disable(Guid.Empty));
         }
         #endregion
     }

@@ -1,5 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
@@ -39,9 +39,10 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         public FindOfficesResponse Find(
             [FromServices] IFindOfficesCommand command,
             [FromQuery] int skipCount,
-            [FromQuery] int takeCount)
+            [FromQuery] int takeCount,
+            [FromQuery] bool? includeDeactivated)
         {
-            return command.Execute(skipCount, takeCount);
+            return command.Execute(skipCount, takeCount, includeDeactivated);
         }
     }
 }

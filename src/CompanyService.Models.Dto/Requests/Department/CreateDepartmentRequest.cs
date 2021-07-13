@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
+namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department
 {
     public record CreateDepartmentRequest
     {

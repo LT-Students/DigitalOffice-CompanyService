@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
+using LT.DigitalOffice.CompanyService.Validation.Department.Interfaces;
 
-namespace LT.DigitalOffice.CompanyService.Validation
+namespace LT.DigitalOffice.CompanyService.Validation.Department
 {
     public class BaseDepartmentInfoValidator : AbstractValidator<BaseDepartmentInfo>, IBaseDepartmentInfoValidator
     {

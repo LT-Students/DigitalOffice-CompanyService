@@ -2,64 +2,22 @@
 using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
-using Microsoft.AspNetCore.JsonPatch;
+using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
+using LT.DigitalOffice.CompanyService.Validation.Helper;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace LT.DigitalOffice.CompanyService.Validation
+namespace LT.DigitalOffice.CompanyService.Validation.Company
 {
-    public class EditCompanyRequestValidator : AbstractValidator<JsonPatchDocument<EditCompanyRequest>>, IEditCompanyRequestValidator
+    public class EditCompanyRequestValidator : BaseEditRequestValidator<EditCompanyRequest>, IEditCompanyRequestValidator
     {
         private void HandleInternalPropertyValidation(Operation<EditCompanyRequest> requestedOperation, CustomContext context)
         {
-            #region local functions
+            Context = context;
+            RequestedOperation = requestedOperation;
 
-            void AddСorrectPaths(List<string> paths)
-            {
-                if (paths.FirstOrDefault(p => p.EndsWith(requestedOperation.path[1..], StringComparison.OrdinalIgnoreCase)) == null)
-                {
-                    context.AddFailure(requestedOperation.path, $"This path {requestedOperation.path} is not available");
-                }
-            }
-
-            void AddСorrectOperations(
-                string propertyName,
-                List<OperationType> types)
-            {
-                if (requestedOperation.path.EndsWith(propertyName, StringComparison.OrdinalIgnoreCase)
-                    && !types.Contains(requestedOperation.OperationType))
-                {
-                    context.AddFailure(propertyName, $"This operation {requestedOperation.OperationType} is prohibited for {propertyName}");
-                }
-            }
-
-            void AddFailureForPropertyIf(
-                string propertyName,
-                Func<OperationType, bool> type,
-                Dictionary<Func<Operation<EditCompanyRequest>, bool>, string> predicates)
-            {
-                if (!requestedOperation.path.EndsWith(propertyName, StringComparison.OrdinalIgnoreCase)
-                    || !type(requestedOperation.OperationType))
-                {
-                    return;
-                }
-
-                foreach (var validateDelegate in predicates)
-                {
-                    if (!validateDelegate.Key(requestedOperation))
-                    {
-                        context.AddFailure(propertyName, validateDelegate.Value);
-                    }
-                }
-            }
-
-            #endregion
-
-            #region paths
+            #region Paths
 
             AddСorrectPaths(
                 new List<string>
@@ -120,21 +78,22 @@ namespace LT.DigitalOffice.CompanyService.Validation
                 x => x == OperationType.Replace,
                 new()
                 {
-                    { x =>
-                        {
-                            try
-                            {
-                                _ = JsonConvert.DeserializeObject<AddImageRequest>(x.value?.ToString());
-                                return true;
-                            }
-                            catch
-                            {
-                                return false;
-                            }
-                        },
+                    {
+                        x =>
+                          {
+                              try
+                              {
+                                  _ = JsonConvert.DeserializeObject<AddImageRequest>(x.value?.ToString());
+                                  return true;
+                              }
+                              catch
+                              {
+                                  return false;
+                              }
+                          },
                         "Incorrect Image format"
                     }
-            });
+                });
 
             #endregion
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
+namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office
 {
     public record CreateOfficeRequest
     {

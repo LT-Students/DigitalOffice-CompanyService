@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
+using LT.DigitalOffice.CompanyService.Validation.Position;
 using NUnit.Framework;
 
 namespace LT.DigitalOffice.CompanyService.Validation.UnitTests

@@ -1,7 +1,9 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -49,6 +51,11 @@ namespace LT.DigitalOffice.CompanyService.Data
                     IsActive = true
                 });
             _provider.Save();
+        }
+
+        public List<DbOfficeUser> Get(List<Guid> userIds)
+        {
+            return _provider.OfficeUsers.Where(x => userIds.Contains(x.UserId)).Include(x => x.Office).ToList();
         }
     }
 }

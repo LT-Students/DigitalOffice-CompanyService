@@ -1,7 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db

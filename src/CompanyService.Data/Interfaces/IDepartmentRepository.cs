@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Attributes;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 
@@ -32,6 +33,14 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <returns>Found departments.</returns>
         List<DbDepartment> FindDepartments();
+
+        /// <summary>
+        /// Edits an existing department in the database. Returns whether it was successful to edit
+        /// </summary>
+        /// <param name="departmentId">Id of edited department.</param>
+        /// <param name="request">Edit request.</param>
+        /// <returns>Whether it was successful to edit.</returns>
+        bool Edit(Guid departmentId, JsonPatchDocument<DbDepartment> request);
 
         List<DbDepartment> Search(string text);
     }

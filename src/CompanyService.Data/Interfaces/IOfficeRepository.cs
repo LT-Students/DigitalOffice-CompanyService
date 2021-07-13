@@ -12,6 +12,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         DbOffice Get(Guid officeId);
 
-        List<DbOffice> Find(int skipCount, int takeCount, out int totalCount);
+        List<DbOffice> Find(int skipCount, int takeCount, bool? includeDeactivated, out int totalCount);
     }
 }

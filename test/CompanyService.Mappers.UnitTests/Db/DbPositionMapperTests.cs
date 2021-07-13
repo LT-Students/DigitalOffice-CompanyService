@@ -2,7 +2,7 @@
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
 using System;
@@ -67,32 +67,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
 
             Assert.IsInstanceOf<Guid>(resultDbPosition.Id);
             SerializerAssert.AreEqual(_expectedDbPosition, resultDbPosition);
-        }
-        #endregion
-
-        #region PositionInfo to DbPosition
-        [Test]
-        public void ShouldThrowExceptionIfArgumentIsNullEditPositionRequestToDbPosition()
-        {
-            PositionInfo positionInfo = null;
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(positionInfo, _companyId));
-        }
-
-        [Test]
-        public void ShouldReturnPositionModelSuccessfullyEditPositionRequestToDbPosition()
-        {
-            var result = _mapper.Map(_positionInfo, _companyId);
-
-            var expected = new DbPosition
-            {
-                Id = result.Id,
-                CompanyId = _companyId,
-                Name = _positionInfo.Name,
-                Description = _positionInfo.Description,
-                IsActive = true
-            };
-
-            SerializerAssert.AreEqual(expected, result);
         }
         #endregion
     }

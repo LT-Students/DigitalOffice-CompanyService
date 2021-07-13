@@ -152,6 +152,7 @@ namespace LT.DigitalOffice.CompanyService
                 x.AddConsumer<ChangeUserOfficeConsumer>();
                 x.AddConsumer<GetSmtpCredentialsConsumer>();
                 x.AddConsumer<GetUsersDepartmentsUsersPositionsConsumer>();
+                x.AddConsumer<GetUserOfficesConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -227,6 +228,11 @@ namespace LT.DigitalOffice.CompanyService
             cfg.ReceiveEndpoint(_rabbitMqConfig.GetUsersDepartmentsUsersPositionsEndpoint, ep =>
             {
                 ep.ConfigureConsumer<GetUsersDepartmentsUsersPositionsConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.GetUserOfficesEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<GetUserOfficesConsumer>(context);
             });
         }
 
