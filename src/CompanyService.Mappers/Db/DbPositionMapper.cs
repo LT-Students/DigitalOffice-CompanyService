@@ -3,6 +3,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using System;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
@@ -20,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 Id = Guid.NewGuid(),
                 CompanyId = companyId,
                 Name = value.Name,
-                Description = value.Description,
+                Description = value.Description.Any() ? value.Description : null,
                 IsActive = true
             };
         }
@@ -37,7 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 Id = positionInfo.Id,
                 CompanyId = companyId,
                 Name = positionInfo.Name,
-                Description = positionInfo.Description,
+                Description = positionInfo.Description.Any() ? positionInfo.Description : null,
                 IsActive = positionInfo.IsActive
             };
         }

@@ -15,7 +15,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Position
             When(position => position.Description != null, () =>
             {
                 RuleFor(position => position.Description)
-                    .NotEmpty()
                     .MaximumLength(350);
             });
         }

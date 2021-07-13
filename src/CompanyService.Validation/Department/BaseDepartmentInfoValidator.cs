@@ -26,8 +26,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Department
             When(request => request.Description != null, () =>
             {
                 RuleFor(request => request.Description)
-                    .NotEmpty()
-                    .WithMessage("Department description can not be empty.")
                     .MaximumLength(1000)
                     .WithMessage("Department description is too long.");
             });
