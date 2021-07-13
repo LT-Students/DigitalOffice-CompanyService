@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
             {
                 Id = value.Id,
                 Name = value.Name,
-                Description = value.Description.Any() ? value.Description : null,
+                Description = value.Description.Trim().Any() ? value.Description.Trim() : null,
                 DirectorUserId = value.DirectorUserId
             };
         }
