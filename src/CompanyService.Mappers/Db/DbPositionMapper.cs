@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 Id = Guid.NewGuid(),
                 CompanyId = companyId,
                 Name = value.Name,
-                Description = value.Description != null && value.Description.Any() ? value.Description : null,
+                Description = value.Description != null && value.Description.Trim().Any() ? value.Description : null,
                 IsActive = true
             };
         }
