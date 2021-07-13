@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Models.Broker.Models;
@@ -15,6 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
     {
         private readonly IProjectInfoMapper _projectInfoMapper;
         private readonly IDepartmentUserInfoMapper _departmentUserInfoMapper;
+        private readonly IShortDepartmentInfoMapper _shortDepartmentInfoMapper;
 
         private ImageData GetImage(List<ImageData> images, Guid? imageId)
         {
@@ -29,15 +29,19 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
                     i.ImageId == imageId);
         }
 
-        public DepartmentResponseMapper(IProjectInfoMapper projectInfoMapper, IDepartmentUserInfoMapper departmentUserInfoMapper)
+        public DepartmentResponseMapper(
+            IProjectInfoMapper projectInfoMapper,
+            IDepartmentUserInfoMapper departmentUserInfoMapper,
+            IShortDepartmentInfoMapper shortDepartmentInfoMapper)
         {
             _projectInfoMapper = projectInfoMapper;
             _departmentUserInfoMapper = departmentUserInfoMapper;
+            _shortDepartmentInfoMapper = shortDepartmentInfoMapper;
         }
 
         public DepartmentResponse Map(
             DbDepartment dbDepartment,
-            List<UserData> userData,
+            List<UserData> usersData,
             List<DbPositionUser> dbPositionUsers,
             List<ImageData> userImages,
             List<ProjectData> projectsInfo,
@@ -45,15 +49,13 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
         {
             return new DepartmentResponse
             {
-                Department = new ShortDepartmentInfo
-                {
-                    Id = dbDepartment.Id,
-                    Name = dbDepartment.Name,
-                    Description = dbDepartment.Description,
-                    IsActive = dbDepartment.IsActive
-                },
+                Department = _shortDepartmentInfoMapper.Map(
+                    dbDepartment,
+                    dbDepartment.DirectorUserId.HasValue ?
+                    usersData.FirstOrDefault(ud => ud.Id == dbDepartment.DirectorUserId)
+                    : null),
                 Users = filter.IsIncludeUsers ?
-                    userData.Select(ud =>
+                    usersData.Select(ud =>
                         _departmentUserInfoMapper.Map(
                             ud,
                             dbPositionUsers.FirstOrDefault(pu => pu.UserId == ud.Id),

@@ -168,6 +168,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 projectsInfo = GetProjectsData(dbDepartment.Id, errors);
             }
 
+            // TODO: add directors department to response
             return new OperationResultResponse<DepartmentResponse>
             {
                 Body = _departmentResponseMapper.Map(dbDepartment, usersData, dbPositionUsers, userImages, projectsInfo, filter),
