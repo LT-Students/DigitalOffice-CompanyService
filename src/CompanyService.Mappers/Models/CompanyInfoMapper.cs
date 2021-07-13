@@ -30,6 +30,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 return null;
             }
 
+            // TODO: add directors department to response
+
             return new CompanyInfo
             {
                 Id = company.Id,
