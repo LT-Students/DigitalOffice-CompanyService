@@ -27,7 +27,10 @@ namespace LT.DigitalOffice.CompanyService.Validation.Department
                 });
 
             AddСorrectOperations(nameof(EditDepartmentRequest.Name), new() { OperationType.Replace });
-            AddСorrectOperations(nameof(EditDepartmentRequest.Description), new() { OperationType.Replace });
+            AddСorrectOperations(nameof(EditDepartmentRequest.Description), new() 
+            { 
+                OperationType.Add, OperationType.Replace, OperationType.Remove 
+            });
             AddСorrectOperations(nameof(EditDepartmentRequest.IsActive), new() { OperationType.Replace });
 
             #endregion
@@ -48,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Department
 
             AddFailureForPropertyIf(
                 nameof(EditDepartmentRequest.Description),
-                x => x == OperationType.Replace,
+                x => x == OperationType.Replace || x == OperationType.Add,
                 new()
                 {
                     { x => !string.IsNullOrEmpty(x.value.ToString()), "Description is too short." },

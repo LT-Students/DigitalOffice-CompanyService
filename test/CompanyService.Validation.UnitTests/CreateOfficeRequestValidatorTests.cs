@@ -33,6 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
 
             _validator.ShouldNotHaveValidationErrorFor(x => x.City, "City");
 
+            _validator.ShouldNotHaveValidationErrorFor(x => x.Name, "");
             _validator.ShouldNotHaveValidationErrorFor(x => x.Name, null as string);
             _validator.ShouldNotHaveValidationErrorFor(x => x.Name, "Name");
         }
@@ -40,8 +41,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
         [Test]
         public void ShouldThrowValidationException()
         {
-            _validator.ShouldHaveValidationErrorFor(x => x.Name, "");
-
             _validator.ShouldHaveValidationErrorFor(x => x.Address, "");
             _validator.ShouldHaveValidationErrorFor(x => x.Address, null as string);
 

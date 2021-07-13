@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using System;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
@@ -18,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
             {
                 Id = value.Id,
                 Name = value.Name,
-                Description = value.Description,
+                Description = value.Description.Trim().Any() ? value.Description.Trim() : null,
                 DirectorUserId = value.DirectorUserId
             };
         }

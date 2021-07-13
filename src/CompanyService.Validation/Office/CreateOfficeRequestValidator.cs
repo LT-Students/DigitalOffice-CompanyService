@@ -13,12 +13,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
 
             RuleFor(request => request.Address)
                 .NotEmpty();
-
-            When(request => request.Name != null, () =>
-            {
-                RuleFor(request => request.Name)
-                    .NotEmpty();
-            });
         }
     }
 }
