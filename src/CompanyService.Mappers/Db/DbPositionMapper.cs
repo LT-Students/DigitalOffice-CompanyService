@@ -38,7 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 Id = positionInfo.Id,
                 CompanyId = companyId,
                 Name = positionInfo.Name,
-                Description = positionInfo.Description.Trim().Any() ? positionInfo.Description.Trim() : null,
+                Description = positionInfo.Description != null && positionInfo.Description.Trim().Any() ? positionInfo.Description.Trim() : null,
                 IsActive = positionInfo.IsActive
             };
         }
