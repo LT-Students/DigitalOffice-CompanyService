@@ -5,16 +5,16 @@ using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
-    public class ShortProjectInfoMapper : IShortProjectInfoMapper
+    public class ProjectInfoMapper : IProjectInfoMapper
     {
-        public ShortProjectInfo Map(ProjectInfo projectInfo)
+        public ProjectInfo Map(ProjectData projectInfo)
         {
             if (projectInfo == null)
             {
                 throw new ArgumentNullException(nameof(projectInfo));
             }
 
-            return new ShortProjectInfo
+            return new ProjectInfo
             {
                 Id = projectInfo.Id,
                 Name = projectInfo.Name,

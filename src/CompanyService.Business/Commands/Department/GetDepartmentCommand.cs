@@ -22,9 +22,9 @@ using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
-    public class GetDepartmentByIdCommand : IGetDepartmentByIdCommand
+    public class GetDepartmentCommand : IGetDepartmentCommand
     {
-        private readonly ILogger<GetDepartmentByIdCommand> _logger;
+        private readonly ILogger<GetDepartmentCommand> _logger;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IPositionUserRepository _positionUserRepository;
         private readonly IDepartmentResponseMapper _departmentResponseMapper;
@@ -59,7 +59,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             return new();
         }
 
-        private List<ProjectInfo> GetProjectsData(Guid departmentId, List<string> errors)
+        private List<ProjectData> GetProjectsData(Guid departmentId, List<string> errors)
         {
             string message = "Can not get projects data. Please try again later.";
             string loggerMessage = $"Can not get projects data for specific department id '{departmentId}'.";
@@ -113,14 +113,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             return new();
         }
 
-        public GetDepartmentByIdCommand(
+        public GetDepartmentCommand(
             IDepartmentRepository departmentRepository,
             IPositionUserRepository positionUserRepository,
             IDepartmentResponseMapper departmentResponseMapper,
             IRequestClient<IGetImagesRequest> rcImages,
             IRequestClient<IGetUsersDataRequest> rcDepartmentUsers,
             IRequestClient<IGetDepartmentProjectsRequest> rcDepartmentProject,
-            ILogger<GetDepartmentByIdCommand> logger)
+            ILogger<GetDepartmentCommand> logger)
         {
             _logger = logger;
             _rcImages = rcImages;
@@ -138,13 +138,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             List<UserData> usersData = null;
             List<ImageData> userImages = null;
-            List<ProjectInfo> projectsInfo = null;
+            List<ProjectData> projectsInfo = null;
 
             DbDepartment dbDepartment = _departmentRepository.GetDepartment(filter);
 
             if (filter.IsIncludeUsers)
             {
-                List<Guid> userIds = dbDepartment.Users.Select(u => u.Id).ToList();
+                List<Guid> userIds = dbDepartment.Users.Select(u => u.UserId).ToList();
 
                 dbPositionUsers = _positionUserRepository.Find(userIds);
 

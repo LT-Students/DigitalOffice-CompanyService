@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department.Interface
     /// Provides method for getting department model by id.
     /// </summary>
     [AutoInject]
-    public interface IGetDepartmentByIdCommand
+    public interface IGetDepartmentCommand
     {
         /// <summary>
         /// Returns the department model with the specified id.

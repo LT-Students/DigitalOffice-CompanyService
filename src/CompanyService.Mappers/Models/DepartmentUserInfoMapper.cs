@@ -17,9 +17,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
 
         public DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image)
         {
-            if (userData == null || dbPositionUser == null || image == null)
+            if (userData == null || dbPositionUser == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(userData));
             }
 
             return new DepartmentUserInfo
@@ -30,14 +30,16 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 MiddleName = userData.MiddleName,
                 Rate = userData.Rate.Value,
                 IsActive = userData.IsActive,
-                Image = new ImageInfo
-                {
-                    Id = image.ImageId,
-                    Content = image.Content,
-                    Extension = image.Extension,
-                    Name = image.Name,
-                    ParentId = image.ParentId
-                },
+                Image = image != null ?
+                    new ImageInfo
+                    {
+                        Id = image.ImageId,
+                        Content = image.Content,
+                        Extension = image.Extension,
+                        Name = image.Name,
+                        ParentId = image.ParentId
+                    }
+                    : null,
                 Position = _positionInfoMapper.Map(dbPositionUser.Position)
             };
         }

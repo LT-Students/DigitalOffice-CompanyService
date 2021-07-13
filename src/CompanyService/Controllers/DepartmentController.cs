@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
 
         [HttpGet("get")]
         public OperationResultResponse<DepartmentResponse> Get(
-            [FromServices] IGetDepartmentByIdCommand command,
+            [FromServices] IGetDepartmentCommand command,
             [FromQuery] GetDepartmentFilter filter)
         {
             return command.Execute(filter);

@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
 {
     public class DepartmentResponseMapper : IDepartmentResponseMapper
     {
-        private readonly IShortProjectInfoMapper _projectInfoMapper;
+        private readonly IProjectInfoMapper _projectInfoMapper;
         private readonly IDepartmentUserInfoMapper _departmentUserInfoMapper;
 
         private ImageData GetImage(List<ImageData> images, Guid? imageId)
@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
                     i.ImageId == imageId);
         }
 
-        public DepartmentResponseMapper(IShortProjectInfoMapper projectInfoMapper, IDepartmentUserInfoMapper departmentUserInfoMapper)
+        public DepartmentResponseMapper(IProjectInfoMapper projectInfoMapper, IDepartmentUserInfoMapper departmentUserInfoMapper)
         {
             _projectInfoMapper = projectInfoMapper;
             _departmentUserInfoMapper = departmentUserInfoMapper;
@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
             List<UserData> userData,
             List<DbPositionUser> dbPositionUsers,
             List<ImageData> userImages,
-            List<ProjectInfo> projectsInfo,
+            List<ProjectData> projectsInfo,
             GetDepartmentFilter filter)
         {
             return new DepartmentResponse
@@ -56,7 +56,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
                     userData.Select(ud =>
                         _departmentUserInfoMapper.Map(
                             ud,
-                            dbPositionUsers.FirstOrDefault(pu => pu.Id == ud.Id),
+                            dbPositionUsers.FirstOrDefault(pu => pu.UserId == ud.Id),
                             GetImage(userImages, ud.ImageId)))
                     : null,
                 Projects = filter.IsIncludeProjects

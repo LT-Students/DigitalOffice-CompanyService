@@ -5,8 +5,8 @@ using LT.DigitalOffice.Models.Broker.Models;
 namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
 {
     [AutoInject]
-    public interface IShortProjectInfoMapper
+    public interface IProjectInfoMapper
     {
-        ShortProjectInfo Map(ProjectInfo projectInfo);
+        ProjectInfo Map(ProjectData projectInfo);
     }
 }

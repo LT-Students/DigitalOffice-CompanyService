@@ -2,7 +2,7 @@
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
 {
-    public record ShortProjectInfo
+    public record ProjectInfo
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

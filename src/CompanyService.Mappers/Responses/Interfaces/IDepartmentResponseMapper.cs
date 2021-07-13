@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces
             List<UserData> userData,
             List<DbPositionUser> dbPositionUsers,
             List<ImageData> userImages,
-            List<ProjectInfo> projectsInfo,
+            List<ProjectData> projectsInfo,
             GetDepartmentFilter filter);
     }
 }
