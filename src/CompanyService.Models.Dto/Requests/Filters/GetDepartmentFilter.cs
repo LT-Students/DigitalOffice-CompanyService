@@ -8,7 +8,11 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters
     {
         [FromQuery(Name ="departmentid")]
         public Guid DepartmentId { get; set; }
+
+        [FromQuery(Name = "includeusers")]
         public bool? IncludeUsers { get; set; }
+
+        [FromQuery(Name = "includeprojects")]
         public bool? IncludeProjects { get; set; }
 
         public bool IsIncludeUsers => IncludeUsers.HasValue && IncludeUsers.Value;
