@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
             {
                 Id = Guid.NewGuid(),
                 CompanyId = companyId,
-                Name = request.Name.Trim().Any() ? request.Name.Trim() : null,
+                Name = request.Name != null && request.Name.Trim().Any() ? request.Name.Trim() : null,
                 City = request.City,
                 Address = request.Address,
                 CreatedAt = DateTime.UtcNow,
