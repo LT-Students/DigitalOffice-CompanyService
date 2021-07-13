@@ -1,10 +1,10 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,9 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("get")]
-        public PositionResponse Get([FromServices] IGetPositionByIdCommand command, [FromQuery] Guid positionId)
+        public PositionResponse Get(
+            [FromServices] IGetPositionByIdCommand command,
+            [FromQuery] Guid positionId)
         {
             return command.Execute(positionId);
         }
@@ -51,16 +53,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             return result;
         }
 
-        [HttpDelete("disable")]
-        public void Disable([FromServices] IDisablePositionByIdCommand command, [FromQuery] Guid positionId)
+        [HttpPatch("edit")]
+        public OperationResultResponse<bool> Edit(
+            [FromServices] IEditPositionCommand command,
+            [FromQuery] Guid positionId,
+            [FromBody] JsonPatchDocument<EditPositionRequest> request)
         {
-            command.Execute(positionId);
-        }
-
-        [HttpPost("edit")]
-        public bool Edit([FromServices] IEditPositionCommand command, [FromBody] PositionInfo request)
-        {
-            return command.Execute(request);
+            return command.Execute(positionId, request);
         }
     }
 }

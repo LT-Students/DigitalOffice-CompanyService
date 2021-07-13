@@ -1,5 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
 using LT.DigitalOffice.Kernel.Attributes;
 using System;
 

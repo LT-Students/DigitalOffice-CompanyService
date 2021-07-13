@@ -19,11 +19,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
             _mapper = mapper;
         }
 
-        public FindOfficesResponse Execute(int skipCount, int takeCount)
+        public FindOfficesResponse Execute(int skipCount, int takeCount, bool? includeDeactivated)
         {
             return new FindOfficesResponse
             {
-                Offices = _officeRepository.Find(skipCount, takeCount, out int totalCount).Select(o => _mapper.Map(o)).ToList(),
+                Offices = _officeRepository.Find(skipCount, takeCount, includeDeactivated, out int totalCount).Select(o => _mapper.Map(o)).ToList(),
                 TotalCount = totalCount
             };
         }

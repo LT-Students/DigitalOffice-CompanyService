@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
@@ -10,5 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         void Add(DbOfficeUser user);
 
         void ChangeOffice(Guid userId, Guid officeId, Guid changedBy);
+
+        List<DbOfficeUser> Get(List<Guid> userIds);
     }
 }

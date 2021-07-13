@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
-using LT.DigitalOffice.CompanyService.Validation.Interfaces;
+using LT.DigitalOffice.CompanyService.Validation.Company;
+using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
 using Moq.AutoMock;
 using NUnit.Framework;
 

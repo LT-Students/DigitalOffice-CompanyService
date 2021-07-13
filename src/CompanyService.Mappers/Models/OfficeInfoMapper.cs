@@ -19,7 +19,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 Id = office.Id,
                 Name = office.Name,
                 City = office.City,
-                Address = office.Address
+                Address = office.Address,
+                IsActive = office.IsActive
             };
         }
     }
