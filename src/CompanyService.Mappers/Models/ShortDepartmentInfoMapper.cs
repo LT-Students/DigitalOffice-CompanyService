@@ -8,14 +8,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
     public class ShortDepartmentInfoMapper : IShortDepartmentInfoMapper
     {
-        private readonly IUserInfoMapper _userInfoMapper;
+        private readonly IDepartmentUserInfoMapper _userInfoMapper;
 
-        public ShortDepartmentInfoMapper(IUserInfoMapper userInfoMapper)
+        public ShortDepartmentInfoMapper(IDepartmentUserInfoMapper userInfoMapper)
         {
             _userInfoMapper = userInfoMapper;
         }
 
-        public ShortDepartmentInfo Map(DbDepartment department, UserData director)
+        public ShortDepartmentInfo Map(DbDepartment department, UserData userData, DbPositionUser dbPositionUser, ImageData image)
         {
             if (department == null)
             {
@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 Description = department.Description,
                 Name = department.Name,
                 IsActive = department.IsActive,
-                Director = _userInfoMapper.Map(director)
+                Director = department.DirectorUserId.HasValue ? _userInfoMapper.Map(userData, dbPositionUser, image) : null
             };
         }
     }
