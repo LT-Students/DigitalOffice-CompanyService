@@ -55,6 +55,9 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             dbPosition.IsActive = false;
             _provider.Positions.Update(dbPosition);
+
+            dbPosition.Users.Select(u => u.IsActive = false);
+
             _provider.Save();
         }
 

@@ -33,7 +33,8 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public List<PositionResponse> Find([FromServices] IFindPositionsCommand command)
+        public List<PositionResponse> Find(
+            [FromServices] IFindPositionsCommand command)
         {
             return command.Execute();
         }

@@ -38,11 +38,11 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (includePosition)
             {
-                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId);
+                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive == true);
             }
             else
             {
-                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId);
+                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive == true);
             }
 
             if (user == null)
@@ -57,7 +57,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return _provider.PositionUsers
                 .Include(pu => pu.Position)
-                .Where(u => userIds.Contains(u.UserId))
+                .Where(u => userIds.Contains(u.UserId) && u.IsActive == true)
                 .ToList();
         }
 
@@ -68,9 +68,12 @@ namespace LT.DigitalOffice.CompanyService.Data
             if (user != null)
             {
                 user.IsActive = false;
+                _provider.Save();
             }
-
-            _provider.Save();
+            else
+            {
+                throw new NotFoundException($"There is not user in position with id {userId}");
+            }
         }
     }
 }
