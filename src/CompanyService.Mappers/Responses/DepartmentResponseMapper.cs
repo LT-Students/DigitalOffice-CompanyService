@@ -50,7 +50,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
         {
 
             ShortDepartmentInfo department;
-
             if (dbDepartment.DirectorUserId.HasValue)
             {
                 UserData director = usersData.FirstOrDefault(ud => ud.Id == dbDepartment.DirectorUserId.Value);
