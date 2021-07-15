@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 _provider.Positions.Where(p => p.IsActive).ToList();
         }
 
-        public bool AreUsersOfPosition(Guid positionId)
+        public bool PositionContainsUsers(Guid positionId)
         {
             return _provider.PositionUsers
                 .Any(pu => pu.PositionId == positionId && pu.IsActive);

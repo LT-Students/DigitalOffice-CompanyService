@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
             {
                 if (item.path.EndsWith(nameof(EditPositionRequest.IsActive), StringComparison.OrdinalIgnoreCase) &&
                     !bool.Parse(item.value.ToString()) &&
-                    _repository.AreUsersOfPosition(positionId))
+                    _repository.PositionContainsUsers(positionId))
                 {
                     response.Status = OperationResultStatusType.Conflict;
                     response.Errors.Add("The position contains users. Please change the position to users");
