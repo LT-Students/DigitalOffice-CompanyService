@@ -3,21 +3,24 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Models.Broker.Models;
 using System;
+using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
     public class DepartmentUserInfoMapper : IDepartmentUserInfoMapper
     {
         private readonly IPositionInfoMapper _positionInfoMapper;
+        private readonly IAccessValidator _accessValidator;
 
-        public DepartmentUserInfoMapper(IPositionInfoMapper positionInfoMapper)
+        public DepartmentUserInfoMapper(IPositionInfoMapper positionInfoMapper, IAccessValidator accessValidator)
         {
             _positionInfoMapper = positionInfoMapper;
+            _accessValidator = accessValidator;
         }
 
         public DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image)
         {
-            if (userData == null || dbPositionUser == null)
+            if (userData == null || (dbPositionUser == null && !_accessValidator.IsAdmin(userData.Id)))
             {
                 throw new ArgumentNullException(nameof(userData));
             }
@@ -40,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                         ParentId = image.ParentId
                     }
                     : null,
-                Position = _positionInfoMapper.Map(dbPositionUser.Position)
+                Position = dbPositionUser != null ? _positionInfoMapper.Map(dbPositionUser.Position) : null
             };
         }
     }
