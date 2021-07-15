@@ -26,10 +26,13 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new ArgumentNullException(nameof(positionUser));
             }
 
-            if (_provider.Positions.FirstOrDefault(p => p.Id == positionUser.PositionId && !p.IsActive) != null)
+            if (_provider.Positions.FirstOrDefault(p => p.Id == positionUser.PositionId && p.IsActive) != null)
             {
+                CheckAndRemovePositionUser(positionUser.UserId);
+
                 _provider.PositionUsers.Add(positionUser);
                 _provider.Save();
+
                 return true;
             }
 
@@ -65,7 +68,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 .ToList();
         }
 
-        public void Remove(Guid userId)
+        public void CheckAndRemovePositionUser(Guid userId)
         {
             DbPositionUser user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
 
