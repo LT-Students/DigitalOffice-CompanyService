@@ -21,9 +21,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
             _mapper = mapper;
         }
 
-        public List<PositionResponse> Execute()
+        public List<PositionResponse> Execute(bool includeDeactivated)
         {
-            return _repository.Find().Select(position => _mapper.Map(position)).ToList();
+            return _repository.Find(includeDeactivated).Select(_mapper.Map).ToList();
         }
     }
 }

@@ -26,10 +26,17 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new ArgumentNullException(nameof(positionUser));
             }
 
-            _provider.PositionUsers.Add(positionUser);
-            _provider.Save();
+            if (_provider.Positions.FirstOrDefault(p => p.Id == positionUser.PositionId && p.IsActive) != null)
+            {
+                CheckAndRemovePositionUser(positionUser.UserId);
 
-            return true;
+                _provider.PositionUsers.Add(positionUser);
+                _provider.Save();
+
+                return true;
+            }
+
+            throw new BadRequestException($"Can not add user id: {positionUser.UserId} to position id: {positionUser.PositionId}");
         }
 
         public DbPositionUser Get(Guid userId, bool includePosition)
@@ -38,11 +45,11 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (includePosition)
             {
-                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId);
+                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive);
             }
             else
             {
-                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId);
+                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
             }
 
             if (user == null)
@@ -57,20 +64,19 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return _provider.PositionUsers
                 .Include(pu => pu.Position)
-                .Where(u => userIds.Contains(u.UserId))
+                .Where(u => userIds.Contains(u.UserId) && u.IsActive)
                 .ToList();
         }
 
-        public void Remove(Guid userId)
+        public void CheckAndRemovePositionUser(Guid userId)
         {
             DbPositionUser user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
 
             if (user != null)
             {
                 user.IsActive = false;
+                _provider.Save();
             }
-
-            _provider.Save();
         }
     }
 }

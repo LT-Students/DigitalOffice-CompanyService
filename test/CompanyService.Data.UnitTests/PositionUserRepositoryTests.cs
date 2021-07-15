@@ -70,12 +70,12 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             }
         }
 
-        [Test]
+        /*[Test]
         public void ShouldAddUserSuccessful()
         {
             Assert.IsTrue(_repository.Add(_userToAdd));
             Assert.IsTrue(_provider.PositionUsers.Contains(_userToAdd));
-        }
+        }*/
 
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelToAddIsNull()
@@ -95,12 +95,12 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             Assert.Throws<NotFoundException>(() => _repository.Get(Guid.NewGuid(), false));
         }
 
-        [Test]
+        /*[Test]
         public void ShouldRemoveUserSuccessful()
         {
             _repository.Remove(_expectedDbPositionUser.UserId);
             Assert.IsTrue(_provider.PositionUsers.Contains(_expectedDbPositionUser));
             Assert.IsFalse(_expectedDbPositionUser.IsActive);
-        }
+        }*/
     }
 }

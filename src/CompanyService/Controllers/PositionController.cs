@@ -33,9 +33,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public List<PositionResponse> Find([FromServices] IFindPositionsCommand command)
+        public List<PositionResponse> Find(
+            [FromServices] IFindPositionsCommand command,
+            [FromQuery] bool includeDeactivated = false)
         {
-            return command.Execute();
+            return command.Execute(includeDeactivated);
         }
 
         [HttpPost("create")]
@@ -59,7 +61,14 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromQuery] Guid positionId,
             [FromBody] JsonPatchDocument<EditPositionRequest> request)
         {
-            return command.Execute(positionId, request);
+            var result = command.Execute(positionId, request);
+
+            if (result.Status == OperationResultStatusType.Conflict)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            }
+
+            return result;
         }
     }
 }

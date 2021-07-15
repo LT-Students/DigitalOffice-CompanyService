@@ -39,23 +39,17 @@ namespace LT.DigitalOffice.CompanyService.Data
             throw new BadRequestException("You must specify 'positionId' or 'userId'.");
         }
 
-        public List<DbPosition> Find()
+        public List<DbPosition> Find(bool includeDeactivated)
         {
-            return _provider.Positions.ToList();
+            return includeDeactivated ?
+                _provider.Positions.ToList() :
+                _provider.Positions.Where(p => p.IsActive).ToList();
         }
 
-        public void Disable(Guid positionId)
+        public bool PositionContainsUsers(Guid positionId)
         {
-            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId);
-
-            if (dbPosition == null)
-            {
-                throw new NotFoundException($"Position with this id: '{positionId}' was not found.");
-            }
-
-            dbPosition.IsActive = false;
-            _provider.Positions.Update(dbPosition);
-            _provider.Save();
+            return _provider.PositionUsers
+                .Any(pu => pu.PositionId == positionId && pu.IsActive);
         }
 
         public Guid Create(DbPosition newPosition)
