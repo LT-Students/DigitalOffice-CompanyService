@@ -102,7 +102,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public bool IsNameExist(string name)
         {
-            return _provider.Departments.Any(p => p.Name == name);
+            return _provider.Departments.Any(d => d.Name == name);
         }
     }
 }
