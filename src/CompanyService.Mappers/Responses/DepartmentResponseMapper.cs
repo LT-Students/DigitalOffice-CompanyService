@@ -76,7 +76,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
                             ud,
                             dbPositionUsers.FirstOrDefault(pu => pu.UserId == ud.Id),
                             GetImage(userImages, ud.ImageId)))
-                        .Where(ud => ud != null)
                     : null,
                 Projects = filter.IsIncludeProjects
                     ? projectsInfo.Select(pi => _projectInfoMapper.Map(pi))
