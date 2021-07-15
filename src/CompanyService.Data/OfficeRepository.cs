@@ -2,7 +2,6 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +31,11 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public List<DbOffice> Find(int skipCount, int takeCount, bool? includeDeactivated, out int totalCount)
         {
+            if (skipCount < 0)
+            {
+                throw new BadRequestException("Skip count can't be less than 0.");
+            }
+
             if (takeCount <= 0)
             {
                 throw new BadRequestException("Take count can't be equal or less than 0.");
