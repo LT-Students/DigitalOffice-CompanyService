@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             string message = "Can not get users data. Please try again later.";
             string loggerMessage = $"Can not get users data for specific user ids:'{string.Join(",", userIds)}'.";
 
-            if (userIds == null && userIds.Any())
+            if (userIds == null || !userIds.Any())
             {
                 return new();
             }
@@ -96,7 +96,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             string message = "Can not get users avatar. Please try again later.";
             string loggerMessage = $"Can not get users avatar by specific image ids '{string.Join(",", imageIds)}.";
 
-            if (imageIds == null && imageIds.Any())
+            if (imageIds == null || !imageIds.Any())
             {
                 return new();
             }
