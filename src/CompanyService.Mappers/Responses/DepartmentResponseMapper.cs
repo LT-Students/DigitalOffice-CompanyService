@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Models.Broker.Models;
@@ -47,13 +48,28 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
             List<ProjectData> projectsInfo,
             GetDepartmentFilter filter)
         {
+
+            ShortDepartmentInfo department;
+            if (dbDepartment.DirectorUserId.HasValue)
+            {
+                UserData director = usersData.FirstOrDefault(ud => ud.Id == dbDepartment.DirectorUserId.Value);
+
+                department = _shortDepartmentInfoMapper.Map(
+                    dbDepartment,
+                    director,
+                    dbPositionUsers.FirstOrDefault(pu => pu.UserId == dbDepartment.DirectorUserId.Value),
+                    GetImage(userImages, director.ImageId));
+
+                usersData = usersData.Where(ud => ud.Id != director.Id).ToList();
+            }
+            else
+            {
+                department = _shortDepartmentInfoMapper.Map(dbDepartment, null, null, null);
+            }
+
             return new DepartmentResponse
             {
-                Department = _shortDepartmentInfoMapper.Map(
-                    dbDepartment,
-                    dbDepartment.DirectorUserId.HasValue ?
-                    usersData?.FirstOrDefault(ud => ud.Id == dbDepartment.DirectorUserId)
-                    : null),
+                Department = department,
                 Users = filter.IsIncludeUsers ?
                     usersData?.Select(ud =>
                         _departmentUserInfoMapper.Map(

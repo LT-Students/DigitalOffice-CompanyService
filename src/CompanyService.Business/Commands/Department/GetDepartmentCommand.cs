@@ -144,25 +144,32 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         public OperationResultResponse<DepartmentResponse> Execute(GetDepartmentFilter filter)
         {
             List<string> errors = new();
-            List<DbPositionUser> dbPositionUsers = new();
-
-            List<UserData> usersData = null;
-            List<ImageData> userImages = null;
-            List<ProjectData> projectsInfo = null;
 
             DbDepartment dbDepartment = _departmentRepository.GetDepartment(filter);
 
+            List<Guid> userIds = new();
+            if (dbDepartment.DirectorUserId.HasValue)
+            {
+                userIds.Add(dbDepartment.DirectorUserId.Value);
+            }
+
+            List<DbPositionUser> dbPositionUsers = new();
             if (filter.IsIncludeUsers)
             {
-                List<Guid> userIds = dbDepartment.Users.Select(u => u.UserId).ToList();
-
+                userIds.AddRange(dbDepartment.Users.Select(u => u.UserId).ToList());
                 dbPositionUsers = _positionUserRepository.Find(userIds);
+            }
 
+            List<UserData> usersData = null;
+            List<ImageData> userImages = null;
+            if (dbDepartment.DirectorUserId.HasValue || filter.IsIncludeUsers)
+            {
                 usersData = GetUsersData(userIds, errors);
                 userImages = GetUsersImage(usersData.Where(
                     us => us.ImageId.HasValue).Select(us => us.ImageId.Value).ToList(), errors);
             }
 
+            List<ProjectData> projectsInfo = null;
             if (filter.IsIncludeProjects)
             {
                 projectsInfo = GetProjectsData(dbDepartment.Id, errors);

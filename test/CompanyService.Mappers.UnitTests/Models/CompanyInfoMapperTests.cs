@@ -106,7 +106,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
             };
 
             _mocker
-                .Setup<IShortDepartmentInfoMapper, ShortDepartmentInfo>(x => x.Map(departament, null))
+                .Setup<IShortDepartmentInfoMapper, ShortDepartmentInfo>(x => x.Map(departament, null, null, null))
                 .Returns(expectedDepartament);
 
             _mocker

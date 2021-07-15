@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
     [AutoInject]
     public interface IShortDepartmentInfoMapper
     {
-        ShortDepartmentInfo Map(DbDepartment department, UserData director);
+        ShortDepartmentInfo Map(DbDepartment department, UserData userData, DbPositionUser dbPositionUser, ImageData image);
     }
 }

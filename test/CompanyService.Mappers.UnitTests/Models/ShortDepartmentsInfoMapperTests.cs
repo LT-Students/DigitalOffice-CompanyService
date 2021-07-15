@@ -13,21 +13,21 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
     public class ShortDepartmentsInfoMapperTests
     {
         private IShortDepartmentInfoMapper _mapper;
-        private Mock<IUserInfoMapper> _userInfoMapperMock;
+        private Mock<IDepartmentUserInfoMapper> _userInfoMapperMock;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _userInfoMapperMock = new Mock<IUserInfoMapper>();
+            _userInfoMapperMock = new Mock<IDepartmentUserInfoMapper>();
         }
 
         [SetUp]
         public void SetUp()
         {
-            UserInfo userData = null;
+           DepartmentUserInfo userData = null;
 
             _userInfoMapperMock
-                .Setup(x => x.Map(It.IsAny<UserData>()))
+                .Setup(x => x.Map(It.IsAny<UserData>(), It.IsAny<DbPositionUser>(), It.IsAny<ImageData>()))
                 .Returns(userData);
 
             _mapper = new ShortDepartmentInfoMapper(_userInfoMapperMock.Object);
@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null, null));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null, null, null, null));
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 IsActive = true
             };
 
-            SerializerAssert.AreEqual(expected, _mapper.Map(department, null));
+            SerializerAssert.AreEqual(expected, _mapper.Map(department, null, null, null));
         }
     }
 }

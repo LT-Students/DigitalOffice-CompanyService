@@ -55,13 +55,23 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public IEnumerable<Guid> Find(Guid departmentId, int skipCount, int takeCount, out int totalCount)
         {
+            if (skipCount < 0)
+            {
+                throw new BadRequestException("Skip count can't be less than 0.");
+            }
+
+            if (takeCount <= 0)
+            {
+                throw new BadRequestException("Take count can't be equal or less than 0.");
+            }
+
             var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
 
             dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == departmentId);
 
             totalCount = dbDepartmentUser.Count();
 
-            return dbDepartmentUser.Skip(skipCount * takeCount).Take(takeCount).Select(x => x.UserId).ToList();
+            return dbDepartmentUser.Skip(skipCount).Take(takeCount).Select(x => x.UserId).ToList();
         }
 
         public List<DbDepartmentUser> Find(List<Guid> userIds)
