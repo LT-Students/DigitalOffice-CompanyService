@@ -34,13 +34,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
         private List<UserData> GetUsersData(List<Guid> userIds, List<string> errors)
         {
-            string message = "Can not get users data. Please try again later.";
-            string loggerMessage = $"Can not get users data for specific user ids:'{string.Join(",", userIds)}'.";
-
             if (userIds == null || !userIds.Any())
             {
                 return new();
             }
+
+            string message = "Can not get users data. Please try again later.";
+            string loggerMessage = $"Can not get users data for specific user ids:'{string.Join(",", userIds)}'.";
 
             try
             {
