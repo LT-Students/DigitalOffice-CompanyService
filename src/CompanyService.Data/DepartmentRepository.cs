@@ -99,5 +99,10 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             return true;
         }
+
+        public bool IsNameExist(string name)
+        {
+            return _provider.Departments.Any(p => p.Name == name);
+        }
     }
 }

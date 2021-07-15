@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
 using LT.DigitalOffice.CompanyService.Validation.Department.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
@@ -10,7 +11,6 @@ using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using System;
-using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -45,22 +45,27 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             _validator.ValidateAndThrowCustom(request);
 
-            var company = _companyRepository.Get();
+            OperationResultResponse<Guid> response = new();
+
+            DbCompany company = _companyRepository.Get();
 
             if (company == null)
             {
-                return new OperationResultResponse<Guid>
-                {
-                    Status = OperationResultStatusType.Failed,
-                    Errors = new List<string> () { "Company does not exist" }
-                };
+                response.Status = OperationResultStatusType.Failed;
+                response.Errors.Add("Company does not exist, please create company");
+                return response;
             }
 
-            return new OperationResultResponse<Guid>
+            if (_repository.IsNameExist(request.Info.Name))
             {
-                Status = OperationResultStatusType.FullSuccess,
-                Body = _repository.CreateDepartment(_mapper.Map(request, company.Id))
-            };
+                response.Status = OperationResultStatusType.Conflict;
+                response.Errors.Add("The department name already exists");
+                return response;
+            }
+
+            response.Body = _repository.CreateDepartment(_mapper.Map(request, company.Id));
+            response.Status = OperationResultStatusType.FullSuccess;
+            return response;
         }
     }
 }

@@ -43,13 +43,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             _validator.ValidateAndThrowCustom(request);
 
-            var result = _repository.Edit(departmentId, _mapper.Map(request));
+            OperationResultResponse<bool> response = new();
 
-            return new OperationResultResponse<bool>
+            foreach (var item in request.Operations)
             {
-                Status = result ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed,
-                Body = result
-            };
+                if (item.path.EndsWith(nameof(EditDepartmentRequest.Name), StringComparison.OrdinalIgnoreCase) &&
+                    _repository.IsNameExist(item.value.ToString()))
+                {
+                    response.Status = OperationResultStatusType.Conflict;
+                    response.Errors.Add("The department name already exists");
+                    return response;
+                }
+            }
+
+            response.Body = _repository.Edit(departmentId, _mapper.Map(request));
+            response.Status = response.Body ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed;
+            return response;
         }
     }
 }
