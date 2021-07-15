@@ -33,9 +33,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public List<PositionResponse> Find([FromServices] IFindPositionsCommand command)
+        public List<PositionResponse> Find(
+            [FromServices] IFindPositionsCommand command,
+            [FromQuery] bool includeDeactivated = false)
         {
-            return command.Execute();
+            return command.Execute(includeDeactivated);
         }
 
         [HttpPost("create")]

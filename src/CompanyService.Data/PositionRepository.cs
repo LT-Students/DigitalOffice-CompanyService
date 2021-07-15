@@ -39,9 +39,11 @@ namespace LT.DigitalOffice.CompanyService.Data
             throw new BadRequestException("You must specify 'positionId' or 'userId'.");
         }
 
-        public List<DbPosition> Find()
+        public List<DbPosition> Find(bool includeDeactivated)
         {
-            return _provider.Positions.ToList();
+            return includeDeactivated ?
+                _provider.Positions.ToList() :
+                _provider.Positions.Where(p => p.IsActive == true).ToList();
         }
 
         public bool AreUsersOfPosition(Guid positionId)

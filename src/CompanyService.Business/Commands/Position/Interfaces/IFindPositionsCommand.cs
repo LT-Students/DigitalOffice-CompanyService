@@ -15,6 +15,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
         /// Returns all added positions.
         /// </summary>
         /// <returns>All added positions.</returns>
-        List<PositionResponse> Execute();
+        List<PositionResponse> Execute(bool includeDeactivated = false);
     }
 }

@@ -14,10 +14,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object ChangePosition(IChangeUserPositionRequest request)
         {
-            bool isSuccess = _repository.Add(_mapper.Map(request.PositionId, request.UserId));
+            _repository.Add(_mapper.Map(request.PositionId, request.UserId));
             _repository.Remove(request.UserId);
 
-            return isSuccess;
+            return true;
         }
 
         public ChangeUserPositionConsumer(
