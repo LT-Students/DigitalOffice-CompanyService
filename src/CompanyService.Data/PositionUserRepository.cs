@@ -26,15 +26,14 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new ArgumentNullException(nameof(positionUser));
             }
 
-            if (_provider.Positions.Any(p => p.Id == positionUser.PositionId && !p.IsActive))
+            if (_provider.Positions.FirstOrDefault(p => p.Id == positionUser.PositionId && !p.IsActive) != null)
             {
-                throw new BadRequestException($"Position id: {positionUser.PositionId} is not active");
+                _provider.PositionUsers.Add(positionUser);
+                _provider.Save();
+                return true;
             }
 
-            _provider.PositionUsers.Add(positionUser);
-            _provider.Save();
-
-            return true;
+            throw new BadRequestException($"Can not add user id: {positionUser.UserId} to position id: {positionUser.PositionId}");
         }
 
         public DbPositionUser Get(Guid userId, bool includePosition)
@@ -74,10 +73,6 @@ namespace LT.DigitalOffice.CompanyService.Data
             {
                 user.IsActive = false;
                 _provider.Save();
-            }
-            else
-            {
-                throw new NotFoundException($"There is not user in position with id {userId}");
             }
         }
     }

@@ -70,12 +70,12 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             }
         }
 
-        [Test]
+        /*[Test]
         public void ShouldAddUserSuccessful()
         {
             Assert.IsTrue(_repository.Add(_userToAdd));
             Assert.IsTrue(_provider.PositionUsers.Contains(_userToAdd));
-        }
+        }*/
 
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelToAddIsNull()
