@@ -44,6 +44,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             _validator.ValidateAndThrowCustom(request);
 
+            OperationResultResponse<bool> response = new();
+
+            foreach (var item in request.Operations)
+            {
+                if (item.path == $"/{nameof(EditPositionRequest.IsActive)}" &&
+                    bool.Parse(item.value.ToString()) == false &&
+                    _repository.AreUsersOfPosition(positionId))
+                {
+                    response.Status = OperationResultStatusType.Conflict;
+                    response.Errors.Add("The position contains users. Please change the position to users");
+                    return response;
+                }
+            }
+
             var result = _repository.Edit(positionId, _mapper.Map(request));
 
             return new OperationResultResponse<bool>

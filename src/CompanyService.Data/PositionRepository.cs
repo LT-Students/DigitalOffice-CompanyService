@@ -44,21 +44,10 @@ namespace LT.DigitalOffice.CompanyService.Data
             return _provider.Positions.ToList();
         }
 
-        public void Disable(Guid positionId)
+        public bool AreUsersOfPosition(Guid positionId)
         {
-            var dbPosition = _provider.Positions.FirstOrDefault(position => position.Id == positionId);
-
-            if (dbPosition == null)
-            {
-                throw new NotFoundException($"Position with this id: '{positionId}' was not found.");
-            }
-
-            dbPosition.IsActive = false;
-            _provider.Positions.Update(dbPosition);
-
-            dbPosition.Users.Select(u => u.IsActive = false);
-
-            _provider.Save();
+            return _provider.PositionUsers
+                .Any(pu => pu.PositionId == positionId && pu.IsActive == true);
         }
 
         public Guid Create(DbPosition newPosition)

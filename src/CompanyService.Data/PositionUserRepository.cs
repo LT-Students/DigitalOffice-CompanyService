@@ -26,6 +26,11 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new ArgumentNullException(nameof(positionUser));
             }
 
+            if (_provider.Positions.Any(p => p.Id == positionUser.PositionId && p.IsActive == false))
+            {
+                throw new BadRequestException($"Position id: {positionUser.PositionId} is not active");
+            }
+
             _provider.PositionUsers.Add(positionUser);
             _provider.Save();
 

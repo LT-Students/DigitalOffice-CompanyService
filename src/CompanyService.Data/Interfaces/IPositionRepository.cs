@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Nothing if the position was disabled, otherwise Exception.</returns>
-        void Disable(Guid positionId);
+        bool AreUsersOfPosition(Guid positionId);
 
         /// <summary>
         /// Adds new position to the database. Returns its Id.
