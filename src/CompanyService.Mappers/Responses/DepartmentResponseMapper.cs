@@ -52,10 +52,10 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
                 Department = _shortDepartmentInfoMapper.Map(
                     dbDepartment,
                     dbDepartment.DirectorUserId.HasValue ?
-                    usersData.FirstOrDefault(ud => ud.Id == dbDepartment.DirectorUserId)
+                    usersData?.FirstOrDefault(ud => ud.Id == dbDepartment.DirectorUserId)
                     : null),
                 Users = filter.IsIncludeUsers ?
-                    usersData.Select(ud =>
+                    usersData?.Select(ud =>
                         _departmentUserInfoMapper.Map(
                             ud,
                             dbPositionUsers.FirstOrDefault(pu => pu.UserId == ud.Id),
