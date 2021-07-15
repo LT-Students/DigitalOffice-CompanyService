@@ -56,6 +56,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
                     response.Errors.Add("The position contains users. Please change the position to users");
                     return response;
                 }
+
+                if (item.path.EndsWith(nameof(EditPositionRequest.Name), StringComparison.OrdinalIgnoreCase) &&
+                    _repository.IsNameExist(item.value.ToString()))
+                {
+                    response.Status = OperationResultStatusType.Conflict;
+                    response.Errors.Add("The position name already exists");
+                    return response;
+                }
             }
 
             response.Body = _repository.Edit(positionId, _mapper.Map(request));

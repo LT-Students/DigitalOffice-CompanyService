@@ -46,13 +46,18 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             _validator.ValidateAndThrowCustom(request);
 
-            var position = _mapper.Map(request, _companyRepository.Get().Id);
+            OperationResultResponse<Guid> response = new();
 
-            return new OperationResultResponse<Guid>
+            if (_repository.IsNameExist(request.Name))
             {
-                Status = OperationResultStatusType.FullSuccess,
-                Body = _repository.Create(position)
-            };
+                response.Status = OperationResultStatusType.Conflict;
+                response.Errors.Add("The position name already exists");
+                return response;
+            }
+
+            response.Body = _repository.Create(_mapper.Map(request, _companyRepository.Get().Id));
+            response.Status = OperationResultStatusType.FullSuccess;
+            return response;
         }
     }
 }
