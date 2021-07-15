@@ -43,13 +43,13 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return includeDeactivated ?
                 _provider.Positions.ToList() :
-                _provider.Positions.Where(p => p.IsActive == true).ToList();
+                _provider.Positions.Where(p => p.IsActive).ToList();
         }
 
         public bool AreUsersOfPosition(Guid positionId)
         {
             return _provider.PositionUsers
-                .Any(pu => pu.PositionId == positionId && pu.IsActive == true);
+                .Any(pu => pu.PositionId == positionId && pu.IsActive);
         }
 
         public Guid Create(DbPosition newPosition)

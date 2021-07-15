@@ -48,8 +48,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             foreach (var item in request.Operations)
             {
-                if (item.path == $"/{nameof(EditPositionRequest.IsActive)}" &&
-                    bool.Parse(item.value.ToString()) == false &&
+                if (item.path.EndsWith(nameof(EditPositionRequest.IsActive), StringComparison.OrdinalIgnoreCase) &&
+                    !bool.Parse(item.value.ToString()) &&
                     _repository.AreUsersOfPosition(positionId))
                 {
                     response.Status = OperationResultStatusType.Conflict;

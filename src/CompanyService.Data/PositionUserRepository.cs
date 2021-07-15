@@ -26,7 +26,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                 throw new ArgumentNullException(nameof(positionUser));
             }
 
-            if (_provider.Positions.Any(p => p.Id == positionUser.PositionId && p.IsActive == false))
+            if (_provider.Positions.Any(p => p.Id == positionUser.PositionId && !p.IsActive))
             {
                 throw new BadRequestException($"Position id: {positionUser.PositionId} is not active");
             }
@@ -43,11 +43,11 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (includePosition)
             {
-                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive == true);
+                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive);
             }
             else
             {
-                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive == true);
+                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
             }
 
             if (user == null)
@@ -62,7 +62,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return _provider.PositionUsers
                 .Include(pu => pu.Position)
-                .Where(u => userIds.Contains(u.UserId) && u.IsActive == true)
+                .Where(u => userIds.Contains(u.UserId) && u.IsActive)
                 .ToList();
         }
 
