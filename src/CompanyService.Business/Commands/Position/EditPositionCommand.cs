@@ -44,13 +44,23 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             _validator.ValidateAndThrowCustom(request);
 
-            var result = _repository.Edit(positionId, _mapper.Map(request));
+            OperationResultResponse<bool> response = new();
 
-            return new OperationResultResponse<bool>
+            foreach (var item in request.Operations)
             {
-                Status = result ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed,
-                Body = result
-            };
+                if (item.path.EndsWith(nameof(EditPositionRequest.IsActive), StringComparison.OrdinalIgnoreCase) &&
+                    !bool.Parse(item.value.ToString()) &&
+                    _repository.PositionContainsUsers(positionId))
+                {
+                    response.Status = OperationResultStatusType.Conflict;
+                    response.Errors.Add("The position contains users. Please change the position to users");
+                    return response;
+                }
+            }
+
+            response.Body = _repository.Edit(positionId, _mapper.Map(request));
+            response.Status = response.Body ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed;
+            return response;
         }
     }
 }

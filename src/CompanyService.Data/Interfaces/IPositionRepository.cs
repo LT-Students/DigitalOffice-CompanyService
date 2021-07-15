@@ -24,14 +24,14 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// Returns a list of all added positions to the database.
         /// </summary>
         /// <returns>List of all added positions.</returns>
-        List<DbPosition> Find();
+        List<DbPosition> Find(bool includeDeactivated = false);
 
         /// <summary>
         /// Disable the position with the specified id from database.
         /// </summary>
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Nothing if the position was disabled, otherwise Exception.</returns>
-        void Disable(Guid positionId);
+        bool PositionContainsUsers(Guid positionId);
 
         /// <summary>
         /// Adds new position to the database. Returns its Id.

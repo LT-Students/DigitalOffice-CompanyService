@@ -101,7 +101,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void FindPositionsSuccessfully()
         {
-            Assert.IsNotEmpty(_repository.Find());
+            Assert.IsNotEmpty(_repository.Find(true));
         }
         #endregion
 
@@ -135,28 +135,6 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         #endregion
 
         #region EditPosition
-        #endregion
-
-        #region DisablePosition
-        [Test]
-        public void ShouldThrowExceptionIfPositionDoesNotExistWhileDisablingPosition()
-        {
-            Assert.Throws<NotFoundException>(() => _repository.Disable(Guid.NewGuid()));
-        }
-
-        [Test]
-        public void ShouldDisablePositionSuccessfully()
-        {
-            _repository.Disable(_positionId);
-
-            Assert.IsFalse(_provider.Positions.Find(_positionId).IsActive);
-        }
-
-        [Test]
-        public void ShouldThrowExceptionIfPositionIdNullWhileDisablingPosition()
-        {
-            Assert.Throws<NotFoundException>(() => _repository.Disable(Guid.Empty));
-        }
         #endregion
     }
 }
