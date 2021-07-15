@@ -93,13 +93,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
         private List<ImageData> GetUsersImage(List<Guid> imageIds, List<string> errors)
         {
-            string message = "Can not get users avatar. Please try again later.";
-            string loggerMessage = $"Can not get users avatar by specific image ids '{string.Join(",", imageIds)}.";
-
             if (imageIds == null || !imageIds.Any())
             {
                 return new();
             }
+
+            string message = "Can not get users avatar. Please try again later.";
+            string loggerMessage = $"Can not get users avatar by specific image ids '{string.Join(",", imageIds)}.";
 
             try
             {
