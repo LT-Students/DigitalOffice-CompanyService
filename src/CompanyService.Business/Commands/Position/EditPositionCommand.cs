@@ -58,13 +58,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
                 }
             }
 
-            var result = _repository.Edit(positionId, _mapper.Map(request));
-
-            return new OperationResultResponse<bool>
-            {
-                Status = result ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed,
-                Body = result
-            };
+            response.Body = _repository.Edit(positionId, _mapper.Map(request));
+            response.Status = response.Body ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed;
+            return response;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
         public List<PositionResponse> Execute(bool includeDeactivated)
         {
-            return _repository.Find(includeDeactivated).Select(position => _mapper.Map(position)).ToList();
+            return _repository.Find(includeDeactivated).Select(_mapper.Map).ToList();
         }
     }
 }
