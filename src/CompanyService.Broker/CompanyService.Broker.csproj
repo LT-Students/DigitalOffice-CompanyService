@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\CompanyService.Data\CompanyService.Data.csproj" />
+    <ProjectReference Include="..\CompanyService.Mappers\CompanyService.Mappers.csproj" />
+  </ItemGroup>
+
+</Project>
