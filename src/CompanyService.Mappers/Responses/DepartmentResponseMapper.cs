@@ -58,9 +58,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
                     dbDepartment,
                     director,
                     dbPositionUsers.FirstOrDefault(pu => pu.UserId == dbDepartment.DirectorUserId.Value),
-                    GetImage(userImages, director.ImageId));
+                    GetImage(userImages, director?.ImageId));
 
-                usersData = usersData.Where(ud => ud.Id != director.Id).ToList();
+                usersData = usersData.Where(ud => ud.Id != director?.Id).ToList();
             }
             else
             {
@@ -71,7 +71,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Responses
             {
                 Department = department,
                 Users = filter.IsIncludeUsers ?
-                    usersData.Select(ud =>
+                    usersData?.Select(ud =>
                         _departmentUserInfoMapper.Map(
                             ud,
                             dbPositionUsers.FirstOrDefault(pu => pu.UserId == ud.Id),
