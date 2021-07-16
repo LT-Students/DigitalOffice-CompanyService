@@ -34,6 +34,8 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             if (result.Status == OperationResultStatusType.Conflict)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+
+                return result;
             }
 
             if (result.Status != OperationResultStatusType.Failed)
