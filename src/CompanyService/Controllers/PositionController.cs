@@ -47,6 +47,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         {
             var result = command.Execute(request);
 
+            if (result.Status == OperationResultStatusType.Conflict)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+
+                return result;
+            }
+
             if (result.Status != OperationResultStatusType.Failed)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;

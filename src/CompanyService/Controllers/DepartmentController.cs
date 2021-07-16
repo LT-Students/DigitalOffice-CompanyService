@@ -31,6 +31,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         {
             var result = command.Execute(department);
 
+            if (result.Status == OperationResultStatusType.Conflict)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            }
+
             if (result.Status != OperationResultStatusType.Failed)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
@@ -60,7 +65,14 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromQuery] Guid departmentId,
             [FromBody] JsonPatchDocument<EditDepartmentRequest> request)
         {
-            return command.Execute(departmentId, request);
+            var result = command.Execute(departmentId, request);
+
+            if (result.Status == OperationResultStatusType.Conflict)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            }
+
+            return result;
         }
     }
 }

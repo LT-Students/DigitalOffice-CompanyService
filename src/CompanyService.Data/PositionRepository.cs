@@ -70,5 +70,10 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             return true;
         }
+
+        public bool IsNameExist(string name)
+        {
+            return _provider.Positions.Any(p => p.Name == name);
+        }
     }
 }

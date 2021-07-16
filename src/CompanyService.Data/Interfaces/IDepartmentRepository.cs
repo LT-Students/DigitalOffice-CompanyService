@@ -43,5 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         bool Edit(Guid departmentId, JsonPatchDocument<DbDepartment> request);
 
         List<DbDepartment> Search(string text);
+
+        bool IsNameExist(string name);
     }
 }

@@ -47,5 +47,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// <param name="request">Edit request.</param>
         /// <returns>Whether it was successful to edit.</returns>
         bool Edit(Guid positionId, JsonPatchDocument<DbPosition> request);
+
+        bool IsNameExist(string name);
     }
 }
