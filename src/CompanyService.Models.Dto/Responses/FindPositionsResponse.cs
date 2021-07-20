@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Responses
 {
-    public record DepartmentsResponse
+    public record FindPositionsResponse
     {
-        public List<DepartmentInfo> Departments { get; set; } = new();
+        public int TotalCount { get; set; }
+        public List<PositionInfo> Positions { get; set; } = new();
         public List<string> Errors { get; set; } = new();
     }
 }

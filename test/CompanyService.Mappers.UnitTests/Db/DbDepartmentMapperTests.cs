@@ -1,6 +1,7 @@
 ﻿using CompanyService.Mappers.Db;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
 using LT.DigitalOffice.UnitTestKernel;
@@ -16,7 +17,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         private IDbDepartmentMapper _mapper;
 
         private CreateDepartmentRequest _request;
-        private BaseDepartmentInfo _newDepartment;
         private DbDepartment _expectedDbDepartment;
         private Guid _companyId;
 
@@ -27,13 +27,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
 
             _mapper = new DbDepartmentMapper();
 
-            _newDepartment = new BaseDepartmentInfo()
-            {
-                Name = "Department",
-                Description = "Description",
-                DirectorUserId = Guid.NewGuid()
-            };
-
             var newUsers = new List<Guid>
             {
                 Guid.NewGuid(),
@@ -42,17 +35,18 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
 
             _request = new CreateDepartmentRequest
             {
-                Info = _newDepartment,
+                Name = "Department",
+                Description = "Description",
+                DirectorUserId = Guid.NewGuid(),
                 Users = newUsers
             };
 
             _expectedDbDepartment = new DbDepartment
             {
-                Name = _newDepartment.Name,
+                Name = _request.Name,
                 CompanyId = _companyId,
-                Description = _newDepartment.Description,
-                IsActive = true,
-                DirectorUserId = _newDepartment.DirectorUserId
+                Description = _request.Description,
+                IsActive = true
             };
 
             foreach (var userId in newUsers)
@@ -61,9 +55,18 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                     new DbDepartmentUser
                     {
                         UserId = userId,
+                        Role = (int)DepartmentUserRole.Employee,
                         IsActive = true
                     });
             }
+
+            _expectedDbDepartment.Users.Add(
+                    new DbDepartmentUser
+                    {
+                        UserId = _request.DirectorUserId.Value,
+                        Role = (int)DepartmentUserRole.Director,
+                        IsActive = true
+                    });
         }
 
         [Test]
@@ -77,22 +80,22 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         [Test]
         public void ShouldReturnDbDepartmentWithoutUserSuccessfully()
         {
-            var newDepartment = new CreateDepartmentRequest
+            CreateDepartmentRequest request = new()
             {
-                Info = _newDepartment
+                Name = _request.Name,
+                Description = _request.Description
             };
 
             var expectedDbDepartment = new DbDepartment
             {
-                Name = _newDepartment.Name,
+                Name = _request.Name,
                 CompanyId = _companyId,
-                Description = _newDepartment.Description,
+                Description = _request.Description,
                 IsActive = true,
-                DirectorUserId = _newDepartment.DirectorUserId,
                 Users = null
             };
 
-            var dbDepartment = _mapper.Map(newDepartment, _companyId);
+            var dbDepartment = _mapper.Map(request, _companyId);
 
             expectedDbDepartment.Id = dbDepartment.Id;
 

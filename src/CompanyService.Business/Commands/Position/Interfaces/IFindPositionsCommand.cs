@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Attributes;
 using System.Collections.Generic;
 
@@ -15,6 +16,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
         /// Returns all added positions.
         /// </summary>
         /// <returns>All added positions.</returns>
-        List<PositionResponse> Execute(bool includeDeactivated = false);
+        FindPositionsResponse Execute(int skipCount, int takeCount, bool includeDeactivated);
     }
 }

@@ -9,12 +9,12 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
     public class CompanyInfoMapper : ICompanyInfoMapper
     {
-        private readonly IShortDepartmentInfoMapper _departmentMapper;
+        private readonly IDepartmentInfoMapper _departmentMapper;
         private readonly IPositionInfoMapper _positionMapper;
         private readonly IOfficeInfoMapper _officeMapper;
 
         public CompanyInfoMapper(
-            IShortDepartmentInfoMapper departmentMapper,
+            IDepartmentInfoMapper departmentMapper,
             IPositionInfoMapper positionMapper,
             IOfficeInfoMapper officeMapper)
         {
@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                     Email = company.Email,
                     Password = company.Password
                 } : null,
-                Departments = company?.Departments.Select(d => _departmentMapper.Map(d, null, null , null)).ToList(),
+                Departments = company?.Departments.Select(d => _departmentMapper.Map(d, null)).ToList(),
                 Offices = company?.Offices.Select(o => _officeMapper.Map(o)).ToList(),
                 Positions = company?.Positions.Select(p => _positionMapper.Map(p)).ToList()
             };

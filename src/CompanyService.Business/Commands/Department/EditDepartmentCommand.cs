@@ -11,6 +11,7 @@ using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
 {
@@ -8,7 +7,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public UserInfo Director { get; set; }
-        public List<UserInfo> Users { get; set; }
+        public bool IsActive { get; set; }
+        public int CountUsers { get; set; }
+        public DepartmentUserInfo Director { get; set; }
     }
 }

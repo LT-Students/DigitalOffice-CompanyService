@@ -1,9 +1,8 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
+using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
@@ -11,19 +10,23 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
     public class FindPositionsCommand : IFindPositionsCommand
     {
         private readonly IPositionRepository _repository;
-        private readonly IPositionResponseMapper _mapper;
+        private readonly IPositionInfoMapper _mapper;
 
         public FindPositionsCommand(
             IPositionRepository repository,
-            IPositionResponseMapper mapper)
+            IPositionInfoMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public List<PositionResponse> Execute(bool includeDeactivated)
+        public FindPositionsResponse Execute(int skipCount, int takeCount, bool includeDeactivated)
         {
-            return _repository.Find(includeDeactivated).Select(_mapper.Map).ToList();
+            return new()
+            {
+                Positions = _repository.Find(skipCount, takeCount, includeDeactivated, out int totalCount).Select(_mapper.Map).ToList(),
+                TotalCount = totalCount
+            };
         }
     }
 }

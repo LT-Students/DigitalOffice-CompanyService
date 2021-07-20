@@ -1,13 +1,13 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
@@ -25,19 +25,21 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("get")]
-        public PositionResponse Get(
-            [FromServices] IGetPositionByIdCommand command,
+        public OperationResultResponse<PositionResponse> Get(
+            [FromServices] IGetPositionCommand command,
             [FromQuery] Guid positionId)
         {
             return command.Execute(positionId);
         }
 
         [HttpGet("find")]
-        public List<PositionResponse> Find(
+        public FindPositionsResponse Find(
             [FromServices] IFindPositionsCommand command,
+            [FromQuery] int skipCount,
+            [FromQuery] int takeCount,
             [FromQuery] bool includeDeactivated = false)
         {
-            return command.Execute(includeDeactivated);
+            return command.Execute(skipCount, takeCount, includeDeactivated);
         }
 
         [HttpPost("create")]

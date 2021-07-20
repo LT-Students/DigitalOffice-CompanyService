@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
@@ -14,8 +15,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
         private IDepartmentInfoMapper _mapper;
 
         private DbDepartment _dbDepartment;
-        private UserInfo _director;
-        private UserInfo _worker;
+        private DepartmentUserInfo _director;
+        private DepartmentUserInfo _worker;
         private DepartmentInfo _expectedDepartment;
 
         [OneTimeSetUp]
@@ -31,19 +32,30 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
                 Id = Guid.NewGuid(),
                 Name = "Name",
                 Description = "TestDescription",
-                DirectorUserId = directorGuid,
                 IsActive = true,
-                Users = null
+                Users = new List<DbDepartmentUser>
+                {
+                    new DbDepartmentUser
+                    {
+                        Id = directorGuid,
+                        Role = (int)DepartmentUserRole.Director
+                    },
+                    new DbDepartmentUser
+                    {
+                        Id = workerGuid,
+                        Role = (int)DepartmentUserRole.Employee
+                    }
+                }
             };
 
-            _director = new UserInfo
+            _director = new DepartmentUserInfo
             {
                 FirstName = "Spartak",
                 LastName = "Ryabtsev",
                 MiddleName = "Alexandrovich"
             };
 
-            _worker = new UserInfo
+            _worker = new DepartmentUserInfo
             {
                 FirstName = "Pavel",
                 LastName = "Kostin",
@@ -56,7 +68,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
                 Name = _dbDepartment.Name,
                 Description = _dbDepartment.Description,
                 Director = _director,
-                Users = new List<UserInfo> { _director, _worker }
+                IsActive = _dbDepartment.IsActive,
+                CountUsers = 2
             };
         }
 
@@ -65,13 +78,13 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
         {
             DbDepartment request = null;
 
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(request, _director, new List<UserInfo> { _director, _worker }));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(request, _director));
         }
         [Test]
         public void ShouldReturnDepartmentSuccessfully()
         {
             DbDepartment dbDepartment = _dbDepartment;
-            SerializerAssert.AreEqual(_expectedDepartment, _mapper.Map(dbDepartment, _director, new List<UserInfo> { _director, _worker }));
+            SerializerAssert.AreEqual(_expectedDepartment, _mapper.Map(dbDepartment, _director));
         }
     }
 }

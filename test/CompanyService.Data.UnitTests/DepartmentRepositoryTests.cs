@@ -131,7 +131,7 @@ namespace CompanyService.Data.UnitTests
         [Test]
         public void ShouldFindDepartmentsSuccessfully()
         {
-            var dbDepartment = _repository.FindDepartments().First();
+            var dbDepartment = _repository.FindDepartments(0, 1, true, out _).First();
 
             _expectedDbDepartment.Users.First().Department = null;
             dbDepartment.Users.First().Department = null;

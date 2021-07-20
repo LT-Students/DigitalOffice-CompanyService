@@ -5,6 +5,7 @@ using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.UnitTestKernel;
 using Moq;
 using NUnit.Framework;
@@ -16,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 {
     class GetPositionByIdCommandTests
     {
-        private IGetPositionByIdCommand _command;
+        private IGetPositionCommand _command;
         private Mock<IPositionRepository> _repositoryMock;
         private Mock<IPositionResponseMapper> _mapperMock;
 
@@ -32,7 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         {
             _repositoryMock = new Mock<IPositionRepository>();
             _mapperMock = new Mock<IPositionResponseMapper>();
-            _command = new GetPositionByIdCommand(_repositoryMock.Object, _mapperMock.Object);
+            _command = new GetPositionCommand(_repositoryMock.Object, _mapperMock.Object);
 
             _companyId = Guid.NewGuid();
             _userId = Guid.NewGuid();
@@ -77,14 +78,18 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         [Test]
         public void ShouldReturnPositionInfoSuccessfully()
         {
-            var expected = new PositionResponse
+            var expected = new OperationResultResponse<PositionResponse>
             {
-                Info = new PositionInfo
+                Status = Kernel.Enums.OperationResultStatusType.FullSuccess,
+                Body = new PositionResponse
                 {
-                    Name = _position.Name,
-                    Description = _position.Description
-                },
-                UserIds = _position.Users?.Select(x => x.UserId).ToList()
+                    Info = new PositionInfo
+                    {
+                        Name = _position.Name,
+                        Description = _position.Description
+                    },
+                    UserIds = _position.Users?.Select(x => x.UserId).ToList()
+                }
             };
 
             _repositoryMock
@@ -92,7 +97,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Returns(_position);
             _mapperMock
                 .Setup(x => x.Map(It.IsAny<DbPosition>()))
-                .Returns(expected);
+                .Returns(expected.Body);
 
             var result = _command.Execute(_positionId);
 

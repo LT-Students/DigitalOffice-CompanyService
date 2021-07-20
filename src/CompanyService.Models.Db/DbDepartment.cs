@@ -13,7 +13,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public Guid CompanyId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public Guid? DirectorUserId { get; set; }
         public bool IsActive { get; set; }
 
         public DbCompany Company { get; set; }

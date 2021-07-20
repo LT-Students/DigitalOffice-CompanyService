@@ -55,10 +55,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public DepartmentsResponse Find(
-            [FromServices] IFindDepartmentsCommand command)
+        public FindDepartmentsResponse Find(
+            [FromServices] IFindDepartmentsCommand command,
+            [FromQuery] int skipCount,
+            [FromQuery] int takeCount,
+            [FromQuery] bool includeDeactivated = false)
         {
-            return command.Execute();
+            return command.Execute(skipCount, takeCount, includeDeactivated);
         }
 
         [HttpPatch("edit")]

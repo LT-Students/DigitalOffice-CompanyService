@@ -17,6 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     public class CreateDepartmentCommand : ICreateDepartmentCommand
     {
         private readonly IDepartmentRepository _repository;
+        private readonly IDepartmentUserRepository _userRepository;
         private readonly ICreateDepartmentRequestValidator _validator;
         private readonly ICompanyRepository _companyRepository;
         private readonly IDbDepartmentMapper _mapper;
@@ -25,12 +26,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         public CreateDepartmentCommand(
             IDepartmentRepository repository,
             ICompanyRepository companyRepository,
+            IDepartmentUserRepository userRepository,
             ICreateDepartmentRequestValidator validator,
             IDbDepartmentMapper mapper,
             IAccessValidator accessValidator)
         {
             _repository = repository;
             _companyRepository = companyRepository;
+            _userRepository = userRepository;
             _validator = validator;
             _mapper = mapper;
             _accessValidator = accessValidator;
@@ -52,16 +55,30 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             if (company == null)
             {
                 response.Status = OperationResultStatusType.Failed;
-                response.Errors.Add("Company does not exist, please create company");
+                response.Errors.Add("Company does not exist, please create company.");
                 return response;
             }
 
-            if (_repository.IsNameExist(request.Info.Name))
+            if (_repository.IsNameExist(request.Name))
             {
                 response.Status = OperationResultStatusType.Conflict;
                 response.Errors.Add("The department name already exists");
                 return response;
             }
+
+            #region Deactivated previous department user records
+
+            foreach (Guid userId in request.Users)
+            {
+                _userRepository.Remove(userId);
+            }
+
+            if (request.DirectorUserId.HasValue)
+            {
+                _userRepository.Remove(request.DirectorUserId.Value);
+            }
+
+            #endregion
 
             response.Body = _repository.CreateDepartment(_mapper.Map(request, company.Id));
             response.Status = OperationResultStatusType.FullSuccess;

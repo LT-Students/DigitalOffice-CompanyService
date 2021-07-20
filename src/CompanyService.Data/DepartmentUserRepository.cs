@@ -38,11 +38,11 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (includeDepartment)
             {
-                user = _provider.DepartmentUsers.Include(u => u.Department).FirstOrDefault(u => u.UserId == userId);
+                user = _provider.DepartmentUsers.Include(u => u.Department).FirstOrDefault(u => u.IsActive && u.UserId == userId);
             }
             else
             {
-                user = _provider.DepartmentUsers.FirstOrDefault(u => u.UserId == userId);
+                user = _provider.DepartmentUsers.FirstOrDefault(u => u.IsActive && u.UserId == userId);
             }
 
             if (user == null)
@@ -67,7 +67,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
 
-            dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == departmentId);
+            dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive && x.DepartmentId == departmentId);
 
             totalCount = dbDepartmentUser.Count();
 
@@ -78,13 +78,13 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return _provider.DepartmentUsers
                 .Include(du => du.Department)
-                .Where(u => userIds.Contains(u.UserId))
+                .Where(u => u.IsActive && userIds.Contains(u.UserId))
                 .ToList();
         }
 
         public void Remove(Guid userId)
         {
-            DbDepartmentUser user = _provider.DepartmentUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
+            DbDepartmentUser user = _provider.DepartmentUsers.FirstOrDefault(u => u.IsActive && u.UserId == userId);
 
             if (user != null)
             {

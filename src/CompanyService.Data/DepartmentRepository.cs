@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -43,13 +44,13 @@ namespace LT.DigitalOffice.CompanyService.Data
             if (departmentId.HasValue)
             {
                 dbDepartment = _provider.Departments
-                    .Include(d => d.Users)
+                    .Include(d => d.Users.Where(u => u.IsActive))
                     .FirstOrDefault(d => d.Id == departmentId.Value);
             }
             else
             {
                 dbDepartment = _provider.Departments
-                    .Include(d => d.Users.Where(du => du.UserId == userId.Value))
+                    .Include(d => d.Users.Where(du => du.UserId == userId.Value && du.IsActive))
                     .FirstOrDefault();
             }
 
@@ -71,7 +72,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             if (filter.IsIncludeUsers)
             {
-                dbDepartments = dbDepartments.Include(d => d.Users);
+                dbDepartments = dbDepartments.Include(d => d.Users.Where(u => u.IsActive));
             }
 
             return dbDepartments.FirstOrDefault()
@@ -79,9 +80,36 @@ namespace LT.DigitalOffice.CompanyService.Data
         }
 
         /// <inheritdoc />
-        public List<DbDepartment> FindDepartments()
+        public List<DbDepartment> FindDepartments(int skipCount, int takeCount, bool includeDeactivated, out int totalCount)
         {
-            return _provider.Departments.Include(x => x.Users).ToList();
+            if (skipCount < 0)
+            {
+                throw new BadRequestException("Skip count can't be less than 0.");
+            }
+
+            if (takeCount <= 0)
+            {
+                throw new BadRequestException("Take count can't be equal or less than 0.");
+            }
+
+            IQueryable<DbDepartment> dbDepartments = _provider.Departments.AsQueryable();
+
+            if (includeDeactivated)
+            {
+                totalCount = _provider.Departments.Count();
+            }
+            else
+            {
+                totalCount = _provider.Departments.Count(d => d.IsActive);
+                dbDepartments = dbDepartments.Where(d => d.IsActive);
+            }
+
+            return dbDepartments.Skip(skipCount).Take(takeCount).Include(d => d.Users.Where(u => u.IsActive)).ToList();
+        }
+
+        public List<DbDepartment> FindDepartments(List<Guid> departmentIds)
+        {
+            return _provider.Departments.Where(d => departmentIds.Contains(d.Id)).ToList();
         }
 
         public List<DbDepartment> Search(string text)
@@ -91,8 +119,27 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public bool Edit(Guid departmentId, JsonPatchDocument<DbDepartment> request)
         {
-            var dbDepartment = _provider.Departments.FirstOrDefault(d => d.Id == departmentId)
-                ?? throw new NotFoundException($"Department with this id: '{departmentId}' was not found.");
+            DbDepartment dbDepartment;
+
+            Operation<DbDepartment> deactivatedOperation = request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(DbDepartment.IsActive), StringComparison.OrdinalIgnoreCase));
+            if (deactivatedOperation != null && !bool.Parse(deactivatedOperation.value.ToString()))
+            {
+                dbDepartment = _provider.Departments.Include(d => d.Users.Where(u => u.IsActive)).FirstOrDefault(d => d.Id == departmentId);
+
+                foreach(var user in dbDepartment?.Users)
+                {
+                    user.IsActive = false;
+                }
+            }
+            else
+            {
+                dbDepartment = _provider.Departments.FirstOrDefault(d => d.Id == departmentId);
+            }
+
+            if (dbDepartment == null)
+            {
+                throw new NotFoundException($"Department with this id: '{departmentId}' was not found.");
+            }
 
             request.ApplyTo(dbDepartment);
             _provider.Save();

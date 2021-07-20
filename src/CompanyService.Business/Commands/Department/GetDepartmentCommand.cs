@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Broker;
@@ -147,22 +148,23 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             DbDepartment dbDepartment = _departmentRepository.GetDepartment(filter);
 
-            List<Guid> userIds = new();
-            if (dbDepartment.DirectorUserId.HasValue)
-            {
-                userIds.Add(dbDepartment.DirectorUserId.Value);
-            }
+            Guid? directorId = dbDepartment.Users.FirstOrDefault(u => u.Role == (int)DepartmentUserRole.Director)?.Id;
 
-            List<DbPositionUser> dbPositionUsers = new();
+            List<Guid> userIds = new();
             if (filter.IsIncludeUsers)
             {
                 userIds.AddRange(dbDepartment.Users.Select(u => u.UserId).ToList());
-                dbPositionUsers = _positionUserRepository.Find(userIds);
             }
+            else if (directorId.HasValue)
+            {
+                userIds.Add(directorId.Value);
+            }
+
+            List<DbPositionUser> dbPositionUsers = _positionUserRepository.Find(userIds);
 
             List<UserData> usersData = null;
             List<ImageData> userImages = null;
-            if (dbDepartment.DirectorUserId.HasValue || filter.IsIncludeUsers)
+            if (directorId.HasValue || filter.IsIncludeUsers)
             {
                 usersData = GetUsersData(userIds, errors);
                 userImages = GetUsersImage(usersData.Where(

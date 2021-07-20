@@ -6,6 +6,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department.Interface
     [AutoInject]
     public interface IFindDepartmentsCommand
     {
-        DepartmentsResponse Execute();
+        FindDepartmentsResponse Execute(int skipCount, int takeCount, bool includeDeactivated);
     }
 }

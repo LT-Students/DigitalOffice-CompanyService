@@ -2,13 +2,12 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using System;
-using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
     public class DepartmentInfoMapper : IDepartmentInfoMapper
     {
-        public DepartmentInfo Map(DbDepartment value, UserInfo director, List<UserInfo> users)
+        public DepartmentInfo Map(DbDepartment value, DepartmentUserInfo director)
         {
             if (value == null)
             {
@@ -21,7 +20,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 Name = value.Name,
                 Description = value.Description,
                 Director = director,
-                Users = users
+                IsActive = value.IsActive,
+                CountUsers = value.Users.Count
             };
         }
     }
