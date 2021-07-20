@@ -124,21 +124,18 @@ namespace LT.DigitalOffice.CompanyService.Data
             Operation<DbDepartment> deactivatedOperation = request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(DbDepartment.IsActive), StringComparison.OrdinalIgnoreCase));
             if (deactivatedOperation != null && !bool.Parse(deactivatedOperation.value.ToString()))
             {
-                dbDepartment = _provider.Departments.Include(d => d.Users.Where(u => u.IsActive)).FirstOrDefault(d => d.Id == departmentId);
+                dbDepartment = _provider.Departments.Include(d => d.Users.Where(u => u.IsActive)).FirstOrDefault(d => d.Id == departmentId)
+                    ?? throw new NotFoundException($"Department with this id: '{departmentId}' was not found.");
 
-                foreach(var user in dbDepartment?.Users)
+                foreach (var user in dbDepartment?.Users)
                 {
                     user.IsActive = false;
                 }
             }
             else
             {
-                dbDepartment = _provider.Departments.FirstOrDefault(d => d.Id == departmentId);
-            }
-
-            if (dbDepartment == null)
-            {
-                throw new NotFoundException($"Department with this id: '{departmentId}' was not found.");
+                dbDepartment = _provider.Departments.FirstOrDefault(d => d.Id == departmentId)
+                    ?? throw new NotFoundException($"Department with this id: '{departmentId}' was not found.");
             }
 
             request.ApplyTo(dbDepartment);
