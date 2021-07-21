@@ -24,15 +24,9 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private List<DbDepartment> _departments;
         private List<Guid> _departmentsGuids;
 
-        private const string DontExistName = "dontExistName";
-        private const string RequiredName = "RequiredName";
-        private Guid _expectedDepartmentId;
-
         [SetUp]
         public void SetUp()
         {
-            _expectedDepartmentId = Guid.NewGuid();
-
             _departments = new List<DbDepartment>();
             _departments.Add(
                 new DbDepartment
@@ -40,8 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     Id = Guid.NewGuid(),
                     Name = "Name1",
                     Description = "Description",
-                    IsActive = true,
-                    DirectorUserId = Guid.NewGuid()
+                    IsActive = true
                 }
             );
 
@@ -51,19 +44,17 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     Id = Guid.NewGuid(),
                     Name = "Name2",
                     Description = "Description",
-                    IsActive = true,
-                    DirectorUserId = Guid.NewGuid()
+                    IsActive = true
                 }
             );
 
             _departments.Add(
                 new DbDepartment
                 {
-                    Id = _expectedDepartmentId,
-                    Name = RequiredName,
+                    Id = Guid.NewGuid(),
+                    Name = "Name",
                     Description = "Description",
-                    IsActive = true,
-                    DirectorUserId = Guid.NewGuid()
+                    IsActive = true
                 }
             );
 
@@ -71,91 +62,13 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             _repositoryMock = new Mock<IDepartmentRepository>();
             _repositoryMock
-                .Setup(x => x.FindDepartments())
-                .Returns(_departments);
+                .Setup(x => x.FindDepartments(It.IsAny<List<Guid>>()))
+                .Returns(new List<DbDepartment> { _departments[0], _departments[1] });
 
             _harness = new InMemoryTestHarness();
             var consumerTestHarness = _harness.Consumer(() =>
                 new FindDepartmentsConsumer(
                     _repositoryMock.Object));
-        }
-
-        [Test]
-        public async Task ShouldReturnGuidOfExistsDepartmentByName()
-        {
-            await _harness.Start();
-
-            try
-            {
-                _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
-
-                var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(RequiredName, null));
-
-                var expectedDict = new Dictionary<Guid, string>();
-                expectedDict.Add(_expectedDepartmentId, RequiredName);
-
-                var expected = new
-                {
-                    IsSuccess = true,
-                    Errors = null as List<string>,
-                    Body = IFindDepartmentsResponse.CreateObj(expectedDict)
-                };
-
-                SerializerAssert.AreEqual(expected, response.Message);
-            }
-            finally
-            {
-                await _harness.Stop();
-            }
-        }
-
-        [Test]
-        public async Task ShouldReturnResponseWithoutExceptionWhenDontExistDepartmentWithExpectedName()
-        {
-            await _harness.Start();
-
-            try
-            {
-                _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
-
-                var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(DontExistName, null));
-
-                Assert.IsTrue(response.Message.IsSuccess);
-                Assert.IsEmpty(response.Message.Body.IdNamePairs);
-                Assert.IsNull(response.Message.Errors);
-            }
-            finally
-            {
-                await _harness.Stop();
-            }
-        }
-
-        [Test]
-        public async Task ShouldReturnAnUnsuccessfulResponseByNameWhenRepositoryThrowExc()
-        {
-            await _harness.Start();
-
-            try
-            {
-                _repositoryMock
-                    .Setup(x => x.FindDepartments())
-                    .Throws(new Exception());
-
-                _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
-
-                var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(DontExistName, null));
-
-                Assert.IsFalse(response.Message.IsSuccess);
-                Assert.IsNull(response.Message.Body);
-                Assert.IsNotNull(response.Message.Errors);
-            }
-            finally
-            {
-                await _harness.Stop();
-            }
         }
 
         [Test]
@@ -168,7 +81,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
-                    IFindDepartmentsRequest.CreateObj(null, _departmentsGuids));
+                    IFindDepartmentsRequest.CreateObj(_departmentsGuids));
 
                 var expectedBody = new Dictionary<Guid, string>();
                 expectedBody.Add(_departments[0].Id, _departments[0].Name);
@@ -182,6 +95,32 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 };
 
                 SerializerAssert.AreEqual(expected, response.Message);
+            }
+            finally
+            {
+                await _harness.Stop();
+            }
+        }
+
+        [Test]
+        public async Task ShouldReturnFailedResponseWhenRepositoryThrowException()
+        {
+            _repositoryMock = new Mock<IDepartmentRepository>();
+            _repositoryMock
+                .Setup(x => x.FindDepartments(It.IsAny<List<Guid>>()))
+                .Throws(new Exception());
+
+            await _harness.Start();
+
+            try
+            {
+                _requestClient = await _harness.ConnectRequestClient<IFindDepartmentsRequest>();
+
+                var response = await _requestClient.GetResponse<IOperationResult<IFindDepartmentsResponse>>(
+                    IFindDepartmentsRequest.CreateObj(_departmentsGuids));
+
+                Assert.IsFalse(response.Message.IsSuccess);
+                Assert.IsNotEmpty(response.Message.Errors);
             }
             finally
             {

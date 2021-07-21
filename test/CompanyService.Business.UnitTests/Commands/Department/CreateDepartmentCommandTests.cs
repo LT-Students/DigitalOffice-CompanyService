@@ -3,7 +3,7 @@ using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
 using LT.DigitalOffice.CompanyService.Validation.Department.Interfaces;
@@ -23,6 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
     {
         private ICreateDepartmentCommand _command;
         private Mock<IDepartmentRepository> _repositoryMock;
+        private Mock<IDepartmentUserRepository> _userRepositoryMock;
         private Mock<ICompanyRepository> _companyRepositoryMock;
         private Mock<IAccessValidator> _accessValidatorMock;
         private Mock<ICreateDepartmentRequestValidator> _validatorMock;
@@ -37,6 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         public void OneTimeSetUp()
         {
             _repositoryMock = new Mock<IDepartmentRepository>();
+            _userRepositoryMock = new Mock<IDepartmentUserRepository>();
             _accessValidatorMock = new Mock<IAccessValidator>();
             _validatorMock = new Mock<ICreateDepartmentRequestValidator>();
             _mapperMock = new Mock<IDbDepartmentMapper>();
@@ -45,18 +47,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _command = new CreateDepartmentCommand(
                 _repositoryMock.Object,
                 _companyRepositoryMock.Object,
+                _userRepositoryMock.Object,
                 _validatorMock.Object,
                 _mapperMock.Object,
                 _accessValidatorMock.Object);
 
             _companyId = Guid.NewGuid();
-
-            var newDepartment = new BaseDepartmentInfo()
-            {
-                Name = "Department",
-                Description = "Description",
-                DirectorUserId = Guid.NewGuid()
-            };
 
             var newUsers = new List<Guid>
             {
@@ -66,7 +62,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
             _request = new CreateDepartmentRequest
             {
-                Info = newDepartment,
+                Name = "Department",
+                Description = "Description",
+                DirectorUserId = Guid.NewGuid(),
                 Users = newUsers
             };
 
@@ -74,8 +72,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             {
                 Id = Guid.NewGuid(),
                 CompanyId = _companyId,
-                Name = newDepartment.Name,
-                Description = newDepartment.Description,
+                Name = _request.Name,
+                Description = _request.Description,
                 IsActive = true,
                 Users = new List<DbDepartmentUser>()
             };
@@ -89,9 +87,21 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                         UserId = userId,
                         DepartmentId = _dbDepartment.Id,
                         StartTime = DateTime.UtcNow,
+                        Role = (int)DepartmentUserRole.Employee,
                         IsActive = true
                     });
             }
+
+            _dbDepartment.Users.Add(
+                    new DbDepartmentUser
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = _request.DirectorUserId.Value,
+                        DepartmentId = _dbDepartment.Id,
+                        StartTime = DateTime.UtcNow,
+                        Role = (int)DepartmentUserRole.Director,
+                        IsActive = true
+                    });
         }
 
         [SetUp]

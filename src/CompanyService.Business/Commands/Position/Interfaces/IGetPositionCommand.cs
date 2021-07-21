@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Kernel.Responses;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
@@ -9,7 +10,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
     /// Provides method for getting position model by id.
     /// </summary>
     [AutoInject]
-    public interface IGetPositionByIdCommand
+    public interface IGetPositionCommand
     {
         /// <summary>
         /// Returns the position model with the specified id.
@@ -17,6 +18,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Position model with specified id.</returns>
         /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when position is not found.</exception>
-        PositionResponse Execute(Guid positionId);
+        OperationResultResponse<PositionResponse> Execute(Guid positionId);
     }
 }

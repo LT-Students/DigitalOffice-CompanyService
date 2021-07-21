@@ -11,6 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public Guid DepartmentId { get; set; }
+        public int Role { get; set; }
         public bool IsActive { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }

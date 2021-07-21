@@ -101,7 +101,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void FindPositionsSuccessfully()
         {
-            Assert.IsNotEmpty(_repository.Find(true));
+            Assert.IsNotEmpty(_repository.Find(0, 2, true, out _));
         }
         #endregion
 

@@ -104,10 +104,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 .Setup<IOfficeInfoMapper, OfficeInfo>(x => x.Map(dbOffice2))
                 .Returns(officeInfo2);
 
-            var expected = new FindOfficesResponse
+            var expected = new FindResultResponse<OfficeInfo>
             {
+                Status = OperationResultStatusType.FullSuccess,
                 TotalCount = _totalCount,
-                Offices = new List<OfficeInfo>
+                Body = new List<OfficeInfo>
                 {
                     officeInfo1,
                     officeInfo2

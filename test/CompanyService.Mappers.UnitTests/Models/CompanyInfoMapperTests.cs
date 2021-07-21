@@ -81,7 +81,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 }
             };
 
-            var expectedDepartament = new ShortDepartmentInfo
+            var expectedDepartament = new DepartmentInfo
             {
                 Id = departament.Id,
                 IsActive = departament.IsActive,
@@ -106,7 +106,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
             };
 
             _mocker
-                .Setup<IShortDepartmentInfoMapper, ShortDepartmentInfo>(x => x.Map(departament, null, null, null))
+                .Setup<IDepartmentInfoMapper, DepartmentInfo>(x => x.Map(departament, null))
                 .Returns(expectedDepartament);
 
             _mocker
@@ -134,7 +134,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 Description = company.Description,
                 Logo = imageInfo,
                 SiteUrl = company.SiteUrl,
-                Departments = new List<ShortDepartmentInfo> { expectedDepartament },
+                Departments = new List<DepartmentInfo> { expectedDepartament },
                 Positions = new List<PositionInfo> { expectedPosition },
                 Offices = new List<OfficeInfo> { expectedOffice },
             };

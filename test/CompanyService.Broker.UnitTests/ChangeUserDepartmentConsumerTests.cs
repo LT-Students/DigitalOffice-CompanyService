@@ -20,6 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private ConsumerTestHarness<ChangeUserDepartmentConsumer> _consumerHarness;
 
         private InMemoryTestHarness _harness;
+        private Mock<IDepartmentRepository> _departmentRepository;
         private Mock<IDepartmentUserRepository> _repository;
         private Mock<IDbDepartmentUserMapper> _mapper;
 
@@ -28,11 +29,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         [SetUp]
         public void SetUp()
         {
+            _departmentRepository = new Mock<IDepartmentRepository>();
             _repository = new Mock<IDepartmentUserRepository>();
             _mapper = new Mock<IDbDepartmentUserMapper>();
 
             _harness = new InMemoryTestHarness();
-            _consumerHarness = _harness.Consumer(() => new ChangeUserDepartmentConsumer(_repository.Object, _mapper.Object));
+            _consumerHarness = _harness.Consumer(() => new ChangeUserDepartmentConsumer(_departmentRepository.Object, _repository.Object, _mapper.Object));
         }
 
         [Test]
@@ -52,6 +54,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             _mapper
                 .Setup(x => x.Map(departmentId, userId))
                 .Returns(user);
+
+            _departmentRepository
+                .Setup(x => x.Contains(departmentId))
+                .Returns(true);
 
             _repository
                 .Setup(x => x.Add(user))
@@ -97,9 +103,42 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 .Setup(x => x.Map(departmentId, userId))
                 .Returns(user);
 
+            _departmentRepository
+                .Setup(x => x.Contains(departmentId))
+                .Returns(true);
+
             _repository
                 .Setup(x => x.Add(user))
                 .Throws(new Exception());
+
+            try
+            {
+                _requestClient = await _harness.ConnectRequestClient<IChangeUserDepartmentRequest>();
+
+                var response = await _requestClient.GetResponse<IOperationResult<bool>>(
+                    IChangeUserDepartmentRequest.CreateObj(userId, departmentId));
+
+                Assert.IsFalse(response.Message.IsSuccess);
+                Assert.IsFalse(response.Message.Body);
+                Assert.IsNotEmpty(response.Message.Errors);
+            }
+            finally
+            {
+                await _harness.Stop();
+            }
+        }
+
+        [Test]
+        public async Task ShouldReturnFailureResponseWhenNoDepartment()
+        {
+            await _harness.Start();
+
+            var userId = Guid.NewGuid();
+            var departmentId = Guid.NewGuid();
+
+            _departmentRepository
+                .Setup(x => x.Contains(departmentId))
+                .Returns(false);
 
             try
             {

@@ -24,14 +24,14 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             if (positionId.HasValue)
             {
-                return _provider.Positions.FirstOrDefault(d => d.Id == positionId.Value)
+                return _provider.Positions.Include(d => d.Users.Where(du => du.IsActive)).FirstOrDefault(d => d.Id == positionId.Value)
                     ?? throw new NotFoundException($"There is not position with id {positionId}");
             }
 
             if (userId.HasValue)
             {
                 return _provider.Positions
-                    .Include(d => d.Users.Where(du => du.UserId == userId.Value))
+                    .Include(d => d.Users.Where(du => du.IsActive && du.UserId == userId.Value))
                     .FirstOrDefault()
                     ?? throw new NotFoundException($"There is not position on which the user with id {userId} works");
             }
@@ -39,11 +39,31 @@ namespace LT.DigitalOffice.CompanyService.Data
             throw new BadRequestException("You must specify 'positionId' or 'userId'.");
         }
 
-        public List<DbPosition> Find(bool includeDeactivated)
+        public List<DbPosition> Find(int skipCount, int takeCount, bool includeDeactivated, out int totalCount)
         {
-            return includeDeactivated ?
-                _provider.Positions.ToList() :
-                _provider.Positions.Where(p => p.IsActive).ToList();
+            if (skipCount < 0)
+            {
+                throw new BadRequestException("Skip count can't be less than 0.");
+            }
+
+            if (takeCount <= 0)
+            {
+                throw new BadRequestException("Take count can't be equal or less than 0.");
+            }
+
+            var dbPositions = _provider.Positions.AsQueryable();
+
+            if (includeDeactivated)
+            {
+                totalCount = _provider.Positions.Count();
+            }
+            else
+            {
+                totalCount = _provider.Positions.Count(p => p.IsActive);
+                dbPositions = dbPositions.Where(p => p.IsActive);
+            }
+
+            return dbPositions.Skip(skipCount).Take(takeCount).ToList();
         }
 
         public bool PositionContainsUsers(Guid positionId)
@@ -71,9 +91,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             return true;
         }
 
-        public bool IsNameExist(string name)
+        public bool DoesNameExist(string name)
         {
             return _provider.Positions.Any(p => p.Name == name);
+        }
+
+        public bool Contains(Guid positionId)
+        {
+            return _provider.Positions.Any(p => p.Id == positionId);
         }
     }
 }

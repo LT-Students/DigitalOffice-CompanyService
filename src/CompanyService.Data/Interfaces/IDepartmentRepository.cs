@@ -32,7 +32,9 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// Find departments in database.
         /// </summary>
         /// <returns>Found departments.</returns>
-        List<DbDepartment> FindDepartments();
+        List<DbDepartment> FindDepartments(int skipCount, int takeCount, bool includeDeactivated, out int totalCount);
+
+        List<DbDepartment> FindDepartments(List<Guid> departmentsIds);
 
         /// <summary>
         /// Edits an existing department in the database. Returns whether it was successful to edit
@@ -44,6 +46,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         List<DbDepartment> Search(string text);
 
-        bool IsNameExist(string name);
+        bool DoesNameExist(string name);
+
+        bool Contains(Guid departmentId);
     }
 }

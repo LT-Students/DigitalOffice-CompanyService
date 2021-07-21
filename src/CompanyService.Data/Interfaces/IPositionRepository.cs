@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// Returns a list of all added positions to the database.
         /// </summary>
         /// <returns>List of all added positions.</returns>
-        List<DbPosition> Find(bool includeDeactivated = false);
+        List<DbPosition> Find(int skipCount, int takeCount, bool includeDeactivated, out int totalCount);
 
         /// <summary>
         /// Disable the position with the specified id from database.
@@ -48,6 +48,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// <returns>Whether it was successful to edit.</returns>
         bool Edit(Guid positionId, JsonPatchDocument<DbPosition> request);
 
-        bool IsNameExist(string name);
+        bool DoesNameExist(string name);
+
+        bool Contains(Guid positionId);
     }
 }

@@ -58,7 +58,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
                 }
 
                 if (item.path.EndsWith(nameof(EditPositionRequest.Name), StringComparison.OrdinalIgnoreCase) &&
-                    _repository.IsNameExist(item.value.ToString()))
+                    _repository.DoesNameExist(item.value.ToString()))
                 {
                     response.Status = OperationResultStatusType.Conflict;
                     response.Errors.Add("The position name already exists");
