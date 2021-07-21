@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
@@ -55,7 +56,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public FindDepartmentsResponse Find(
+        public FindResultResponse<DepartmentInfo> Find(
             [FromServices] IFindDepartmentsCommand command,
             [FromQuery] int skipCount,
             [FromQuery] int takeCount,

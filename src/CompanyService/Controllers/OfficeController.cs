@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Responses;
@@ -36,7 +37,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public FindOfficesResponse Find(
+        public FindResultResponse<OfficeInfo> Find(
             [FromServices] IFindOfficesCommand command,
             [FromQuery] int skipCount,
             [FromQuery] int takeCount,

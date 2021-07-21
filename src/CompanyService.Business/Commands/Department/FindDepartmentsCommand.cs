@@ -6,6 +6,8 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Models;
 using LT.DigitalOffice.Models.Broker.Requests.File;
 using LT.DigitalOffice.Models.Broker.Requests.User;
@@ -106,9 +108,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             _logger = logger;
         }
 
-        public FindDepartmentsResponse Execute(int skipCount, int takeCount, bool includeDeactivated)
+        public FindResultResponse<DepartmentInfo> Execute(int skipCount, int takeCount, bool includeDeactivated)
         {
-            FindDepartmentsResponse response = new();
+            FindResultResponse<DepartmentInfo> response = new(body: new());
 
             var dbDepartments = _repository.FindDepartments(skipCount, takeCount, includeDeactivated, out int totalCount);
 
@@ -136,8 +138,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                     director = directorUserData == null ? null : _userMapper.Map(directorUserData, positionUser, images.FirstOrDefault(i => i.ImageId == directorUserData.ImageId));
                 }
 
-                response.Departments.Add(_departmentMapper.Map(department, director));
+                response.Body.Add(_departmentMapper.Map(department, director));
             }
+
+            response.Status = response.Errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess;
 
             return response;
         }

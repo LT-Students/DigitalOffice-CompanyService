@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Enums;
@@ -33,7 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("find")]
-        public FindPositionsResponse Find(
+        public FindResultResponse<PositionInfo> Find(
             [FromServices] IFindPositionsCommand command,
             [FromQuery] int skipCount,
             [FromQuery] int takeCount,

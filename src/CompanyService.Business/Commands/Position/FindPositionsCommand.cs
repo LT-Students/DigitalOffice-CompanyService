@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Kernel.Enums;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
@@ -20,11 +22,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
             _mapper = mapper;
         }
 
-        public FindPositionsResponse Execute(int skipCount, int takeCount, bool includeDeactivated)
+        public FindResultResponse<PositionInfo> Execute(int skipCount, int takeCount, bool includeDeactivated)
         {
             return new()
             {
-                Positions = _repository.Find(skipCount, takeCount, includeDeactivated, out int totalCount).Select(_mapper.Map).ToList(),
+                Status = OperationResultStatusType.FullSuccess,
+                Body = _repository.Find(skipCount, takeCount, includeDeactivated, out int totalCount).Select(_mapper.Map).ToList(),
                 TotalCount = totalCount
             };
         }
