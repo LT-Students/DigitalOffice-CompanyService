@@ -8,10 +8,10 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     [AutoInject]
     public interface IOfficeUserRepository
     {
-        void Add(DbOfficeUser user);
-
-        void ChangeOffice(Guid userId, Guid officeId, Guid changedBy);
+        bool Add(DbOfficeUser user);
 
         List<DbOfficeUser> Get(List<Guid> userIds);
+
+        void Remove(Guid userId);
     }
 }

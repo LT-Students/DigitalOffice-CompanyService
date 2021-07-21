@@ -14,6 +14,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         List<DbPositionUser> Find(List<Guid> userIds);
 
-        void CheckAndRemovePositionUser(Guid userId);
+        void Remove(Guid userId);
     }
 }

@@ -49,9 +49,12 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
             else
             {
+                //dbDepartment = _provider.Departments
+                //    .Include(d => d.Users.Where(du => du.UserId == userId.Value && du.IsActive))
+                //    .FirstOrDefault();
                 dbDepartment = _provider.Departments
-                    .Include(d => d.Users.Where(du => du.UserId == userId.Value && du.IsActive))
-                    .FirstOrDefault();
+                    .Include(d => d.Users.Where(u => u.IsActive))
+                    .FirstOrDefault(d => d.IsActive && d.Users.FirstOrDefault(u => u.IsActive && u.UserId == userId.Value) != null);
             }
 
             if (dbDepartment == null)
