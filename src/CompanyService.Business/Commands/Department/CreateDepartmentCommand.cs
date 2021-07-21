@@ -59,7 +59,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 return response;
             }
 
-            if (_repository.IsNameExist(request.Name))
+            if (_repository.DoesNameExist(request.Name))
             {
                 response.Status = OperationResultStatusType.Conflict;
                 response.Errors.Add("The department name already exists");

@@ -144,9 +144,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             return true;
         }
 
-        public bool IsNameExist(string name)
+        public bool DoesNameExist(string name)
         {
             return _provider.Departments.Any(d => d.Name == name);
+        }
+
+        public bool Contains(Guid departmentId)
+        {
+            return _provider.Departments.Any(d => d.Id == departmentId);
         }
     }
 }

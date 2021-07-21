@@ -20,7 +20,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         private ConsumerTestHarness<ChangeUserPositionConsumer> _consumerHarness;
 
         private InMemoryTestHarness _harness;
-        private Mock<IPositionUserRepository> _repository;
+        private Mock<IPositionRepository> _positionRepository;
+        private Mock<IPositionUserRepository> _positionUserRepository;
         private Mock<IDbPositionUserMapper> _mapper;
 
         private IRequestClient<IChangeUserPositionRequest> _requestClient;
@@ -28,11 +29,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         [SetUp]
         public void SetUp()
         {
-            _repository = new Mock<IPositionUserRepository>();
+            _positionRepository = new Mock<IPositionRepository>();
+            _positionUserRepository = new Mock<IPositionUserRepository>();
             _mapper = new Mock<IDbPositionUserMapper>();
 
             _harness = new InMemoryTestHarness();
-            _consumerHarness = _harness.Consumer(() => new ChangeUserPositionConsumer(_repository.Object, _mapper.Object));
+            _consumerHarness = _harness.Consumer(() => new ChangeUserPositionConsumer(_positionRepository.Object, _positionUserRepository.Object, _mapper.Object));
         }
 
         [Test]
@@ -53,7 +55,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 .Setup(x => x.Map(positionId, userId))
                 .Returns(user);
 
-            _repository
+            _positionRepository
+                .Setup(x => x.Contains(positionId))
+                .Returns(true);
+
+            _positionUserRepository
                 .Setup(x => x.Add(user))
                 .Returns(true);
 
@@ -97,7 +103,53 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 .Setup(x => x.Map(positionId, userId))
                 .Returns(user);
 
-            _repository
+            _positionRepository
+                .Setup(x => x.Contains(positionId))
+                .Returns(true);
+
+            _positionUserRepository
+                .Setup(x => x.Add(user))
+                .Throws(new Exception());
+
+            try
+            {
+                _requestClient = await _harness.ConnectRequestClient<IChangeUserPositionRequest>();
+
+                var response = await _requestClient.GetResponse<IOperationResult<bool>>(
+                    IChangeUserPositionRequest.CreateObj(userId, positionId));
+
+                Assert.IsFalse(response.Message.IsSuccess);
+                Assert.IsFalse(response.Message.Body);
+                Assert.IsNotEmpty(response.Message.Errors);
+            }
+            finally
+            {
+                await _harness.Stop();
+            }
+        }
+
+        public async Task ShouldReturnFailureResponseWhenNoPosition()
+        {
+            await _harness.Start();
+
+            var userId = Guid.NewGuid();
+            var positionId = Guid.NewGuid();
+
+            DbPositionUser user = new DbPositionUser
+            {
+                UserId = userId,
+                PositionId = positionId
+            };
+
+            _mapper
+                .Setup(x => x.Map(positionId, userId))
+                .Returns(user);
+
+            _positionRepository
+                .Setup(x => x.Contains(positionId))
+                .Returns(false);
+
+            _positionUserRepository
                 .Setup(x => x.Add(user))
                 .Throws(new Exception());
 

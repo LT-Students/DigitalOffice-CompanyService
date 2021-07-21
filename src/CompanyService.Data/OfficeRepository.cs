@@ -29,6 +29,11 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider.Save();
         }
 
+        public bool Contains(Guid officeId)
+        {
+            return _provider.Offices.Any(o => o.Id == officeId);
+        }
+
         public List<DbOffice> Find(int skipCount, int takeCount, bool? includeDeactivated, out int totalCount)
         {
             if (skipCount < 0)

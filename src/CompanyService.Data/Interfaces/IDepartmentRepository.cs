@@ -46,6 +46,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         List<DbDepartment> Search(string text);
 
-        bool IsNameExist(string name);
+        bool DoesNameExist(string name);
+
+        bool Contains(Guid departmentId);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using MassTransit;
 using System.Threading.Tasks;
@@ -9,22 +10,30 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
     public class ChangeUserDepartmentConsumer : IConsumer<IChangeUserDepartmentRequest>
     {
-        private readonly IDepartmentUserRepository _repository;
+        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IDepartmentUserRepository _departmentUserRepository;
         private readonly IDbDepartmentUserMapper _mapper;
 
         private object ChangeDepartment(IChangeUserDepartmentRequest request)
         {
-            _repository.Remove(request.UserId);
-            bool isSuccess = _repository.Add(_mapper.Map(request.DepartmentId, request.UserId));
+            if (!_departmentRepository.Contains(request.DepartmentId))
+            {
+                throw new BadRequestException($"No department with Id {request.DepartmentId}.");
+            }
+
+            _departmentUserRepository.Remove(request.UserId);
+            bool isSuccess = _departmentUserRepository.Add(_mapper.Map(request.DepartmentId, request.UserId));
 
             return isSuccess;
         }
 
         public ChangeUserDepartmentConsumer(
-            IDepartmentUserRepository repository,
+            IDepartmentRepository departmentRepository,
+            IDepartmentUserRepository departmentUserRepository,
             IDbDepartmentUserMapper mapper)
         {
-            _repository = repository;
+            _departmentRepository = departmentRepository;
+            _departmentUserRepository = departmentUserRepository;
             _mapper = mapper;
         }
 

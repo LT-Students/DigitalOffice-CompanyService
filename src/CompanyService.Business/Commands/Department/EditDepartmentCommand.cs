@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             foreach (var item in request.Operations)
             {
                 if (item.path.EndsWith(nameof(EditDepartmentRequest.Name), StringComparison.OrdinalIgnoreCase) &&
-                    _repository.IsNameExist(item.value.ToString()))
+                    _repository.DoesNameExist(item.value.ToString()))
                 {
                     response.Status = OperationResultStatusType.Conflict;
                     response.Errors.Add("The department name already exists");

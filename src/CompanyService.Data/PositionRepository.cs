@@ -91,9 +91,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             return true;
         }
 
-        public bool IsNameExist(string name)
+        public bool DoesNameExist(string name)
         {
             return _provider.Positions.Any(p => p.Name == name);
+        }
+
+        public bool Contains(Guid positionId)
+        {
+            return _provider.Positions.Any(p => p.Id == positionId);
         }
     }
 }

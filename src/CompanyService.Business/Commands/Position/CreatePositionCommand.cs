@@ -48,7 +48,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 
             OperationResultResponse<Guid> response = new();
 
-            if (_repository.IsNameExist(request.Name))
+            if (_repository.DoesNameExist(request.Name))
             {
                 response.Status = OperationResultStatusType.Conflict;
                 response.Errors.Add("The position name already exists");
