@@ -128,7 +128,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             foreach (var department in dbDepartments)
             {
-                DepartmentUserInfo director = null;
+                UserInfo director = null;
                 if (departmentsDirectors.ContainsKey(department.Id) && usersData.Any())
                 {
                     var directorUserData = usersData.FirstOrDefault(x => x.Id == departmentsDirectors[department.Id]);

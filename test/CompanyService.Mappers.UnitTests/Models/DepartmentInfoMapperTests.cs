@@ -15,8 +15,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
         private IDepartmentInfoMapper _mapper;
 
         private DbDepartment _dbDepartment;
-        private DepartmentUserInfo _director;
-        private DepartmentUserInfo _worker;
+        private UserInfo _director;
+        private UserInfo _worker;
         private DepartmentInfo _expectedDepartment;
 
         [OneTimeSetUp]
@@ -48,14 +48,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.ResponseMappers
                 }
             };
 
-            _director = new DepartmentUserInfo
+            _director = new UserInfo
             {
                 FirstName = "Spartak",
                 LastName = "Ryabtsev",
                 MiddleName = "Alexandrovich"
             };
 
-            _worker = new DepartmentUserInfo
+            _worker = new UserInfo
             {
                 FirstName = "Pavel",
                 LastName = "Kostin",

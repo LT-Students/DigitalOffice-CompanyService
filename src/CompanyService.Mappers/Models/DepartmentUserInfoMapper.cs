@@ -18,14 +18,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
             _accessValidator = accessValidator;
         }
 
-        public DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image)
+        public UserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image)
         {
             if (userData == null || (dbPositionUser == null && !_accessValidator.IsAdmin(userData.Id)))
             {
                 throw new ArgumentNullException(nameof(userData));
             }
 
-            return new DepartmentUserInfo
+            return new UserInfo
             {
                 Id = userData.Id,
                 FirstName = userData.FirstName,

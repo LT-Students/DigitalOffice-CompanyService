@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
         public string Description { get; set; }
         public bool IsActive { get; set; }
         public int CountUsers { get; set; }
-        public DepartmentUserInfo Director { get; set; }
+        public UserInfo Director { get; set; }
     }
 }
