@@ -36,6 +36,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             List<UserData> users = new();
             string errorMessage = $"Can not get users info for users '{usersIds}'. Please try again later.";
 
+            if (!usersIds.Any())
+            {
+                return users;
+            }
+
             try
             {
                 var usersDataResponse = _rcGetUsersData.GetResponse<IOperationResult<IGetUsersDataResponse>>(
@@ -67,6 +72,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         {
             string logMessage = "Can not get images: {ids}.";
             string errorMessage = "Can not get images. Please try again later.";
+
+            if (!imageIds.Any())
+            {
+                return new();
+            }
 
             try
             {
