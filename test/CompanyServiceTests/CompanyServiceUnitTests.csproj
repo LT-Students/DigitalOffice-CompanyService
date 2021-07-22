@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <AssemblyName>LT.DigitalOffice.CompanyServiceUnitTests</AssemblyName>
+
+    <RootNamespace>LT.DigitalOffice.CompanyServiceUnitTests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.0.1" />
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.7" />
+    <PackageReference Include="Moq" Version="4.14.5" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CompanyService.Mappers\CompanyService.Mappers.csproj" />
+    <ProjectReference Include="..\..\src\CompanyService\CompanyService.csproj" />
+  </ItemGroup>
+
+</Project>
