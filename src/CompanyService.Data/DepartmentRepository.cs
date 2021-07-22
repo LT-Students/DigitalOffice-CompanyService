@@ -49,9 +49,9 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
             else
             {
-                dbDepartment = _provider.Departments
-                    .Include(d => d.Users.Where(u => u.IsActive))
-                    .FirstOrDefault(d => d.IsActive && d.Users.FirstOrDefault(u => u.IsActive && u.UserId == userId.Value) != null);
+                dbDepartment = _provider.DepartmentUsers
+                    .Include(du => du.Department)
+                    .FirstOrDefault(du => du.IsActive && du.UserId == userId)?.Department;
             }
 
             if (dbDepartment == null)
