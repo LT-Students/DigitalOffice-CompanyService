@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             return IGetDepartmentResponse.CreateObj(
                 dbDepartment.Id,
                 dbDepartment.Name,
-                dbDepartment.Users.FirstOrDefault(u => u.Role == (int)DepartmentUserRole.Director && u.DepartmentId == dbDepartment.Id).UserId);
+                dbDepartment.Users.FirstOrDefault(u => u.Role == (int)DepartmentUserRole.Director && u.DepartmentId == dbDepartment.Id)?.UserId);
         }
 
         public GetDepartmentConsumer(IDepartmentRepository repository)
