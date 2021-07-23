@@ -1,10 +1,10 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto;
-using System;
+﻿using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
@@ -12,17 +12,17 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
     public class GetPositionCommand : IGetPositionCommand
     {
         private readonly IPositionRepository _repository;
-        private readonly IPositionResponseMapper _mapper;
+        private readonly IPositionInfoMapper _mapper;
 
         public GetPositionCommand(
             IPositionRepository repository,
-            IPositionResponseMapper mapper)
+            IPositionInfoMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public OperationResultResponse<PositionResponse> Execute(Guid positionId)
+        public OperationResultResponse<PositionInfo> Execute(Guid positionId)
         {
             return new()
             {

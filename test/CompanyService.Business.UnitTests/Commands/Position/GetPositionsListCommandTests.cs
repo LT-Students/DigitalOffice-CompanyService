@@ -1,13 +1,9 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position;
-using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using Moq;
-using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
