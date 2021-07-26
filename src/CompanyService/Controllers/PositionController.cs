@@ -26,7 +26,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("get")]
-        public OperationResultResponse<PositionResponse> Get(
+        public OperationResultResponse<PositionInfo> Get(
             [FromServices] IGetPositionCommand command,
             [FromQuery] Guid positionId)
         {

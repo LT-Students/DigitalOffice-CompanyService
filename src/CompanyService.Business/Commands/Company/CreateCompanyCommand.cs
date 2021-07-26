@@ -123,7 +123,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
             _validator.ValidateAndThrowCustom(request);
 
-            if (!(UpdateSmtp(request.SmtpInfo, errors) ||
+            if (!(UpdateSmtp(request.SmtpInfo, errors) &&
                 CreateAdmin(request.AdminInfo, errors)))
             {
                 return new OperationResultResponse<Guid>

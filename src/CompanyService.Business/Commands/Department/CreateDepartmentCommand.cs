@@ -68,9 +68,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             #region Deactivated previous department user records
 
-            foreach (Guid userId in request.Users)
+            if (request.Users != null)
             {
-                _userRepository.Remove(userId);
+                foreach (Guid userId in request.Users)
+                {
+                    _userRepository.Remove(userId);
+                }
             }
 
             if (request.DirectorUserId.HasValue)

@@ -1,9 +1,8 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.ResponsesMappers.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.UnitTestKernel;
@@ -15,11 +14,11 @@ using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 {
-    class GetPositionByIdCommandTests
+    class GetPositionCommandTests
     {
         private IGetPositionCommand _command;
         private Mock<IPositionRepository> _repositoryMock;
-        private Mock<IPositionResponseMapper> _mapperMock;
+        private Mock<IPositionInfoMapper> _mapperMock;
 
         private DbPositionUser _dbPositionUser;
         private DbPosition _position;
@@ -32,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         public void SetUp()
         {
             _repositoryMock = new Mock<IPositionRepository>();
-            _mapperMock = new Mock<IPositionResponseMapper>();
+            _mapperMock = new Mock<IPositionInfoMapper>();
             _command = new GetPositionCommand(_repositoryMock.Object, _mapperMock.Object);
 
             _companyId = Guid.NewGuid();
@@ -78,17 +77,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         [Test]
         public void ShouldReturnPositionInfoSuccessfully()
         {
-            var expected = new OperationResultResponse<PositionResponse>
+            var expected = new OperationResultResponse<PositionInfo>
             {
                 Status = Kernel.Enums.OperationResultStatusType.FullSuccess,
-                Body = new PositionResponse
+                Body = new PositionInfo
                 {
-                    Info = new PositionInfo
-                    {
-                        Name = _position.Name,
-                        Description = _position.Description
-                    },
-                    UserIds = _position.Users?.Select(x => x.UserId).ToList()
+                    Name = _position.Name,
+                    Description = _position.Description
                 }
             };
 

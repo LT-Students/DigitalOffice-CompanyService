@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto;
+﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Responses;
 using System;
@@ -18,6 +18,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Position model with specified id.</returns>
         /// <exception cref="Kernel.Exceptions.NotFoundException">Thrown when position is not found.</exception>
-        OperationResultResponse<PositionResponse> Execute(Guid positionId);
+        OperationResultResponse<PositionInfo> Execute(Guid positionId);
     }
 }

@@ -24,15 +24,15 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             if (positionId.HasValue)
             {
-                return _provider.Positions.Include(d => d.Users.Where(du => du.IsActive)).FirstOrDefault(d => d.Id == positionId.Value)
+                return _provider.Positions.FirstOrDefault(d => d.Id == positionId.Value)
                     ?? throw new NotFoundException($"There is not position with id {positionId}");
             }
 
             if (userId.HasValue)
             {
-                return _provider.Positions
-                    .Include(d => d.Users.Where(du => du.IsActive && du.UserId == userId.Value))
-                    .FirstOrDefault()
+                return _provider.PositionUsers
+                    .Include(pu => pu.Position)
+                    .FirstOrDefault(pu => pu.IsActive && pu.UserId == userId)?.Position
                     ?? throw new NotFoundException($"There is not position on which the user with id {userId} works");
             }
 
