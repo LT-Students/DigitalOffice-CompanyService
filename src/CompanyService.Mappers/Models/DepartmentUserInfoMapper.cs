@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 FirstName = userData.FirstName,
                 LastName = userData.LastName,
                 MiddleName = userData.MiddleName,
-                Rate = userData.Rate.Value,
+                Rate = userData.Rate,
                 IsActive = userData.IsActive,
                 Image = image != null ?
                     new ImageInfo
