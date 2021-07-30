@@ -26,6 +26,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 EnableSsl = request.SmtpInfo.EnableSsl,
                 Email = request.SmtpInfo.Email,
                 Password = request.SmtpInfo.Password,
+                IsDepartmentModuleEnabled = request.IsDepartmentModuleEnabled,
                 IsActive = true
             };
         }
