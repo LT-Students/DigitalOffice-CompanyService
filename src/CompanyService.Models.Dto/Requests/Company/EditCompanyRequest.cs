@@ -13,5 +13,6 @@
         public string Tagline { get; set; }
         public string Description { get; set; }
         public AddImageRequest Logo { get; set; }
+        public bool IsDepartmentModuleEnabled { get; set; }
     }
 }

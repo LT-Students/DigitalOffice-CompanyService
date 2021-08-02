@@ -2,7 +2,6 @@
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
-using System;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
@@ -41,6 +40,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
                 Logo = image,
                 Tagline = company.Tagline,
                 SiteUrl = company.SiteUrl,
+                IsDepartmentModuleEnabled = company.IsDepartmentModuleEnabled,
                 SmtpInfo = filter.IsIncludeSmtpCredentials ? new SmtpInfo
                 {
                     Port = company.Port,

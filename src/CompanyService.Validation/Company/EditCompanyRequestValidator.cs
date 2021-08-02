@@ -31,7 +31,8 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
                     nameof(EditCompanyRequest.Email),
                     nameof(EditCompanyRequest.Password),
                     nameof(EditCompanyRequest.EnableSsl),
-                    nameof(EditCompanyRequest.Logo)
+                    nameof(EditCompanyRequest.Logo),
+                    nameof(EditCompanyRequest.IsDepartmentModuleEnabled)
                 });
 
             AddСorrectOperations(nameof(EditCompanyRequest.PortalName), new List<OperationType> { OperationType.Replace });
@@ -44,6 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
             AddСorrectOperations(nameof(EditCompanyRequest.Password), new List<OperationType> { OperationType.Replace });
             AddСorrectOperations(nameof(EditCompanyRequest.EnableSsl), new List<OperationType> { OperationType.Replace });
             AddСorrectOperations(nameof(EditCompanyRequest.Logo), new List<OperationType> { OperationType.Replace, OperationType.Add, OperationType.Remove });
+            AddСorrectOperations(nameof(EditCompanyRequest.IsDepartmentModuleEnabled), new List<OperationType> { OperationType.Replace });
 
             #endregion
 
@@ -93,6 +95,18 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
                           },
                         "Incorrect Image format"
                     }
+                });
+
+            #endregion
+
+            #region IsDepartmentModuleEnabled
+
+            AddFailureForPropertyIf(
+                nameof(EditCompanyRequest.IsDepartmentModuleEnabled),
+                x => x == OperationType.Replace,
+                new()
+                {
+                    { x => bool.TryParse(x.value.ToString(), out bool _), "Incorrect format of IsDepartmentModuleEnabled." },
                 });
 
             #endregion
