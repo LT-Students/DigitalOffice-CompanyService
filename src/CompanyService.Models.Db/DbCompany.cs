@@ -24,6 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public string Email { get; set; }
         public string Password { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsDepartmentModuleEnabled { get; set; }
         public bool IsActive { get; set; }
 
         [JsonIgnore]
