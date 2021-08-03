@@ -15,7 +15,6 @@ using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Requests.File;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
-using LT.DigitalOffice.Models.Broker.Responses.File;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -24,7 +23,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -78,12 +76,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
             {
                 Guid userId = _httpContextAccessor.HttpContext.GetUserId();
 
-                var response = _rcAddImage.GetResponse<IOperationResult<IAddImageResponse>>(
+                IOperationResult<Guid> response = _rcAddImage.GetResponse<IOperationResult<Guid>>(
                     IAddImageRequest.CreateObj(logo.Name, logo.Content, logo.Extension, userId)).Result.Message;
 
                 if (response.IsSuccess)
                 {
-                    return response.Body.Id;
+                    return response.Body;
                 }
 
                 errors.Add(errorMessage);
