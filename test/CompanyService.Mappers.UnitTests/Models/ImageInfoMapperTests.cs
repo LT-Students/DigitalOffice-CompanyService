@@ -1,9 +1,8 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.Models.Broker.Responses.File;
+using LT.DigitalOffice.Models.Broker.Models;
 using LT.DigitalOffice.UnitTestKernel;
-using Moq;
 using NUnit.Framework;
 using System;
 
@@ -20,9 +19,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         }
 
         [Test]
-        public void ShouldThrowArgumentNullExceptionWhenResponseIsNull()
+        public void ShouldReturnNullWhenRequestIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
+            Assert.IsNull(_mapper.Map(null));
         }
 
         [Test]
@@ -32,29 +31,20 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
             {
                 Id = Guid.NewGuid(),
                 ParentId = Guid.NewGuid(),
+                Type = "Thumb",
                 Name = "Name",
                 Content = "Content",
                 Extension = "Extension"
             };
 
-            Mock<IGetImageResponse> response = new();
-            response
-                .Setup(x => x.ImageId)
-                .Returns(expected.Id);
-            response
-                .Setup(x => x.ParentId)
-                .Returns(expected.ParentId);
-            response
-                .Setup(x => x.Name)
-                .Returns(expected.Name);
-            response
-                .Setup(x => x.Content)
-                .Returns(expected.Content);
-            response
-                .Setup(x => x.Extension)
-                .Returns(expected.Extension);
-
-            SerializerAssert.AreEqual(expected, _mapper.Map(response.Object));
+            SerializerAssert.AreEqual(expected, _mapper.Map(
+                new ImageData(
+                    expected.Id,
+                    expected.ParentId,
+                    expected.Type,
+                    expected.Content,
+                    expected.Extension,
+                    expected.Name)));
         }
     }
 }
