@@ -62,10 +62,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 Body = _positionsList,
                 TotalCount = 1
             };
-
-            /*            _mapperMock
-                            .Setup(mapper => mapper.Map(dbPosition))
-                            .Returns(position);*/
         }
 
         [Test]
@@ -84,7 +80,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _autoMock
                 .Setup<IPositionRepository, List<DbPosition>>(x => x.Find(0, 15, true, out value))
                 .Throws(new Exception());
-            Assert.That(() => _command.Execute(0, 15, true), Throws.TypeOf<Exception>());
+            Assert.Throws<Exception>(() => _command.Execute(0, 15, true));
         }
 
         [Test]
@@ -101,7 +97,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Returns(_dbPositionsList)
                 .Verifiable();
 
-            Assert.That(() => _command.Execute(0, 15, true), Throws.TypeOf<Exception>());
+            Assert.Throws<Exception>(() => _command.Execute(0, 15, true));
 
             _autoMock.Verify<IPositionInfoMapper, PositionInfo>(
                 x => x.Map(It.IsAny<DbPosition>()),
