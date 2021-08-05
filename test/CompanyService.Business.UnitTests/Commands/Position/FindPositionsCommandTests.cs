@@ -55,12 +55,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _command = new FindPositionsCommand(_autoMock.GetMock<IPositionRepository>().Object,
                 _autoMock.GetMock<IPositionInfoMapper>().Object);
 
-
             _findResultResponse = new()
             {
                 Status = OperationResultStatusType.FullSuccess,
                 Body = _positionsList,
-                TotalCount = 1
+                TotalCount = value
             };
         }
 
@@ -81,6 +80,14 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Setup<IPositionRepository, List<DbPosition>>(x => x.Find(0, 15, true, out value))
                 .Throws(new Exception());
             Assert.Throws<Exception>(() => _command.Execute(0, 15, true));
+
+            _autoMock.Verify<IPositionRepository, List<DbPosition>>(
+                x => x.Find(0, 15, true, out value),
+                Times.Once());
+
+            _autoMock.Verify<IPositionInfoMapper, PositionInfo>(
+                x => x.Map(It.IsAny<DbPosition>()),
+                Times.Never());
         }
 
         [Test]
