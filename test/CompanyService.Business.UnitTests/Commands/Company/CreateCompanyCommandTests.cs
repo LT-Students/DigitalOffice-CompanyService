@@ -9,6 +9,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
@@ -197,7 +198,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             var expected = new OperationResultResponse<Guid>
             {
-                Status = Kernel.Enums.OperationResultStatusType.Failed,
+                Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not update smtp credentials." }
             };
 
@@ -249,7 +250,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             var expected = new OperationResultResponse<Guid>
             {
-                Status = Kernel.Enums.OperationResultStatusType.Failed,
+                Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not update smtp credentials." }
             };
 
@@ -321,7 +322,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             var expected = new OperationResultResponse<Guid>
             {
-                Status = Kernel.Enums.OperationResultStatusType.Failed,
+                Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not create admin." }
             };
 
@@ -392,7 +393,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             var expected = new OperationResultResponse<Guid>
             {
-                Status = Kernel.Enums.OperationResultStatusType.Failed,
+                Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not create admin." }
             };
 
@@ -540,7 +541,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             var expected = new OperationResultResponse<Guid>
             {
                 Body = _company.Id,
-                Status = Kernel.Enums.OperationResultStatusType.FullSuccess
+                Status = OperationResultStatusType.FullSuccess
             };
 
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
