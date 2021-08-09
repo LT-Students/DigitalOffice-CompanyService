@@ -38,17 +38,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _autoMock = new AutoMocker();
+            _autoMock = new();
 
-            _command = new CreateCompanyCommand(
-                _autoMock.GetMock<IDbCompanyMapper>().Object,
-                _autoMock.GetMock<ILogger<ICreateCompanyCommand>>().Object,
-                _autoMock.GetMock<ICreateCompanyRequestValidator>().Object,
-                _autoMock.GetMock<ICompanyRepository>().Object,
-                _autoMock.GetMock<IRequestClient<ICreateAdminRequest>>().Object,
-                _autoMock.GetMock<IRequestClient<IUpdateSmtpCredentialsRequest>>().Object,
-                _autoMock.GetMock<ICompanyChangesRepository>().Object,
-                _autoMock.GetMock<IHttpContextAccessor>().Object);
+            _command = _autoMock.CreateInstance<CreateCompanyCommand>();
 
             _request = new()
             {
@@ -56,7 +48,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 CompanyName = "Name",
                 SiteUrl = "siteurl",
                 IsDepartmentModuleEnabled = true,
-                AdminInfo = new AdminInfo
+                AdminInfo = new()
                 {
                     FirstName = "Name",
                     MiddleName = null,
@@ -75,7 +67,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 }
             };
 
-            _company = new DbCompany
+            _company = new()
             {
                 Id = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
@@ -119,7 +111,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -143,7 +135,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         }
 
         [Test]
-        public void ShouldThrowBadRequestException()
+        public void ShouldThrowBadRequestExceptionWhenRepositoryIsNotNull()
         {
             _autoMock
                 .Setup<ICompanyRepository, DbCompany>(x => x.Get(null))
@@ -153,7 +145,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             Assert.That(ex.Message, Is.EqualTo("Company already exists"));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -177,12 +169,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         }
 
         [Test]
-        public void ShouldReturnFailedResponseWhenUpdateSMTPResponseThrowAndCatchException()
+        public void ShouldReturnFailedResponseWhenUpdateSMTPResponseThrowException()
         {
-            _autoMock
-                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
-                .Returns(false);
-
             _autoMock
                 .Setup<IOperationResult<bool>, List<string>>(x => x.Errors)
                 .Returns(new List<string> { "Can not update smtp credentials." });
@@ -196,7 +184,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                     It.IsAny<object>(), default, default))
                 .Throws(new Exception());
 
-            var expected = new OperationResultResponse<Guid>
+            OperationResultResponse<Guid> expected = new()
             {
                 Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not update smtp credentials." }
@@ -205,7 +193,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -248,7 +236,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                     It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(_autoMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
-            var expected = new OperationResultResponse<Guid>
+            OperationResultResponse<Guid> expected = new()
             {
                 Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not update smtp credentials." }
@@ -257,7 +245,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -281,38 +269,35 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         }
 
         [Test]
-        public void ShouldReturnFailedResponseWhenAdminResponseThrowAndCatchException()
+        public void ShouldReturnFailedResponseWhenAdminResponseThrowException()
         {
-            AutoMocker firstMock = new();
-            firstMock
+            AutoMocker secondMock = new();
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.Body)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(firstMock.GetMock<IOperationResult<bool>>().Object);
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(firstMock.GetMock<Response<IOperationResult<bool>>>().Object));
+                .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
-            AutoMocker secondAutoMock = new();
-            secondAutoMock
-                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
-                .Returns(false);
+            AutoMocker thirdMock = new();
 
-            secondAutoMock
+            thirdMock
                 .Setup<IOperationResult<bool>, List<string>>(x => x.Errors)
                 .Returns(new List<string> { "Can not create admin." });
 
-            secondAutoMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(secondAutoMock.GetMock<IOperationResult<bool>>().Object);
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
@@ -320,7 +305,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                     It.IsAny<object>(), default, default))
                 .Throws(new Exception());
 
-            var expected = new OperationResultResponse<Guid>
+            OperationResultResponse<Guid> expected = new()
             {
                 Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not create admin." }
@@ -329,7 +314,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(_company), Times.Never);
@@ -354,44 +339,44 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         [Test]
         public void ShouldReturnFailedResponseWhenCreateAdminResponseIsNotSuccessfuly()
         {
-            AutoMocker firstMock = new();
-            firstMock
+            AutoMocker secondMock = new();
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.Body)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(firstMock.GetMock<IOperationResult<bool>>().Object);
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(firstMock.GetMock<Response<IOperationResult<bool>>>().Object));
+                .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
-            AutoMocker secondAutoMock = new();
-            secondAutoMock
+            AutoMocker thirdMock = new();
+            thirdMock
                 .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
                 .Returns(false);
 
-            secondAutoMock
+            thirdMock
                 .Setup<IOperationResult<bool>, List<string>>(x => x.Errors)
                 .Returns(new List<string> { "Can not create admin." });
 
-            secondAutoMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(secondAutoMock.GetMock<IOperationResult<bool>>().Object);
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(secondAutoMock.GetMock<Response<IOperationResult<bool>>>().Object));
+                .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
-            var expected = new OperationResultResponse<Guid>
+            OperationResultResponse<Guid> expected = new()
             {
                 Status = OperationResultStatusType.Failed,
                 Errors = new List<string> { "Can not create admin." }
@@ -400,7 +385,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(_company), Times.Never);
@@ -425,42 +410,42 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         [Test]
         public void ShouldThrowExceptionWhenRepositoryThrow()
         {
-            AutoMocker firstMock = new();
-            firstMock
+            AutoMocker secondMock = new();
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.Body)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(firstMock.GetMock<IOperationResult<bool>>().Object);
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default))
-               .Returns(Task.FromResult(firstMock.GetMock<Response<IOperationResult<bool>>>().Object));
+               .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
-            AutoMocker secondAutoMock = new();
-            secondAutoMock
+            AutoMocker thirdMock = new();
+            thirdMock
                 .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
                 .Returns(true);
 
-            secondAutoMock
+            thirdMock
                 .Setup<IOperationResult<bool>, bool>(x => x.Body)
                 .Returns(true);
 
-            secondAutoMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(secondAutoMock.GetMock<IOperationResult<bool>>().Object);
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(secondAutoMock.GetMock<Response<IOperationResult<bool>>>().Object));
+                .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             _autoMock.Setup<IDbCompanyMapper, DbCompany>(x => x.Map(_request))
                 .Returns(_company);
@@ -471,7 +456,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             Assert.Throws<Exception>(() => _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(_company),
@@ -497,48 +482,48 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         [Test]
         public void ShouldCreateCompanySuccessfuly()
         {
-            AutoMocker firstMock = new();
-            firstMock
+            AutoMocker secondMock = new();
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<IOperationResult<bool>, bool>(x => x.Body)
                 .Returns(true);
 
-            firstMock
+            secondMock
                 .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(firstMock.GetMock<IOperationResult<bool>>().Object);
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(firstMock.GetMock<Response<IOperationResult<bool>>>().Object));
+                .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
-            AutoMocker secondAutoMock = new();
-            secondAutoMock
+            AutoMocker thirdMock = new();
+            thirdMock
                 .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
                 .Returns(true);
 
-            secondAutoMock
+            thirdMock
                 .Setup<IOperationResult<bool>, bool>(x => x.Body)
                 .Returns(true);
 
-            secondAutoMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
-                .Returns(secondAutoMock.GetMock<IOperationResult<bool>>().Object);
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(secondAutoMock.GetMock<Response<IOperationResult<bool>>>().Object));
+                .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             _autoMock
                 .Setup<IDbCompanyMapper, DbCompany>(x => x.Map(_request))
                 .Returns(_company);
 
-            var expected = new OperationResultResponse<Guid>
+            OperationResultResponse<Guid> expected = new()
             {
                 Body = _company.Id,
                 Status = OperationResultStatusType.FullSuccess
@@ -547,7 +532,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Once);
+                x => x.Get(null), Times.Once);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(_company), Times.Once);
