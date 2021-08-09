@@ -122,7 +122,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 Times.Once);
 
             _autoMock.Verify<IDbCompanyMapper>(
-                x => x.Map(It.IsAny<CreateCompanyRequest>()),
+                x => x.Map(_request),
                 Times.Never());
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
@@ -156,7 +156,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 Times.Never);
 
             _autoMock.Verify<IDbCompanyMapper>(
-                x => x.Map(It.IsAny<CreateCompanyRequest>()),
+                x => x.Map(_request),
                 Times.Never());
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
@@ -204,7 +204,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 Times.Once);
 
             _autoMock.Verify<IDbCompanyMapper>(
-                x => x.Map(It.IsAny<CreateCompanyRequest>()),
+                x => x.Map(_request),
                 Times.Never());
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
@@ -256,7 +256,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                 Times.Once);
 
             _autoMock.Verify<IDbCompanyMapper>(
-                x => x.Map(It.IsAny<CreateCompanyRequest>()),
+                x => x.Map(_request),
                 Times.Never());
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
