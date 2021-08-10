@@ -21,8 +21,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     {
         private readonly ICompanyRepository _repository;
         private readonly ICompanyInfoMapper _companyInfoMapper;
-        private readonly IRequestClient<IGetImageRequest> _requestClient;
+        private readonly IRequestClient<IGetImagesRequest> _requestClient;
         private readonly ILogger<GetCompanyCommand> _logger;
+        private readonly IImageInfoMapper _imageMapper;
 
         private ImageInfo GetImage(Guid? imageId, List<string> errors)
         {
@@ -38,19 +39,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
             try
             {
-                var response = _requestClient.GetResponse<IOperationResult<IGetImageResponse>>(
-                    IGetImageRequest.CreateObj(imageId.Value)).Result.Message;
+                var response = _requestClient.GetResponse<IOperationResult<IGetImagesResponse>>(
+                    IGetImagesRequest.CreateObj(new() { imageId.Value })).Result.Message;
 
                 if (response.IsSuccess)
                 {
-                    result = new()
-                    {
-                        Id = response.Body.ImageId,
-                        Name = response.Body.Name,
-                        ParentId = response.Body.ParentId,
-                        Content = response.Body.Content,
-                        Extension = response.Body.Extension
-                    };
+                    result = _imageMapper.Map(response.Body.Images[0]);
                 }
                 else
                 {
@@ -72,13 +66,15 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         public GetCompanyCommand(
             ICompanyRepository repository,
             ICompanyInfoMapper mapper,
-            IRequestClient<IGetImageRequest> requestClient,
-            ILogger<GetCompanyCommand> logger)
+            IRequestClient<IGetImagesRequest> requestClient,
+            ILogger<GetCompanyCommand> logger,
+            IImageInfoMapper imageMapper)
         {
             _repository = repository;
             _companyInfoMapper = mapper;
             _requestClient = requestClient;
             _logger = logger;
+            _imageMapper = imageMapper;
         }
 
         public OperationResultResponse<CompanyInfo> Execute(GetCompanyFilter filter)

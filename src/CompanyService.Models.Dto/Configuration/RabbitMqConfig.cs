@@ -22,6 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
         public string GetPositionEndpoint { get; set; }
         public string GetUsersDepartmentsUsersPositionsEndpoint { get; set; }
         public string GetUserOfficesEndpoint { get; set; }
+        public string DisactivateUserEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(IGetUsersDataRequest))]
         public string GetUsersDataEndpoint { get; set; }
@@ -31,9 +32,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 
         [AutoInjectRequest(typeof(IAddImageRequest))]
         public string AddImageEndpoint { get; set; }
-
-        [AutoInjectRequest(typeof(IGetImageRequest))]
-        public string GetImageEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(IGetImagesRequest))]
         public string GetImagesEndpoint { get; set; }
