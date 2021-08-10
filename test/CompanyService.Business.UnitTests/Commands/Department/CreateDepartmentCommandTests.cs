@@ -114,8 +114,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Setup<IAccessValidator, bool>(x => x.HasRights(Rights.AddEditRemoveDepartments))
                 .Returns(false);
 
-            var ex = Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
-            Assert.That(ex.Message, Is.EqualTo("Not enough rights."));
+            Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository, DbCompany>(
                 x => x.Get(It.IsAny<GetCompanyFilter>()), 
@@ -146,7 +145,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         }
 
         [Test]
-        public void CompanyDoesNotExistTest()
+        public void ShouldThrowExcWhenCompanyDoesntExist()
         {
             var expected = new OperationResultResponse<Guid>
             {
@@ -169,7 +168,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         }
 
         [Test]
-        public void TheDepartmentNameAlreadyExistsTest()
+        public void ShouldThrowExcWhenDepartmentNameAlreadyExists()
         {
             var expected = new OperationResultResponse<Guid>
             {

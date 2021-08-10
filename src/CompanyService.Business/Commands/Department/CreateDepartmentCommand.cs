@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
         public OperationResultResponse<Guid> Execute(CreateDepartmentRequest request)
         {
-            if (!(_accessValidator.IsAdmin() || _accessValidator.HasRights(Rights.AddEditRemoveDepartments))) 
+            if (!(_accessValidator.IsAdmin() || _accessValidator.HasRights(Rights.AddEditRemoveDepartments)))
             {
                 throw new ForbiddenException("Not enough rights.");
             }
