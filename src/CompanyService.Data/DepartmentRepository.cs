@@ -3,6 +3,8 @@ using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +18,14 @@ namespace LT.DigitalOffice.CompanyService.Data
     public class DepartmentRepository : IDepartmentRepository
     {
         private readonly IDataProvider _provider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DepartmentRepository(IDataProvider provider)
+        public DepartmentRepository(
+            IDataProvider provider,
+             IHttpContextAccessor httpContextAccessor)
         {
             _provider = provider;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <inheritdoc />
@@ -139,6 +145,8 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             request.ApplyTo(dbDepartment);
+            dbDepartment.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
+            dbDepartment.ModifiedAtUtc = DateTime.UtcNow;
             _provider.Save();
 
             return true;

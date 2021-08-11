@@ -6,6 +6,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
     public class DbPositionUserMapper : IDbPositionUserMapper
     {
+        //Todo update models and add createdBy
         public DbPositionUser Map(Guid positionId, Guid userId)
         {
             return new DbPositionUser
@@ -14,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 UserId = userId,
                 PositionId = positionId,
                 IsActive = true,
-                StartTime = DateTime.UtcNow
+                CreatedAtUtc = DateTime.UtcNow
             };
         }
     }

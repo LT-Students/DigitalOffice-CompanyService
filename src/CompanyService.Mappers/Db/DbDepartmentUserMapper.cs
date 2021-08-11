@@ -6,6 +6,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
     public class DbDepartmentUserMapper : IDbDepartmentUserMapper
     {
+        //Todo update models and add createdBy
         public DbDepartmentUser Map(Guid departmentId, Guid userId)
         {
             return new DbDepartmentUser
@@ -14,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 UserId = userId,
                 DepartmentId = departmentId,
                 IsActive = true,
-                StartTime = DateTime.UtcNow
+                CreatedAtUtc = DateTime.UtcNow
             };
         }
     }

@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 Id = Guid.NewGuid(),
                 OfficeId = request.OfficeId,
                 UserId = request.UserId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 CreatedBy = request.ChangedBy,
                 IsActive = true
             };

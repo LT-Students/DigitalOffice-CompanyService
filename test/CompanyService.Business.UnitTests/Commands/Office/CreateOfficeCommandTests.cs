@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             {
                 Id = Guid.NewGuid(),
                 Address = _request.Address,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 City = _request.City,
                 CompanyId = Guid.NewGuid(),

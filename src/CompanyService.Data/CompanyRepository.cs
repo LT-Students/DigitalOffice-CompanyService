@@ -3,6 +3,8 @@ using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Data
     public class CompanyRepository : ICompanyRepository
     {
         private readonly IDataProvider _provider;
-
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private IQueryable<DbCompany> CreateGetPredicates(
             GetCompanyFilter filter,
             IQueryable<DbCompany> dbCompanies)
@@ -37,9 +39,11 @@ namespace LT.DigitalOffice.CompanyService.Data
         }
 
         public CompanyRepository(
-            IDataProvider provider)
+            IDataProvider provider,
+             IHttpContextAccessor httpContextAccessor)
         {
             _provider = provider;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public void Add(DbCompany company)
@@ -87,7 +91,8 @@ namespace LT.DigitalOffice.CompanyService.Data
             }
 
             request.ApplyTo(company);
-
+            company.ModifiedAtUtc = DateTime.UtcNow;
+            company.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
             _provider.Save();
         }
     }

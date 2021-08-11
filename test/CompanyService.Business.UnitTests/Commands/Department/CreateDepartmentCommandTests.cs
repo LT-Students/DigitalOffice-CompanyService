@@ -86,7 +86,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                         Id = Guid.NewGuid(),
                         UserId = userId,
                         DepartmentId = _dbDepartment.Id,
-                        StartTime = DateTime.UtcNow,
+                        CreatedAtUtc = DateTime.UtcNow,
                         Role = (int)DepartmentUserRole.Employee,
                         IsActive = true
                     });
@@ -98,7 +98,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                         Id = Guid.NewGuid(),
                         UserId = _request.DirectorUserId.Value,
                         DepartmentId = _dbDepartment.Id,
-                        StartTime = DateTime.UtcNow,
+                        CreatedAtUtc = DateTime.UtcNow,
                         Role = (int)DepartmentUserRole.Director,
                         IsActive = true
                     });
