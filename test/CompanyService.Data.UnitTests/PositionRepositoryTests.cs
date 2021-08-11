@@ -1,140 +1,155 @@
-﻿//using LT.DigitalOffice.CompanyService.Data.Interfaces;
-//using LT.DigitalOffice.CompanyService.Data.Provider;
-//using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
-//using LT.DigitalOffice.CompanyService.Models.Db;
-//using LT.DigitalOffice.Kernel.Exceptions.Models;
-//using Microsoft.EntityFrameworkCore;
-//using NUnit.Framework;
-//using System;
-//using System.Linq;
+﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
+using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-//namespace LT.DigitalOffice.CompanyService.Data.UnitTests
-//{
-//    internal class PositionRepositoryTests
-//    {
-//        private IDataProvider _provider;
-//        private IPositionRepository _repository;
+namespace LT.DigitalOffice.CompanyService.Data.UnitTests
+{
+    internal class PositionRepositoryTests
+    {
+        private IDataProvider _provider;
+        private IPositionRepository _repository;
+        private Mock<IHttpContextAccessor> _accessorMock;
 
-//        private DbPosition _dbPosition;
-//        private Guid _positionId;
-//        private DbPosition _newPosition;
-//        private DbPosition _dbPositionToAdd;
+        private Guid _userId;
+        private DbPosition _dbPosition;
+        private Guid _positionId;
+        private DbPosition _newPosition;
+        private DbPosition _dbPositionToAdd;
 
-//        [OneTimeSetUp]
-//        public void OneTimeSetUp()
-//        {
-//            var dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
-//                .UseInMemoryDatabase("InMemoryDatabase")
-//                .Options;
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            var dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
+                .UseInMemoryDatabase("InMemoryDatabase")
+                .Options;
 
-//            _provider = new CompanyServiceDbContext(dbOptions);
+            _userId = Guid.NewGuid();
 
-//            _repository = new PositionRepository(_provider);
-//        }
+            _accessorMock = new();
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
 
-//        [SetUp]
-//        public void SetUp()
-//        {
-//            _positionId = Guid.NewGuid();
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
 
-//            _dbPosition = new DbPosition
-//            {
-//                Id = _positionId,
-//                Description = "Description",
-//                Name = "Name"
-//            };
-//            _dbPosition.Users.Add(new DbPositionUser
-//            {
-//                Id = Guid.NewGuid(),
-//                PositionId = _positionId,
-//                UserId = Guid.NewGuid(),
-//                IsActive = true,
-//                StartTime = DateTime.Now.AddDays(-1)
-//            });
+            _provider = new CompanyServiceDbContext(dbOptions);
 
-//            _provider.Positions.Add(_dbPosition);
-//            _provider.Save();
+            _repository = new PositionRepository(_provider, _accessorMock.Object);
+        }
 
-//            _dbPositionToAdd = new DbPosition
-//            {
-//                Id = Guid.NewGuid(),
-//                Name = "Position",
-//                Description = "Description"
-//            };
-//        }
+        [SetUp]
+        public void SetUp()
+        {
+            _positionId = Guid.NewGuid();
 
-//        [TearDown]
-//        public void CleanDb()
-//        {
-//            if (_provider.IsInMemory())
-//            {
-//                _provider.EnsureDeleted();
-//            }
-//        }
+            _dbPosition = new DbPosition
+            {
+                Id = _positionId,
+                Description = "Description",
+                Name = "Name"
+            };
+            _dbPosition.Users.Add(new DbPositionUser
+            {
+                Id = Guid.NewGuid(),
+                PositionId = _positionId,
+                UserId = Guid.NewGuid(),
+                IsActive = true,
+                CreatedAtUtc = DateTime.Now.AddDays(-1)
+            });
 
-//        #region GetPosition
-//        [Test]
-//        public void ShouldThrowExceptionIfPositionDoesNotExist()
-//        {
-//            Assert.Throws<NotFoundException>(() => _repository.Get(Guid.NewGuid(), null));
-//        }
+            _provider.Positions.Add(_dbPosition);
+            _provider.Save();
 
-//        [Test]
-//        public void ShouldReturnSimplePositionInfoSuccessfully()
-//        {
-//            var result = _repository.Get(_dbPosition.Id, null);
+            _dbPositionToAdd = new DbPosition
+            {
+                Id = Guid.NewGuid(),
+                Name = "Position",
+                Description = "Description"
+            };
+        }
 
-//            var expected = new DbPosition
-//            {
-//                Id = _dbPosition.Id,
-//                Name = _dbPosition.Name,
-//                Description = _dbPosition.Description
-//            };
+        [TearDown]
+        public void CleanDb()
+        {
+            if (_provider.IsInMemory())
+            {
+                _provider.EnsureDeleted();
+            }
+        }
 
-//            Assert.AreEqual(expected.Id, result.Id);
-//            Assert.AreEqual(expected.Name, result.Name);
-//            Assert.AreEqual(expected.Description, result.Description);
-//        }
-//        #endregion
+        #region GetPosition
+        [Test]
+        public void ShouldThrowExceptionIfPositionDoesNotExist()
+        {
+            Assert.Throws<NotFoundException>(() => _repository.Get(Guid.NewGuid(), null));
+        }
 
-//        #region FindPositions
-//        [Test]
-//        public void FindPositionsSuccessfully()
-//        {
-//            Assert.IsNotEmpty(_repository.Find(0, 2, true, out _));
-//        }
-//        #endregion
+        [Test]
+        public void ShouldReturnSimplePositionInfoSuccessfully()
+        {
+            var result = _repository.Get(_dbPosition.Id, null);
 
-//        #region GetUserPosition
+            var expected = new DbPosition
+            {
+                Id = _dbPosition.Id,
+                Name = _dbPosition.Name,
+                Description = _dbPosition.Description
+            };
 
-//        [Test]
-//        public void ShouldReturnUserPosition()
-//        {
-//            var userId = _dbPosition.Users.First().UserId;
+            Assert.AreEqual(expected.Id, result.Id);
+            Assert.AreEqual(expected.Name, result.Name);
+            Assert.AreEqual(expected.Description, result.Description);
+        }
+        #endregion
 
-//            var result = _repository.Get(null, userId);
+        #region FindPositions
+        [Test]
+        public void FindPositionsSuccessfully()
+        {
+            Assert.IsNotEmpty(_repository.Find(0, 2, true, out _));
+        }
+        #endregion
 
-//            Assert.AreEqual(_dbPosition.Id, result.Id);
-//            Assert.AreEqual(_dbPosition.Description, result.Description);
-//            Assert.AreEqual(_dbPosition.Name, result.Name);
-//            Assert.That(_provider.Positions, Is.EquivalentTo(new[] { _dbPosition }));
-//        }
-//        #endregion
+        #region GetUserPosition
 
-//        #region AddPosition
-//        [Test]
-//        public void ShouldAddNewPositionSuccessfully()
-//        {
-//            var expected = _dbPositionToAdd.Id;
+        [Test]
+        public void ShouldReturnUserPosition()
+        {
+            var userId = _dbPosition.Users.First().UserId;
 
-//            var result = _repository.Create(_dbPositionToAdd);
+            var result = _repository.Get(null, userId);
 
-//            Assert.AreEqual(expected, result);
-//            Assert.NotNull(_provider.Positions.Find(_dbPositionToAdd.Id));
-//        }
-//        #endregion
+            Assert.AreEqual(_dbPosition.Id, result.Id);
+            Assert.AreEqual(_dbPosition.Description, result.Description);
+            Assert.AreEqual(_dbPosition.Name, result.Name);
+            Assert.That(_provider.Positions, Is.EquivalentTo(new[] { _dbPosition }));
+        }
+        #endregion
 
-//        #region EditPosition
-//        #endregion
-//    }
-//}
+        #region AddPosition
+        [Test]
+        public void ShouldAddNewPositionSuccessfully()
+        {
+            var expected = _dbPositionToAdd.Id;
+
+            var result = _repository.Create(_dbPositionToAdd);
+
+            Assert.AreEqual(expected, result);
+            Assert.NotNull(_provider.Positions.Find(_dbPositionToAdd.Id));
+        }
+        #endregion
+
+        #region EditPosition
+        #endregion
+    }
+}

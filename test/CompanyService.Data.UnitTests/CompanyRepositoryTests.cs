@@ -1,110 +1,125 @@
-﻿//using LT.DigitalOffice.CompanyService.Data.Interfaces;
-//using LT.DigitalOffice.CompanyService.Data.Provider;
-//using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
-//using LT.DigitalOffice.CompanyService.Models.Db;
-//using LT.DigitalOffice.Kernel.Exceptions.Models;
-//using Microsoft.EntityFrameworkCore;
-//using NUnit.Framework;
-//using System;
-//using System.Linq;
+﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
+using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-//namespace LT.DigitalOffice.CompanyService.Data.UnitTests
-//{
-//    public class CompanyRepositoryTests
-//    {
-//        private IDataProvider _provider;
-//        private ICompanyRepository _repository;
-//        private DbContextOptions<CompanyServiceDbContext> _dbOptions;
+namespace LT.DigitalOffice.CompanyService.Data.UnitTests
+{
+    public class CompanyRepositoryTests
+    {
+        private IDataProvider _provider;
+        private ICompanyRepository _repository;
+        private DbContextOptions<CompanyServiceDbContext> _dbOptions;
+        private Mock<IHttpContextAccessor> _accessorMock;
+        private Guid _userId;
 
-//        [OneTimeSetUp]
-//        public void OneTimeSetUp()
-//        {
-//            CreateInMemoryDb();
-//        }
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            CreateInMemoryDb();
 
-//        public void CreateInMemoryDb()
-//        {
-//            _dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
-//                .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
-//                .Options;
-//        }
+            _userId = Guid.NewGuid();
 
-//        [SetUp]
-//        public void SetUp()
-//        {
-//            _provider = new CompanyServiceDbContext(_dbOptions);
-//            _repository = new CompanyRepository(_provider);
-//        }
+            _accessorMock = new();
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
 
-//        [TearDown]
-//        public void CleanInMemoryDb()
-//        {
-//            if (_provider.IsInMemory())
-//            {
-//                _provider.EnsureDeleted();
-//            }
-//        }
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
+        }
 
-//        #region Add tests
+        public void CreateInMemoryDb()
+        {
+            _dbOptions = new DbContextOptionsBuilder<CompanyServiceDbContext>()
+                .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
+                .Options;
+        }
 
-//        [Test]
-//        public void ShouldThrowArgumentNullExceptionWhenModelsToAddIsNull()
-//        {
-//            Assert.Throws<ArgumentNullException>(() => _repository.Add(null));
-//        }
+        [SetUp]
+        public void SetUp()
+        {
+            _provider = new CompanyServiceDbContext(_dbOptions);
+            _repository = new CompanyRepository(_provider, _accessorMock.Object);
+        }
 
-//        [Test]
-//        public void ShouldAddSuccessfuly()
-//        {
-//            DbCompany company = new()
-//            {
-//                Id = Guid.NewGuid(),
-//                CreatedAt = DateTime.UtcNow,
-//                IsActive = true,
-//                Description = "Desc",
-//                LogoId = Guid.NewGuid(),
-//                CompanyName = "Name",
-//                PortalName = "PortalName",
-//                Tagline = "tagline"
-//            };
+        [TearDown]
+        public void CleanInMemoryDb()
+        {
+            if (_provider.IsInMemory())
+            {
+                _provider.EnsureDeleted();
+            }
+        }
 
-//            _repository.Add(company);
+        #region Add tests
 
-//            Assert.IsTrue(_provider.Companies.Contains(company));
-//        }
+        [Test]
+        public void ShouldThrowArgumentNullExceptionWhenModelsToAddIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => _repository.Add(null));
+        }
 
-//        [Test]
-//        public void ShouldThrowBadRequestExceptionWhenCompanyExist()
-//        {
-//            DbCompany company1 = new();
-//            DbCompany company2 = new();
+        [Test]
+        public void ShouldAddSuccessfuly()
+        {
+            DbCompany company = new()
+            {
+                Id = Guid.NewGuid(),
+                CreatedAtUtc = DateTime.UtcNow,
+                IsActive = true,
+                Description = "Desc",
+                LogoId = Guid.NewGuid(),
+                CompanyName = "Name",
+                PortalName = "PortalName",
+                Tagline = "tagline"
+            };
 
-//            _repository.Add(company1);
+            _repository.Add(company);
 
-//            Assert.Throws<BadRequestException>(() => _repository.Add(company2));
-//        }
+            Assert.IsTrue(_provider.Companies.Contains(company));
+        }
 
-//        #endregion
+        [Test]
+        public void ShouldThrowBadRequestExceptionWhenCompanyExist()
+        {
+            DbCompany company1 = new();
+            DbCompany company2 = new();
 
-//        #region Get Tests
+            _repository.Add(company1);
 
-//        [Test]
-//        public void ShouldGetCompanySuccessfuly()
-//        {
-//            DbCompany company = new DbCompany();
+            Assert.Throws<BadRequestException>(() => _repository.Add(company2));
+        }
 
-//            _provider.Companies.Add(company);
-//            _provider.Save();
+        #endregion
 
-//            Assert.AreEqual(company, _repository.Get(null));
-//        }
+        #region Get Tests
 
-//        [Test]
-//        public void ShouldThrowExceptionWhetCompanyDoesNotExist()
-//        {
-//            Assert.IsNull(_repository.Get(null));
-//        }
+        [Test]
+        public void ShouldGetCompanySuccessfuly()
+        {
+            DbCompany company = new DbCompany();
 
-//        #endregion
-//    }
-//}
+            _provider.Companies.Add(company);
+            _provider.Save();
+
+            Assert.AreEqual(company, _repository.Get(null));
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhetCompanyDoesNotExist()
+        {
+            Assert.IsNull(_repository.Get(null));
+        }
+
+        #endregion
+    }
+}
