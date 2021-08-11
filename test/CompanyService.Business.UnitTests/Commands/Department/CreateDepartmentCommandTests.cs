@@ -129,8 +129,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         public void ShouldThrowValidationException()
         {
             _autoMock
-                .Setup<ICreateDepartmentRequestValidator, bool>
-                (x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+                .Setup<ICreateDepartmentRequestValidator, bool>(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(false);
 
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
