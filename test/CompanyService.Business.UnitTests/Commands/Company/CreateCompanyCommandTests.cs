@@ -4,9 +4,7 @@ using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
@@ -16,8 +14,6 @@ using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.AutoMock;
 using NUnit.Framework;
@@ -86,17 +82,14 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         public void SetUp()
         {
             _autoMock.GetMock<IDbCompanyMapper>().Reset();
-            _autoMock.GetMock<ILogger<ICreateCompanyCommand>>().Reset();
             _autoMock.GetMock<ICreateCompanyRequestValidator>().Reset();
             _autoMock.GetMock<ICompanyRepository>().Reset();
             _autoMock.GetMock<IRequestClient<ICreateAdminRequest>>().Reset();
             _autoMock.GetMock<IRequestClient<IUpdateSmtpCredentialsRequest>>().Reset();
-            _autoMock.GetMock<ICompanyChangesRepository>().Reset();
-            _autoMock.GetMock<IHttpContextAccessor>().Reset();
 
             _autoMock
                 .Setup<ICreateCompanyRequestValidator, bool>(
-                x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+                    x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(true);
         }
 
@@ -105,13 +98,13 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         {
             _autoMock
                 .Setup<ICreateCompanyRequestValidator, bool>(
-                x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+                    x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(false);
 
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -119,7 +112,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Once);
+                Times.Once());
 
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
@@ -127,11 +120,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
         }
 
         [Test]
@@ -145,7 +138,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             Assert.That(ex.Message, Is.EqualTo("Company already exists"));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -153,7 +146,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Never);
+                Times.Never());
 
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
@@ -161,11 +154,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
         }
 
         [Test]
@@ -180,8 +173,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Throws(new Exception());
 
             OperationResultResponse<Guid> expected = new()
@@ -193,7 +186,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -201,7 +194,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Once);
+                Times.Once());
 
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
@@ -209,11 +202,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
         }
 
         [Test]
@@ -232,8 +225,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(_autoMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             OperationResultResponse<Guid> expected = new()
@@ -245,7 +238,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(It.IsAny<DbCompany>()),
@@ -253,7 +246,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Once);
+                Times.Once());
 
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
@@ -261,11 +254,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
         }
 
         [Test]
@@ -286,8 +279,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             AutoMocker thirdMock = new();
@@ -301,8 +294,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Throws(new Exception());
 
             OperationResultResponse<Guid> expected = new()
@@ -314,26 +307,26 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Add(_company), Times.Never);
+                x => x.Add(_company), Times.Never());
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Once);
-                
+                Times.Once());
+
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
                 Times.Never());
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
         }
 
         [Test]
@@ -354,8 +347,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             AutoMocker thirdMock = new();
@@ -372,8 +365,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             OperationResultResponse<Guid> expected = new()
@@ -385,14 +378,14 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Add(_company), Times.Never);
+                x => x.Add(_company), Times.Never());
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Once);
+                Times.Once());
 
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
@@ -400,11 +393,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
         }
 
         [Test]
@@ -425,8 +418,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             AutoMocker thirdMock = new();
@@ -443,8 +436,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             _autoMock.Setup<IDbCompanyMapper, DbCompany>(x => x.Map(_request))
@@ -456,15 +449,15 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             Assert.Throws<Exception>(() => _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Add(_company),
-                Times.Once);
+                Times.Once());
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Once);
+                Times.Once());
 
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
@@ -472,11 +465,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
         }
 
         [Test]
@@ -497,8 +490,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             AutoMocker thirdMock = new();
@@ -515,8 +508,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock
                 .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
-                x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default))
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
             _autoMock
@@ -532,26 +525,26 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Get(null), Times.Once);
+                x => x.Get(null), Times.Once());
 
             _autoMock.Verify<ICompanyRepository>(
-                x => x.Add(_company), Times.Once);
+                x => x.Add(_company), Times.Once());
 
             _autoMock.Verify<ICreateCompanyRequestValidator>(
                 x => x.Validate(It.IsAny<IValidationContext>()),
-                Times.Once);
-                
+                Times.Once());
+
             _autoMock.Verify<IDbCompanyMapper>(
                 x => x.Map(_request),
                 Times.Once());
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once);
+                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
         }
     }
 }
