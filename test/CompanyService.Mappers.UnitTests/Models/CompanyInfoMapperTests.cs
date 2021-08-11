@@ -63,7 +63,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 CompanyName = "Name",
                 Tagline = "Tagline",
                 Description = "Description",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 LogoId = Guid.NewGuid(),
                 SiteUrl = "siteUrl",

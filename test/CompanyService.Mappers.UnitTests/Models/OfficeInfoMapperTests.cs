@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 Address = "address",
                 City = "company",
                 CompanyId = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true
             };
 

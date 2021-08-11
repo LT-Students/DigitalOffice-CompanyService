@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
                     DepartmentId = _departmentId,
-                    StartTime = DateTime.UtcNow,
+                    CreatedAtUtc = DateTime.UtcNow,
                     IsActive = true
                 },
                 new DbDepartmentUser
@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
                     DepartmentId = _departmentId,
-                    StartTime = DateTime.UtcNow,
+                    CreatedAtUtc = DateTime.UtcNow,
                     IsActive = true
                 }
             };
@@ -55,7 +55,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 UserId = Guid.NewGuid(),
                 DepartmentId = Guid.NewGuid(),
-                StartTime = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true
             };
         }

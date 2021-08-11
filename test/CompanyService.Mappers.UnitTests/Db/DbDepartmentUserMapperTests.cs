@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 DepartmentId = departmentId,
                 UserId = userId,
                 IsActive = true,
-                StartTime = response.StartTime
+                CreatedAtUtc = response.CreatedAtUtc
             };
 
             SerializerAssert.AreEqual(expectedResponse, response);

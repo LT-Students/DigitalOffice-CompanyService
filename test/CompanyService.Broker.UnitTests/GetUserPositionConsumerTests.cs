@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 Id = Guid.NewGuid(),
                 UserId = Guid.NewGuid(),
                 PositionId = positionId,
-                StartTime = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 Position = new DbPosition
                 {
                     Id = positionId,
@@ -75,7 +75,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     {
                         PositionId = dbPositionUser.PositionId,
                         Name = userPositionName,
-                        ReceivedAt = dbPositionUser.StartTime
+                        ReceivedAt = dbPositionUser.CreatedAtUtc
                     }
                 };
 
