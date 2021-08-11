@@ -46,20 +46,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 throw new ForbiddenException("Not enough rights.");
             }
 
-            _validator.ValidateAndThrowCustom(request); 
+            _validator.ValidateAndThrowCustom(request);
 
             OperationResultResponse<Guid> response = new();
 
             DbCompany company = _companyRepository.Get();
 
-            if (company == null) 
+            if (company == null)
             {
                 response.Status = OperationResultStatusType.Failed;
                 response.Errors.Add("Company does not exist, please create company.");
                 return response;
             }
 
-            if (_repository.DoesNameExist(request.Name)) 
+            if (_repository.DoesNameExist(request.Name))
             {
                 response.Status = OperationResultStatusType.Conflict;
                 response.Errors.Add("The department name already exists");
@@ -68,7 +68,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             #region Deactivated previous department user records
 
-            if (request.Users != null) 
+            if (request.Users != null)
             {
                 foreach (Guid userId in request.Users)
                 {
@@ -76,7 +76,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 }
             }
 
-            if (request.DirectorUserId.HasValue) 
+            if (request.DirectorUserId.HasValue)
             {
                 _userRepository.Remove(request.DirectorUserId.Value);
             }
