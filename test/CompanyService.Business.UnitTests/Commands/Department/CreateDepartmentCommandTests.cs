@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
         private CreateDepartmentRequest GenerateRequest(
             Guid? directorUserId,
-            params Guid[] userIds) 
+            params Guid[] userIds)
         {
             return new()
             {
@@ -117,11 +117,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository, DbCompany>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), 
+                x => x.Get(It.IsAny<GetCompanyFilter>()),
                 Times.Never);
 
             _autoMock.Verify<IDepartmentRepository, Guid>(
-                x => x.CreateDepartment(It.IsAny<DbDepartment>()), 
+                x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Never);
         }
 
@@ -135,11 +135,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.Throws<ValidationException>(() => _command.Execute(_request));
 
             _autoMock.Verify<ICompanyRepository, DbCompany>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), 
+                x => x.Get(It.IsAny<GetCompanyFilter>()),
                 Times.Never);
 
             _autoMock.Verify<IDepartmentRepository, Guid>(
-                x => x.CreateDepartment(It.IsAny<DbDepartment>()), 
+                x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Never);
         }
 
@@ -158,11 +158,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
             Assert.AreEqual(expected.Errors, _command.Execute(_request).Errors);
             _autoMock.Verify<ICompanyRepository, DbCompany>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), 
+                x => x.Get(It.IsAny<GetCompanyFilter>()),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentRepository, Guid>(
-                x => x.CreateDepartment(It.IsAny<DbDepartment>()), 
+                x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Never);
         }
 
@@ -182,11 +182,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.AreEqual(expected.Errors, _command.Execute(_request).Errors);
 
             _autoMock.Verify<ICompanyRepository, DbCompany>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), 
+                x => x.Get(It.IsAny<GetCompanyFilter>()),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentRepository, Guid>(
-                x => x.CreateDepartment(It.IsAny<DbDepartment>()), 
+                x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Never);
         }
 
@@ -198,11 +198,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.DoesNotThrow(() => _command.Execute(_request));
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(_userId1), 
+                x => x.Remove(_userId1),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(_userId2), 
+                x => x.Remove(_userId2),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentUserRepository>(
@@ -218,7 +218,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.DoesNotThrow(() => _command.Execute(_request));
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(_directorId), 
+                x => x.Remove(_directorId),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentUserRepository>(
@@ -238,11 +238,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.AreEqual(expected.Body, _command.Execute(_request).Body);
 
             _autoMock.Verify<ICompanyRepository, DbCompany>(
-                x => x.Get(It.IsAny<GetCompanyFilter>()), 
+                x => x.Get(It.IsAny<GetCompanyFilter>()),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentRepository, Guid>(
-                x => x.CreateDepartment(It.IsAny<DbDepartment>()), 
+                x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Once);
         }
     }
