@@ -191,7 +191,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         }
 
         [Test]
-        public void RemoveUserTest()
+        public void ShouldRemoveUserWhenUserAlreadyExists()
         {
             _request = GenerateRequest(null, _userId1, _userId2);
 
@@ -211,7 +211,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         }
 
         [Test]
-        public void RemoveWDirectorUserTest()
+        public void ShouldRemoveDerictorrWhenDirectorAlreadyExists()
         {
             _request = GenerateRequest(_directorId);
 
@@ -222,8 +222,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 Times.Once);
 
             _autoMock.Verify<IDepartmentUserRepository>(
-            x => x.Remove(It.IsAny<Guid>()),
-            Times.Exactly(1));
+                x => x.Remove(It.IsAny<Guid>()),
+                Times.Exactly(1));
         }
 
         [Test]

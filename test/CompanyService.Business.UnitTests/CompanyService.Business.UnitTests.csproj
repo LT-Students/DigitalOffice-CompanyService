@@ -3,10 +3,6 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture.AutoMoq" Version="4.17.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\CompanyService.Business\CompanyService.Business.csproj" />
     <ProjectReference Include="..\..\src\CompanyService.Data\CompanyService.Data.csproj" />
     <ProjectReference Include="..\..\src\CompanyService.Mappers\CompanyService.Mappers.csproj" />
