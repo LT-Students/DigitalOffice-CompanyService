@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public DepartmentRepository(
             IDataProvider provider,
-             IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor)
         {
             _provider = provider;
             _httpContextAccessor = httpContextAccessor;

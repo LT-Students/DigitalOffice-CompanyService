@@ -37,9 +37,7 @@ namespace CompanyService.Mappers.Db
                 IsActive = true,
                 CreatedBy = authorId,
                 CreatedAtUtc = DateTime.UtcNow,
-                Users = value.Users?.Select(du =>
-                    GetDbDepartmentUser(departmentId, du, authorId, DepartmentUserRole.Employee)).ToList()
-                    ?? new()
+                Users = value.Users?.Select(du => GetDbDepartmentUser(departmentId, du, authorId, DepartmentUserRole.Employee)).ToList() ?? new()
             };
 
             if (value.DirectorUserId.HasValue)
