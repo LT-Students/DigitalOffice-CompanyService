@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Helper
         {
             DbCompany company = new DbCompany
             {
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 PortalName = "DigitalOffice",
                 CompanyName = "MyCompany",
                 Description = "aw",

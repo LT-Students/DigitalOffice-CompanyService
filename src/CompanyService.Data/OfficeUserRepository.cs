@@ -36,13 +36,15 @@ namespace LT.DigitalOffice.CompanyService.Data
             return _provider.OfficeUsers.Where(x => userIds.Contains(x.UserId)).Include(x => x.Office).ToList();
         }
 
-        public void Remove(Guid userId)
+        public void Remove(Guid userId, Guid removedBy)
         {
             DbOfficeUser user = _provider.OfficeUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
 
             if (user != null)
             {
                 user.IsActive = false;
+                user.ModifiedAtUtc = DateTime.UtcNow;
+                user.ModifiedBy = removedBy;
                 _provider.Save();
             }
         }

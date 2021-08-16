@@ -2,6 +2,8 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,10 +16,14 @@ namespace LT.DigitalOffice.CompanyService.Data
     public class PositionRepository : IPositionRepository
     {
         private readonly IDataProvider _provider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PositionRepository(IDataProvider provider)
+        public PositionRepository(
+            IDataProvider provider,
+            IHttpContextAccessor httpContextAccessor)
         {
             _provider = provider;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public DbPosition Get(Guid? positionId, Guid? userId)
@@ -86,6 +92,8 @@ namespace LT.DigitalOffice.CompanyService.Data
                 ?? throw new NotFoundException($"Position with this id: '{positionId}' was not found.");
 
             request.ApplyTo(dbPosition);
+            dbPosition.ModifiedAtUtc = DateTime.UtcNow;
+            dbPosition.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
             _provider.Save();
 
             return true;

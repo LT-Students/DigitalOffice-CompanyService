@@ -44,15 +44,17 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             var userId = Guid.NewGuid();
             var departmentId = Guid.NewGuid();
+            var changedBy = Guid.NewGuid();
 
             DbDepartmentUser user = new DbDepartmentUser
             {
                 UserId = userId,
-                DepartmentId = departmentId
+                DepartmentId = departmentId,
+                ModifiedBy = changedBy
             };
 
             _mapper
-                .Setup(x => x.Map(departmentId, userId))
+                .Setup(x => x.Map(It.IsAny<IChangeUserDepartmentRequest>()))
                 .Returns(user);
 
             _departmentRepository
@@ -68,7 +70,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IChangeUserDepartmentRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<bool>>(
-                    IChangeUserDepartmentRequest.CreateObj(userId, departmentId));
+                    IChangeUserDepartmentRequest.CreateObj(userId, departmentId, changedBy));
 
                 var expectedResponse = new
                 {
@@ -92,15 +94,17 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             var userId = Guid.NewGuid();
             var departmentId = Guid.NewGuid();
+            var changedBy = Guid.NewGuid();
 
             DbDepartmentUser user = new DbDepartmentUser
             {
                 UserId = userId,
-                DepartmentId = departmentId
+                DepartmentId = departmentId,
+                ModifiedBy = changedBy
             };
 
             _mapper
-                .Setup(x => x.Map(departmentId, userId))
+                .Setup(x => x.Map(It.IsAny<IChangeUserDepartmentRequest>()))
                 .Returns(user);
 
             _departmentRepository
@@ -116,7 +120,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IChangeUserDepartmentRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<bool>>(
-                    IChangeUserDepartmentRequest.CreateObj(userId, departmentId));
+                    IChangeUserDepartmentRequest.CreateObj(userId, departmentId, changedBy));
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsFalse(response.Message.Body);
@@ -135,6 +139,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             var userId = Guid.NewGuid();
             var departmentId = Guid.NewGuid();
+            var changedBy = Guid.NewGuid();
 
             _departmentRepository
                 .Setup(x => x.Contains(departmentId))
@@ -145,7 +150,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IChangeUserDepartmentRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<bool>>(
-                    IChangeUserDepartmentRequest.CreateObj(userId, departmentId));
+                    IChangeUserDepartmentRequest.CreateObj(userId, departmentId, changedBy));
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsFalse(response.Message.Body);

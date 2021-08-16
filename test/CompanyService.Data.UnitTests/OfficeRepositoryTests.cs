@@ -61,7 +61,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             DbOffice office = new()
             {
                 Id = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 Address = "Address",
                 City = "City",

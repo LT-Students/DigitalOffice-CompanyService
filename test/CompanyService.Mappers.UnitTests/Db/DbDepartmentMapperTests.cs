@@ -4,7 +4,10 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.AspNetCore.Http;
+using Moq.AutoMock;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,18 +17,29 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
 {
     internal class DbDepartmentMapperTests
     {
+        private AutoMocker _mocker;
         private IDbDepartmentMapper _mapper;
 
         private CreateDepartmentRequest _request;
         private DbDepartment _expectedDbDepartment;
         private Guid _companyId;
+        private Guid _userId;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _companyId = Guid.NewGuid();
+            _userId = Guid.NewGuid();
 
-            _mapper = new DbDepartmentMapper();
+            _mocker = new();
+            _mapper = _mocker.CreateInstance<DbDepartmentMapper>();
+
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
+            _mocker
+                .Setup<IHttpContextAccessor, IDictionary<object, object>>(x => x.HttpContext.Items)
+                .Returns(_items);
 
             var newUsers = new List<Guid>
             {
@@ -46,6 +60,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 Name = _request.Name,
                 CompanyId = _companyId,
                 Description = _request.Description,
+                CreatedBy = _userId,
                 IsActive = true
             };
 
@@ -56,7 +71,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                     {
                         UserId = userId,
                         Role = (int)DepartmentUserRole.Employee,
-                        IsActive = true
+                        IsActive = true,
+                        CreatedBy = _userId
                     });
             }
 
@@ -65,6 +81,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                     {
                         UserId = _request.DirectorUserId.Value,
                         Role = (int)DepartmentUserRole.Director,
+                        CreatedBy = _userId,
                         IsActive = true
                     });
         }
@@ -92,12 +109,14 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 CompanyId = _companyId,
                 Description = _request.Description,
                 IsActive = true,
-                Users = null
+                CreatedBy = _userId,
+                Users = new List<DbDepartmentUser>()
             };
 
             var dbDepartment = _mapper.Map(request, _companyId);
 
             expectedDbDepartment.Id = dbDepartment.Id;
+            expectedDbDepartment.CreatedAtUtc = dbDepartment.CreatedAtUtc;
 
             SerializerAssert.AreEqual(expectedDbDepartment, dbDepartment);
         }
@@ -108,11 +127,12 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             var dbDepartment = _mapper.Map(_request, _companyId);
 
             _expectedDbDepartment.Id = dbDepartment.Id;
+            _expectedDbDepartment.CreatedAtUtc = dbDepartment.CreatedAtUtc;
 
             for (int i = 0; i < dbDepartment.Users.Count; i++)
             {
-                _expectedDbDepartment.Users.ElementAt(i).StartTime =
-                    dbDepartment.Users.ElementAt(i).StartTime;
+                _expectedDbDepartment.Users.ElementAt(i).CreatedAtUtc =
+                    dbDepartment.Users.ElementAt(i).CreatedAtUtc;
 
                 _expectedDbDepartment.Users.ElementAt(i).Id =
                     dbDepartment.Users.ElementAt(i).Id;

@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
                     DepartmentId = _departmentId,
-                    StartTime = DateTime.UtcNow,
+                    CreatedAtUtc = DateTime.UtcNow,
                     IsActive = true
                 },
                 new DbDepartmentUser
@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
                     DepartmentId = _departmentId,
-                    StartTime = DateTime.UtcNow,
+                    CreatedAtUtc = DateTime.UtcNow,
                     IsActive = true
                 }
             };
@@ -55,7 +55,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 UserId = Guid.NewGuid(),
                 DepartmentId = Guid.NewGuid(),
-                StartTime = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true
             };
         }
@@ -114,7 +114,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldRemoveUserSuccessful()
         {
-            _repository.Remove(_expectedDbDepartmentUser.UserId);
+            _repository.Remove(_expectedDbDepartmentUser.UserId, Guid.NewGuid());
             Assert.IsTrue(_provider.DepartmentUsers.Contains(_expectedDbDepartmentUser));
             Assert.IsFalse(_expectedDbDepartmentUser.IsActive);
         }
