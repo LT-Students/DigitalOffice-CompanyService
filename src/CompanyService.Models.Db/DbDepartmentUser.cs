@@ -13,8 +13,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public Guid DepartmentId { get; set; }
         public int Role { get; set; }
         public bool IsActive { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
+        public Guid CreatedBy { get; set; }
+        public DateTime CreatedAtUtc { get; set; }
+        public Guid? ModifiedBy { get; set; }
+        public DateTime? ModifiedAtUtc { get; set; }
 
         public DbDepartment Department { get; set; }
     }

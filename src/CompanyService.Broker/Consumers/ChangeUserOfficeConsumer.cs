@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 throw new BadRequestException($"No office with Id {request.OfficeId}.");
             }
 
-            _officeUserRepository.Remove(request.UserId);
+            _officeUserRepository.Remove(request.UserId, request.ChangedBy);
             _officeUserRepository.Add(_mapper.Map(request));
 
             return true;

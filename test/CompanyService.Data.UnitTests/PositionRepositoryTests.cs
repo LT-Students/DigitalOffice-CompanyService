@@ -3,9 +3,12 @@ using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data.UnitTests
@@ -14,7 +17,9 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
     {
         private IDataProvider _provider;
         private IPositionRepository _repository;
+        private Mock<IHttpContextAccessor> _accessorMock;
 
+        private Guid _userId;
         private DbPosition _dbPosition;
         private Guid _positionId;
         private DbPosition _newPosition;
@@ -27,9 +32,19 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 .UseInMemoryDatabase("InMemoryDatabase")
                 .Options;
 
+            _userId = Guid.NewGuid();
+
+            _accessorMock = new();
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
+
             _provider = new CompanyServiceDbContext(dbOptions);
 
-            _repository = new PositionRepository(_provider);
+            _repository = new PositionRepository(_provider, _accessorMock.Object);
         }
 
         [SetUp]
@@ -49,7 +64,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 PositionId = _positionId,
                 UserId = Guid.NewGuid(),
                 IsActive = true,
-                StartTime = DateTime.Now.AddDays(-1)
+                CreatedAtUtc = DateTime.Now.AddDays(-1)
             });
 
             _provider.Positions.Add(_dbPosition);
