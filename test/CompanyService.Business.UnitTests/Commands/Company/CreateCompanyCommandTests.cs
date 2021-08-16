@@ -120,11 +120,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Never());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Never());
         }
 
         [Test]
@@ -154,11 +154,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Never());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Never());
         }
 
         [Test]
@@ -202,11 +202,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Never());
         }
 
         [Test]
@@ -254,11 +254,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Never());
         }
 
         [Test]
@@ -322,11 +322,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Never());
+                    It.IsAny<object>(), default, default), Times.Once());
         }
 
         [Test]
@@ -393,11 +393,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
         }
 
         [Test]
@@ -465,11 +465,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
         }
 
         [Test]
@@ -540,11 +540,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
 
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
-                    It.IsAny<object>(), default, default).Result.Message, Times.Once());
+                    It.IsAny<object>(), default, default), Times.Once());
         }
     }
 }
