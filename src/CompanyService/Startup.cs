@@ -154,6 +154,7 @@ namespace LT.DigitalOffice.CompanyService
                 x.AddConsumer<GetUsersDepartmentsUsersPositionsConsumer>();
                 x.AddConsumer<GetUserOfficesConsumer>();
                 x.AddConsumer<DisactivateUserConsumer>();
+                //x.AddConsumer<CheckDepartmentsExistenceConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -240,6 +241,11 @@ namespace LT.DigitalOffice.CompanyService
             {
                 ep.ConfigureConsumer<DisactivateUserConsumer>(context);
             });
+
+            /*cfg.ReceiveEndpoint(_rabbitMqConfig.CheckDepartmentsExistence, ep =>
+            {
+                ep.ConfigureConsumer<CheckDepartmentsExistenceConsumer>(context);
+            });*/
         }
 
         private void UpdateDatabase(IApplicationBuilder app)
