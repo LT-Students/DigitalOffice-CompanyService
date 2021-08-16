@@ -12,6 +12,7 @@ using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -28,21 +29,31 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         private Mock<IAccessValidator> _accessValidatorMock;
         private Mock<ICreateDepartmentRequestValidator> _validatorMock;
         private Mock<IDbDepartmentMapper> _mapperMock;
+        private Mock<IHttpContextAccessor> _accessorMock;
 
         private CreateDepartmentRequest _request;
         private DbDepartment _dbDepartment;
 
         private Guid _companyId;
+        private Guid _userId = Guid.NewGuid();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _repositoryMock = new Mock<IDepartmentRepository>();
-            _userRepositoryMock = new Mock<IDepartmentUserRepository>();
-            _accessValidatorMock = new Mock<IAccessValidator>();
-            _validatorMock = new Mock<ICreateDepartmentRequestValidator>();
-            _mapperMock = new Mock<IDbDepartmentMapper>();
+            _repositoryMock = new();
+            _userRepositoryMock = new();
+            _accessValidatorMock = new();
+            _validatorMock = new();
+            _mapperMock = new();
             _companyRepositoryMock = new();
+            _accessorMock = new();
+
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
 
             _command = new CreateDepartmentCommand(
                 _repositoryMock.Object,
@@ -50,7 +61,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 _userRepositoryMock.Object,
                 _validatorMock.Object,
                 _mapperMock.Object,
-                _accessValidatorMock.Object);
+                _accessValidatorMock.Object,
+                _accessorMock.Object);
 
             _companyId = Guid.NewGuid();
 

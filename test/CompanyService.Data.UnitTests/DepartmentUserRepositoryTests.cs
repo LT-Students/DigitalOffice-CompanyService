@@ -114,7 +114,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldRemoveUserSuccessful()
         {
-            _repository.Remove(_expectedDbDepartmentUser.UserId);
+            _repository.Remove(_expectedDbDepartmentUser.UserId, Guid.NewGuid());
             Assert.IsTrue(_provider.DepartmentUsers.Contains(_expectedDbDepartmentUser));
             Assert.IsFalse(_expectedDbDepartmentUser.IsActive);
         }

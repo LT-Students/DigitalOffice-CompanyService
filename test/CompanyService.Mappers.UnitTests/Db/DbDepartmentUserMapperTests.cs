@@ -19,25 +19,5 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
         {
             _mapper = new();
         }
-
-        [Test]
-        public void ShouldMapSuccessful()
-        {
-            var departmentId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-
-            var response = _mapper.Map(departmentId, userId);
-
-            var expectedResponse = new DbDepartmentUser
-            {
-                Id = response.Id,
-                DepartmentId = departmentId,
-                UserId = userId,
-                IsActive = true,
-                CreatedAtUtc = response.CreatedAtUtc
-            };
-
-            SerializerAssert.AreEqual(expectedResponse, response);
-        }
     }
 }

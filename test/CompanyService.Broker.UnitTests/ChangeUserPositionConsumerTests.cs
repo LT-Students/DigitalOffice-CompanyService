@@ -54,7 +54,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             };
 
             _mapper
-                .Setup(x => x.Map(positionId, userId))
+                .Setup(x => x.Map(It.IsAny<IChangeUserPositionRequest>()))
                 .Returns(user);
 
             _positionRepository
@@ -104,7 +104,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             };
 
             _mapper
-                .Setup(x => x.Map(positionId, userId))
+                .Setup(x => x.Map(It.IsAny<IChangeUserPositionRequest>()))
                 .Returns(user);
 
             _positionRepository
@@ -148,7 +148,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             };
 
             _mapper
-                .Setup(x => x.Map(positionId, userId))
+                .Setup(x => x.Map(It.IsAny<IChangeUserPositionRequest>()))
                 .Returns(user);
 
             _positionRepository

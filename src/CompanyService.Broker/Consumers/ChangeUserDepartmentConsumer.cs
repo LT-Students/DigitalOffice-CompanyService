@@ -21,8 +21,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 throw new BadRequestException($"No department with Id {request.DepartmentId}.");
             }
 
-            _departmentUserRepository.Remove(request.UserId);
-            bool isSuccess = _departmentUserRepository.Add(_mapper.Map(request.DepartmentId, request.UserId));
+            _departmentUserRepository.Remove(request.UserId, request.ChangedBy);
+            bool isSuccess = _departmentUserRepository.Add(_mapper.Map(request));
 
             return isSuccess;
         }

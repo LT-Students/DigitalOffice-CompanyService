@@ -54,7 +54,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             };
 
             _mapper
-                .Setup(x => x.Map(departmentId, userId))
+                .Setup(x => x.Map(It.IsAny<IChangeUserDepartmentRequest>()))
                 .Returns(user);
 
             _departmentRepository
@@ -104,7 +104,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             };
 
             _mapper
-                .Setup(x => x.Map(departmentId, userId))
+                .Setup(x => x.Map(It.IsAny<IChangeUserDepartmentRequest>()))
                 .Returns(user);
 
             _departmentRepository
