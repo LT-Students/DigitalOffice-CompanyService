@@ -127,7 +127,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         }
 
         [Test]
-        public void ShouldThrowBadRequestExceptionWhenRepositoryIsNotNull()
+        public void ShouldThrowBadRequestExceptionWhenCompanyAlreadyExists()
         {
             _autoMock
                 .Setup<ICompanyRepository, DbCompany>(x => x.Get(null))
