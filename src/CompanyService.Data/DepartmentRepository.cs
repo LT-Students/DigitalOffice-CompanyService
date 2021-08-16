@@ -70,10 +70,11 @@ namespace LT.DigitalOffice.CompanyService.Data
             return dbDepartment;
         }
 
-        public List<Guid> AreDepartmentsExist(Guid departmentId)
+        public List<Guid> AreDepartmentsExist(List<Guid> departmentId)
         {
             return _provider.Departments
-                .Where(d => d.Id == departmentId && d.IsActive).Select(d => d.Id).ToList();
+                .Where(d => departmentId.Contains(d.Id) && d.IsActive)
+                .Select(d => d.Id).ToList();
         }
 
         public DbDepartment GetDepartment(GetDepartmentFilter filter)
