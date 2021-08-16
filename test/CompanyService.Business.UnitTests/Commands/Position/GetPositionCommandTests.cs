@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 UserId = _userId,
                 PositionId = _positionId,
                 IsActive = true,
-                StartTime = new DateTime()
+                CreatedAtUtc = new DateTime()
             };
             _position = new DbPosition
             {

@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,9 @@ namespace LT.DigitalOffice.CompanyService.Data
 {
     public class OfficeRepository : IOfficeRepository
     {
-        private IDataProvider _provider;
+        private readonly IDataProvider _provider;
 
-        public OfficeRepository(
-            IDataProvider provider)
+        public OfficeRepository(IDataProvider provider)
         {
             _provider = provider;
         }
