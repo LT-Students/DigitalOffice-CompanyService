@@ -66,7 +66,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             _company = new()
             {
                 Id = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow,
                 IsActive = true,
                 IsDepartmentModuleEnabled = _request.IsDepartmentModuleEnabled,
                 PortalName = _request.PortalName,
