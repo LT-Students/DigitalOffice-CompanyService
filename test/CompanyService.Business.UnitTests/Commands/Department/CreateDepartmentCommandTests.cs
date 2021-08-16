@@ -28,9 +28,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         private CreateDepartmentRequest _request;
         private DbDepartment _dbDepartment;
 
-        private readonly Guid _directorId = new Guid("528E413B-7A3D-4CA9-851A-B9DA5840B216");
-        private readonly Guid _userId1 = new Guid("10C2C56D-28E7-4134-B77A-63CEA1AD0307");
-        private readonly Guid _userId2 = new Guid("8C63446D-6D06-4A18-9E7E-E032AB869E1E");
+        private readonly Guid _directorId = Guid.NewGuid();
+        private readonly Guid _userId1 = Guid.NewGuid();
+        private readonly Guid _userId2 = Guid.NewGuid();
 
         private Guid _companyId;
 
@@ -50,9 +50,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _autoMock = new AutoMocker();
-            _command = _autoMock.CreateInstance<CreateDepartmentCommand>();
-
             _companyId = Guid.NewGuid();
 
             _request = GenerateRequest(_directorId, _userId1, _userId2);
@@ -71,12 +68,8 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         [SetUp]
         public void SetUp()
         {
-            _autoMock.GetMock<IDepartmentRepository>().Reset();
-            _autoMock.GetMock<ICompanyRepository>().Reset();
-            _autoMock.GetMock<IDepartmentUserRepository>().Reset();
-            _autoMock.GetMock<ICreateDepartmentRequestValidator>().Reset();
-            _autoMock.GetMock<IDbDepartmentMapper>().Reset();
-            _autoMock.GetMock<IAccessValidator>().Reset();
+            _autoMock = new AutoMocker();
+            _command = _autoMock.CreateInstance<CreateDepartmentCommand>();
 
             _autoMock
                 .Setup<IAccessValidator, bool>(x => x.IsAdmin(null))
