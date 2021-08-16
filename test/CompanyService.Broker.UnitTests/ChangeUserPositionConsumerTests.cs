@@ -44,11 +44,13 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             var userId = Guid.NewGuid();
             var positionId = Guid.NewGuid();
+            var changedBy = Guid.NewGuid();
 
             DbPositionUser user = new DbPositionUser
             {
                 UserId = userId,
-                PositionId = positionId
+                PositionId = positionId,
+                ModifiedBy = changedBy
             };
 
             _mapper
@@ -68,7 +70,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IChangeUserPositionRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<bool>>(
-                    IChangeUserPositionRequest.CreateObj(userId, positionId));
+                    IChangeUserPositionRequest.CreateObj(userId, positionId, changedBy));
 
                 var expectedResponse = new
                 {
@@ -92,11 +94,13 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             var userId = Guid.NewGuid();
             var positionId = Guid.NewGuid();
+            var changedBy = Guid.NewGuid();
 
             DbPositionUser user = new DbPositionUser
             {
                 UserId = userId,
-                PositionId = positionId
+                PositionId = positionId,
+                ModifiedBy = changedBy
             };
 
             _mapper
@@ -116,7 +120,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IChangeUserPositionRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<bool>>(
-                    IChangeUserPositionRequest.CreateObj(userId, positionId));
+                    IChangeUserPositionRequest.CreateObj(userId, positionId, changedBy));
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsFalse(response.Message.Body);
@@ -134,11 +138,13 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             var userId = Guid.NewGuid();
             var positionId = Guid.NewGuid();
+            var changedBy = Guid.NewGuid();
 
             DbPositionUser user = new DbPositionUser
             {
                 UserId = userId,
-                PositionId = positionId
+                PositionId = positionId,
+                ModifiedBy = changedBy
             };
 
             _mapper
@@ -158,7 +164,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 _requestClient = await _harness.ConnectRequestClient<IChangeUserPositionRequest>();
 
                 var response = await _requestClient.GetResponse<IOperationResult<bool>>(
-                    IChangeUserPositionRequest.CreateObj(userId, positionId));
+                    IChangeUserPositionRequest.CreateObj(userId, positionId, changedBy));
 
                 Assert.IsFalse(response.Message.IsSuccess);
                 Assert.IsFalse(response.Message.Body);
