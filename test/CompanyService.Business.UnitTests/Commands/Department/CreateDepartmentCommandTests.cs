@@ -4,6 +4,7 @@ using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department;
 using LT.DigitalOffice.CompanyService.Validation.Department.Interfaces;
@@ -12,6 +13,7 @@ using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Moq.AutoMock;
 using NUnit.Framework;
@@ -31,6 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         private readonly Guid _directorId = Guid.NewGuid();
         private readonly Guid _userId1 = Guid.NewGuid();
         private readonly Guid _userId2 = Guid.NewGuid();
+        private readonly Guid _userId = Guid.NewGuid();
 
         private Guid _companyId;
 
@@ -69,7 +72,15 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         public void SetUp()
         {
             _autoMock = new AutoMocker();
+
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
             _command = _autoMock.CreateInstance<CreateDepartmentCommand>();
+
+            _autoMock
+                .Setup<IHttpContextAccessor, object>(x => x.HttpContext.Items)
+                .Returns(_items);
 
             _autoMock
                 .Setup<IAccessValidator, bool>(x => x.IsAdmin(null))
@@ -191,15 +202,15 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.DoesNotThrow(() => _command.Execute(_request));
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(_userId1),
+                x => x.Remove(_userId1, _userId),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(_userId2),
+                x => x.Remove(_userId2, _userId),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(It.IsAny<Guid>()),
+                x => x.Remove(It.IsAny<Guid>(), _userId),
                 Times.Exactly(2));
         }
 
@@ -211,11 +222,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.DoesNotThrow(() => _command.Execute(_request));
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(_directorId),
+                x => x.Remove(_directorId, _userId),
                 Times.Once);
 
             _autoMock.Verify<IDepartmentUserRepository>(
-                x => x.Remove(It.IsAny<Guid>()),
+                x => x.Remove(It.IsAny<Guid>(), _userId),
                 Times.Exactly(1));
         }
 
