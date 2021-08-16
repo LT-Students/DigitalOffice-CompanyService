@@ -21,8 +21,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 throw new BadRequestException($"No position with Id {request.PositionId}.");
             }
 
-            _positionUserRepository.Remove(request.UserId);
-            _positionUserRepository.Add(_mapper.Map(request.PositionId, request.UserId));
+            _positionUserRepository.Remove(request.UserId, request.ChangedBy);
+            _positionUserRepository.Add(_mapper.Map(request));
 
             return true;
         }

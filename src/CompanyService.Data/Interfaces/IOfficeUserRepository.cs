@@ -12,6 +12,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         List<DbOfficeUser> Get(List<Guid> userIds);
 
-        void Remove(Guid userId);
+        void Remove(Guid userId, Guid removedBy);
     }
 }

@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             return IGetDepartmentUserResponse.CreateObj(
                 departmentUser.DepartmentId,
                 departmentUser.Department.Name,
-                departmentUser.StartTime);
+                departmentUser.CreatedAtUtc);
         }
 
         public GetUserDepartmentConsumer(

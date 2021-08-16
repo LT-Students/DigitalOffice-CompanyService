@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
             return IPositionResponse.CreateObj(
                 positionUser.PositionId,
                 positionUser.Position.Name,
-                positionUser.StartTime);
+                positionUser.CreatedAtUtc);
         }
 
         public GetPositionConsumer(IPositionUserRepository repository)

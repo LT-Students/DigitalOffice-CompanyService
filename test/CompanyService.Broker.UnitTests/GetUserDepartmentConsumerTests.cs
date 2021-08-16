@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     Id = departmentId,
                     Name = "Name"
                 },
-                StartTime = DateTime.UtcNow
+                CreatedAtUtc = DateTime.UtcNow
             };
 
             _repository
@@ -72,7 +72,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                     {
                         DepartmentId = user.Department.Id,
                         Name = user.Department.Name,
-                        StartWorkingAt = user.StartTime
+                        StartWorkingAt = user.CreatedAtUtc
                     }
                 };
 

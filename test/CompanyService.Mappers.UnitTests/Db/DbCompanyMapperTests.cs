@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 Description = null,
                 LogoId = null,
                 Tagline = null,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 SiteUrl = request.SiteUrl
             };
 
@@ -56,7 +56,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             Assert.AreEqual(expected.Tagline, response.Tagline);
             Assert.AreEqual(expected.SiteUrl, response.SiteUrl);
             Assert.IsTrue(response.IsActive);
-            Assert.LessOrEqual(expected.CreatedAt, response.CreatedAt);
+            Assert.LessOrEqual(expected.CreatedAtUtc, response.CreatedAtUtc);
         }
     }
 }

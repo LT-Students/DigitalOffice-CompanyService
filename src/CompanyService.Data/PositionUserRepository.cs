@@ -61,13 +61,15 @@ namespace LT.DigitalOffice.CompanyService.Data
                 .ToList();
         }
 
-        public void Remove(Guid userId)
+        public void Remove(Guid userId, Guid removedBy)
         {
             DbPositionUser user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
 
             if (user != null)
             {
                 user.IsActive = false;
+                user.ModifiedAtUtc = DateTime.UtcNow;
+                user.ModifiedBy = removedBy;
                 _provider.Save();
             }
         }
