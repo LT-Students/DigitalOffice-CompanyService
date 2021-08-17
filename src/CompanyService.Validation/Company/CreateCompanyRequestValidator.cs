@@ -9,22 +9,28 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
         public CreateCompanyRequestValidator()
         {
             RuleFor(request => request.PortalName)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("PortalName can't be empty");
 
             RuleFor(request => request.CompanyName)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("CompanyName can't be empty");
 
             RuleFor(request => request.SiteUrl)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("SiteUrl can't be empty");
 
             RuleFor(request => request.AdminInfo)
-                .NotNull();
+                .NotNull()
+                .WithMessage("AdminInfo can't be null");
 
             RuleFor(request => request.SmtpInfo)
-                .NotNull();
+                .NotNull()
+                .WithMessage("SmtpInfo can't be null");
 
             RuleFor(request => request.WorkDaysApiUrl)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("WorkDaysApiUrl can't be empty");
         }
     }
 }
