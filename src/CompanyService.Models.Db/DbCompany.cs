@@ -28,6 +28,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         public DateTime? ModifiedAtUtc { get; set; }
         public bool IsDepartmentModuleEnabled { get; set; }
         public bool IsActive { get; set; }
+        public string WorkDaysApiUrl { get; set; }
 
         [JsonIgnore]
         public ICollection<DbDepartment> Departments { get; set; }
@@ -76,6 +77,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
 
             builder
                 .Property(c => c.SiteUrl)
+                .IsRequired();
+
+            builder
+                .Property(c => c.WorkDaysApiUrl)
                 .IsRequired();
 
             builder
