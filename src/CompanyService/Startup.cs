@@ -242,7 +242,7 @@ namespace LT.DigitalOffice.CompanyService
                 ep.ConfigureConsumer<DisactivateUserConsumer>(context);
             });
 
-            cfg.ReceiveEndpoint(_rabbitMqConfig.CheckDepartmentsExistence, ep =>
+            cfg.ReceiveEndpoint(_rabbitMqConfig.CheckDepartmentsExistenceEndpoint, ep =>
             {
                 ep.ConfigureConsumer<CheckDepartmentsExistenceConsumer>(context);
             });
