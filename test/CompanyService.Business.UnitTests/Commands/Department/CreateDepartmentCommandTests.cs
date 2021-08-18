@@ -79,7 +79,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _command = _autoMock.CreateInstance<CreateDepartmentCommand>();
 
             _autoMock
-                .Setup<IHttpContextAccessor, object>(x => x.HttpContext.Items)
+                .Setup<IHttpContextAccessor, IDictionary<object, object>>(x => x.HttpContext.Items)
                 .Returns(_items);
 
             _autoMock
