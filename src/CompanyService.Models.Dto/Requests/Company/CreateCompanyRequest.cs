@@ -10,5 +10,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
         public string SiteUrl { get; set; }
         public AdminInfo AdminInfo { get; set; }
         public bool IsDepartmentModuleEnabled { get; set; }
+        public string WorkDaysApiUrl { get; set; }
     }
 }
