@@ -4,7 +4,9 @@ using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,9 @@ namespace CompanyService.Data.UnitTests
     {
         private IDataProvider _provider;
         private IDepartmentRepository _repository;
+        private Mock<IHttpContextAccessor> _accessorMock;
 
+        private Guid _userId;
         private DbDepartment _departmentToAdd;
         private DbDepartment _expectedDbDepartment;
         private DbContextOptions<CompanyServiceDbContext> _dbOptions;
@@ -25,6 +29,16 @@ namespace CompanyService.Data.UnitTests
         public void OneTimeSetUp()
         {
             CreateInMemoryDb();
+
+            _userId = Guid.NewGuid();
+
+            _accessorMock = new();
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
 
             _departmentToAdd = new DbDepartment
             {
@@ -38,7 +52,7 @@ namespace CompanyService.Data.UnitTests
                     {
                         UserId  = Guid.NewGuid(),
                         IsActive = true,
-                        StartTime = DateTime.UtcNow
+                        CreatedAtUtc = DateTime.UtcNow
                     }
                 }
             };
@@ -55,7 +69,7 @@ namespace CompanyService.Data.UnitTests
                     {
                         UserId  = Guid.NewGuid(),
                         IsActive = true,
-                        StartTime = DateTime.UtcNow
+                        CreatedAtUtc = DateTime.UtcNow
                     }
                 }
             };
@@ -72,7 +86,7 @@ namespace CompanyService.Data.UnitTests
         public void SetUp()
         {
             _provider = new CompanyServiceDbContext(_dbOptions);
-            _repository = new DepartmentRepository(_provider);
+            _repository = new DepartmentRepository(_provider, _accessorMock.Object);
 
             _provider.Departments.Add(_expectedDbDepartment);
             _provider.Save();

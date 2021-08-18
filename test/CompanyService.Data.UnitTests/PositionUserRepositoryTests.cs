@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 UserId = Guid.NewGuid(),
                 PositionId = Guid.NewGuid(),
-                StartTime = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true
             };
 
@@ -39,7 +39,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 UserId = Guid.NewGuid(),
                 PositionId = Guid.NewGuid(),
-                StartTime = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true
             };
         }

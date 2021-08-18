@@ -52,7 +52,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             {
                 Id = Guid.NewGuid(),
                 Address = "Address",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 City = "City",
                 CompanyId = Guid.NewGuid(),
@@ -63,7 +63,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             {
                 Id = Guid.NewGuid(),
                 Address = "Address1",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 City = "City1",
                 CompanyId = Guid.NewGuid(),

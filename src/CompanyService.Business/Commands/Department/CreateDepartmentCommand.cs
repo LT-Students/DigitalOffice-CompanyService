@@ -8,8 +8,10 @@ using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.Http;
 using System;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
@@ -22,6 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         private readonly ICompanyRepository _companyRepository;
         private readonly IDbDepartmentMapper _mapper;
         private readonly IAccessValidator _accessValidator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CreateDepartmentCommand(
             IDepartmentRepository repository,
@@ -29,7 +32,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             IDepartmentUserRepository userRepository,
             ICreateDepartmentRequestValidator validator,
             IDbDepartmentMapper mapper,
-            IAccessValidator accessValidator)
+            IAccessValidator accessValidator,
+            IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _companyRepository = companyRepository;
@@ -37,6 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             _validator = validator;
             _mapper = mapper;
             _accessValidator = accessValidator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<Guid> Execute(CreateDepartmentRequest request)
@@ -72,13 +77,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             {
                 foreach (Guid userId in request.Users)
                 {
-                    _userRepository.Remove(userId);
+                    _userRepository.Remove(userId, _httpContextAccessor.HttpContext.GetUserId());
                 }
             }
 
             if (request.DirectorUserId.HasValue)
             {
-                _userRepository.Remove(request.DirectorUserId.Value);
+                _userRepository.Remove(request.DirectorUserId.Value, _httpContextAccessor.HttpContext.GetUserId());
             }
 
             #endregion
