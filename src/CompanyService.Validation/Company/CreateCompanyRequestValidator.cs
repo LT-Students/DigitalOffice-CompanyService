@@ -10,27 +10,27 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
         {
             RuleFor(request => request.PortalName)
                 .NotEmpty()
-                .WithMessage("PortalName can't be empty");
+                .WithMessage("Portal name can't be empty");
 
             RuleFor(request => request.CompanyName)
                 .NotEmpty()
-                .WithMessage("CompanyName can't be empty");
+                .WithMessage("Company name can't be empty");
 
             RuleFor(request => request.SiteUrl)
                 .NotEmpty()
-                .WithMessage("SiteUrl can't be empty");
+                .WithMessage("Site url can't be empty");
 
             RuleFor(request => request.AdminInfo)
                 .NotNull()
-                .WithMessage("AdminInfo can't be null");
+                .WithMessage("Admin information can't be null");
 
             RuleFor(request => request.SmtpInfo)
                 .NotNull()
-                .WithMessage("SmtpInfo can't be null");
+                .WithMessage("Smtp information can't be null");
 
             RuleFor(request => request.WorkDaysApiUrl)
                 .NotEmpty()
-                .WithMessage("WorkDaysApiUrl can't be empty");
+                .WithMessage("Work days api url can't be empty");
         }
     }
 }

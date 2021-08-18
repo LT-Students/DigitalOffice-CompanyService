@@ -6,7 +6,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 {
     [DbContext(typeof(CompanyServiceDbContext))]
     [Migration("20210817223800_AddWorkDaysApiUrlColumn")]
-    public class _20210817223800_AddWorkDaysApiUrlColumn : Migration
+    public class AddWorkDaysApiUrlColumn : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
