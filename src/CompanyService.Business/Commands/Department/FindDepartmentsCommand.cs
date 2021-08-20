@@ -142,7 +142,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 {
                     var directorUserData = usersData.FirstOrDefault(x => x.Id == departmentsDirectors[department.Id]);
 
-                    DbPositionUser positionUser = _userPositionRepository.Get(directorUserData.Id, includePosition: true);
+                    DbPositionUser positionUser = _userPositionRepository.Get(directorUserData.Id);
 
                     director = directorUserData == null ? null : _userMapper.Map(directorUserData, positionUser, images.FirstOrDefault(i => i.ImageId == directorUserData.ImageId));
                 }
