@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.Department;
 using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -127,6 +128,18 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _autoMock.Verify<IDepartmentRepository, Guid>(
                 x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Never);
+
+            _autoMock.Verify<ICreateDepartmentRequestValidator, ValidationResult>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Never);
+
+            _autoMock.Verify<IDepartmentRepository, bool>(
+                x => x.DoesNameExist(It.IsAny<string>()),
+                Times.Never);
+
+            _autoMock.Verify<IDbDepartmentMapper, DbDepartment>(
+                x => x.Map(It.IsAny<CreateDepartmentRequest>(), It.IsAny<Guid>()),
+                Times.Never);
         }
 
         [Test]
@@ -145,10 +158,22 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _autoMock.Verify<IDepartmentRepository, Guid>(
                 x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Never);
+
+            _autoMock.Verify<ICreateDepartmentRequestValidator, ValidationResult>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once);
+
+            _autoMock.Verify<IDepartmentRepository, bool>(
+                x => x.DoesNameExist(It.IsAny<string>()),
+                Times.Never);
+
+            _autoMock.Verify<IDbDepartmentMapper, DbDepartment>(
+                x => x.Map(It.IsAny<CreateDepartmentRequest>(), It.IsAny<Guid>()),
+                Times.Never);
         }
 
         [Test]
-        public void ShouldThrowExcWhenCompanyDoesntExist()
+        public void ShouldThrowExceptionWhenCompanyDoesNotExist()
         {
             var expected = new OperationResultResponse<Guid>
             {
@@ -161,6 +186,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns((DbCompany)null);
 
             Assert.AreEqual(expected.Errors, _command.Execute(_request).Errors);
+
             _autoMock.Verify<ICompanyRepository, DbCompany>(
                 x => x.Get(It.IsAny<GetCompanyFilter>()),
                 Times.Once);
@@ -168,10 +194,22 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             _autoMock.Verify<IDepartmentRepository, Guid>(
                 x => x.CreateDepartment(It.IsAny<DbDepartment>()),
                 Times.Never);
+
+            _autoMock.Verify<ICreateDepartmentRequestValidator, ValidationResult>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once);
+
+            _autoMock.Verify<IDepartmentRepository, bool>(
+                x => x.DoesNameExist(It.IsAny<string>()),
+                Times.Never);
+
+            _autoMock.Verify<IDbDepartmentMapper, DbDepartment>(
+                x => x.Map(It.IsAny<CreateDepartmentRequest>(), It.IsAny<Guid>()),
+                Times.Never);
         }
 
         [Test]
-        public void ShouldThrowExcWhenDepartmentNameAlreadyExists()
+        public void ShouldThrowExceptionWhenDepartmentNameAlreadyExists()
         {
             var expected = new OperationResultResponse<Guid>
             {
@@ -191,6 +229,18 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
             _autoMock.Verify<IDepartmentRepository, Guid>(
                 x => x.CreateDepartment(It.IsAny<DbDepartment>()),
+                Times.Never);
+
+            _autoMock.Verify<ICreateDepartmentRequestValidator, ValidationResult>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once);
+
+            _autoMock.Verify<IDepartmentRepository, bool>(
+                x => x.DoesNameExist(It.IsAny<string>()),
+                Times.Once);
+
+            _autoMock.Verify<IDbDepartmentMapper, DbDepartment>(
+                x => x.Map(It.IsAny<CreateDepartmentRequest>(), It.IsAny<Guid>()),
                 Times.Never);
         }
 
@@ -247,6 +297,18 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
             _autoMock.Verify<IDepartmentRepository, Guid>(
                 x => x.CreateDepartment(It.IsAny<DbDepartment>()),
+                Times.Once);
+
+            _autoMock.Verify<ICreateDepartmentRequestValidator, ValidationResult>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once);
+
+            _autoMock.Verify<IDepartmentRepository, bool>(
+                x => x.DoesNameExist(It.IsAny<string>()),
+                Times.Once);
+
+            _autoMock.Verify<IDbDepartmentMapper, DbDepartment>(
+                x => x.Map(It.IsAny<CreateDepartmentRequest>(), It.IsAny<Guid>()),
                 Times.Once);
         }
     }
