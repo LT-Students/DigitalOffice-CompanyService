@@ -27,7 +27,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 Email = request.SmtpInfo.Email,
                 Password = request.SmtpInfo.Password,
                 IsDepartmentModuleEnabled = request.IsDepartmentModuleEnabled,
-                IsActive = true
+                IsActive = true,
+                WorkDaysApiUrl = request.WorkDaysApiUrl
             };
         }
     }

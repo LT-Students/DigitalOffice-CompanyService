@@ -26,6 +26,8 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
             _validator.ShouldNotHaveValidationErrorFor(x => x.PortalName, "Name");
 
             _validator.ShouldNotHaveValidationErrorFor(x => x.SiteUrl, "siteurl");
+
+            _validator.ShouldNotHaveValidationErrorFor(x => x.WorkDaysApiUrl, "testUrl.ru");
         }
 
         [Test]
@@ -39,6 +41,9 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
 
             _validator.ShouldHaveValidationErrorFor(x => x.SiteUrl, "");
             _validator.ShouldHaveValidationErrorFor(x => x.SiteUrl, null as string);
+
+            _validator.ShouldHaveValidationErrorFor(x => x.WorkDaysApiUrl, "");
+            _validator.ShouldHaveValidationErrorFor(x => x.WorkDaysApiUrl, null as string);
         }
     }
 }
