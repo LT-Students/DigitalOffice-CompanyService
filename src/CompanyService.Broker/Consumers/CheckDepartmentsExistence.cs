@@ -26,11 +26,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object GetDepartmentExistenceInfo(ICheckDepartmentsExistence requestIds)
         {
-            List<Guid> departmentIds = _repository.AreDepartmentsExist(requestIds.DepartmentIds);
-
-            return ICheckDepartmentsExistence.CreateObj(departmentIds);
+            return ICheckDepartmentsExistence.CreateObj(new List<Guid>( _repository.AreDepartmentsExist(requestIds.DepartmentIds)));
         }
-
     }
-
 }

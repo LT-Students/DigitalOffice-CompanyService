@@ -74,7 +74,8 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             return _provider.Departments
                 .Where(d => departmentId.Contains(d.Id) && d.IsActive)
-                .Select(d => d.Id).ToList();
+                .Select(d => d.Id)
+                .ToList();
         }
 
         public DbDepartment GetDepartment(GetDepartmentFilter filter)
