@@ -118,7 +118,11 @@ namespace LT.DigitalOffice.CompanyService.Data
                 dbDepartments = dbDepartments.Where(d => d.IsActive);
             }
 
-            return dbDepartments.Skip(skipCount).Take(takeCount).Include(d => d.Users.Where(u => u.IsActive)).ToList();
+            return dbDepartments
+                .Skip(skipCount)
+                .Take(takeCount)
+                .Include(d => d.Users.Where(u => u.IsActive))
+                .ToList();
         }
 
         public List<DbDepartment> FindDepartments(List<Guid> departmentIds)

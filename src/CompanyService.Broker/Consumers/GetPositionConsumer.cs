@@ -19,7 +19,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
                 throw new BadRequestException($"Request must contain '{nameof(request.UserId)}' value");
             }
 
-            var positionUser = _repository.Get(request.UserId.Value, includePosition: true);
+            var positionUser = _repository.Get(request.UserId.Value)
+                ?? throw new NotFoundException("This user doesn't have any position.");
 
             return IPositionResponse.CreateObj(
                 positionUser.PositionId,

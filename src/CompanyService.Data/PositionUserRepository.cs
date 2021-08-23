@@ -32,25 +32,9 @@ namespace LT.DigitalOffice.CompanyService.Data
             return true;
         }
 
-        public DbPositionUser Get(Guid userId, bool includePosition)
+        public DbPositionUser Get(Guid userId)
         {
-            DbPositionUser user = null;
-
-            if (includePosition)
-            {
-                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive);
-            }
-            else
-            {
-                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
-            }
-
-            if (user == null)
-            {
-                throw new NotFoundException($"There is not user in position with id {userId}");
-            }
-
-            return user;
+            return _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive);
         }
 
         public List<DbPositionUser> Find(List<Guid> userIds)
