@@ -14,6 +14,7 @@ using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
+using LT.DigitalOffice.Kernel.Enums;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 {
@@ -92,13 +93,15 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         }
 
         [Test]
-        public void ShouldThrowExceptionAccordingToValidator()
+        public void ShouldReturnResponseWithTypeBadRequestWhenIncorrectRequest()
         {
             _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(false);
 
-            Assert.Throws<ValidationException>(() => _command.Execute(_request));
+            var response = _command.Execute(_request);
+
+            Assert.AreEqual(OperationResultStatusType.BadRequest, response.Status);
             _repositoryMock.Verify(repository => repository.Create(It.IsAny<DbPosition>()), Times.Never);
             _companyRepositoryMock.Verify(repository => repository.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
         }

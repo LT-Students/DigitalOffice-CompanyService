@@ -100,7 +100,9 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                     x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(false);
 
-            Assert.Throws<ValidationException>(() => _command.Execute(_request));
+            var response = _command.Execute(_request);
+
+            Assert.AreEqual(OperationResultStatusType.BadRequest, response.Status);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Get(null), Times.Once());

@@ -8,6 +8,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
 using LT.DigitalOffice.CompanyService.Validation.Office.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.UnitTestKernel;
@@ -91,13 +92,14 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         }
 
         [Test]
-        public void ShouldThrowValidationException()
+        public void ShouldReturnResponseWithTypeBadRequestWhenIncorrectRequest()
         {
             _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
                 .Returns(false);
 
-            Assert.Throws<ValidationException>(() => _command.Execute(_request));
+            var response = _command.Execute(_request);
+            Assert.AreEqual(OperationResultStatusType.BadRequest, response.Status);
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(It.IsAny<DbOffice>()), Times.Never);
             _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
