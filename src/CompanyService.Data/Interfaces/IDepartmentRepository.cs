@@ -28,6 +28,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         DbDepartment GetDepartment(GetDepartmentFilter filter);
 
+        List<Guid> AreDepartmentsExist(List<Guid> departmentIds);
+
         /// <summary>
         /// Find departments in database.
         /// </summary>
