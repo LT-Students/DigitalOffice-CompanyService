@@ -11,6 +11,7 @@ using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using System;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
@@ -42,7 +43,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
                 throw new ForbiddenException("Not enough rights.");
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                return new OperationResultResponse<bool>
+                {
+                    Status = OperationResultStatusType.BadRequest,
+                    Errors = errors
+                };
+            }
 
             OperationResultResponse<bool> response = new();
 

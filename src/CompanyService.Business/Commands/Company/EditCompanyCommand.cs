@@ -132,9 +132,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
                 throw new NotFoundException("Compan does not exist");
             }
 
-            _validator.ValidateAndThrowCustom(request);
-
-            List<string> errors = new List<string>();
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                return new OperationResultResponse<bool>
+                {
+                    Status = OperationResultStatusType.BadRequest,
+                    Errors = errors
+                };
+            }
 
             var imageOperation = request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Logo), StringComparison.OrdinalIgnoreCase));
             Guid? imageId = null;

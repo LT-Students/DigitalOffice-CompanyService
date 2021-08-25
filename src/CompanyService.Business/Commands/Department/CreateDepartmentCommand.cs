@@ -13,6 +13,7 @@ using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -51,7 +52,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 throw new ForbiddenException("Not enough rights.");
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.BadRequest,
+                    Errors = errors
+                };
+            }
 
             OperationResultResponse<Guid> response = new();
 

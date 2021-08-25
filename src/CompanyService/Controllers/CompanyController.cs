@@ -29,7 +29,12 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromServices] ICreateCompanyCommand command,
             [FromBody] CreateCompanyRequest request)
         {
-            var result = command.Execute(request);
+            OperationResultResponse<Guid> result = command.Execute(request);
+
+            if (result.Status == Kernel.Enums.OperationResultStatusType.BadRequest)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
             if (result.Status != Kernel.Enums.OperationResultStatusType.Failed)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
@@ -51,7 +56,14 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromServices] IEditCompanyCommand command,
             [FromBody] JsonPatchDocument<EditCompanyRequest> request)
         {
-            return command.Execute(request);
+            OperationResultResponse<bool> result = command.Execute(request);
+
+            if (result.Status == Kernel.Enums.OperationResultStatusType.BadRequest)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
+
+            return result;
         }
     }
 }

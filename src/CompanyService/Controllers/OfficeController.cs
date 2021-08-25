@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
+using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromServices] ICreateOfficeCommand command,
             [FromBody] CreateOfficeRequest request)
         {
-            var result = command.Execute(request);
-            if (result.Status != Kernel.Enums.OperationResultStatusType.Failed)
+            OperationResultResponse<Guid> result = command.Execute(request);
+
+            if (result.Status == OperationResultStatusType.BadRequest)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
+            else if (result.Status != OperationResultStatusType.Failed)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
             }

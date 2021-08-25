@@ -30,16 +30,17 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromServices] ICreateDepartmentCommand command,
             [FromBody] CreateDepartmentRequest department)
         {
-            var result = command.Execute(department);
+            OperationResultResponse<Guid> result = command.Execute(department);
 
-            if (result.Status == OperationResultStatusType.Conflict)
+            if (result.Status == OperationResultStatusType.BadRequest)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
+            else if (result.Status == OperationResultStatusType.Conflict)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
-
-                return result;
             }
-
-            if (result.Status != OperationResultStatusType.Failed)
+            else if (result.Status != OperationResultStatusType.Failed)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
             }
@@ -71,9 +72,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromQuery] Guid departmentId,
             [FromBody] JsonPatchDocument<EditDepartmentRequest> request)
         {
-            var result = command.Execute(departmentId, request);
+            OperationResultResponse<bool> result = command.Execute(departmentId, request);
 
-            if (result.Status == OperationResultStatusType.Conflict)
+            if (result.Status == OperationResultStatusType.BadRequest)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
+            else if (result.Status == OperationResultStatusType.Conflict)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
             }

@@ -11,6 +11,7 @@ using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
@@ -42,7 +43,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 throw new ForbiddenException("Not enough rights.");
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                return new OperationResultResponse<bool>
+                {
+                    Status = OperationResultStatusType.BadRequest,
+                    Errors = errors
+                };
+            }
 
             OperationResultResponse<bool> response = new();
 

@@ -114,14 +114,19 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
         public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
         {
-            List<string> errors = new();
-
             if (_repository.Get() != null)
             {
                 throw new BadRequestException("Company already exists");
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.BadRequest,
+                    Errors = errors
+                };
+            }
 
             if (!(UpdateSmtp(request.SmtpInfo, errors) &&
                 CreateAdmin(request.AdminInfo, errors)))

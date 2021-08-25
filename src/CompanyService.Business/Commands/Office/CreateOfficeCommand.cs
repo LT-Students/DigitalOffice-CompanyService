@@ -10,6 +10,7 @@ using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 {
@@ -42,7 +43,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
                 throw new ForbiddenException("Not enouth rights.");
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.BadRequest,
+                    Errors = errors
+                };
+            }
 
             DbOffice office = _mapper.Map(request, _companyRepository.Get().Id);
             _officeRepository.Add(office);

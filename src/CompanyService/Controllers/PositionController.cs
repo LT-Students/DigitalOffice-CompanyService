@@ -1,8 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
@@ -50,14 +48,15 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         {
             var result = command.Execute(request);
 
-            if (result.Status == OperationResultStatusType.Conflict)
+            if (result.Status == OperationResultStatusType.BadRequest)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
+            else if (result.Status == OperationResultStatusType.Conflict)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
-
-                return result;
             }
-
-            if (result.Status != OperationResultStatusType.Failed)
+            else if (result.Status != OperationResultStatusType.Failed)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
             }
@@ -71,9 +70,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromQuery] Guid positionId,
             [FromBody] JsonPatchDocument<EditPositionRequest> request)
         {
-            var result = command.Execute(positionId, request);
+            OperationResultResponse<bool> result = command.Execute(positionId, request);
 
-            if (result.Status == OperationResultStatusType.Conflict)
+            if (result.Status == OperationResultStatusType.BadRequest)
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
+            else if (result.Status == OperationResultStatusType.Conflict)
             {
                 _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
             }
