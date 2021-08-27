@@ -1,15 +1,13 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
-    public class OfficeRepository : IOfficeRepository
+  public class OfficeRepository : IOfficeRepository
     {
         private readonly IDataProvider _provider;
 
@@ -38,12 +36,12 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             if (skipCount < 0)
             {
-                throw new BadRequestException("Skip count can't be less than 0.");
+                throw new ArgumentException("Skip count can't be less than 0.");
             }
 
-            if (takeCount <= 0)
+            if (takeCount < 1)
             {
-                throw new BadRequestException("Take count can't be equal or less than 0.");
+                throw new ArgumentException("Take count can't less than 1.");
             }
 
             IQueryable<DbOffice> dbOffices = _provider.Offices
@@ -66,8 +64,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
         public DbOffice Get(Guid officeId)
         {
-            return _provider.Offices.FirstOrDefault(x => x.Id == officeId)
-                ?? throw new NotFoundException($"No office with id '{officeId}'");
+            return _provider.Offices.FirstOrDefault(x => x.Id == officeId);
         }
     }
 }

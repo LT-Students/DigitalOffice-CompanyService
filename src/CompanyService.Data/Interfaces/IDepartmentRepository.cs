@@ -19,30 +19,24 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// </summary>
         /// <param name="department">Department to add.</param>
         /// <returns>New department Id.</returns>
-        Guid CreateDepartment(DbDepartment department);
+        Guid Create(DbDepartment department);
 
         /// <summary>
         /// Get <see cref="DbDepartment"/>.
         /// </summary>
-        DbDepartment GetDepartment(Guid? departmentId, Guid? userId);
+        DbDepartment Get(Guid? departmentId, Guid? userId);
 
-        DbDepartment GetDepartment(GetDepartmentFilter filter);
+        DbDepartment Get(GetDepartmentFilter filter);
 
         /// <summary>
         /// Find departments in database.
         /// </summary>
         /// <returns>Found departments.</returns>
-        List<DbDepartment> FindDepartments(int skipCount, int takeCount, bool includeDeactivated, out int totalCount);
+        List<DbDepartment> Find(int skipCount, int takeCount, bool includeDeactivated, out int totalCount);
 
-        List<DbDepartment> FindDepartments(List<Guid> departmentsIds);
+        List<DbDepartment> Find(List<Guid> departmentsIds);
 
-        /// <summary>
-        /// Edits an existing department in the database. Returns whether it was successful to edit
-        /// </summary>
-        /// <param name="departmentId">Id of edited department.</param>
-        /// <param name="request">Edit request.</param>
-        /// <returns>Whether it was successful to edit.</returns>
-        bool Edit(Guid departmentId, JsonPatchDocument<DbDepartment> request);
+        bool Edit(DbDepartment department, JsonPatchDocument<DbDepartment> request);
 
         List<DbDepartment> Search(string text);
 

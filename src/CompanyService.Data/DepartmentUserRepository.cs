@@ -57,12 +57,12 @@ namespace LT.DigitalOffice.CompanyService.Data
         {
             if (skipCount < 0)
             {
-                throw new BadRequestException("Skip count can't be less than 0.");
+                throw new ArgumentException("Skip count can't be less than 0.");
             }
 
             if (takeCount <= 0)
             {
-                throw new BadRequestException("Take count can't be equal or less than 0.");
+                throw new ArgumentException("Take count can't be equal or less than 0.");
             }
 
             var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();

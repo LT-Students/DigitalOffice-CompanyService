@@ -106,7 +106,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             #endregion
 
-            response.Body = _repository.CreateDepartment(_mapper.Map(request, company.Id));
+            response.Body = _repository.Create(_mapper.Map(request, company.Id));
             response.Status = OperationResultStatusType.FullSuccess;
 
             _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;

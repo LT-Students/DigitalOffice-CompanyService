@@ -4,13 +4,11 @@ using NUnit.Framework;
 using System;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Commands.Position;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
@@ -21,7 +19,7 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 {
-    class CreatePositionCommandTests
+  class CreatePositionCommandTests
     {
         private ICreatePositionCommand _command;
         private Mock<IPositionRepository> _repositoryMock;

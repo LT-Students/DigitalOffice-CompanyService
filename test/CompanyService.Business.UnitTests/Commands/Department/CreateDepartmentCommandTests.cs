@@ -150,7 +150,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
             Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
             Assert.AreEqual(new List<string> { "Not enough rights."}, response.Errors);
             _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
-            _repositoryMock.Verify(x => x.CreateDepartment(It.IsAny<DbDepartment>()), Times.Never);
+            _repositoryMock.Verify(x => x.Create(It.IsAny<DbDepartment>()), Times.Never);
         }
 
         /*[Test]
@@ -192,12 +192,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Returns(_dbDepartment);
 
             _repositoryMock
-                .Setup(x => x.CreateDepartment(_dbDepartment))
+                .Setup(x => x.Create(_dbDepartment))
                 .Returns(_dbDepartment.Id);
 
             Assert.AreEqual(expected.Body, _command.Execute(_request).Body);
             _companyRepositoryMock.Verify(x => x.Get(null), Times.Once);
-            _repositoryMock.Verify(x => x.CreateDepartment(_dbDepartment), Times.Once);
+            _repositoryMock.Verify(x => x.Create(_dbDepartment), Times.Once);
         }
     }
 }
