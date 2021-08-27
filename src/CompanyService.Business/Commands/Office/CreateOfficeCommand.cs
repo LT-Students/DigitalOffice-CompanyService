@@ -9,8 +9,10 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 {
@@ -21,19 +23,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
         private readonly ICompanyRepository _companyRepository;
         private readonly IDbOfficeMapper _mapper;
         private readonly ICreateOfficeRequestValidator _validator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CreateOfficeCommand(
             IAccessValidator accessValidator,
             IOfficeRepository officeRepository,
             ICompanyRepository companyRepository,
             IDbOfficeMapper mapper,
-            ICreateOfficeRequestValidator validator)
+            ICreateOfficeRequestValidator validator,
+            IHttpContextAccessor httpContextAccessor)
         {
             _accessValidator = accessValidator;
             _officeRepository = officeRepository;
             _companyRepository = companyRepository;
             _mapper = mapper;
             _validator = validator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<Guid> Execute(CreateOfficeRequest request)
@@ -45,15 +50,19 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 
             if (!_validator.ValidateCustom(request, out List<string> errors))
             {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
                 return new OperationResultResponse<Guid>
                 {
-                    Status = OperationResultStatusType.BadRequest,
+                    Status = OperationResultStatusType.Failed,
                     Errors = errors
                 };
             }
 
             DbOffice office = _mapper.Map(request, _companyRepository.Get().Id);
             _officeRepository.Add(office);
+
+            _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
             return new OperationResultResponse<Guid>
             {

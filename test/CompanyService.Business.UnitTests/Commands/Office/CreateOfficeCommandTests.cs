@@ -12,6 +12,7 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -24,6 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         private Mock<ICompanyRepository> _companyRepositoryMock;
         private Mock<IDbOfficeMapper> _mapperMock;
         private Mock<ICreateOfficeRequestValidator> _validatorMock;
+        private Mock<IHttpContextAccessor> _accessorMock;
         private ICreateOfficeCommand _command;
 
         private CreateOfficeRequest _request;
@@ -59,13 +61,19 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             _repositoryMock = new();
             _companyRepositoryMock = new();
             _validatorMock = new();
+            _accessorMock = new();
+
+            _accessorMock
+                .Setup(a => a.HttpContext.Response.StatusCode)
+                .Returns(200);
 
             _command = new CreateOfficeCommand(
                 _accessValidatorMock.Object,
                 _repositoryMock.Object,
                 _companyRepositoryMock.Object,
                 _mapperMock.Object,
-                _validatorMock.Object);
+                _validatorMock.Object,
+                _accessorMock.Object);
 
             _accessValidatorMock
                 .Setup(x => x.IsAdmin(null))
@@ -99,7 +107,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 .Returns(false);
 
             var response = _command.Execute(_request);
-            Assert.AreEqual(OperationResultStatusType.BadRequest, response.Status);
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
             _accessValidatorMock.Verify(x => x.IsAdmin(null), Times.Once);
             _repositoryMock.Verify(x => x.Add(It.IsAny<DbOffice>()), Times.Never);
             _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);

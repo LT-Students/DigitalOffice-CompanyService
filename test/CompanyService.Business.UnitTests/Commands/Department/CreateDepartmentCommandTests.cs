@@ -55,6 +55,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Setup(x => x.HttpContext.Items)
                 .Returns(_items);
 
+            _accessorMock
+                .Setup(a => a.HttpContext.Response.StatusCode)
+                .Returns(200);
+
             _command = new CreateDepartmentCommand(
                 _repositoryMock.Object,
                 _companyRepositoryMock.Object,
@@ -131,7 +135,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         }
 
         [Test]
-        public void ShouldThrowForbiddenExceptionWhenUserIsNotAdminAndNotEnoughRights()
+        public void ShouldReturnFailedResponseWhenUserIsNotAdminAndNotEnoughRights()
         {
             _accessValidatorMock
                 .Setup(x => x.IsAdmin(null))
@@ -141,7 +145,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
                 .Setup(x => x.HasRights(Rights.AddEditRemoveDepartments))
                 .Returns(false);
 
-            Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
+            var response = _command.Execute(_request);
+
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
+            Assert.AreEqual(new List<string> { "Not enough rights."}, response.Errors);
             _companyRepositoryMock.Verify(x => x.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
             _repositoryMock.Verify(x => x.CreateDepartment(It.IsAny<DbDepartment>()), Times.Never);
         }

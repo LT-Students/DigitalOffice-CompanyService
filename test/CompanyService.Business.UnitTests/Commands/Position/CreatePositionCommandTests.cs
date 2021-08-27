@@ -15,6 +15,9 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
 using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
 using LT.DigitalOffice.Kernel.Enums;
+using Microsoft.AspNetCore.Http;
+using LT.DigitalOffice.UnitTestKernel;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 {
@@ -26,6 +29,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
         private Mock<IDbPositionMapper> _mapperMock;
         private Mock<ICreatePositionRequestValidator> _validatorMock;
         private Mock<IAccessValidator> _accessValidatorMock;
+        private Mock<IHttpContextAccessor> _accessorMock;
         private CreatePositionRequest _request;
 
         private Guid _companyId;
@@ -59,6 +63,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
             _mapperMock = new Mock<IDbPositionMapper>();
             _accessValidatorMock = new Mock<IAccessValidator>();
             _companyRepositoryMock = new();
+            _accessorMock = new();
+
+            _accessorMock
+                .Setup(a => a.HttpContext.Response.StatusCode)
+                .Returns(200);
 
             _accessValidatorMock
                 .Setup(x => x.IsAdmin(null))
@@ -73,11 +82,12 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 _repositoryMock.Object,
                 _companyRepositoryMock.Object,
                 _mapperMock.Object,
-                _accessValidatorMock.Object);
+                _accessValidatorMock.Object,
+                _accessorMock.Object);
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenNotEnoughRights()
+        public void ShouldReturnFailedResponseWhenNotEnoughRights()
         {
             _accessValidatorMock
                 .Setup(x => x.HasRights(Rights.AddEditRemovePositions))
@@ -87,7 +97,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
                 .Setup(x => x.IsAdmin(null))
                 .Returns(false);
 
-            Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
+            var response = _command.Execute(_request);
+
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
+            SerializerAssert.AreEqual(new List<string> { "Not enough rights." }, response.Errors);
             _repositoryMock.Verify(repository => repository.Create(It.IsAny<DbPosition>()), Times.Never);
             _companyRepositoryMock.Verify(repository => repository.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
         }
@@ -101,7 +114,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Position
 
             var response = _command.Execute(_request);
 
-            Assert.AreEqual(OperationResultStatusType.BadRequest, response.Status);
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
             _repositoryMock.Verify(repository => repository.Create(It.IsAny<DbPosition>()), Times.Never);
             _companyRepositoryMock.Verify(repository => repository.Get(It.IsAny<GetCompanyFilter>()), Times.Never);
         }

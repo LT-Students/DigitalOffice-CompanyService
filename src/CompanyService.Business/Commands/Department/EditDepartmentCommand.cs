@@ -9,10 +9,12 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -22,17 +24,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         private readonly IDepartmentRepository _repository;
         private readonly IPatchDbDepartmentMapper _mapper;
         private readonly IAccessValidator _accessValidator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public EditDepartmentCommand(
             IEditDepartmentRequestValidator validator,
             IDepartmentRepository repository,
             IPatchDbDepartmentMapper mapper,
-            IAccessValidator accessValidator)
+            IAccessValidator accessValidator,
+            IHttpContextAccessor httpContextAccessor)
         {
             _validator = validator;
             _repository = repository;
             _mapper = mapper;
             _accessValidator = accessValidator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<bool> Execute(Guid departmentId, JsonPatchDocument<EditDepartmentRequest> request)
@@ -40,14 +45,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             if (!(_accessValidator.IsAdmin() ||
                   _accessValidator.HasRights(Rights.AddEditRemoveDepartments)))
             {
-                throw new ForbiddenException("Not enough rights.");
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                return new OperationResultResponse<bool>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new() { "Not enough rights." }
+                };
             }
 
             if (!_validator.ValidateCustom(request, out List<string> errors))
             {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
                 return new OperationResultResponse<bool>
                 {
-                    Status = OperationResultStatusType.BadRequest,
+                    Status = OperationResultStatusType.Failed,
                     Errors = errors
                 };
             }
@@ -59,7 +72,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
                 if (item.path.EndsWith(nameof(EditDepartmentRequest.Name), StringComparison.OrdinalIgnoreCase) &&
                     _repository.DoesNameExist(item.value.ToString()))
                 {
-                    response.Status = OperationResultStatusType.Conflict;
+                    _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+
+                    response.Status = OperationResultStatusType.Failed;
                     response.Errors.Add("The department name already exists");
                     return response;
                 }

@@ -12,6 +12,8 @@ using System;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.CompanyService.Validation.Position.Interfaces;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
 {
@@ -22,17 +24,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
         private readonly IPositionRepository _repository;
         private readonly IPatchDbPositionMapper _mapper;
         private readonly IAccessValidator _accessValidator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public EditPositionCommand(
             IEditPositionRequestValidator validator,
             IPositionRepository repository,
             IPatchDbPositionMapper mapper,
-            IAccessValidator accessValidator)
+            IAccessValidator accessValidator,
+            IHttpContextAccessor httpContextAccessor)
         {
             _validator = validator;
             _repository = repository;
             _mapper = mapper;
             _accessValidator = accessValidator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<bool> Execute(Guid positionId, JsonPatchDocument<EditPositionRequest> request)
@@ -40,14 +45,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
             if (!(_accessValidator.IsAdmin() ||
                   _accessValidator.HasRights(Rights.AddEditRemovePositions)))
             {
-                throw new ForbiddenException("Not enough rights.");
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                return new OperationResultResponse<bool>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new() { "Not enough rights." }
+                };
             }
 
             if (!_validator.ValidateCustom(request, out List<string> errors))
             {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
                 return new OperationResultResponse<bool>
                 {
-                    Status = OperationResultStatusType.BadRequest,
+                    Status = OperationResultStatusType.Failed,
                     Errors = errors
                 };
             }
@@ -60,7 +73,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
                     !bool.Parse(item.value.ToString()) &&
                     _repository.PositionContainsUsers(positionId))
                 {
-                    response.Status = OperationResultStatusType.Conflict;
+                    _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+
+                    response.Status = OperationResultStatusType.Failed;
                     response.Errors.Add("The position contains users. Please change the position to users");
                     return response;
                 }
@@ -68,7 +83,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Position
                 if (item.path.EndsWith(nameof(EditPositionRequest.Name), StringComparison.OrdinalIgnoreCase) &&
                     _repository.DoesNameExist(item.value.ToString()))
                 {
-                    response.Status = OperationResultStatusType.Conflict;
+                    _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+
+                    response.Status = OperationResultStatusType.Failed;
                     response.Errors.Add("The position name already exists");
                     return response;
                 }

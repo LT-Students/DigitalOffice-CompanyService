@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -124,19 +125,33 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         {
             if (!_accessValidator.IsAdmin())
             {
-                throw new ForbiddenException("Not enouth rights.");
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                return new OperationResultResponse<bool>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new() { "Not enouth rights." }
+                };
             }
 
             if (_companyRepository.Get() == null)
             {
-                throw new NotFoundException("Compan does not exist");
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+
+                return new OperationResultResponse<bool>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new() { "Compan does not exist" }
+                };
             }
 
             if (!_validator.ValidateCustom(request, out List<string> errors))
             {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
                 return new OperationResultResponse<bool>
                 {
-                    Status = OperationResultStatusType.BadRequest,
+                    Status = OperationResultStatusType.Failed,
                     Errors = errors
                 };
             }

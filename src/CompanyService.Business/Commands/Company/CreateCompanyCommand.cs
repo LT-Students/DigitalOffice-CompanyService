@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
@@ -116,14 +117,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         {
             if (_repository.Get() != null)
             {
-                throw new BadRequestException("Company already exists");
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new() { "Company already exists" }
+                };
             }
 
             if (!_validator.ValidateCustom(request, out List<string> errors))
             {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
                 return new OperationResultResponse<Guid>
                 {
-                    Status = OperationResultStatusType.BadRequest,
+                    Status = OperationResultStatusType.Failed,
                     Errors = errors
                 };
             }
@@ -148,6 +157,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
                 company.Id,
                 null,
                 CreateHistoryMessageHelper.Create(company));
+
+            _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
             return new OperationResultResponse<Guid>
             {

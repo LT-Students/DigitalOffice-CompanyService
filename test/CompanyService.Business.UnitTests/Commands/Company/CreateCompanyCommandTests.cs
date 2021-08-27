@@ -14,6 +14,7 @@ using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Moq.AutoMock;
 using NUnit.Framework;
@@ -35,6 +36,10 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         public void OneTimeSetUp()
         {
             _autoMock = new();
+
+            _autoMock
+                .Setup<IHttpContextAccessor, int>(a => a.HttpContext.Response.StatusCode)
+                .Returns(200);
 
             _command = _autoMock.CreateInstance<CreateCompanyCommand>();
 
@@ -102,7 +107,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 
             var response = _command.Execute(_request);
 
-            Assert.AreEqual(OperationResultStatusType.BadRequest, response.Status);
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Get(null), Times.Once());
@@ -129,14 +134,16 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
         }
 
         [Test]
-        public void ShouldThrowBadRequestExceptionWhenCompanyAlreadyExists()
+        public void ShouldReturnFaliledResponseWhenCompanyAlreadyExists()
         {
             _autoMock
                 .Setup<ICompanyRepository, DbCompany>(x => x.Get(null))
                 .Returns(_company);
 
-            var ex = Assert.Throws<BadRequestException>(() => _command.Execute(_request));
-            Assert.That(ex.Message, Is.EqualTo("Company already exists"));
+            var response = _command.Execute(_request);
+
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
+            SerializerAssert.AreEqual(response.Errors, new List<string> { "Company already exists" });
 
             _autoMock.Verify<ICompanyRepository>(
                 x => x.Get(null), Times.Once());
