@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     private List<UserData> GetUsers(List<Guid> usersIds, List<string> errors)
     {
       List<UserData> users = new();
-      string errorMessage = $"Can not get users info for users '{usersIds}'. Please try again later.";
+      string errorMessage = $"Can not get users info for users '{string.Join(", ", usersIds)}'. Please try again later.";
 
       if (!usersIds.Any())
       {
@@ -50,22 +50,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
         if (usersDataResponse.Message.IsSuccess)
         {
-          users = usersDataResponse.Message.Body.UsersData;
+          return usersDataResponse.Message.Body.UsersData;
         }
         else
         {
           _logger?.LogWarning(
               $"Can not get users. Reason:{Environment.NewLine}{string.Join('\n', usersDataResponse.Message.Errors)}.");
-
-          errors.Add(errorMessage);
         }
       }
       catch (Exception exc)
       {
         _logger?.LogError(exc, errorMessage);
-
-        errors.Add(errorMessage);
       }
+
+      errors.Add(errorMessage);
 
       return users;
     }
