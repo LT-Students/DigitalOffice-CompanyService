@@ -84,6 +84,14 @@ namespace LT.DigitalOffice.CompanyService.Data
       return dbDepartments.FirstOrDefault();
     }
 
+    public List<Guid> AreDepartmentsExist(List<Guid> departmentIds)
+    {
+      return _provider.Departments
+          .Where(d => departmentIds.Contains(d.Id) && d.IsActive)
+          .Select(d => d.Id)
+          .ToList();
+    }
+
     /// <inheritdoc />
     public List<DbDepartment> Find(int skipCount, int takeCount, bool includeDeactivated, out int totalCount)
     {

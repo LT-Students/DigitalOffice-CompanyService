@@ -154,6 +154,7 @@ namespace LT.DigitalOffice.CompanyService
                 x.AddConsumer<GetUsersDepartmentsUsersPositionsConsumer>();
                 x.AddConsumer<GetUserOfficesConsumer>();
                 x.AddConsumer<DisactivateUserConsumer>();
+                x.AddConsumer<CheckDepartmentsExistenceConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -239,6 +240,11 @@ namespace LT.DigitalOffice.CompanyService
             cfg.ReceiveEndpoint(_rabbitMqConfig.DisactivateUserEndpoint, ep =>
             {
                 ep.ConfigureConsumer<DisactivateUserConsumer>(context);
+            });
+
+            cfg.ReceiveEndpoint(_rabbitMqConfig.CheckDepartmentsExistenceEndpoint, ep =>
+            {
+                ep.ConfigureConsumer<CheckDepartmentsExistenceConsumer>(context);
             });
         }
 
