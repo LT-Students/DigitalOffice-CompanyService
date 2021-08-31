@@ -37,7 +37,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         private readonly Guid _userId = Guid.NewGuid();
 
         private Guid _companyId;
-        private Guid _userId = Guid.NewGuid();
 
         private CreateDepartmentRequest GenerateRequest(
             Guid? directorUserId,
