@@ -55,7 +55,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             };
 
             repository
-                .Setup(x => x.Get(dbPositionUser.UserId, true))
+                .Setup(x => x.Get(dbPositionUser.UserId))
                 .Returns(dbPositionUser);
 
             try
@@ -93,7 +93,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
             await harness.Start();
 
             repository
-                .Setup(x => x.Get(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(x => x.Get(It.IsAny<Guid>()))
                 .Throws(new Exception("Position not found."));
 
             try

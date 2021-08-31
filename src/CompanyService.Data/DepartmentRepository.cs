@@ -70,6 +70,14 @@ namespace LT.DigitalOffice.CompanyService.Data
             return dbDepartment;
         }
 
+        public List<Guid> AreDepartmentsExist(List<Guid> departmentIds)
+        {
+            return _provider.Departments
+                .Where(d => departmentIds.Contains(d.Id) && d.IsActive)
+                .Select(d => d.Id)
+                .ToList();
+        }
+
         public DbDepartment GetDepartment(GetDepartmentFilter filter)
         {
             IQueryable<DbDepartment> dbDepartments = _provider.Departments.AsQueryable();
@@ -110,7 +118,11 @@ namespace LT.DigitalOffice.CompanyService.Data
                 dbDepartments = dbDepartments.Where(d => d.IsActive);
             }
 
-            return dbDepartments.Skip(skipCount).Take(takeCount).Include(d => d.Users.Where(u => u.IsActive)).ToList();
+            return dbDepartments
+                .Skip(skipCount)
+                .Take(takeCount)
+                .Include(d => d.Users.Where(u => u.IsActive))
+                .ToList();
         }
 
         public List<DbDepartment> FindDepartments(List<Guid> departmentIds)
