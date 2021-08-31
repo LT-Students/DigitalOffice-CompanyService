@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     {
       if (userIds == null || !userIds.Any())
       {
-        return new();
+        return null;
       }
 
       string message = "Can not get users data. Please try again later.";
@@ -65,7 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       errors.Add(message);
 
-      return new();
+      return null;
     }
 
     private List<ProjectData> GetProjectsData(Guid departmentId, List<string> errors)
@@ -92,14 +92,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       errors.Add(message);
 
-      return new();
+      return null;
     }
 
     private List<ImageData> GetUsersImage(List<Guid> imageIds, List<string> errors)
     {
       if (imageIds == null || !imageIds.Any())
       {
-        return new();
+        return null;
       }
 
       string message = "Can not get users avatar. Please try again later.";
@@ -124,7 +124,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       errors.Add(message);
 
-      return new();
+      return null;
     }
 
     public GetDepartmentCommand(
@@ -183,7 +183,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       if (directorId.HasValue || filter.IsIncludeUsers)
       {
         usersData = GetUsersData(userIds, errors);
-        userImages = GetUsersImage(usersData.Where(
+        userImages = GetUsersImage(usersData?.Where(
             us => us.ImageId.HasValue).Select(us => us.ImageId.Value).ToList(), errors);
       }
 
