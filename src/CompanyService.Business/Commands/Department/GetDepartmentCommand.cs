@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         private readonly IDepartmentResponseMapper _departmentResponseMapper;
         private readonly IRequestClient<IGetImagesRequest> _rcImages;
         private readonly IRequestClient<IGetUsersDataRequest> _rcDepartmentUsers;
-        private readonly IRequestClient<IGetDepartmentProjectsRequest> _rcDepartmentProject;
+        private readonly IRequestClient<IGetProjectsRequest> _rcGetProjects;
 
         private List<UserData> GetUsersData(List<Guid> userIds, List<string> errors)
         {
@@ -72,8 +72,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             try
             {
-                var response = _rcDepartmentProject.GetResponse<IOperationResult<IGetDepartmentProjectsResponse>>(
-                    IGetDepartmentProjectsRequest.CreateObj(departmentId)).Result;
+                var response = _rcGetProjects.GetResponse<IOperationResult<IGetProjectsResponse>>(
+                    IGetProjectsRequest.CreateObj(departmentId: departmentId)).Result;
 
                 if (response.Message.IsSuccess)
                 {
@@ -130,13 +130,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
             IDepartmentResponseMapper departmentResponseMapper,
             IRequestClient<IGetImagesRequest> rcImages,
             IRequestClient<IGetUsersDataRequest> rcDepartmentUsers,
-            IRequestClient<IGetDepartmentProjectsRequest> rcDepartmentProject,
+            IRequestClient<IGetProjectsRequest> rcGetProjects,
             ILogger<GetDepartmentCommand> logger)
         {
             _logger = logger;
             _rcImages = rcImages;
             _rcDepartmentUsers = rcDepartmentUsers;
-            _rcDepartmentProject = rcDepartmentProject;
+            _rcGetProjects = rcGetProjects;
             _departmentRepository = departmentRepository;
             _positionUserRepository = positionUserRepository;
             _departmentResponseMapper = departmentResponseMapper;

@@ -37,8 +37,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
         [AutoInjectRequest(typeof(IGetImagesRequest))]
         public string GetImagesEndpoint { get; set; }
 
-        [AutoInjectRequest(typeof(IGetDepartmentProjectsRequest))]
-        public string GetDepartmentProjectsEndpoint { get; set; }
+        [AutoInjectRequest(typeof(IGetProjectsRequest))]
+        public string GetProjectsEndpoint { get; set; }
 
         [AutoInjectRequest(typeof(ICreateAdminRequest))]
         public string CreateAdminEndpoint { get; set; }

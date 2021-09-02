@@ -2,6 +2,7 @@
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -53,25 +54,25 @@ namespace LT.DigitalOffice.CompanyService.Data
             return user;
         }
 
-        public IEnumerable<Guid> Find(Guid departmentId, int skipCount, int takeCount, out int totalCount)
+        public IEnumerable<Guid> Find(IFindDepartmentUsersRequest request, out int totalCount)
         {
-            if (skipCount < 0)
-            {
-                throw new BadRequestException("Skip count can't be less than 0.");
-            }
-
-            if (takeCount <= 0)
-            {
-                throw new BadRequestException("Take count can't be equal or less than 0.");
-            }
-
             var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
 
-            dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive && x.DepartmentId == departmentId);
+            dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive && x.DepartmentId == request.DepartmentId);
 
             totalCount = dbDepartmentUser.Count();
 
-            return dbDepartmentUser.Skip(skipCount).Take(takeCount).Select(x => x.UserId).ToList();
+            if (request.SkipCount.HasValue)
+            {
+                dbDepartmentUser = dbDepartmentUser.Skip(request.SkipCount.Value);
+            }
+
+            if (request.TakeCount.HasValue)
+            {
+                dbDepartmentUser = dbDepartmentUser.Take(request.TakeCount.Value);
+            }
+
+            return dbDepartmentUser.Select(x => x.UserId).ToList();
         }
 
         public List<DbDepartmentUser> Find(List<Guid> userIds)

@@ -38,44 +38,44 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
                 new FindDepartmentUsersConsumer(_repository.Object));
         }
 
-        [Test]
-        public async Task ShouldResponseUserIdsResponse()
-        {
-            int skipCount = 0;
-            int takeCount = _userIds.Count;
-            int totalCount = takeCount;
+        //[Test]
+        //public async Task ShouldResponseUserIdsResponse()
+        //{
+        //    int skipCount = 0;
+        //    int takeCount = _userIds.Count;
+        //    int totalCount = takeCount;
 
-            _repository
-                .Setup(x => x.Find(_departmentId, skipCount, takeCount, out totalCount))
-                .Returns(_userIds);
+        //    _repository
+        //        .Setup(x => x.Find(_departmentId, skipCount, takeCount, out totalCount))
+        //        .Returns(_userIds);
 
-            await _harness.Start();
+        //    await _harness.Start();
 
-            try
-            {
-                var requestClient = await _harness.ConnectRequestClient<IFindDepartmentUsersRequest>();
+        //    try
+        //    {
+        //        var requestClient = await _harness.ConnectRequestClient<IFindDepartmentUsersRequest>();
 
-                var response = await requestClient.GetResponse<IOperationResult<IFindDepartmentUsersResponse>>(
-                    IFindDepartmentUsersRequest.CreateObj(_departmentId, skipCount, takeCount), default, default);
+        //        var response = await requestClient.GetResponse<IOperationResult<IFindDepartmentUsersResponse>>(
+        //            IFindDepartmentUsersRequest.CreateObj(_departmentId, skipCount, takeCount), default, default);
 
-                var expectedResult = new
-                {
-                    IsSuccess = true,
-                    Errors = null as List<string>,
-                    Body = IFindDepartmentUsersResponse.CreateObj(_userIds, totalCount)
-                };
+        //        var expectedResult = new
+        //        {
+        //            IsSuccess = true,
+        //            Errors = null as List<string>,
+        //            Body = IFindDepartmentUsersResponse.CreateObj(_userIds, totalCount)
+        //        };
 
-                Assert.True(response.Message.IsSuccess);
-                Assert.AreEqual(null, response.Message.Errors);
-                SerializerAssert.AreEqual(expectedResult, response.Message);
-                Assert.True(_consumerTestHarness.Consumed.Select<IFindDepartmentUsersRequest>().Any());
-                Assert.True(_harness.Sent.Select<IOperationResult<IFindDepartmentUsersResponse>>().Any());
-                _repository.Verify(x => x.Find(_departmentId, skipCount, takeCount, out totalCount), Times.Once);
-            }
-            finally
-            {
-                await _harness.Stop();
-            }
-        }
+        //        Assert.True(response.Message.IsSuccess);
+        //        Assert.AreEqual(null, response.Message.Errors);
+        //        SerializerAssert.AreEqual(expectedResult, response.Message);
+        //        Assert.True(_consumerTestHarness.Consumed.Select<IFindDepartmentUsersRequest>().Any());
+        //        Assert.True(_harness.Sent.Select<IOperationResult<IFindDepartmentUsersResponse>>().Any());
+        //        _repository.Verify(x => x.Find(_departmentId, skipCount, takeCount, out totalCount), Times.Once);
+        //    }
+        //    finally
+        //    {
+        //        await _harness.Stop();
+        //    }
+        //}
     }
 }
