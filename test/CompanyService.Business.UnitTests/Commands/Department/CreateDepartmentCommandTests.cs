@@ -122,7 +122,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         .Setup<IAccessValidator, bool>(x => x.HasRights(Rights.AddEditRemoveDepartments))
         .Returns(false);
 
-      Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
+      Assert.AreEqual(OperationResultStatusType.Failed, _command.Execute(_request).Status);
 
       _autoMock.Verify<ICompanyRepository, DbCompany>(
         x => x.Get(It.IsAny<GetCompanyFilter>()),
@@ -152,7 +152,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
         .Setup<ICreateDepartmentRequestValidator, bool>(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
         .Returns(false);
 
-      Assert.Throws<ValidationException>(() => _command.Execute(_request));
+      Assert.AreEqual(OperationResultStatusType.Failed, _command.Execute(_request).Status);
 
       _autoMock.Verify<ICompanyRepository, DbCompany>(
         x => x.Get(It.IsAny<GetCompanyFilter>()),
