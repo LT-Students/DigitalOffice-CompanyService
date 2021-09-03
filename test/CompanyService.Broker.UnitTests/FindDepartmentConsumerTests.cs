@@ -62,7 +62,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             _repositoryMock = new Mock<IDepartmentRepository>();
             _repositoryMock
-                .Setup(x => x.FindDepartments(It.IsAny<List<Guid>>()))
+                .Setup(x => x.Find(It.IsAny<List<Guid>>()))
                 .Returns(new List<DbDepartment> { _departments[0], _departments[1] });
 
             _harness = new InMemoryTestHarness();
@@ -107,7 +107,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
         {
             _repositoryMock = new Mock<IDepartmentRepository>();
             _repositoryMock
-                .Setup(x => x.FindDepartments(It.IsAny<List<Guid>>()))
+                .Setup(x => x.Find(It.IsAny<List<Guid>>()))
                 .Throws(new Exception());
 
             await _harness.Start();

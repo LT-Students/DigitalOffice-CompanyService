@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object GetDepartment(IGetDepartmentRequest request)
         {
-            var dbDepartment = _repository.GetDepartment(request.DepartmentId, request.UserId);
+            var dbDepartment = _repository.Get(request.DepartmentId, request.UserId);
 
             return IGetDepartmentResponse.CreateObj(
                 dbDepartment.Id,

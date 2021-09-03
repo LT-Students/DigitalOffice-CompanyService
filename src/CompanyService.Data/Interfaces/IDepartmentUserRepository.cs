@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         DbDepartmentUser Get(Guid userId, bool includeDepartment);
 
-        IEnumerable<Guid> Find(Guid departmentId, int skipCount, int takeCount, out int totalCount);
+        IEnumerable<Guid> Find(IFindDepartmentUsersRequest request, out int totalCount);
 
         List<DbDepartmentUser> Find(List<Guid> userIds);
 

@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
             if (request.DepartmentIds != null && request.DepartmentIds.Any())
             {
-                dbDepartments = _repository.FindDepartments(request.DepartmentIds);
+                dbDepartments = _repository.Find(request.DepartmentIds);
             }
 
             return IFindDepartmentsResponse.CreateObj(dbDepartments.ToDictionary(x => x.Id, x => x.Name));

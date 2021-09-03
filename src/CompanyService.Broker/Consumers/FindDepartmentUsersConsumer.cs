@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
         private object FindUsers(IFindDepartmentUsersRequest request)
         {
-            var userIds = _repository.Find(request.DepartmentId, request.SkipCount, request.TakeCount, out int totalCount).ToList();
+            var userIds = _repository.Find(request, out int totalCount).ToList();
 
             return IFindDepartmentUsersResponse.CreateObj(userIds, totalCount);
         }
