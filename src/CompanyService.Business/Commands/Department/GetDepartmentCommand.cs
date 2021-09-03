@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
+﻿using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -20,27 +16,28 @@ using LT.DigitalOffice.Models.Broker.Responses.File;
 using LT.DigitalOffice.Models.Broker.Responses.Project;
 using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
   public class GetDepartmentCommand : IGetDepartmentCommand
   {
     private readonly ILogger<GetDepartmentCommand> _logger;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IDepartmentRepository _departmentRepository;
     private readonly IPositionUserRepository _positionUserRepository;
     private readonly IDepartmentResponseMapper _departmentResponseMapper;
     private readonly IRequestClient<IGetImagesRequest> _rcImages;
     private readonly IRequestClient<IGetUsersDataRequest> _rcDepartmentUsers;
-    private readonly IRequestClient<IGetDepartmentProjectsRequest> _rcDepartmentProject;
+    private readonly IRequestClient<IGetProjectsRequest> _rcGetProjects;
 
     private List<UserData> GetUsersData(List<Guid> userIds, List<string> errors)
     {
       if (userIds == null || !userIds.Any())
       {
-        return null;
+        return new();
       }
 
       string message = "Can not get users data. Please try again later.";
@@ -65,7 +62,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       errors.Add(message);
 
-      return null;
+      return new();
     }
 
     private List<ProjectData> GetProjectsData(Guid departmentId, List<string> errors)
@@ -75,8 +72,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       try
       {
-        var response = _rcDepartmentProject.GetResponse<IOperationResult<IGetDepartmentProjectsResponse>>(
-            IGetDepartmentProjectsRequest.CreateObj(departmentId)).Result;
+        var response = _rcGetProjects.GetResponse<IOperationResult<IGetProjectsResponse>>(
+          IGetProjectsRequest.CreateObj(departmentId: departmentId)).Result;
 
         if (response.Message.IsSuccess)
         {
@@ -92,14 +89,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       errors.Add(message);
 
-      return null;
+      return new();
     }
 
     private List<ImageData> GetUsersImage(List<Guid> imageIds, List<string> errors)
     {
       if (imageIds == null || !imageIds.Any())
       {
-        return null;
+        return new();
       }
 
       string message = "Can not get users avatar. Please try again later.";
@@ -108,7 +105,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       try
       {
         var response = _rcImages.GetResponse<IOperationResult<IGetImagesResponse>>(
-            IGetImagesRequest.CreateObj(imageIds)).Result;
+          IGetImagesRequest.CreateObj(imageIds)).Result;
 
         if (response.Message.IsSuccess)
         {
@@ -124,24 +121,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       errors.Add(message);
 
-      return null;
+      return new();
     }
 
     public GetDepartmentCommand(
-        IDepartmentRepository departmentRepository,
-        IPositionUserRepository positionUserRepository,
-        IDepartmentResponseMapper departmentResponseMapper,
-        IRequestClient<IGetImagesRequest> rcImages,
-        IRequestClient<IGetUsersDataRequest> rcDepartmentUsers,
-        IRequestClient<IGetDepartmentProjectsRequest> rcDepartmentProject,
-        ILogger<GetDepartmentCommand> logger,
-        IHttpContextAccessor httpContextAccessor)
+      IDepartmentRepository departmentRepository,
+      IPositionUserRepository positionUserRepository,
+      IDepartmentResponseMapper departmentResponseMapper,
+      IRequestClient<IGetImagesRequest> rcImages,
+      IRequestClient<IGetUsersDataRequest> rcDepartmentUsers,
+      IRequestClient<IGetProjectsRequest> rcGetProjects,
+      ILogger<GetDepartmentCommand> logger)
     {
       _logger = logger;
-      _httpContextAccessor = httpContextAccessor;
       _rcImages = rcImages;
       _rcDepartmentUsers = rcDepartmentUsers;
-      _rcDepartmentProject = rcDepartmentProject;
+      _rcGetProjects = rcGetProjects;
       _departmentRepository = departmentRepository;
       _positionUserRepository = positionUserRepository;
       _departmentResponseMapper = departmentResponseMapper;
@@ -152,17 +147,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       List<string> errors = new();
 
       DbDepartment dbDepartment = _departmentRepository.Get(filter);
-
-      if (dbDepartment == null)
-      {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-
-        return new OperationResultResponse<DepartmentResponse>
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = new() { $"Department was not found by specific {filter.DepartmentId}" }
-        };
-      }
 
       Guid? directorId = dbDepartment.Users.FirstOrDefault(u => u.Role == (int)DepartmentUserRole.Director)?.Id;
 
@@ -183,8 +167,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       if (directorId.HasValue || filter.IsIncludeUsers)
       {
         usersData = GetUsersData(userIds, errors);
-        userImages = GetUsersImage(usersData?.Where(
-            us => us.ImageId.HasValue).Select(us => us.ImageId.Value).ToList(), errors);
+        userImages = GetUsersImage(usersData.Where(
+          us => us.ImageId.HasValue).Select(us => us.ImageId.Value).ToList(), errors);
       }
 
       List<ProjectData> projectsInfo = null;
