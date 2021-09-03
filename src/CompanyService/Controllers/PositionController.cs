@@ -1,15 +1,10 @@
 ﻿using LT.DigitalOffice.CompanyService.Business.Commands.Position.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Position;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
 {
@@ -17,14 +12,6 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     [ApiController]
     public class PositionController : ControllerBase
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public PositionController(
-            IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
         [HttpGet("get")]
         public OperationResultResponse<PositionInfo> Get(
             [FromServices] IGetPositionCommand command,
@@ -48,21 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromServices] ICreatePositionCommand command,
             [FromBody] CreatePositionRequest request)
         {
-            var result = command.Execute(request);
-
-            if (result.Status == OperationResultStatusType.Conflict)
-            {
-                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
-
-                return result;
-            }
-
-            if (result.Status != OperationResultStatusType.Failed)
-            {
-                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
-            }
-
-            return result;
+            return command.Execute(request);
         }
 
         [HttpPatch("edit")]
@@ -71,14 +44,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
             [FromQuery] Guid positionId,
             [FromBody] JsonPatchDocument<EditPositionRequest> request)
         {
-            var result = command.Execute(positionId, request);
-
-            if (result.Status == OperationResultStatusType.Conflict)
-            {
-                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
-            }
-
-            return result;
+            return command.Execute(positionId, request);
         }
     }
 }

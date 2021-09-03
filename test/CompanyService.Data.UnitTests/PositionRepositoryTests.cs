@@ -22,7 +22,6 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         private Guid _userId;
         private DbPosition _dbPosition;
         private Guid _positionId;
-        private DbPosition _newPosition;
         private DbPosition _dbPositionToAdd;
 
         [OneTimeSetUp]
@@ -89,15 +88,15 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 
         #region GetPosition
         [Test]
-        public void ShouldThrowExceptionIfPositionDoesNotExist()
+        public void ShouldReturnNullWhenPositionDoesNotExist()
         {
-            Assert.Throws<NotFoundException>(() => _repository.Get(Guid.NewGuid(), null));
+            Assert.IsNull(_repository.Get(Guid.NewGuid()));
         }
 
         [Test]
         public void ShouldReturnSimplePositionInfoSuccessfully()
         {
-            var result = _repository.Get(_dbPosition.Id, null);
+            var result = _repository.Get(_dbPosition.Id);
 
             var expected = new DbPosition
             {
@@ -117,22 +116,6 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         public void FindPositionsSuccessfully()
         {
             Assert.IsNotEmpty(_repository.Find(0, 2, true, out _));
-        }
-        #endregion
-
-        #region GetUserPosition
-
-        [Test]
-        public void ShouldReturnUserPosition()
-        {
-            var userId = _dbPosition.Users.First().UserId;
-
-            var result = _repository.Get(null, userId);
-
-            Assert.AreEqual(_dbPosition.Id, result.Id);
-            Assert.AreEqual(_dbPosition.Description, result.Description);
-            Assert.AreEqual(_dbPosition.Name, result.Name);
-            Assert.That(_provider.Positions, Is.EquivalentTo(new[] { _dbPosition }));
         }
         #endregion
 

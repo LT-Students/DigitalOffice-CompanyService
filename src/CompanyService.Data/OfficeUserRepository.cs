@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
-    public class OfficeUserRepository : IOfficeUserRepository
+  public class OfficeUserRepository : IOfficeUserRepository
     {
         private readonly IDataProvider _provider;
 

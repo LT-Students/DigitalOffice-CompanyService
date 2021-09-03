@@ -7,12 +7,13 @@ using LT.DigitalOffice.CompanyService.Validation.Department.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
+using System.Net;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -48,10 +49,25 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         {
             if (!(_accessValidator.IsAdmin() || _accessValidator.HasRights(Rights.AddEditRemoveDepartments)))
             {
-                throw new ForbiddenException("Not enough rights.");
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new() { "Not enough rights." }
+                };
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = errors
+                };
+            }
 
             OperationResultResponse<Guid> response = new();
 
@@ -66,7 +82,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             if (_repository.DoesNameExist(request.Name))
             {
-                response.Status = OperationResultStatusType.Conflict;
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+
+                response.Status = OperationResultStatusType.Failed;
                 response.Errors.Add("The department name already exists");
                 return response;
             }
@@ -88,8 +106,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             #endregion
 
-            response.Body = _repository.CreateDepartment(_mapper.Map(request, company.Id));
+            response.Body = _repository.Create(_mapper.Map(request, company.Id));
             response.Status = OperationResultStatusType.FullSuccess;
+
+            _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+
             return response;
         }
     }
