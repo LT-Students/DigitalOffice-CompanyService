@@ -15,10 +15,10 @@ using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 {
-    class FindDepartmentUsersConsumerTests
+    class GetDepartmentUsersConsumerTests
     {
         private InMemoryTestHarness _harness;
-        private ConsumerTestHarness<FindDepartmentUsersConsumer> _consumerTestHarness;
+        private ConsumerTestHarness<GetDepartmentUsersConsumer> _consumerTestHarness;
 
         private Guid _departmentId;
         private List<Guid> _userIds;
@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.UnitTests
 
             _harness = new InMemoryTestHarness();
             _consumerTestHarness = _harness.Consumer(() =>
-                new FindDepartmentUsersConsumer(_repository.Object));
+                new GetDepartmentUsersConsumer(_repository.Object));
         }
 
         //[Test]

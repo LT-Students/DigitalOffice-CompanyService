@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             return _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive);
         }
 
-        public List<DbPositionUser> Find(List<Guid> userIds)
+        public List<DbPositionUser> Get(List<Guid> userIds)
         {
             return _provider.PositionUsers
                 .Include(pu => pu.Position)

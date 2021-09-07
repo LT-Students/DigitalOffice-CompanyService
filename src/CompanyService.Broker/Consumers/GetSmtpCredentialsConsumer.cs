@@ -1,39 +1,39 @@
-﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
+﻿using System.Threading.Tasks;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Responses.Company;
 using MassTransit;
-using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-    public class GetSmtpCredentialsConsumer : IConsumer<IGetSmtpCredentialsRequest>
+  public class GetSmtpCredentialsConsumer : IConsumer<IGetSmtpCredentialsRequest>
+  {
+    private ICompanyRepository _repository;
+
+    private object GetSmtpCredentials(object arg)
     {
-        private ICompanyRepository _repository;
+      DbCompany company = _repository.Get();
 
-        private object GetSmtpCredentials(object arg)
-        {
-            DbCompany company = _repository.Get();
-
-            return IGetSmtpCredentialsResponse.CreateObj(
-                host: company.Host,
-                port: company.Port,
-                enableSsl: company.EnableSsl,
-                email: company.Email,
-                password: company.Password);
-        }
-
-        public GetSmtpCredentialsConsumer(ICompanyRepository repository)
-        {
-            _repository = repository;
-        }
-
-        public async Task Consume(ConsumeContext<IGetSmtpCredentialsRequest> context)
-        {
-            var response = OperationResultWrapper.CreateResponse(GetSmtpCredentials, context.Message);
-
-            await context.RespondAsync<IOperationResult<IGetSmtpCredentialsResponse>>(response);
-        }
+      return IGetSmtpCredentialsResponse.CreateObj(
+        host: company.Host,
+        port: company.Port,
+        enableSsl: company.EnableSsl,
+        email: company.Email,
+        password: company.Password);
     }
+
+    public GetSmtpCredentialsConsumer(ICompanyRepository repository)
+    {
+      _repository = repository;
+    }
+
+    public async Task Consume(ConsumeContext<IGetSmtpCredentialsRequest> context)
+    {
+      var response = OperationResultWrapper.CreateResponse(GetSmtpCredentials, context.Message);
+
+      await context.RespondAsync<IOperationResult<IGetSmtpCredentialsResponse>>(response);
+    }
+  }
 }

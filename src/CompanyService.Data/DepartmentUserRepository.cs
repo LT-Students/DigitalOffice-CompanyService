@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Data
     private readonly IDataProvider _provider;
 
     public DepartmentUserRepository(
-        IDataProvider provider)
+      IDataProvider provider)
     {
       _provider = provider;
     }
@@ -54,7 +54,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       return user;
     }
 
-    public IEnumerable<Guid> Find(IFindDepartmentUsersRequest request, out int totalCount)
+    public List<Guid> Get(IGetDepartmentUsersRequest request, out int totalCount)
     {
       var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
 
@@ -75,7 +75,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       return dbDepartmentUser.Select(x => x.UserId).ToList();
     }
 
-    public List<DbDepartmentUser> Find(List<Guid> userIds)
+    public List<DbDepartmentUser> Get(List<Guid> userIds)
     {
       return _provider.DepartmentUsers
         .Include(du => du.Department)

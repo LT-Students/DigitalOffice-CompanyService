@@ -7,20 +7,15 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
     public class DbDepartmentUserMapper : IDbDepartmentUserMapper
     {
-        public DbDepartmentUser Map(IChangeUserDepartmentRequest request)
+        public DbDepartmentUser Map(Guid userId, Guid departmentId, Guid modifiedBy)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
             return new DbDepartmentUser
             {
                 Id = Guid.NewGuid(),
-                UserId = request.UserId,
-                DepartmentId = request.DepartmentId,
+                UserId = userId,
+                DepartmentId = departmentId,
                 IsActive = true,
-                CreatedBy = request.ChangedBy,
+                CreatedBy = modifiedBy,
                 CreatedAtUtc = DateTime.UtcNow
             };
         }

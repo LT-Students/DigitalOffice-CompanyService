@@ -124,9 +124,16 @@ namespace LT.DigitalOffice.CompanyService.Data
           .ToList();
     }
 
-    public List<DbDepartment> Find(List<Guid> departmentIds)
+    public List<DbDepartment> Get(List<Guid> departmentIds, bool includeUsers = false)
     {
-      return _provider.Departments.Where(d => departmentIds.Contains(d.Id)).ToList();
+      IQueryable<DbDepartment> departments = _provider.Departments.Where(d => departmentIds.Contains(d.Id));
+
+      if (includeUsers)
+      {
+        departments = departments.Include(d => d.Users);
+      }
+
+      return departments.ToList();
     }
 
     public List<DbDepartment> Search(string text)

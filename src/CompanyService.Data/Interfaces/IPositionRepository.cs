@@ -15,6 +15,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     {
         DbPosition Get(Guid positionId);
 
+        List<DbPosition> Get(List<Guid> positionsIds, bool includeUsers);
+
         /// <summary>
         /// Returns a list of all added positions to the database.
         /// </summary>
