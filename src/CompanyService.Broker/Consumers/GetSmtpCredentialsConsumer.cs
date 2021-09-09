@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IGetSmtpCredentialsRequest> context)
     {
-      var response = OperationResultWrapper.CreateResponse(GetSmtpCredentials, context.Message);
+      object response = OperationResultWrapper.CreateResponse(GetSmtpCredentials, context.Message);
 
       await context.RespondAsync<IOperationResult<IGetSmtpCredentialsResponse>>(response);
     }

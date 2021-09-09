@@ -84,7 +84,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       return dbDepartments.FirstOrDefault();
     }
 
-    public List<Guid> AreDepartmentsExist(List<Guid> departmentIds)
+    public List<Guid> DoDepartmentsExist(List<Guid> departmentIds)
     {
       return _provider.Departments
           .Where(d => departmentIds.Contains(d.Id) && d.IsActive)

@@ -104,7 +104,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IEditCompanyEmployeeRequest> context)
     {
-      var response = OperationResultWrapper.CreateResponse(ChangeEmployee, context.Message);
+      object response = OperationResultWrapper.CreateResponse(ChangeEmployee, context.Message);
 
       await context.RespondAsync<IOperationResult<(bool department, bool position, bool office)>>(response);
     }

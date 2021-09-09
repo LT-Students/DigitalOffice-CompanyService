@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     }
 
     public GetDepartmentUsersConsumer(
-       IDepartmentUserRepository repository)
+      IDepartmentUserRepository repository)
     {
       _repository = repository;
     }

@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     private object GetPosition(IGetPositionsRequest request)
     {
-      List<DbPosition> positions = _repository.Get(request.PositionsIds, true);
+      List<DbPosition> positions = _repository.Get(request.PositionsIds, includeUsers: true);
 
       return IGetPositionsResponse.CreateObj(
         positions.Select(
@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IGetPositionsRequest> context)
     {
-      var response = OperationResultWrapper.CreateResponse(GetPosition, context.Message);
+      object response = OperationResultWrapper.CreateResponse(GetPosition, context.Message);
 
       await context.RespondAsync<IOperationResult<IGetPositionsResponse>>(response);
     }

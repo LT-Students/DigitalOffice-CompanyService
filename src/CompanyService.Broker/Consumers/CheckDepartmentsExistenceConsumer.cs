@@ -12,6 +12,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
   {
     private readonly IDepartmentRepository _repository;
 
+    private object GetDepartmentExistenceInfo(ICheckDepartmentsExistence requestIds)
+    {
+      return ICheckDepartmentsExistence.CreateObj(new List<Guid>(_repository.DoDepartmentsExist(requestIds.DepartmentIds)));
+    }
+
     public CheckDepartmentsExistenceConsumer(IDepartmentRepository repository)
     {
       _repository = repository;
@@ -19,14 +24,9 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<ICheckDepartmentsExistence> context)
     {
-      var response = OperationResultWrapper.CreateResponse(GetDepartmentExistenceInfo, context.Message);
+      object response = OperationResultWrapper.CreateResponse(GetDepartmentExistenceInfo, context.Message);
 
       await context.RespondAsync<IOperationResult<ICheckDepartmentsExistence>>(response);
-    }
-
-    private object GetDepartmentExistenceInfo(ICheckDepartmentsExistence requestIds)
-    {
-      return ICheckDepartmentsExistence.CreateObj(new List<Guid>(_repository.AreDepartmentsExist(requestIds.DepartmentIds)));
     }
   }
 }

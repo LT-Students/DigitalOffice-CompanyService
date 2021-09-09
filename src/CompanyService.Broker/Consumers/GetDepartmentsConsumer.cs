@@ -36,14 +36,14 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     }
 
     public GetDepartmentsConsumer(
-        IDepartmentRepository repository)
+      IDepartmentRepository repository)
     {
       _repository = repository;
     }
 
     public async Task Consume(ConsumeContext<IGetDepartmentsRequest> context)
     {
-      var departmentId = OperationResultWrapper.CreateResponse(GetDepartment, context.Message);
+      object departmentId = OperationResultWrapper.CreateResponse(GetDepartment, context.Message);
 
       await context.RespondAsync<IOperationResult<IGetDepartmentsResponse>>(departmentId);
     }

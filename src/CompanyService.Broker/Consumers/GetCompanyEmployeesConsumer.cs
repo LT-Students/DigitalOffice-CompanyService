@@ -21,9 +21,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     private List<DepartmentData> GetDepartments(List<Guid> userIds)
     {
-      List<DbDepartmentUser> dbDepartmentUsers = _departmentUserRepository.Get(userIds);
-
-      List<DbDepartment> departments = dbDepartmentUsers.Select(du => du.Department).Distinct().ToList();
+      List<DbDepartment> departments = _departmentUserRepository
+        .Get(userIds)
+        .Select(du => du.Department)
+        .Distinct()
+        .ToList();
 
       return departments.Select(
         d => new DepartmentData(
@@ -35,9 +37,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     private List<PositionData> GetPositions(List<Guid> userIds)
     {
-      List<DbPositionUser> dbPositionsUsers = _positionUserRepository.Get(userIds);
-
-      List<DbPosition> positions = dbPositionsUsers.Select(du => du.Position).Distinct().ToList();
+      List<DbPosition> positions = _positionUserRepository
+        .Get(userIds)
+        .Select(du => du.Position)
+        .Distinct()
+        .ToList();
 
       return positions.Select(
         p => new PositionData(
@@ -48,9 +52,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     private List<OfficeData> GetOffices(List<Guid> userIds)
     {
-      List<DbOfficeUser> dbOfficesUsers = _officeUserRepository.Get(userIds);
-
-      List<DbOffice> offices = dbOfficesUsers.Select(du => du.Office).Distinct().ToList();
+      List<DbOffice> offices = _officeUserRepository
+        .Get(userIds)
+        .Select(du => du.Office)
+        .Distinct()
+        .ToList();
 
       return offices.Select(
         o => new OfficeData(
@@ -97,7 +103,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IGetCompanyEmployeesRequest> context)
     {
-      var response = OperationResultWrapper.CreateResponse(GetResponse, context.Message);
+      object response = OperationResultWrapper.CreateResponse(GetResponse, context.Message);
 
       await context.RespondAsync<IOperationResult<IGetCompanyEmployeesResponse>>(response);
     }
