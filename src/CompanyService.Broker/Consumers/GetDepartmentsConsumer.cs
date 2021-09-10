@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -20,9 +21,11 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     {
       List<DbDepartment> dbDepartments = new();
 
-      if (request.DepartmentsIds != null && request.DepartmentsIds.Any())
+      List<Guid> departmentIds = request.DepartmentsIds;
+
+      if (departmentIds != null && departmentIds.Any())
       {
-        dbDepartments = _repository.Get(request.DepartmentsIds, true);
+        dbDepartments = _repository.Get(departmentIds, true);
       }
 
       return IGetDepartmentsResponse.CreateObj(
