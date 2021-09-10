@@ -11,8 +11,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     private readonly IPositionUserRepository _positionUserRepository;
 
     public DisactivateUserConsumer(
-        IDepartmentUserRepository departmentUserRepository,
-        IPositionUserRepository positionUserRepository)
+      IDepartmentUserRepository departmentUserRepository,
+      IPositionUserRepository positionUserRepository)
     {
       _departmentUserRepository = departmentUserRepository;
       _positionUserRepository = positionUserRepository;
