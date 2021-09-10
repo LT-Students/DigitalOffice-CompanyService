@@ -4,7 +4,6 @@ using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -19,8 +18,8 @@ namespace LT.DigitalOffice.CompanyService.Data
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public PositionRepository(
-        IDataProvider provider,
-        IHttpContextAccessor httpContextAccessor)
+      IDataProvider provider,
+      IHttpContextAccessor httpContextAccessor)
     {
       _provider = provider;
       _httpContextAccessor = httpContextAccessor;
@@ -28,7 +27,19 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public DbPosition Get(Guid positionId)
     {
-        return _provider.Positions.FirstOrDefault(d => d.Id == positionId);
+      return _provider.Positions.FirstOrDefault(d => d.Id == positionId);
+    }
+
+    public List<DbPosition> Get(List<Guid> positionsIds, bool includeUsers)
+    {
+      IQueryable<DbPosition> positions = _provider.Positions.Where(p => positionsIds.Contains(p.Id));
+
+      if (includeUsers)
+      {
+        positions = positions.Include(p => p.Users);
+      }
+
+      return positions.ToList();
     }
 
     public List<DbPosition> Find(int skipCount, int takeCount, bool includeDeactivated, out int totalCount)

@@ -160,7 +160,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         userIds.Add(directorId.Value);
       }
 
-      List<DbPositionUser> dbPositionUsers = _positionUserRepository.Find(userIds);
+      List<DbPositionUser> dbPositionUsers = _positionUserRepository.Get(userIds);
 
       List<UserData> usersData = null;
       List<ImageData> userImages = null;
