@@ -58,7 +58,7 @@ namespace LT.DigitalOffice.CompanyService.Data
     {
       var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
 
-      dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == request.DepartmentId);
+      dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive && x.DepartmentId == request.DepartmentId);
 
       totalCount = dbDepartmentUser.Count();
 
@@ -75,10 +75,6 @@ namespace LT.DigitalOffice.CompanyService.Data
       if (request.ByEntryDate.HasValue)
       {
         dbDepartmentUser = dbDepartmentUser.Where(x => x.CreatedAtUtc <= request.ByEntryDate.Value);
-      }
-      else
-      {
-        dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive);
       }
 
       return dbDepartmentUser.Select(x => x.UserId).ToList();
