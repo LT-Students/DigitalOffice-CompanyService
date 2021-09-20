@@ -65,7 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       if (request.ByEntryDate.HasValue)
       {
         dbDepartmentUser = dbDepartmentUser.Where(x =>
-          x.CreatedAtUtc < request.ByEntryDate.Value && (x.IsActive || x.LeftAt > request.ByEntryDate));
+          x.CreatedAtUtc < request.ByEntryDate.Value);
       }
       else
       {
