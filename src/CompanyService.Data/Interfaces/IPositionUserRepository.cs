@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
         DbPositionUser Get(Guid userId);
 
-        List<DbPositionUser> Find(List<Guid> userIds);
+        List<DbPositionUser> Get(List<Guid> userIds);
 
         void Remove(Guid userId, Guid removedBy);
     }

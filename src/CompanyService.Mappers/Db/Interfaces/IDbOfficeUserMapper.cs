@@ -1,12 +1,12 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Db;
+﻿using System;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Attributes;
-using LT.DigitalOffice.Models.Broker.Requests.Company;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
 {
-    [AutoInject]
+  [AutoInject]
     public interface IDbOfficeUserMapper
     {
-        DbOfficeUser Map(IChangeUserOfficeRequest request);
+        DbOfficeUser Map(Guid userId, Guid officeId, Guid modifiedBy);
     }
 }
