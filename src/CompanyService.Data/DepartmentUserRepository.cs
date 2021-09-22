@@ -58,9 +58,20 @@ namespace LT.DigitalOffice.CompanyService.Data
     {
       var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
 
-      dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive && x.DepartmentId == request.DepartmentId);
+      dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == request.DepartmentId);
 
       totalCount = dbDepartmentUser.Count();
+
+      if (request.ByEntryDate.HasValue)
+      {
+        dbDepartmentUser = dbDepartmentUser.Where(x =>
+          (x.CreatedAtUtc.Year * 12 + x.CreatedAtUtc.Month) <=
+          (request.ByEntryDate.Value.Year * 12 + request.ByEntryDate.Value.Month));
+      }
+      else
+      {
+        dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive);
+      }
 
       if (request.SkipCount.HasValue)
       {
@@ -92,6 +103,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         user.IsActive = false;
         user.ModifiedAtUtc = DateTime.UtcNow;
         user.ModifiedBy = removedBy;
+        user.LeftAtUts = DateTime.UtcNow;
       }
 
       _provider.Save();
