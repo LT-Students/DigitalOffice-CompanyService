@@ -26,15 +26,15 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public void Configure(EntityTypeBuilder<DbDepartmentUser> builder)
     {
       builder
-          .ToTable(DbDepartmentUser.TableName);
+        .ToTable(DbDepartmentUser.TableName);
 
       builder
-          .HasKey(u => u.Id);
+        .HasKey(u => u.Id);
 
       builder
-          .HasOne(u => u.Department)
-          .WithMany(d => d.Users)
-          .HasForeignKey(u => u.DepartmentId);
+        .HasOne(u => u.Department)
+        .WithMany(d => d.Users)
+        .HasForeignKey(u => u.DepartmentId);
     }
   }
 }
