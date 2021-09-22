@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public DateTime CreatedAtUtc { get; set; }
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
-    public DateTime? LeftAt { get; set; }
+    public DateTime? LeftAtUts { get; set; }
     public DbDepartment Department { get; set; }
   }
 

@@ -103,7 +103,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         user.IsActive = false;
         user.ModifiedAtUtc = DateTime.UtcNow;
         user.ModifiedBy = removedBy;
-        user.LeftAt = DateTime.UtcNow;
+        user.LeftAtUts = DateTime.UtcNow;
       }
 
       _provider.Save();
