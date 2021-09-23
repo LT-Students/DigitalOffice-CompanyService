@@ -6,10 +6,14 @@ using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Models.Broker.Models.Company;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Responses.Company;
 using MassTransit;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
@@ -18,6 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     private readonly IDepartmentUserRepository _departmentUserRepository;
     private readonly IPositionUserRepository _positionUserRepository;
     private readonly IOfficeUserRepository _officeUserRepository;
+    private readonly IConnectionMultiplexer _cache;
 
     private List<DepartmentData> GetDepartments(List<Guid> userIds)
     {
@@ -67,45 +72,68 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
           o.Users.Select(u => u.UserId).ToList())).ToList();
     }
 
-    private object GetResponse(IGetCompanyEmployeesRequest request)
+    public GetCompanyEmployeesConsumer(
+      IDepartmentUserRepository departmentUserRepository,
+      IPositionUserRepository positionUserRepository,
+      IOfficeUserRepository officeUserRepository, 
+      IConnectionMultiplexer cache)
+    {
+      _departmentUserRepository = departmentUserRepository;
+      _positionUserRepository = positionUserRepository;
+      _officeUserRepository = officeUserRepository;
+      _cache = cache;
+    }
+
+    private async Task CreateCache(
+      List<Guid> userIds,
+      List<DepartmentData> departments,
+      List<PositionData> positions,
+      List<OfficeData> offices)
+    {
+      string key = userIds.GetRedisCacheHashCode();
+
+      if (departments != null)
+      {
+        await _cache.GetDatabase(Cache.Departments).StringSetAsync(key, JsonConvert.SerializeObject(departments));
+      }
+
+      if (positions != null)
+      {
+        await _cache.GetDatabase(Cache.Positions).StringSetAsync(key, JsonConvert.SerializeObject(positions));
+      }
+
+      if (offices != null)
+      {
+        await _cache.GetDatabase(Cache.Offices).StringSetAsync(key, JsonConvert.SerializeObject(offices));
+      }
+    }
+
+    public async Task Consume(ConsumeContext<IGetCompanyEmployeesRequest> context)
     {
       List<DepartmentData> departments = null;
       List<PositionData> positions = null;
       List<OfficeData> offices = null;
 
-      if (request.IncludeDepartments)
+      if (context.Message.IncludeDepartments)
       {
-        departments = GetDepartments(request.UserIds);
+        departments = GetDepartments(context.Message.UserIds);
       }
 
-      if (request.IncludePositions)
+      if (context.Message.IncludePositions)
       {
-        positions = GetPositions(request.UserIds);
+        positions = GetPositions(context.Message.UserIds);
       }
 
-      if (request.IncludeOffices)
+      if (context.Message.IncludeOffices)
       {
-        offices = GetOffices(request.UserIds);
+        offices = GetOffices(context.Message.UserIds);
       }
 
-      return IGetCompanyEmployeesResponse.CreateObj(departments, positions, offices);
-    }
-
-    public GetCompanyEmployeesConsumer(
-      IDepartmentUserRepository departmentUserRepository,
-      IPositionUserRepository positionUserRepository,
-      IOfficeUserRepository officeUserRepository)
-    {
-      _departmentUserRepository = departmentUserRepository;
-      _positionUserRepository = positionUserRepository;
-      _officeUserRepository = officeUserRepository;
-    }
-
-    public async Task Consume(ConsumeContext<IGetCompanyEmployeesRequest> context)
-    {
-      object response = OperationResultWrapper.CreateResponse(GetResponse, context.Message);
+      object response = OperationResultWrapper.CreateResponse((_) => IGetCompanyEmployeesResponse.CreateObj(departments, positions, offices), context);
 
       await context.RespondAsync<IOperationResult<IGetCompanyEmployeesResponse>>(response);
+
+      await CreateCache(context.Message.UserIds, departments, positions, offices);
     }
   }
 }

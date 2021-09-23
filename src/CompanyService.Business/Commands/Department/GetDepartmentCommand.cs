@@ -6,7 +6,9 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Models;
 using LT.DigitalOffice.Models.Broker.Requests.File;
@@ -17,9 +19,12 @@ using LT.DigitalOffice.Models.Broker.Responses.Project;
 using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -32,8 +37,21 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     private readonly IRequestClient<IGetImagesRequest> _rcImages;
     private readonly IRequestClient<IGetUsersDataRequest> _rcDepartmentUsers;
     private readonly IRequestClient<IGetProjectsRequest> _rcGetProjects;
+    private readonly IConnectionMultiplexer _cache;
 
-    private List<UserData> GetUsersData(List<Guid> userIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersData(List<Guid> userIds, List<string> errors)
+    {
+      RedisValue valueFromCache = await _cache.GetDatabase(Cache.Users).StringGetAsync(userIds.GetRedisCacheHashCode());
+
+      if (valueFromCache.HasValue)
+      {
+        return JsonConvert.DeserializeObject<List<UserData>>(valueFromCache.ToString());
+      }
+
+      return await GetUsersDataFromBroker(userIds, errors);
+    }
+
+    private async Task<List<UserData>> GetUsersDataFromBroker(List<Guid> userIds, List<string> errors)
     {
       if (userIds == null || !userIds.Any())
       {
@@ -45,8 +63,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       try
       {
-        var response = _rcDepartmentUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
-            IGetUsersDataRequest.CreateObj(userIds)).Result;
+        var response = await _rcDepartmentUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+            IGetUsersDataRequest.CreateObj(userIds));
 
         if (response.Message.IsSuccess)
         {
@@ -62,7 +80,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       errors.Add(message);
 
-      return new();
+      return null;
     }
 
     private List<ProjectData> GetProjectsData(Guid departmentId, List<string> errors)
@@ -131,9 +149,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       IRequestClient<IGetImagesRequest> rcImages,
       IRequestClient<IGetUsersDataRequest> rcDepartmentUsers,
       IRequestClient<IGetProjectsRequest> rcGetProjects,
+      IConnectionMultiplexer cache,
       ILogger<GetDepartmentCommand> logger)
     {
       _logger = logger;
+      _cache = cache;
       _rcImages = rcImages;
       _rcDepartmentUsers = rcDepartmentUsers;
       _rcGetProjects = rcGetProjects;
@@ -142,7 +162,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       _departmentResponseMapper = departmentResponseMapper;
     }
 
-    public OperationResultResponse<DepartmentResponse> Execute(GetDepartmentFilter filter)
+    public async Task<OperationResultResponse<DepartmentResponse>> Execute(GetDepartmentFilter filter)
     {
       List<string> errors = new();
 
@@ -166,7 +186,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       List<ImageData> userImages = null;
       if (directorId.HasValue || filter.IsIncludeUsers)
       {
-        usersData = GetUsersData(userIds, errors);
+        usersData = await GetUsersData(userIds, errors);
         userImages = GetUsersImage(usersData.Where(
           us => us.ImageId.HasValue).Select(us => us.ImageId.Value).ToList(), errors);
       }
