@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Configurations;
+using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.Models.Broker.Requests.File;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.Project;
@@ -36,5 +37,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 
     [AutoInjectRequest(typeof(IUpdateSmtpCredentialsRequest))]
     public string UpdateSmtpCredentialsEndpoint { get; set; }
+
+    [AutoInjectRequest(typeof(ICheckUsersExistence))]
+    public string CheckUsersExistenceEndpoint { get; set; }
   }
 }

@@ -9,7 +9,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   [AutoInject]
   public interface IDepartmentUserRepository
   {
-    bool Add(DbDepartmentUser departmentUser);
+    bool Add(List<DbDepartmentUser> departmentUsers);
 
     DbDepartmentUser Get(Guid userId, bool includeDepartment);
 
@@ -17,6 +17,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
     List<DbDepartmentUser> Get(List<Guid> userIds);
 
-    void Remove(Guid userId, Guid removedBy);
+    void Remove(List<Guid> usersIds, Guid removedBy);
+
+    public bool IsDepartmentDirector(Guid departmentId, Guid userId);
   }
 }

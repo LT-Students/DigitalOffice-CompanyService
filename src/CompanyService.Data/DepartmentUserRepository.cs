@@ -4,6 +4,7 @@ using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using Microsoft.EntityFrameworkCore;
@@ -20,14 +21,14 @@ namespace LT.DigitalOffice.CompanyService.Data
       _provider = provider;
     }
 
-    public bool Add(DbDepartmentUser departmentUser)
+    public bool Add(List<DbDepartmentUser> departmentUsers)
     {
-      if (departmentUser == null)
+      if (departmentUsers == null || !departmentUsers.Any())
       {
-        throw new ArgumentNullException(nameof(departmentUser));
+        return false;
       }
 
-      _provider.DepartmentUsers.Add(departmentUser);
+      _provider.DepartmentUsers.AddRange(departmentUsers);
       _provider.Save();
 
       return true;
@@ -94,19 +95,30 @@ namespace LT.DigitalOffice.CompanyService.Data
         .ToList();
     }
 
-    public void Remove(Guid userId, Guid removedBy)
+    public void Remove(List<Guid> usersIds, Guid removedBy)
     {
-      DbDepartmentUser user = _provider.DepartmentUsers.FirstOrDefault(u => u.IsActive && u.UserId == userId);
+      IEnumerable<DbDepartmentUser> dbDepartmentsUsers = _provider.DepartmentUsers
+        .Where(du => du.IsActive && usersIds.Contains(du.UserId));
 
-      if (user != null)
+      if (usersIds != null && usersIds.Any())
       {
-        user.IsActive = false;
-        user.ModifiedAtUtc = DateTime.UtcNow;
-        user.ModifiedBy = removedBy;
-        user.LeftAtUts = DateTime.UtcNow;
-      }
+        foreach (DbDepartmentUser du in dbDepartmentsUsers)
+        {
+          du.IsActive = false;
+          du.ModifiedAtUtc = DateTime.UtcNow;
+          du.ModifiedBy = removedBy;
+          du.LeftAtUts = DateTime.UtcNow;
+        };
 
       _provider.Save();
+      }
+    }
+
+    public bool IsDepartmentDirector(Guid departmentId, Guid userId)
+    {
+      return _provider.DepartmentUsers
+        .FirstOrDefault(x => x.UserId == userId && x.DepartmentId == departmentId && x.IsActive)?
+        .Role == (int)DepartmentUserRole.Director;
     }
   }
 }
