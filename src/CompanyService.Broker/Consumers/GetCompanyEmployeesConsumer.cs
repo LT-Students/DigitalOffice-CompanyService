@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Configuration;
 using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Constants;
@@ -12,6 +13,7 @@ using LT.DigitalOffice.Models.Broker.Models.Company;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Responses.Company;
 using MassTransit;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -23,6 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     private readonly IPositionUserRepository _positionUserRepository;
     private readonly IOfficeUserRepository _officeUserRepository;
     private readonly IConnectionMultiplexer _cache;
+    private readonly IOptions<RedisConfig> _redisConfig;
 
     private List<DepartmentData> GetDepartments(List<Guid> userIds)
     {
@@ -72,18 +75,6 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
           o.Users.Select(u => u.UserId).ToList())).ToList();
     }
 
-    public GetCompanyEmployeesConsumer(
-      IDepartmentUserRepository departmentUserRepository,
-      IPositionUserRepository positionUserRepository,
-      IOfficeUserRepository officeUserRepository, 
-      IConnectionMultiplexer cache)
-    {
-      _departmentUserRepository = departmentUserRepository;
-      _positionUserRepository = positionUserRepository;
-      _officeUserRepository = officeUserRepository;
-      _cache = cache;
-    }
-
     private async Task CreateCache(
       List<Guid> userIds,
       List<DepartmentData> departments,
@@ -94,18 +85,41 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
       if (departments != null)
       {
-        await _cache.GetDatabase(Cache.Departments).StringSetAsync(key, JsonConvert.SerializeObject(departments));
+        await _cache.GetDatabase(Cache.Departments).StringSetAsync(
+          key, 
+          JsonConvert.SerializeObject(departments), 
+          TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
       }
 
       if (positions != null)
       {
-        await _cache.GetDatabase(Cache.Positions).StringSetAsync(key, JsonConvert.SerializeObject(positions));
+        await _cache.GetDatabase(Cache.Positions).StringSetAsync(
+          key, 
+          JsonConvert.SerializeObject(positions),
+          TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
       }
 
       if (offices != null)
       {
-        await _cache.GetDatabase(Cache.Offices).StringSetAsync(key, JsonConvert.SerializeObject(offices));
+        await _cache.GetDatabase(Cache.Offices).StringSetAsync(
+          key, 
+          JsonConvert.SerializeObject(offices),
+          TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
       }
+    }
+
+    public GetCompanyEmployeesConsumer(
+      IDepartmentUserRepository departmentUserRepository,
+      IPositionUserRepository positionUserRepository,
+      IOfficeUserRepository officeUserRepository, 
+      IConnectionMultiplexer cache,
+      IOptions<RedisConfig> redisConfig)
+    {
+      _departmentUserRepository = departmentUserRepository;
+      _positionUserRepository = positionUserRepository;
+      _officeUserRepository = officeUserRepository;
+      _cache = cache;
+      _redisConfig = redisConfig;
     }
 
     public async Task Consume(ConsumeContext<IGetCompanyEmployeesRequest> context)
