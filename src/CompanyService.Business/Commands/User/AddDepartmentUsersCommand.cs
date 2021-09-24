@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.User.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
@@ -13,24 +12,23 @@ using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.User
 {
-  public class CreateDepartmentUsersCommand : ICreateDepartmetUsersCommand
+  public class AddDepartmentUsersCommand : IAddDepartmetUsersCommand
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IAccessValidator _accessValidator;
-    private readonly ICreateDepartmentUsersRequestValidator _validator;
+    private readonly IAddDepartmentUsersRequestValidator _validator;
     private readonly IDbDepartmentUserMapper _mapper;
     private readonly IDepartmentUserRepository _repository;
 
-    public CreateDepartmentUsersCommand(
+    public AddDepartmentUsersCommand(
       IHttpContextAccessor httpContextAccessor,
       IAccessValidator accessValidator,
-      ICreateDepartmentUsersRequestValidator validator,
+      IAddDepartmentUsersRequestValidator validator,
       IDbDepartmentUserMapper mapper,
       IDepartmentUserRepository repository)
     {
@@ -41,7 +39,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.User
       _repository = repository;
     }
 
-    public OperationResultResponse<bool> Execute(CreateDepartmentUsersRequest request)
+    public async Task<OperationResultResponse<bool>> Execute(AddDepartmentUsersRequest request)
     {
       Guid requestUserId = _httpContextAccessor.HttpContext.GetUserId();
 
@@ -57,14 +55,16 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.User
         };
       }
 
-      if (!_validator.ValidateCustom(request, out List<string> errors))
+      ValidationResult validationResult = await _validator.ValidateAsync(request);
+
+      if (!validationResult.IsValid)
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
         return new OperationResultResponse<bool>
         {
           Status = OperationResultStatusType.Failed,
-          Errors = errors
+          Errors = validationResult.Errors.Select(vf => vf.ErrorMessage).ToList()
         };
       }
 

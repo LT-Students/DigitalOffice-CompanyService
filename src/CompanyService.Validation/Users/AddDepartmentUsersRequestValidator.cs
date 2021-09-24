@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.User;
 using LT.DigitalOffice.CompanyService.Validation.Users.Interfaces;
@@ -11,14 +12,14 @@ using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.CompanyService.Validation.Users
 {
-  public class CreateDepartmentUsersRequestValidator : AbstractValidator<CreateDepartmentUsersRequest>, ICreateDepartmentUsersRequestValidator
+  public class AddDepartmentUsersRequestValidator : AbstractValidator<AddDepartmentUsersRequest>, IAddDepartmentUsersRequestValidator
   {
     private readonly IRequestClient<ICheckUsersExistence> _rcCheckUsersExistence;
-    private readonly ILogger<CreateDepartmentUsersRequestValidator> _logger;
+    private readonly ILogger<AddDepartmentUsersRequestValidator> _logger;
 
-    public CreateDepartmentUsersRequestValidator(
+    public AddDepartmentUsersRequestValidator(
       IRequestClient<ICheckUsersExistence> rcCheckUsersExistence,
-      ILogger<CreateDepartmentUsersRequestValidator> logger)
+      ILogger<AddDepartmentUsersRequestValidator> logger)
     {
       _rcCheckUsersExistence = rcCheckUsersExistence;
       _logger = logger;
@@ -29,15 +30,15 @@ namespace LT.DigitalOffice.CompanyService.Validation.Users
         .Must(x => x.Any()).WithMessage("Users ids must not be empty.")
         .Must(x => !x.Contains(Guid.Empty)).WithMessage("Users ids must not contains empty value.")
         .Must(x => x.Count() == x.Distinct().Count()).WithMessage("User cannot be added to the department twice.")
-        .Must(x => CheckUserExistence(x)).WithMessage("Users ids contains invalid id.");
+        .MustAsync(async (x, cancellation) => await CheckUserExistence(x)).WithMessage("Users ids contains invalid id.");
     }
 
-    private bool CheckUserExistence(List<Guid> usersIds)
+    private async Task<bool> CheckUserExistence(List<Guid> usersIds)
     {
       try
       {
-        var response = _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
-          ICheckUsersExistence.CreateObj(usersIds)).Result;
+        var response = await _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
+          ICheckUsersExistence.CreateObj(usersIds));
 
         if (response.Message.IsSuccess)
         {

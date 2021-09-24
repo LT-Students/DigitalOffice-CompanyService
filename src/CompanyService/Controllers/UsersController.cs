@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Commands.User.Interfaces;
+﻿using System.Threading.Tasks;
+using LT.DigitalOffice.CompanyService.Business.Commands.User.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.User;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
   public class UsersController : ControllerBase
   {
     [HttpPost("create")]
-    public OperationResultResponse<bool> Create(
-      [FromServices] ICreateDepartmetUsersCommand command,
-      [FromBody] CreateDepartmentUsersRequest request)
+    public async Task<OperationResultResponse<bool>> Create(
+      [FromServices] IAddDepartmetUsersCommand command,
+      [FromBody] AddDepartmentUsersRequest request)
     {
-      return command.Execute(request);
+      return await command.Execute(request);
     }
   }
 }

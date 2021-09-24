@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public Task Consume(ConsumeContext<IDisactivateUserRequest> context)
     {
-      _departmentUserRepository.Remove(new List<Guid>() { context.Message.UserId }, context.Message.ModifiedBy);
+      _departmentUserRepository.Remove(context.Message.UserId, context.Message.ModifiedBy);
       _positionUserRepository.Remove(context.Message.UserId, context.Message.ModifiedBy);
 
       return Task.FromResult(0);

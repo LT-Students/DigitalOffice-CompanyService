@@ -21,6 +21,19 @@ namespace LT.DigitalOffice.CompanyService.Data
       _provider = provider;
     }
 
+    public bool Add(DbDepartmentUser departmentUser)
+    {
+      if (departmentUser == null)
+      {
+        return false;
+      }
+
+      _provider.DepartmentUsers.Add(departmentUser);
+      _provider.Save();
+
+      return true;
+    }
+
     public bool Add(List<DbDepartmentUser> departmentUsers)
     {
       if (departmentUsers == null || !departmentUsers.Any())
@@ -95,6 +108,22 @@ namespace LT.DigitalOffice.CompanyService.Data
         .ToList();
     }
 
+    public void Remove(Guid userId, Guid removedBy)
+    {
+      DbDepartmentUser dbDepartmentUser = _provider.DepartmentUsers
+        .FirstOrDefault(du => du.UserId == userId && du.IsActive);
+
+      if (dbDepartmentUser != null)
+      {
+        dbDepartmentUser.IsActive = false;
+        dbDepartmentUser.ModifiedAtUtc = DateTime.UtcNow;
+        dbDepartmentUser.ModifiedBy = removedBy;
+        dbDepartmentUser.LeftAtUts = DateTime.UtcNow;
+
+        _provider.Save();
+      }
+    }
+
     public void Remove(List<Guid> usersIds, Guid removedBy)
     {
       IEnumerable<DbDepartmentUser> dbDepartmentsUsers = _provider.DepartmentUsers
@@ -110,7 +139,7 @@ namespace LT.DigitalOffice.CompanyService.Data
           du.LeftAtUts = DateTime.UtcNow;
         };
 
-      _provider.Save();
+        _provider.Save();
       }
     }
 

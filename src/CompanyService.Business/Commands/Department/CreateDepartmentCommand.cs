@@ -98,7 +98,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             if (request.DirectorUserId.HasValue)
             {
-                _userRepository.Remove(new List<Guid>() { request.DirectorUserId.Value }, _httpContextAccessor.HttpContext.GetUserId());
+                _userRepository.Remove(request.DirectorUserId.Value, _httpContextAccessor.HttpContext.GetUserId());
             }
 
             #endregion
