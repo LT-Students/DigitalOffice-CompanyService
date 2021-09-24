@@ -259,14 +259,14 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
     }
 
     [Test]
-    public void ShouldRemoveDerictorrWhenDirectorAlreadyExists()
+    public void ShouldRemoveDerictorWhenDirectorAlreadyExists()
     {
       _request = GenerateRequest(_directorId, new List<Guid>() { _userId2 });
 
       Assert.DoesNotThrow(() => _command.Execute(_request));
 
       _autoMock.Verify<IDepartmentUserRepository>(
-        x => x.Remove(new List<Guid> { _directorId }, _userId),
+        x => x.Remove(_directorId, _userId),
         Times.Once);
     }
 
