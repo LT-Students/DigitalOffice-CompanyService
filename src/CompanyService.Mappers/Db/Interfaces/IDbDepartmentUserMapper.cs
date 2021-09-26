@@ -1,12 +1,12 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Db;
+﻿using System;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Attributes;
-using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
 {
   [AutoInject]
-    public interface IDbDepartmentUserMapper
-    {
-        DbDepartmentUser Map(Guid userId, Guid departmentId, Guid modifiedBy);
-    }
+  public interface IDbDepartmentUserMapper
+  {
+    DbDepartmentUser Map(Guid userId, Guid departmentId, Guid modifiedBy);
+  }
 }

@@ -93,10 +93,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
             if (request.Users != null)
             {
-                foreach (Guid userId in request.Users)
-                {
-                    _userRepository.Remove(userId, _httpContextAccessor.HttpContext.GetUserId());
-                }
+                _userRepository.Remove(request.Users, _httpContextAccessor.HttpContext.GetUserId());
             }
 
             if (request.DirectorUserId.HasValue)

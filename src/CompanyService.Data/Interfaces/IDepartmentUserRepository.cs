@@ -11,6 +11,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   {
     bool Add(DbDepartmentUser departmentUser);
 
+    bool Add(List<DbDepartmentUser> departmentUsers);
+
     DbDepartmentUser Get(Guid userId, bool includeDepartment);
 
     List<Guid> Get(IGetDepartmentUsersRequest request, out int totalCount);
@@ -18,5 +20,9 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     List<DbDepartmentUser> Get(List<Guid> userIds);
 
     void Remove(Guid userId, Guid removedBy);
+
+    void Remove(List<Guid> usersIds, Guid removedBy);
+
+    bool IsDepartmentDirector(Guid departmentId, Guid userId);
   }
 }
