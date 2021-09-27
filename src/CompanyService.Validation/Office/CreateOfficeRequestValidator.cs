@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using FluentValidation;
+﻿using FluentValidation;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
 using LT.DigitalOffice.CompanyService.Validation.Office.Interfaces;
 
