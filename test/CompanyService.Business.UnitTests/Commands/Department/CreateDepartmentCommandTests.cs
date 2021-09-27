@@ -13,7 +13,6 @@ using LT.DigitalOffice.CompanyService.Validation.Department.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -39,7 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
 
     private CreateDepartmentRequest GenerateRequest(
         Guid? directorUserId,
-        params Guid[] userIds)
+        List<Guid> userIds)
     {
       return new()
       {
@@ -55,7 +54,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
     {
       _companyId = Guid.NewGuid();
 
-      _request = GenerateRequest(_directorId, _userId1, _userId2);
+      _request = GenerateRequest(_directorId, new List<Guid>() { _userId1, _userId2 });
 
       _dbDepartment = new DbDepartment
       {
@@ -250,37 +249,25 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Department
     [Test]
     public void ShouldRemoveUserWhenUserAlreadyExists()
     {
-      _request = GenerateRequest(null, _userId1, _userId2);
+      _request = GenerateRequest(null, new List<Guid> { _userId1 });
 
       Assert.DoesNotThrow(() => _command.Execute(_request));
 
       _autoMock.Verify<IDepartmentUserRepository>(
-        x => x.Remove(_userId1, _userId),
+        x => x.Remove(new List<Guid>() { _userId1 }, _userId),
         Times.Once);
-
-      _autoMock.Verify<IDepartmentUserRepository>(
-        x => x.Remove(_userId2, _userId),
-        Times.Once);
-
-      _autoMock.Verify<IDepartmentUserRepository>(
-        x => x.Remove(It.IsAny<Guid>(), _userId),
-        Times.Exactly(2));
     }
 
     [Test]
-    public void ShouldRemoveDerictorrWhenDirectorAlreadyExists()
+    public void ShouldRemoveDerictorWhenDirectorAlreadyExists()
     {
-      _request = GenerateRequest(_directorId);
+      _request = GenerateRequest(_directorId, new List<Guid>() { _userId2 });
 
       Assert.DoesNotThrow(() => _command.Execute(_request));
 
       _autoMock.Verify<IDepartmentUserRepository>(
         x => x.Remove(_directorId, _userId),
         Times.Once);
-
-      _autoMock.Verify<IDepartmentUserRepository>(
-        x => x.Remove(It.IsAny<Guid>(), _userId),
-        Times.Exactly(1));
     }
 
     [Test]

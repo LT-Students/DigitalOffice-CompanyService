@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using MassTransit;
@@ -48,13 +50,14 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         return false;
       }
 
-      _departmentUserRepository.Remove(userId, modifiedBy);
+      _departmentUserRepository.Remove(new List<Guid>() { userId }, modifiedBy);
 
       if (!departmentId.HasValue) {
         return true;
       }
 
-      return _departmentUserRepository.Add(_departmentUserMapper.Map(userId, departmentId.Value, modifiedBy));
+      return _departmentUserRepository.Add(
+        new List<DbDepartmentUser>() { _departmentUserMapper.Map(userId, departmentId.Value, modifiedBy) });
     }
 
     private bool ChangeOffice(Guid userId, Guid? officeId, Guid modifiedBy)

@@ -4,6 +4,7 @@ using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using Microsoft.EntityFrameworkCore;
@@ -24,10 +25,23 @@ namespace LT.DigitalOffice.CompanyService.Data
     {
       if (departmentUser == null)
       {
-        throw new ArgumentNullException(nameof(departmentUser));
+        return false;
       }
 
       _provider.DepartmentUsers.Add(departmentUser);
+      _provider.Save();
+
+      return true;
+    }
+
+    public bool Add(List<DbDepartmentUser> departmentUsers)
+    {
+      if (departmentUsers == null || !departmentUsers.Any())
+      {
+        return false;
+      }
+
+      _provider.DepartmentUsers.AddRange(departmentUsers);
       _provider.Save();
 
       return true;
@@ -96,17 +110,44 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public void Remove(Guid userId, Guid removedBy)
     {
-      DbDepartmentUser user = _provider.DepartmentUsers.FirstOrDefault(u => u.IsActive && u.UserId == userId);
+      DbDepartmentUser dbDepartmentUser = _provider.DepartmentUsers
+        .FirstOrDefault(du => du.UserId == userId && du.IsActive);
 
-      if (user != null)
+      if (dbDepartmentUser != null)
       {
-        user.IsActive = false;
-        user.ModifiedAtUtc = DateTime.UtcNow;
-        user.ModifiedBy = removedBy;
-        user.LeftAtUts = DateTime.UtcNow;
-      }
+        dbDepartmentUser.IsActive = false;
+        dbDepartmentUser.ModifiedAtUtc = DateTime.UtcNow;
+        dbDepartmentUser.ModifiedBy = removedBy;
+        dbDepartmentUser.LeftAtUts = DateTime.UtcNow;
 
-      _provider.Save();
+        _provider.Save();
+      }
+    }
+
+    public void Remove(List<Guid> usersIds, Guid removedBy)
+    {
+      IEnumerable<DbDepartmentUser> dbDepartmentsUsers = _provider.DepartmentUsers
+        .Where(du => du.IsActive && usersIds.Contains(du.UserId));
+
+      if (usersIds != null && usersIds.Any())
+      {
+        foreach (DbDepartmentUser du in dbDepartmentsUsers)
+        {
+          du.IsActive = false;
+          du.ModifiedAtUtc = DateTime.UtcNow;
+          du.ModifiedBy = removedBy;
+          du.LeftAtUts = DateTime.UtcNow;
+        };
+
+        _provider.Save();
+      }
+    }
+
+    public bool IsDepartmentDirector(Guid departmentId, Guid userId)
+    {
+      return _provider.DepartmentUsers
+        .FirstOrDefault(x => x.UserId == userId && x.DepartmentId == departmentId && x.IsActive)?
+        .Role == (int)DepartmentUserRole.Director;
     }
   }
 }
