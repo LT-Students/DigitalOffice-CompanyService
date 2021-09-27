@@ -9,14 +9,14 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
   {
     public CreateOfficeRequestValidator()
     {
-      RuleFor(request => request.Address.Trim())
-        .NotEmpty().WithMessage("Name cannot be empty.");
+      RuleFor(request => request.Name.Trim())
+        .NotEmpty().WithMessage("Name must not be empty.");
 
       RuleFor(request => request.City.Trim())
-        .NotEmpty().WithMessage("City cannot be empty.");
+        .NotEmpty().WithMessage("City must not be empty.");
 
       RuleFor(request => request.Address.Trim())
-        .NotEmpty().WithMessage("Address cannot be empty.");
+        .NotEmpty().WithMessage("Address must not be empty.");
     }
   }
 }
