@@ -1,4 +1,4 @@
-﻿using FluentValidation.TestHelper;
+﻿/*using FluentValidation.TestHelper;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
 using LT.DigitalOffice.CompanyService.Validation.Office;
 using LT.DigitalOffice.CompanyService.Validation.Office.Interfaces;
@@ -48,4 +48,4 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
             _validator.ShouldHaveValidationErrorFor(x => x.City, null as string);
         }
     }
-}
+}*/
