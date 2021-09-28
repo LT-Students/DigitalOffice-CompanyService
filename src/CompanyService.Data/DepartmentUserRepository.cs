@@ -60,8 +60,6 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == request.DepartmentId);
 
-      totalCount = dbDepartmentUser.Count();
-
       if (request.ByEntryDate.HasValue)
       {
         dbDepartmentUser = dbDepartmentUser.Where(x =>
@@ -72,6 +70,8 @@ namespace LT.DigitalOffice.CompanyService.Data
       {
         dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive);
       }
+
+      totalCount = dbDepartmentUser.Count();
 
       if (request.SkipCount.HasValue)
       {

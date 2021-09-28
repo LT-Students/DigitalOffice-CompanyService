@@ -48,10 +48,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         return JsonConvert.DeserializeObject<List<UserData>>(valueFromCache.ToString());
       }
 
-      return await GetUsersDataFromBroker(userIds, errors);
+      return await GetUsersDataThroughBroker(userIds, errors);
     }
 
-    private async Task<List<UserData>> GetUsersDataFromBroker(List<Guid> userIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersDataThroughBroker(List<Guid> userIds, List<string> errors)
     {
       if (userIds == null || !userIds.Any())
       {
@@ -83,15 +83,29 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       return null;
     }
 
-    private List<ProjectData> GetProjectsData(Guid departmentId, List<string> errors)
+    private async Task<List<ProjectData>> GetProjectsDatas(Guid departmentId, List<string> errors)
+    {
+      RedisValue projectsFromCache = await _cache.GetDatabase(Cache.Projects).StringGetAsync(departmentId.GetRedisCacheHashCode().ToString());
+
+      if (projectsFromCache.HasValue)
+      {
+        (List<ProjectData> projects, int _) = JsonConvert.DeserializeObject<(List<ProjectData>, int)>(projectsFromCache);
+
+        return projects;
+      }
+
+      return await GetProjectsDatasThroughBroker(departmentId, errors);
+    }
+
+    private async Task<List<ProjectData>> GetProjectsDatasThroughBroker(Guid departmentId, List<string> errors)
     {
       string message = "Can not get projects data. Please try again later.";
       string loggerMessage = $"Can not get projects data for specific department id '{departmentId}'.";
 
       try
       {
-        var response = _rcGetProjects.GetResponse<IOperationResult<IGetProjectsResponse>>(
-          IGetProjectsRequest.CreateObj(departmentId: departmentId)).Result;
+        var response = await _rcGetProjects.GetResponse<IOperationResult<IGetProjectsResponse>>(
+          IGetProjectsRequest.CreateObj(departmentId: departmentId));
 
         if (response.Message.IsSuccess)
         {
@@ -191,15 +205,15 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
           us => us.ImageId.HasValue).Select(us => us.ImageId.Value).ToList(), errors);
       }
 
-      List<ProjectData> projectsInfo = null;
+      List<ProjectData> projectsDatas = null;
       if (filter.IsIncludeProjects)
       {
-        projectsInfo = GetProjectsData(dbDepartment.Id, errors);
+        projectsDatas = await GetProjectsDatas(dbDepartment.Id, errors);
       }
 
       return new OperationResultResponse<DepartmentResponse>
       {
-        Body = _departmentResponseMapper.Map(dbDepartment, usersData, dbPositionUsers, userImages, projectsInfo, filter),
+        Body = _departmentResponseMapper.Map(dbDepartment, usersData, dbPositionUsers, userImages, projectsDatas, filter),
         Status = errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess,
         Errors = errors
       };
