@@ -17,9 +17,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
             return new OfficeInfo
             {
                 Id = office.Id,
-                Name = office.Name,
-                City = office.City,
-                Address = office.Address,
+                Name = office.Name.Trim(),
+                City = office.City.Trim(),
+                Address = office.Address.Trim(),
                 IsActive = office.IsActive
             };
         }
