@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
@@ -75,7 +75,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 
     #region Find Tests
 
-    /*[Test]
+    *//*[Test]
     public void ShouldFindOfficeSuccessfuly()
     {
         DbOffice office1 = new()
@@ -105,7 +105,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
 
         SerializerAssert.AreEqual(new List<DbOffice>() { office1, office2 }, _repository.Find(0, 2, true, out int totalCount));
         Assert.AreEqual(2, totalCount);
-    }*/
+    }*//*
 
     [Test]
     public void ShouldThrowArgumentExceptionWhenTakeCountLessThanOne()
@@ -116,3 +116,4 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
     #endregion
   }
 }
+*/
