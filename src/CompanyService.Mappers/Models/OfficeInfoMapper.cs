@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
@@ -11,15 +10,15 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
         {
             if (office == null)
             {
-                throw new ArgumentNullException(nameof(office));
+                return null;
             }
 
             return new OfficeInfo
             {
                 Id = office.Id,
-                Name = office.Name.Trim(),
-                City = office.City.Trim(),
-                Address = office.Address.Trim(),
+                Name = office.Name,
+                City = office.City,
+                Address = office.Address,
                 IsActive = office.IsActive
             };
         }
