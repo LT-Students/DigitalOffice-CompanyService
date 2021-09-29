@@ -8,6 +8,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
@@ -15,20 +16,24 @@ namespace LT.DigitalOffice.CompanyService.Data
   {
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<OfficeRepository> _logger;
 
     public OfficeRepository(
       IDataProvider provider,
-      IHttpContextAccessor httpContextAccessor)
+      IHttpContextAccessor httpContextAccessor,
+      ILogger<OfficeRepository> logger)
     {
       _httpContextAccessor = httpContextAccessor;
       _provider = provider;
+      _logger = logger;
     }
 
     public void Add(DbOffice office)
     {
       if (office == null)
       {
-        throw new ArgumentNullException(nameof(office));
+        _logger.LogWarning(new ArgumentNullException(nameof(office)).Message);
+        return;
       }
 
       _provider.Offices.Add(office);
@@ -49,7 +54,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       IQueryable<DbOffice> dbOffices = _provider.Offices
-          .AsQueryable();
+        .AsQueryable();
 
       if (!filter.IncludeDeactivated)
       {
