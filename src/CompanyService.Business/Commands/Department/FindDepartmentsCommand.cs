@@ -41,6 +41,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
     private async Task<List<UserData>> GetUsersData(List<Guid> userIds, List<string> errors)
     {
+      if (userIds == null || !userIds.Any())
+      {
+        return new();
+      }
+
       RedisValue valueFromCache = await _cache.GetDatabase(Cache.Users).StringGetAsync(userIds.GetRedisCacheHashCode());
 
       if (valueFromCache.HasValue)
@@ -88,7 +93,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       string logMessage = "Can not get images: {ids}.";
       string errorMessage = "Can not get images. Please try again later.";
 
-      if (!imageIds.Any())
+      if (imageIds == null || !imageIds.Any())
       {
         return new();
       }
@@ -116,15 +121,15 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     }
 
     public FindDepartmentsCommand(
-        IDepartmentRepository repository,
-        IPositionUserRepository userPositionRepository,
-        IDepartmentInfoMapper departmentMapper,
-        IDepartmentUserInfoMapper userMapper,
-        IRequestClient<IGetUsersDataRequest> rcGetUsersData,
-        IRequestClient<IGetImagesRequest> rcGetImages,
-        ILogger<FindDepartmentsCommand> logger,
-        IHttpContextAccessor httpContextAccessor,
-        IConnectionMultiplexer cache)
+      IDepartmentRepository repository,
+      IPositionUserRepository userPositionRepository,
+      IDepartmentInfoMapper departmentMapper,
+      IDepartmentUserInfoMapper userMapper,
+      IRequestClient<IGetUsersDataRequest> rcGetUsersData,
+      IRequestClient<IGetImagesRequest> rcGetImages,
+      ILogger<FindDepartmentsCommand> logger,
+      IHttpContextAccessor httpContextAccessor,
+      IConnectionMultiplexer cache)
     {
       _repository = repository;
       _userPositionRepository = userPositionRepository;
@@ -168,12 +173,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       response.TotalCount = totalCount;
 
       Dictionary<Guid, Guid> departmentsDirectors =
-          dbDepartments
-              .SelectMany(d => d.Users.Where(u => u.Role == (int)DepartmentUserRole.Director)).ToDictionary(d => d.DepartmentId, d => d.UserId);
+        dbDepartments
+          .SelectMany(d => d.Users.Where(u => u.Role == (int)DepartmentUserRole.Director)).ToDictionary(d => d.DepartmentId, d => d.UserId);
 
       List<UserData> usersData = await GetUsersData(
-          departmentsDirectors.Values.ToList(),
-          response.Errors);
+        departmentsDirectors.Values.ToList(),
+        response.Errors);
 
       List<ImageData> images = GetImages(usersData.Where(d => d.ImageId.HasValue).Select(d => d.ImageId.Value).ToList(), response.Errors);
 

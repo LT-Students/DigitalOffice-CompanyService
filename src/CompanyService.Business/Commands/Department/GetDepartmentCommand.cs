@@ -41,6 +41,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
     private async Task<List<UserData>> GetUsersData(List<Guid> userIds, List<string> errors)
     {
+      if (userIds == null || !userIds.Any())
+      {
+        return new();
+      }
+
       RedisValue valueFromCache = await _cache.GetDatabase(Cache.Users).StringGetAsync(userIds.GetRedisCacheHashCode());
 
       if (valueFromCache.HasValue)
