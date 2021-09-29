@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -15,6 +16,7 @@ using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -22,19 +24,22 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
   {
     private readonly IEditDepartmentRequestValidator _validator;
     private readonly IDepartmentRepository _repository;
+    private readonly IDepartmentUserRepository _userRepository;
     private readonly IPatchDbDepartmentMapper _mapper;
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public EditDepartmentCommand(
-        IEditDepartmentRequestValidator validator,
-        IDepartmentRepository repository,
-        IPatchDbDepartmentMapper mapper,
-        IAccessValidator accessValidator,
-        IHttpContextAccessor httpContextAccessor)
+      IEditDepartmentRequestValidator validator,
+      IDepartmentRepository repository,
+      IDepartmentUserRepository userRepository,
+      IPatchDbDepartmentMapper mapper,
+      IAccessValidator accessValidator,
+      IHttpContextAccessor httpContextAccessor)
     {
       _validator = validator;
       _repository = repository;
+      _userRepository = userRepository;
       _mapper = mapper;
       _accessValidator = accessValidator;
       _httpContextAccessor = httpContextAccessor;
@@ -91,6 +96,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
           response.Errors.Add("The department name already exists");
           return response;
         }
+      }
+
+      Operation<EditDepartmentRequest> directorOperation = request.Operations
+        .FirstOrDefault(o => o.path.EndsWith(nameof(EditDepartmentRequest.DirectorId), StringComparison.OrdinalIgnoreCase));
+      if (directorOperation != null && !_userRepository.ChangeDirector(departmentId, Guid.Parse(directorOperation.value?.ToString())))
+      {
+        response.Errors.Add("Cannot change department director.");
       }
 
       response.Body = _repository.Edit(dbDepartment, _mapper.Map(request));

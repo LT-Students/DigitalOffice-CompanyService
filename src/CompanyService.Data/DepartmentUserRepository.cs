@@ -68,6 +68,27 @@ namespace LT.DigitalOffice.CompanyService.Data
       return user;
     }
 
+    public bool ChangeDirector(Guid departmentId, Guid newDirectorId)
+    {
+      List<DbDepartmentUser> directors = _provider.DepartmentUsers.Where(du => du.DepartmentId == departmentId
+        && (du.Role == (int)DepartmentUserRole.Director || du.UserId == newDirectorId)
+        && du.IsActive).ToList();
+
+      if (directors.Count != 2)
+      {
+        return false;
+      }
+
+      DbDepartmentUser prevDirector = directors.First(d => d.Role == (int)DepartmentUserRole.Director);
+      DbDepartmentUser newDirector = directors.First(d => d.Role == (int)DepartmentUserRole.Employee);
+      prevDirector.Role = (int)DepartmentUserRole.Employee;
+      newDirector.Role = (int)DepartmentUserRole.Director;
+
+      _provider.Save();
+
+      return true;
+    }
+
     public List<Guid> Get(IGetDepartmentUsersRequest request, out int totalCount)
     {
       var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
