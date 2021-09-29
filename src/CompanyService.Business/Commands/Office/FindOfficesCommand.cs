@@ -55,14 +55,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
       response.TotalCount = totalCount;
       response.Status = OperationResultStatusType.FullSuccess;
 
-      if (response.Body == null)
-      {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-
-        response.Errors = new() { "Office was not found." };
-        response.Status = OperationResultStatusType.Failed;
-      }
-
       return response;
     }
   }
