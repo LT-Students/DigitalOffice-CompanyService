@@ -12,10 +12,10 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
         .Must(n => !string.IsNullOrEmpty(n?.Trim())).WithMessage("Name must not be empty.");
 
       RuleFor(request => request.City)
-        .Must(n => !string.IsNullOrEmpty(n?.Trim())).WithMessage("City must not be empty.");
+        .Must(c => !string.IsNullOrEmpty(c?.Trim())).WithMessage("City must not be empty.");
 
       RuleFor(request => request.Address)
-        .Must(n => !string.IsNullOrEmpty(n?.Trim())).WithMessage("Address must not be empty.");
+        .Must(a => !string.IsNullOrEmpty(a?.Trim())).WithMessage("Address must not be empty.");
     }
   }
 }
