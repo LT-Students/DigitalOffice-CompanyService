@@ -31,11 +31,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 .Returns(_items);
         }
 
-        [Test]
+/*        [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => _mapper.Map(null, Guid.NewGuid()));
-        }
+        }*/
 
         [Test]
         public void ShouldMapSuccessfuly()

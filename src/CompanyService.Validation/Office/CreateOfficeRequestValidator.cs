@@ -4,15 +4,18 @@ using LT.DigitalOffice.CompanyService.Validation.Office.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Validation.Office
 {
-    public class CreateOfficeRequestValidator : AbstractValidator<CreateOfficeRequest>, ICreateOfficeRequestValidator
+  public class CreateOfficeRequestValidator : AbstractValidator<CreateOfficeRequest>, ICreateOfficeRequestValidator
+  {
+    public CreateOfficeRequestValidator()
     {
-        public CreateOfficeRequestValidator()
-        {
-            RuleFor(request => request.City)
-                .NotEmpty();
+      RuleFor(request => request.Name)
+        .NotEmpty().WithMessage("Name must not be empty.");
 
-            RuleFor(request => request.Address)
-                .NotEmpty();
-        }
+      RuleFor(request => request.City)
+        .NotEmpty().WithMessage("City must not be empty.");
+
+      RuleFor(request => request.Address)
+        .NotEmpty().WithMessage("Address must not be empty.");
     }
+  }
 }
