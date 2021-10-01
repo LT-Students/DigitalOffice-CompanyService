@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         return false;
       }
 
-      _departmentUserRepository.Remove(new List<Guid>() { userId }, modifiedBy);
+      _departmentUserRepository.Remove(userId, modifiedBy);
 
       if (!departmentId.HasValue) {
         return true;

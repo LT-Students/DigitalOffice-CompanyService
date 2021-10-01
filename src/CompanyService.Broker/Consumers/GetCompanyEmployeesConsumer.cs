@@ -4,12 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Configuration;
 using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Models.Broker.Models.Company;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Responses.Company;
 using MassTransit;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
@@ -18,6 +24,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     private readonly IDepartmentUserRepository _departmentUserRepository;
     private readonly IPositionUserRepository _positionUserRepository;
     private readonly IOfficeUserRepository _officeUserRepository;
+    private readonly IConnectionMultiplexer _cache;
+    private readonly IOptions<RedisConfig> _redisConfig;
 
     private List<DepartmentData> GetDepartments(List<Guid> userIds)
     {
@@ -67,45 +75,79 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
           o.Users.Select(u => u.UserId).ToList())).ToList();
     }
 
-    private object GetResponse(IGetCompanyEmployeesRequest request)
+    private async Task CreateCache(
+      List<Guid> userIds,
+      List<DepartmentData> departments,
+      List<PositionData> positions,
+      List<OfficeData> offices)
     {
-      List<DepartmentData> departments = null;
-      List<PositionData> positions = null;
-      List<OfficeData> offices = null;
+      string key = userIds.GetRedisCacheHashCode();
 
-      if (request.IncludeDepartments)
+      if (departments != null)
       {
-        departments = GetDepartments(request.UserIds);
+        await _cache.GetDatabase(Cache.Departments).StringSetAsync(
+          key, 
+          JsonConvert.SerializeObject(departments), 
+          TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
       }
 
-      if (request.IncludePositions)
+      if (positions != null)
       {
-        positions = GetPositions(request.UserIds);
+        await _cache.GetDatabase(Cache.Positions).StringSetAsync(
+          key, 
+          JsonConvert.SerializeObject(positions),
+          TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
       }
 
-      if (request.IncludeOffices)
+      if (offices != null)
       {
-        offices = GetOffices(request.UserIds);
+        await _cache.GetDatabase(Cache.Offices).StringSetAsync(
+          key, 
+          JsonConvert.SerializeObject(offices),
+          TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
       }
-
-      return IGetCompanyEmployeesResponse.CreateObj(departments, positions, offices);
     }
 
     public GetCompanyEmployeesConsumer(
       IDepartmentUserRepository departmentUserRepository,
       IPositionUserRepository positionUserRepository,
-      IOfficeUserRepository officeUserRepository)
+      IOfficeUserRepository officeUserRepository, 
+      IConnectionMultiplexer cache,
+      IOptions<RedisConfig> redisConfig)
     {
       _departmentUserRepository = departmentUserRepository;
       _positionUserRepository = positionUserRepository;
       _officeUserRepository = officeUserRepository;
+      _cache = cache;
+      _redisConfig = redisConfig;
     }
 
     public async Task Consume(ConsumeContext<IGetCompanyEmployeesRequest> context)
     {
-      object response = OperationResultWrapper.CreateResponse(GetResponse, context.Message);
+      List<DepartmentData> departments = null;
+      List<PositionData> positions = null;
+      List<OfficeData> offices = null;
+
+      if (context.Message.IncludeDepartments)
+      {
+        departments = GetDepartments(context.Message.UserIds);
+      }
+
+      if (context.Message.IncludePositions)
+      {
+        positions = GetPositions(context.Message.UserIds);
+      }
+
+      if (context.Message.IncludeOffices)
+      {
+        offices = GetOffices(context.Message.UserIds);
+      }
+
+      object response = OperationResultWrapper.CreateResponse((_) => IGetCompanyEmployeesResponse.CreateObj(departments, positions, offices), context);
 
       await context.RespondAsync<IOperationResult<IGetCompanyEmployeesResponse>>(response);
+
+      await CreateCache(context.Message.UserIds, departments, positions, offices);
     }
   }
 }
