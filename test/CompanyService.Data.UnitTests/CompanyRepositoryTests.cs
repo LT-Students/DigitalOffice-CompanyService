@@ -3,9 +3,12 @@ using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data.UnitTests
@@ -15,11 +18,23 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         private IDataProvider _provider;
         private ICompanyRepository _repository;
         private DbContextOptions<CompanyServiceDbContext> _dbOptions;
+        private Mock<IHttpContextAccessor> _accessorMock;
+        private Guid _userId;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             CreateInMemoryDb();
+
+            _userId = Guid.NewGuid();
+
+            _accessorMock = new();
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
         }
 
         public void CreateInMemoryDb()
@@ -33,7 +48,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         public void SetUp()
         {
             _provider = new CompanyServiceDbContext(_dbOptions);
-            _repository = new CompanyRepository(_provider);
+            _repository = new CompanyRepository(_provider, _accessorMock.Object);
         }
 
         [TearDown]
@@ -59,7 +74,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             DbCompany company = new()
             {
                 Id = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 Description = "Desc",
                 LogoId = Guid.NewGuid(),

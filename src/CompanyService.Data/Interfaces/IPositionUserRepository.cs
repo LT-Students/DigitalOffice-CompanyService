@@ -10,10 +10,10 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     {
         bool Add(DbPositionUser positionUser);
 
-        DbPositionUser Get(Guid userId, bool includePosition);
+        DbPositionUser Get(Guid userId);
 
-        List<DbPositionUser> Find(List<Guid> userIds);
+        List<DbPositionUser> Get(List<Guid> userIds);
 
-        void Remove(Guid userId);
+        void Remove(Guid userId, Guid removedBy);
     }
 }

@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Data
                     Id = Guid.NewGuid(),
                     CompanyId = companyId,
                     ModifiedBy = changedBy,
-                    ModifiedAt = DateTime.UtcNow,
+                    ModifiedAtUtc = DateTime.UtcNow,
                     Changes = changes
                 });
             _provider.Save();

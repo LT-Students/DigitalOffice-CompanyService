@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
-    public class OfficeUserRepository : IOfficeUserRepository
+  public class OfficeUserRepository : IOfficeUserRepository
     {
         private readonly IDataProvider _provider;
 
@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Data
             _provider = provider;
         }
 
-        public void Add(DbOfficeUser user)
+        public bool Add(DbOfficeUser user)
         {
             if (user == null)
             {
@@ -26,36 +26,26 @@ namespace LT.DigitalOffice.CompanyService.Data
 
             _provider.OfficeUsers.Add(user);
             _provider.Save();
-        }
 
-        public void ChangeOffice(Guid userId, Guid officeId, Guid changedBy)
-        {
-            var officeUser = _provider.OfficeUsers.FirstOrDefault(x => x.UserId == userId);
-
-            if (officeUser != null)
-            {
-                officeUser.OfficeId = officeId;
-                _provider.Save();
-
-                return;
-            }
-
-            _provider.OfficeUsers.Add(
-                new DbOfficeUser
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = userId,
-                    OfficeId = officeId,
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedBy = changedBy,
-                    IsActive = true
-                });
-            _provider.Save();
+            return true;
         }
 
         public List<DbOfficeUser> Get(List<Guid> userIds)
         {
             return _provider.OfficeUsers.Where(x => userIds.Contains(x.UserId)).Include(x => x.Office).ToList();
+        }
+
+        public void Remove(Guid userId, Guid removedBy)
+        {
+            DbOfficeUser user = _provider.OfficeUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
+
+            if (user != null)
+            {
+                user.IsActive = false;
+                user.ModifiedAtUtc = DateTime.UtcNow;
+                user.ModifiedBy = removedBy;
+                _provider.Save();
+            }
         }
     }
 }

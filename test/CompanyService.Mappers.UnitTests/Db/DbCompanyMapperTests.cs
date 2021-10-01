@@ -32,7 +32,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 CompanyName = "Name",
                 AdminInfo = new(),
                 SmtpInfo = new(),
-                SiteUrl = "siteurl"
+                SiteUrl = "siteurl",
+                WorkDaysApiUrl = "testUrl.ru"
             };
 
             DbCompany expected = new()
@@ -42,8 +43,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
                 Description = null,
                 LogoId = null,
                 Tagline = null,
-                CreatedAt = DateTime.UtcNow,
-                SiteUrl = request.SiteUrl
+                CreatedAtUtc = DateTime.UtcNow,
+                SiteUrl = request.SiteUrl,
+                WorkDaysApiUrl = request.WorkDaysApiUrl
             };
 
             var response = _mapper.Map(request);
@@ -56,7 +58,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             Assert.AreEqual(expected.Tagline, response.Tagline);
             Assert.AreEqual(expected.SiteUrl, response.SiteUrl);
             Assert.IsTrue(response.IsActive);
-            Assert.LessOrEqual(expected.CreatedAt, response.CreatedAt);
+            Assert.LessOrEqual(expected.CreatedAtUtc, response.CreatedAtUtc);
+            Assert.AreEqual(expected.WorkDaysApiUrl, response.WorkDaysApiUrl);
         }
     }
 }

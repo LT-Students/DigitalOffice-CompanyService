@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
     [AutoInject]
     public interface IDepartmentUserInfoMapper
     {
-        DepartmentUserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image);
+        UserInfo Map(UserData userData, DbPositionUser dbPositionUser, ImageData image);
     }
 }

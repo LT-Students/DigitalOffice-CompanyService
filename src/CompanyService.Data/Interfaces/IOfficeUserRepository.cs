@@ -1,17 +1,17 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.Kernel.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Attributes;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
-    [AutoInject]
-    public interface IOfficeUserRepository
-    {
-        void Add(DbOfficeUser user);
+  [AutoInject]
+  public interface IOfficeUserRepository
+  {
+    bool Add(DbOfficeUser user);
 
-        void ChangeOffice(Guid userId, Guid officeId, Guid changedBy);
+    List<DbOfficeUser> Get(List<Guid> userIds);
 
-        List<DbOfficeUser> Get(List<Guid> userIds);
-    }
+    void Remove(Guid userId, Guid removedBy);
+  }
 }

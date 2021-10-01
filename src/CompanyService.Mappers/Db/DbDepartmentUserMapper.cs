@@ -1,21 +1,22 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+﻿using System;
+using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
-    public class DbDepartmentUserMapper : IDbDepartmentUserMapper
+  public class DbDepartmentUserMapper : IDbDepartmentUserMapper
+  {
+    public DbDepartmentUser Map(Guid userId, Guid departmentId, Guid modifiedBy)
     {
-        public DbDepartmentUser Map(Guid departmentId, Guid userId)
-        {
-            return new DbDepartmentUser
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                DepartmentId = departmentId,
-                IsActive = true,
-                StartTime = DateTime.UtcNow
-            };
-        }
+      return new DbDepartmentUser
+      {
+        Id = Guid.NewGuid(),
+        UserId = userId,
+        DepartmentId = departmentId,
+        IsActive = true,
+        CreatedBy = modifiedBy,
+        CreatedAtUtc = DateTime.UtcNow
+      };
     }
+  }
 }

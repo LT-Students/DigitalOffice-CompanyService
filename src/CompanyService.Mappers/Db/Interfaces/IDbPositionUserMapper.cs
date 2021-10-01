@@ -4,9 +4,9 @@ using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
 {
-    [AutoInject]
+  [AutoInject]
     public interface IDbPositionUserMapper
     {
-        DbPositionUser Map(Guid positionId, Guid userId);
+        DbPositionUser Map(Guid userId, Guid positionId, Guid modifiedBy);
     }
 }

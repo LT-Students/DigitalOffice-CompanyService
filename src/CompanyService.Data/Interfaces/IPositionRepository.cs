@@ -13,25 +13,22 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     [AutoInject]
     public interface IPositionRepository
     {
-        /// <summary>
-        /// Returns the position with the specified id from database.
-        /// </summary>
-        /// <param name="positionId">Specified id of position.</param>
-        /// <returns>Position with specified id.</returns>
-        DbPosition Get(Guid? positionId, Guid? userId);
+        DbPosition Get(Guid positionId);
+
+        List<DbPosition> Get(List<Guid> positionsIds, bool includeUsers);
 
         /// <summary>
         /// Returns a list of all added positions to the database.
         /// </summary>
         /// <returns>List of all added positions.</returns>
-        List<DbPosition> Find();
+        List<DbPosition> Find(int skipCount, int takeCount, bool includeDeactivated, out int totalCount);
 
         /// <summary>
         /// Disable the position with the specified id from database.
         /// </summary>
         /// <param name="positionId">Specified id of position.</param>
         /// <returns>Nothing if the position was disabled, otherwise Exception.</returns>
-        void Disable(Guid positionId);
+        bool PositionContainsUsers(Guid positionId);
 
         /// <summary>
         /// Adds new position to the database. Returns its Id.
@@ -40,12 +37,10 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         /// <returns>New position Id.</returns>
         Guid Create(DbPosition position);
 
-        /// <summary>
-        /// Edits an existing position in the database. Returns whether it was successful to edit
-        /// </summary>
-        /// <param name="positionId">Id of edited position.</param>
-        /// <param name="request">Edit request.</param>
-        /// <returns>Whether it was successful to edit.</returns>
-        bool Edit(Guid positionId, JsonPatchDocument<DbPosition> request);
+        bool Edit(DbPosition position, JsonPatchDocument<DbPosition> request);
+
+        bool DoesNameExist(string name);
+
+        bool Contains(Guid positionId);
     }
 }

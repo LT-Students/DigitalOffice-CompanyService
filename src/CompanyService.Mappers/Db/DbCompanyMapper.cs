@@ -20,13 +20,15 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
                 PortalName = request.PortalName,
                 CompanyName = request.CompanyName,
                 SiteUrl = request.SiteUrl,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 Host = request.SmtpInfo.Host,
                 Port = request.SmtpInfo.Port,
                 EnableSsl = request.SmtpInfo.EnableSsl,
                 Email = request.SmtpInfo.Email,
                 Password = request.SmtpInfo.Password,
-                IsActive = true
+                IsDepartmentModuleEnabled = request.IsDepartmentModuleEnabled,
+                IsActive = true,
+                WorkDaysApiUrl = request.WorkDaysApiUrl
             };
         }
     }

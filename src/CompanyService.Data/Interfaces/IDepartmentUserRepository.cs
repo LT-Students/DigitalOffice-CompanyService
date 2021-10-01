@@ -1,21 +1,30 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.Kernel.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
-    [AutoInject]
-    public interface IDepartmentUserRepository
-    {
-        bool Add(DbDepartmentUser departmentUser);
+  [AutoInject]
+  public interface IDepartmentUserRepository
+  {
+    bool Add(DbDepartmentUser departmentUser);
 
-        DbDepartmentUser Get(Guid userId, bool includeDepartment);
+    bool Add(List<DbDepartmentUser> departmentUsers);
 
-        IEnumerable<Guid> Find(Guid departmentId, int skipCount, int takeCount, out int totalCount);
+    DbDepartmentUser Get(Guid userId, bool includeDepartment);
 
-        List<DbDepartmentUser> Find(List<Guid> userIds);
+    List<Guid> Get(IGetDepartmentUsersRequest request, out int totalCount);
 
-        void Remove(Guid userId);
-    }
+    List<DbDepartmentUser> Get(List<Guid> userIds);
+
+    void Remove(Guid userId, Guid removedBy);
+
+    void Remove(List<Guid> usersIds, Guid removedBy);
+
+    bool IsDepartmentDirector(Guid departmentId, Guid userId);
+
+    bool ChangeDirector(Guid departmentId, Guid newDirectorId);
+  }
 }

@@ -1,344 +1,558 @@
-﻿//using FluentValidation;
-//using LT.DigitalOffice.CompanyService.Business.Commands.Company;
-//using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
-//using LT.DigitalOffice.CompanyService.Data.Interfaces;
-//using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
-//using LT.DigitalOffice.CompanyService.Models.Db;
-//using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-//using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
-//using LT.DigitalOffice.CompanyService.Validation.Interfaces;
-//using LT.DigitalOffice.Kernel.Broker;
-//using LT.DigitalOffice.Kernel.Exceptions.Models;
-//using LT.DigitalOffice.Kernel.Responses;
-//using LT.DigitalOffice.Models.Broker.Requests.Message;
-//using LT.DigitalOffice.Models.Broker.Requests.User;
-//using LT.DigitalOffice.UnitTestKernel;
-//using MassTransit;
-//using Microsoft.Extensions.Logging;
-//using Moq;
-//using NUnit.Framework;
-//using System;
-//using System.Collections.Generic;
-//using System.Threading.Tasks;
+﻿using FluentValidation;
+using LT.DigitalOffice.CompanyService.Business.Commands.Company;
+using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
+using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
+using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.User;
+using LT.DigitalOffice.UnitTestKernel;
+using MassTransit;
+using Microsoft.AspNetCore.Http;
+using Moq;
+using Moq.AutoMock;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-//namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
-//{
-//    public class CreateCompanyCommandTests
-//    {
-//        private Mock<IDbCompanyMapper> _mapperMock;
-//        private Mock<IRequestClient<ICreateSMTPRequest>> _rcCreateSMTPMock;
-//        private Mock<IRequestClient<ICreateAdminRequest>> _rcCreateAdminMock;
-//        private Mock<ILogger<ICreateCompanyCommand>> _loggerMock;
-//        private Mock<ICreateCompanyRequestValidator> _validatorMock;
-//        private Mock<ICompanyRepository> _repositoryMock;
-//        private ICreateCompanyCommand _command;
+namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
+{
+    public class CreateCompanyCommandTests
+    {
+        private AutoMocker _autoMock;
+        private ICreateCompanyCommand _command;
 
-//        private CreateCompanyRequest _request;
-//        private DbCompany _company;
-//        private Guid _authorId;
+        private CreateCompanyRequest _request;
+        private DbCompany _company;
 
-//        [OneTimeSetUp]
-//        public void OneTimeSetUp()
-//        {
-//            _mapperMock = new();
-//            _rcCreateSMTPMock = new();
-//            _rcCreateAdminMock = new();
-//            _loggerMock = new();
-//            _validatorMock = new();
-//            _repositoryMock = new();
-//            _command = new CreateCompanyCommand(
-//                _mapperMock.Object,
-//                _loggerMock.Object,
-//                _validatorMock.Object,
-//                _repositoryMock.Object,
-//                _rcCreateSMTPMock.Object,
-//                _rcCreateAdminMock.Object);
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _autoMock = new();
 
-//            _request = new()
-//            {
-//                PortalName = "PortalName",
-//                CompanyName = "Name",
-//                SiteUrl = "siteurl",
-//                AdminInfo = new AdminInfo
-//                {
-//                    FirstName = "Name",
-//                    MiddleName = null,
-//                    LastName = "LastName",
-//                    Email = "email@email.com",
-//                    Login = "MyLogin",
-//                    Password = "MyPassword"
-//                },
-//                Smtp = new()
-//                {
-//                    Host = "host",
-//                    Port = 123,
-//                    Email = "email@email.ru",
-//                    EnableSsl = true,
-//                    Password = "password"
-//                }
-//            };
+            _autoMock
+                .Setup<IHttpContextAccessor, int>(a => a.HttpContext.Response.StatusCode)
+                .Returns(200);
 
-//            _company = new DbCompany
-//            {
-//                Id = Guid.NewGuid(),
-//                CreatedAt = DateTime.UtcNow,
-//                IsActive = true,
-//                PortalName = _request.PortalName,
-//                CompanyName = _request.CompanyName,
-//                Description = null,
-//                LogoId = null,
-//                Tagline = null,
-//                SiteUrl = _request.SiteUrl
-//            };
-//        }
+            _command = _autoMock.CreateInstance<CreateCompanyCommand>();
 
-//        [SetUp]
-//        public void SetUp()
-//        {
-//            _mapperMock.Reset();
-//            _rcCreateAdminMock.Reset();
-//            _rcCreateSMTPMock.Reset();
-//            _validatorMock.Reset();
-//            _repositoryMock.Reset();
-//            _loggerMock.Reset();
+            _request = new()
+            {
+                PortalName = "PortalName",
+                CompanyName = "Name",
+                SiteUrl = "siteurl",
+                IsDepartmentModuleEnabled = true,
+                AdminInfo = new()
+                {
+                    FirstName = "Name",
+                    MiddleName = null,
+                    LastName = "LastName",
+                    Email = "email@email.com",
+                    Login = "MyLogin",
+                    Password = "MyPassword"
+                },
+                SmtpInfo = new()
+                {
+                    Host = "host",
+                    Port = 123,
+                    Email = "email@email.ru",
+                    EnableSsl = true,
+                    Password = "password"
+                }
+            };
 
-//            _authorId = Guid.NewGuid();
+            _company = new()
+            {
+                Id = Guid.NewGuid(),
+                IsActive = true,
+                IsDepartmentModuleEnabled = _request.IsDepartmentModuleEnabled,
+                PortalName = _request.PortalName,
+                CompanyName = _request.CompanyName,
+                Description = null,
+                LogoId = null,
+                Tagline = null,
+                SiteUrl = _request.SiteUrl
+            };
+        }
 
-//            _validatorMock
-//                .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
-//                .Returns(true);
-//        }
+        [SetUp]
+        public void SetUp()
+        {
+            _autoMock.GetMock<IDbCompanyMapper>().Reset();
+            _autoMock.GetMock<ICreateCompanyRequestValidator>().Reset();
+            _autoMock.GetMock<ICompanyRepository>().Reset();
+            _autoMock.GetMock<IRequestClient<ICreateAdminRequest>>().Reset();
+            _autoMock.GetMock<IRequestClient<IUpdateSmtpCredentialsRequest>>().Reset();
 
-//        [Test]
-//        public void ShouldThrowValidationException()
-//        {
-//            _validatorMock
-//                .Setup(x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
-//                .Returns(false);
+            _autoMock
+                .Setup<ICreateCompanyRequestValidator, bool>(
+                    x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+                .Returns(true);
+        }
 
-//            Assert.Throws<ValidationException>(() => _command.Execute(_request));
-//            _repositoryMock.Verify(x => x.Add(It.IsAny<DbCompany>()), Times.Never);
-//            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-//            _mapperMock.Verify(x => x.Map(It.IsAny<CreateCompanyRequest>()), Times.Never);
-//            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Never);
-//            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Never);
-//        }
+        [Test]
+        public void ShouldThrowValidationException()
+        {
+            _autoMock
+                .Setup<ICreateCompanyRequestValidator, bool>(
+                    x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
+                .Returns(false);
 
-//        [Test]
-//        public void ShouldReturnFailedResponseWhenCreateSMTPResponseIsNotSuccessfuly()
-//        {
-//            var response = new Mock<IOperationResult<bool>>();
-//            response
-//                .Setup(x => x.IsSuccess)
-//                .Returns(false);
+            var response = _command.Execute(_request);
 
-//            response
-//                .Setup(x => x.Errors)
-//                .Returns(new List<string> { "some error" });
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
 
-//            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
-//            brokerResponseMock
-//                .Setup(x => x.Message)
-//                .Returns(response.Object);
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
 
-//            _rcCreateSMTPMock
-//               .Setup(x => x.GetResponse<IOperationResult<bool>>(
-//                       It.IsAny<object>(), default, default))
-//               .Returns(Task.FromResult(brokerResponseMock.Object));
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(It.IsAny<DbCompany>()),
+                Times.Never());
 
-//            var expected = new OperationResultResponse<Guid>
-//            {
-//                Status = Kernel.Enums.OperationResultStatusType.Failed,
-//                Errors = new List<string> { "Can not create smtp." }
-//            };
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once());
 
-//            SerializerAssert.AreEqual(expected, _command.Execute(_request));
-//            _repositoryMock.Verify(x => x.Add(_company), Times.Never);
-//            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-//            _mapperMock.Verify(x => x.Map(_request), Times.Never);
-//            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Once);
-//            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Never);
-//        }
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Never());
 
-//        [Test]
-//        public void ShouldReturnFailedResponseWhenCreateAdminResponseIsNotSuccessfuly()
-//        {
-//            var response = new Mock<IOperationResult<bool>>();
-//            response
-//                .Setup(x => x.IsSuccess)
-//                .Returns(true);
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Never());
 
-//            response
-//                .Setup(x => x.Body)
-//                .Returns(true);
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Never());
+        }
 
-//            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
-//            brokerResponseMock
-//                .Setup(x => x.Message)
-//                .Returns(response.Object);
+        [Test]
+        public void ShouldReturnFaliledResponseWhenCompanyAlreadyExists()
+        {
+            _autoMock
+                .Setup<ICompanyRepository, DbCompany>(x => x.Get(null))
+                .Returns(_company);
 
-//            _rcCreateSMTPMock
-//               .Setup(x => x.GetResponse<IOperationResult<bool>>(
-//                       It.IsAny<object>(), default, default))
-//               .Returns(Task.FromResult(brokerResponseMock.Object));
+            var response = _command.Execute(_request);
 
-//            response = new Mock<IOperationResult<bool>>();
-//            response
-//                .Setup(x => x.IsSuccess)
-//                .Returns(false);
+            Assert.AreEqual(OperationResultStatusType.Failed, response.Status);
+            SerializerAssert.AreEqual(response.Errors, new List<string> { "Company already exists" });
 
-//            response
-//                .Setup(x => x.Errors)
-//                .Returns(new List<string> { "some error" });
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
 
-//            brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
-//            brokerResponseMock
-//                .Setup(x => x.Message)
-//                .Returns(response.Object);
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(It.IsAny<DbCompany>()),
+                Times.Never());
 
-//            _rcCreateAdminMock
-//               .Setup(x => x.GetResponse<IOperationResult<bool>>(
-//                       It.IsAny<object>(), default, default))
-//               .Returns(Task.FromResult(brokerResponseMock.Object));
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Never());
 
-//            var expected = new OperationResultResponse<Guid>
-//            {
-//                Status = Kernel.Enums.OperationResultStatusType.Failed,
-//                Errors = new List<string> { "Can not create admin." }
-//            };
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Never());
 
-//            SerializerAssert.AreEqual(expected, _command.Execute(_request));
-//            _repositoryMock.Verify(x => x.Add(_company), Times.Never);
-//            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-//            _mapperMock.Verify(x => x.Map(_request), Times.Never);
-//            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Once);
-//            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Once);
-//        }
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Never());
 
-//        [Test]
-//        public void ShouldThrowExceptionWhenRepositoryThrow()
-//        {
-//            var response = new Mock<IOperationResult<bool>>();
-//            response
-//                .Setup(x => x.IsSuccess)
-//                .Returns(true);
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Never());
+        }
 
-//            response
-//                .Setup(x => x.Body)
-//                .Returns(true);
+        [Test]
+        public void ShouldReturnFailedResponseWhenUpdateSMTPResponseThrowException()
+        {
+            _autoMock
+                .Setup<IOperationResult<bool>, List<string>>(x => x.Errors)
+                .Returns(new List<string> { "Can not update smtp credentials." });
 
-//            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
-//            brokerResponseMock
-//                .Setup(x => x.Message)
-//                .Returns(response.Object);
+            _autoMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(_autoMock.GetMock<IOperationResult<bool>>().Object);
 
-//            _rcCreateSMTPMock
-//               .Setup(x => x.GetResponse<IOperationResult<bool>>(
-//                       It.IsAny<object>(), default, default))
-//               .Returns(Task.FromResult(brokerResponseMock.Object));
+            _autoMock
+                .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Throws(new Exception());
 
-//            response = new Mock<IOperationResult<bool>>();
-//            response
-//                .Setup(x => x.IsSuccess)
-//                .Returns(true);
+            OperationResultResponse<Guid> expected = new()
+            {
+                Status = OperationResultStatusType.Failed,
+                Errors = new List<string> { "Can not update smtp credentials." }
+            };
 
-//            response
-//                .Setup(x => x.Body)
-//                .Returns(true);
+            SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
-//            brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
-//            brokerResponseMock
-//                .Setup(x => x.Message)
-//                .Returns(response.Object);
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
 
-//            _rcCreateAdminMock
-//               .Setup(x => x.GetResponse<IOperationResult<bool>>(
-//                       It.IsAny<object>(), default, default))
-//               .Returns(Task.FromResult(brokerResponseMock.Object));
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(It.IsAny<DbCompany>()),
+                Times.Never());
 
-//            _mapperMock
-//                .Setup(x => x.Map(_request))
-//                .Returns(_company);
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once());
 
-//            _repositoryMock
-//                .Setup(x => x.Add(_company))
-//                .Throws(new Exception());
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Never());
 
-//            Assert.Throws<Exception>(() => _command.Execute(_request));
-//            _repositoryMock.Verify(x => x.Add(_company), Times.Once);
-//            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-//            _mapperMock.Verify(x => x.Map(_request), Times.Once);
-//            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Once);
-//            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Once);
-//        }
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
 
-//        [Test]
-//        public void ShouldCreateCompanySuccessfuly()
-//        {
-//            var response = new Mock<IOperationResult<bool>>();
-//            response
-//                .Setup(x => x.IsSuccess)
-//                .Returns(true);
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Never());
+        }
 
-//            response
-//                .Setup(x => x.Body)
-//                .Returns(true);
+        [Test]
+        public void ShouldReturnFailedResponseWhenUpdateSMTPResponseIsNotSuccessfuly()
+        {
+            _autoMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(false);
 
-//            var brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
-//            brokerResponseMock
-//                .Setup(x => x.Message)
-//                .Returns(response.Object);
+            _autoMock
+                .Setup<IOperationResult<bool>, List<string>>(x => x.Errors)
+                .Returns(new List<string> { "Can not update smtp credentials." });
 
-//            _rcCreateSMTPMock
-//               .Setup(x => x.GetResponse<IOperationResult<bool>>(
-//                       It.IsAny<object>(), default, default))
-//               .Returns(Task.FromResult(brokerResponseMock.Object));
+            _autoMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(_autoMock.GetMock<IOperationResult<bool>>().Object);
 
-//            response = new Mock<IOperationResult<bool>>();
-//            response
-//                .Setup(x => x.IsSuccess)
-//                .Returns(true);
+            _autoMock
+                .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(_autoMock.GetMock<Response<IOperationResult<bool>>>().Object));
 
-//            response
-//                .Setup(x => x.Body)
-//                .Returns(true);
+            OperationResultResponse<Guid> expected = new()
+            {
+                Status = OperationResultStatusType.Failed,
+                Errors = new List<string> { "Can not update smtp credentials." }
+            };
 
-//            brokerResponseMock = new Mock<Response<IOperationResult<bool>>>();
-//            brokerResponseMock
-//                .Setup(x => x.Message)
-//                .Returns(response.Object);
+            SerializerAssert.AreEqual(expected, _command.Execute(_request));
 
-//            _rcCreateAdminMock
-//               .Setup(x => x.GetResponse<IOperationResult<bool>>(
-//                       It.IsAny<object>(), default, default))
-//               .Returns(Task.FromResult(brokerResponseMock.Object));
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
 
-//            _mapperMock
-//                .Setup(x => x.Map(_request))
-//                .Returns(_company);
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(It.IsAny<DbCompany>()),
+                Times.Never());
 
-//            var expected = new OperationResultResponse<Guid>
-//            {
-//                Body = _company.Id,
-//                Status = Kernel.Enums.OperationResultStatusType.FullSuccess
-//            };
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once());
 
-//            SerializerAssert.AreEqual(expected, _command.Execute(_request));
-//            _repositoryMock.Verify(x => x.Add(_company), Times.Once);
-//            _validatorMock.Verify(x => x.Validate(It.IsAny<IValidationContext>()), Times.Once);
-//            _mapperMock.Verify(x => x.Map(_request), Times.Once);
-//            _rcCreateSMTPMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Once);
-//            _rcCreateAdminMock.Verify(x => x.GetResponse<IOperationResult<bool>>(
-//               It.IsAny<object>(), default, default).Result.Message, Times.Once);
-//        }
-//    }
-//}
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Never());
+
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Never());
+        }
+
+        [Test]
+        public void ShouldReturnFailedResponseWhenAdminResponseThrowException()
+        {
+            AutoMocker secondMock = new();
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(true);
+
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.Body)
+                .Returns(true);
+
+            secondMock
+                .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
+
+            AutoMocker thirdMock = new();
+
+            thirdMock
+                .Setup<IOperationResult<bool>, List<string>>(x => x.Errors)
+                .Returns(new List<string> { "Can not create admin." });
+
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Throws(new Exception());
+
+            OperationResultResponse<Guid> expected = new()
+            {
+                Status = OperationResultStatusType.Failed,
+                Errors = new List<string> { "Can not create admin." }
+            };
+
+            SerializerAssert.AreEqual(expected, _command.Execute(_request));
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(_company), Times.Never());
+
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once());
+
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Never());
+
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+        }
+
+        [Test]
+        public void ShouldReturnFailedResponseWhenCreateAdminResponseIsNotSuccessfuly()
+        {
+            AutoMocker secondMock = new();
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(true);
+
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.Body)
+                .Returns(true);
+
+            secondMock
+                .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
+
+            AutoMocker thirdMock = new();
+            thirdMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(false);
+
+            thirdMock
+                .Setup<IOperationResult<bool>, List<string>>(x => x.Errors)
+                .Returns(new List<string> { "Can not create admin." });
+
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
+
+            OperationResultResponse<Guid> expected = new()
+            {
+                Status = OperationResultStatusType.Failed,
+                Errors = new List<string> { "Can not create admin." }
+            };
+
+            SerializerAssert.AreEqual(expected, _command.Execute(_request));
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(_company), Times.Never());
+
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once());
+
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Never());
+
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenRepositoryThrow()
+        {
+            AutoMocker secondMock = new();
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(true);
+
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.Body)
+                .Returns(true);
+
+            secondMock
+                .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+               .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
+
+            AutoMocker thirdMock = new();
+            thirdMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(true);
+
+            thirdMock
+                .Setup<IOperationResult<bool>, bool>(x => x.Body)
+                .Returns(true);
+
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
+
+            _autoMock.Setup<IDbCompanyMapper, DbCompany>(x => x.Map(_request))
+                .Returns(_company);
+
+            _autoMock.Setup<ICompanyRepository>(x => x.Add(_company))
+                .Throws(new Exception());
+
+            Assert.Throws<Exception>(() => _command.Execute(_request));
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(_company),
+                Times.Once());
+
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once());
+
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Once());
+
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+        }
+
+        [Test]
+        public void ShouldCreateCompanySuccessfuly()
+        {
+            AutoMocker secondMock = new();
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(true);
+
+            secondMock
+                .Setup<IOperationResult<bool>, bool>(x => x.Body)
+                .Returns(true);
+
+            secondMock
+                .Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(secondMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<IUpdateSmtpCredentialsRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(secondMock.GetMock<Response<IOperationResult<bool>>>().Object));
+
+            AutoMocker thirdMock = new();
+            thirdMock
+                .Setup<IOperationResult<bool>, bool>(x => x.IsSuccess)
+                .Returns(true);
+
+            thirdMock
+                .Setup<IOperationResult<bool>, bool>(x => x.Body)
+                .Returns(true);
+
+            thirdMock.Setup<Response<IOperationResult<bool>>, IOperationResult<bool>>(x => x.Message)
+                .Returns(thirdMock.GetMock<IOperationResult<bool>>().Object);
+
+            _autoMock
+                .Setup<IRequestClient<ICreateAdminRequest>, Task<Response<IOperationResult<bool>>>>(
+                    x => x.GetResponse<IOperationResult<bool>>(
+                        It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(thirdMock.GetMock<Response<IOperationResult<bool>>>().Object));
+
+            _autoMock
+                .Setup<IDbCompanyMapper, DbCompany>(x => x.Map(_request))
+                .Returns(_company);
+
+            OperationResultResponse<Guid> expected = new()
+            {
+                Body = _company.Id,
+                Status = OperationResultStatusType.FullSuccess
+            };
+
+            SerializerAssert.AreEqual(expected, _command.Execute(_request));
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Get(null), Times.Once());
+
+            _autoMock.Verify<ICompanyRepository>(
+                x => x.Add(_company), Times.Once());
+
+            _autoMock.Verify<ICreateCompanyRequestValidator>(
+                x => x.Validate(It.IsAny<IValidationContext>()),
+                Times.Once());
+
+            _autoMock.Verify<IDbCompanyMapper>(
+                x => x.Map(_request),
+                Times.Once());
+
+            _autoMock.Verify<IRequestClient<IUpdateSmtpCredentialsRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+
+            _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
+                x => x.GetResponse<IOperationResult<bool>>(
+                    It.IsAny<object>(), default, default), Times.Once());
+        }
+    }
+}

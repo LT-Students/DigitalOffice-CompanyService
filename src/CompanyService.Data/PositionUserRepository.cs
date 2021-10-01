@@ -32,45 +32,30 @@ namespace LT.DigitalOffice.CompanyService.Data
             return true;
         }
 
-        public DbPositionUser Get(Guid userId, bool includePosition)
+        public DbPositionUser Get(Guid userId)
         {
-            DbPositionUser user = null;
-
-            if (includePosition)
-            {
-                user = _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId);
-            }
-            else
-            {
-                user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId);
-            }
-
-            if (user == null)
-            {
-                throw new NotFoundException($"There is not user in position with id {userId}");
-            }
-
-            return user;
+            return _provider.PositionUsers.Include(u => u.Position).FirstOrDefault(u => u.UserId == userId && u.IsActive);
         }
 
-        public List<DbPositionUser> Find(List<Guid> userIds)
+        public List<DbPositionUser> Get(List<Guid> userIds)
         {
             return _provider.PositionUsers
                 .Include(pu => pu.Position)
-                .Where(u => userIds.Contains(u.UserId))
+                .Where(u => userIds.Contains(u.UserId) && u.IsActive)
                 .ToList();
         }
 
-        public void Remove(Guid userId)
+        public void Remove(Guid userId, Guid removedBy)
         {
             DbPositionUser user = _provider.PositionUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
 
             if (user != null)
             {
                 user.IsActive = false;
+                user.ModifiedAtUtc = DateTime.UtcNow;
+                user.ModifiedBy = removedBy;
+                _provider.Save();
             }
-
-            _provider.Save();
         }
     }
 }

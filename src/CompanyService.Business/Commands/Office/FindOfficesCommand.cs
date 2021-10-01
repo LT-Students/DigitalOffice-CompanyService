@@ -1,31 +1,61 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
-using System.Linq;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
+using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Kernel.Validators.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 {
-    public class FindOfficesCommand : IFindOfficesCommand
+  public class FindOfficesCommand : IFindOfficesCommand
+  {
+    private readonly IOfficeRepository _officeRepository;
+    private readonly IOfficeInfoMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IBaseFindFilterValidator _baseFindValidator;
+
+
+    public FindOfficesCommand(
+      IOfficeRepository officeRepository,
+      IOfficeInfoMapper mapper,
+      IHttpContextAccessor httpContextAccessor,
+      IBaseFindFilterValidator baseFindValidator)
     {
-        private readonly IOfficeRepository _officeRepository;
-        private readonly IOfficeInfoMapper _mapper;
-
-        public FindOfficesCommand(
-            IOfficeRepository officeRepository,
-            IOfficeInfoMapper mapper)
-        {
-            _officeRepository = officeRepository;
-            _mapper = mapper;
-        }
-
-        public FindOfficesResponse Execute(int skipCount, int takeCount, bool? includeDeactivated)
-        {
-            return new FindOfficesResponse
-            {
-                Offices = _officeRepository.Find(skipCount, takeCount, includeDeactivated, out int totalCount).Select(o => _mapper.Map(o)).ToList(),
-                TotalCount = totalCount
-            };
-        }
+      _officeRepository = officeRepository;
+      _mapper = mapper;
+      _httpContextAccessor = httpContextAccessor;
+      _baseFindValidator = baseFindValidator;
     }
+
+    public FindResultResponse<OfficeInfo> Execute(OfficeFindFilter filter)
+    {
+      FindResultResponse<OfficeInfo> response = new();
+
+      if (!_baseFindValidator.ValidateCustom(filter, out List<string> errors))
+      {
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+        response.Status = OperationResultStatusType.Failed;
+        response.Errors = errors;
+        return response;
+      }
+
+      response.Body = _officeRepository
+        .Find(filter, out int totalCount)
+        .Select(_mapper.Map)
+        .ToList();
+
+      response.TotalCount = totalCount;
+      response.Status = OperationResultStatusType.FullSuccess;
+
+      return response;
+    }
+  }
 }

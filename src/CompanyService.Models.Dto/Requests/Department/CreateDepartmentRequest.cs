@@ -1,12 +1,13 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.Department
 {
     public record CreateDepartmentRequest
     {
-        public BaseDepartmentInfo Info { get; set; }
-        public IEnumerable<Guid> Users { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Guid? DirectorUserId { get; set; }
+        public List<Guid> Users { get; set; }
     }
 }

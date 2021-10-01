@@ -1,30 +1,40 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+﻿using System;
+using System.Linq;
+using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
-using System;
-using System.Linq;
+using LT.DigitalOffice.Kernel.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
-    public class DbOfficeMapper : IDbOfficeMapper
-    {
-        public DbOffice Map(CreateOfficeRequest request, Guid companyId)
-        {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+  public class DbOfficeMapper : IDbOfficeMapper
+  {
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-            return new DbOffice
-            {
-                Id = Guid.NewGuid(),
-                CompanyId = companyId,
-                Name = request.Name != null && request.Name.Trim().Any() ? request.Name.Trim() : null,
-                City = request.City,
-                Address = request.Address,
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
-            };
-        }
+    public DbOfficeMapper(IHttpContextAccessor httpContextAccessor)
+    {
+      _httpContextAccessor = httpContextAccessor;
     }
+
+    public DbOffice Map(CreateOfficeRequest request, Guid companyId)
+    {
+      if (request == null)
+      {
+        return null;
+      }
+
+      return new DbOffice
+      {
+        Id = Guid.NewGuid(),
+        CompanyId = companyId,
+        Name = request.Name != null && request.Name.Trim().Any() ? request.Name.Trim() : null,
+        City = request.City != null && request.City.Trim().Any() ? request.City.Trim() : null,
+        Address = request.Address != null && request.Address.Trim().Any() ? request.Address.Trim() : null,
+        CreatedAtUtc = DateTime.UtcNow,
+        CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
+        IsActive = true
+      };
+    }
+  }
 }

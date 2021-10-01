@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office;
+﻿/*using LT.DigitalOffice.CompanyService.Business.Commands.Office;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
@@ -52,7 +52,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             {
                 Id = Guid.NewGuid(),
                 Address = "Address",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 City = "City",
                 CompanyId = Guid.NewGuid(),
@@ -63,7 +63,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
             {
                 Id = Guid.NewGuid(),
                 Address = "Address1",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 City = "City1",
                 CompanyId = Guid.NewGuid(),
@@ -104,10 +104,11 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
                 .Setup<IOfficeInfoMapper, OfficeInfo>(x => x.Map(dbOffice2))
                 .Returns(officeInfo2);
 
-            var expected = new FindOfficesResponse
+            var expected = new FindResultResponse<OfficeInfo>
             {
+                Status = OperationResultStatusType.FullSuccess,
                 TotalCount = _totalCount,
-                Offices = new List<OfficeInfo>
+                Body = new List<OfficeInfo>
                 {
                     officeInfo1,
                     officeInfo2
@@ -118,3 +119,4 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         }
     }
 }
+*/
