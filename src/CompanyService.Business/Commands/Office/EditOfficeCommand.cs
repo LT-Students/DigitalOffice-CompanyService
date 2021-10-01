@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
 using LT.DigitalOffice.CompanyService.Validation.Office.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
@@ -13,41 +12,39 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 {
-  public class CreateOfficeCommand : ICreateOfficeCommand
+  public class EditOfficeCommand : IEditOfficeCommand
   {
     private readonly IAccessValidator _accessValidator;
     private readonly IOfficeRepository _officeRepository;
-    private readonly ICompanyRepository _companyRepository;
-    private readonly IDbOfficeMapper _mapper;
-    private readonly ICreateOfficeRequestValidator _validator;
+    private readonly IPatchDbOfficeMapper _mapper;
+    private readonly IEditOfficeRequestValidator _validator;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CreateOfficeCommand(
+    public EditOfficeCommand(
       IAccessValidator accessValidator,
       IOfficeRepository officeRepository,
-      ICompanyRepository companyRepository,
-      IDbOfficeMapper mapper,
-      ICreateOfficeRequestValidator validator,
+      IPatchDbOfficeMapper mapper,
+      IEditOfficeRequestValidator validator,
       IHttpContextAccessor httpContextAccessor)
     {
       _accessValidator = accessValidator;
       _officeRepository = officeRepository;
-      _companyRepository = companyRepository;
       _mapper = mapper;
       _validator = validator;
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<Guid> Execute(CreateOfficeRequest request)
+    public OperationResultResponse<bool> Execute(Guid officeId, JsonPatchDocument<EditOfficeRequest> request)
     {
       if (!_accessValidator.HasRights(Rights.EditCompany))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
-        return new OperationResultResponse<Guid>
+        return new OperationResultResponse<bool>
         {
           Status = OperationResultStatusType.Failed,
           Errors = new() { "Not enough rights." }
@@ -58,23 +55,26 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        return new OperationResultResponse<Guid>
+        return new OperationResultResponse<bool>
         {
           Status = OperationResultStatusType.Failed,
           Errors = errors
         };
       }
 
-      DbOffice office = _mapper.Map(request, _companyRepository.Get().Id);
-      _officeRepository.Add(office);
+      OperationResultResponse<bool> response = new();
 
-      _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+      response.Body = _officeRepository.Edit(officeId, _mapper.Map(request));
+      response.Status = OperationResultStatusType.FullSuccess;
 
-      return new OperationResultResponse<Guid>
+      if (!response.Body)
       {
-        Status = OperationResultStatusType.FullSuccess,
-        Body = office.Id
-      };
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+        response.Status = OperationResultStatusType.Failed;
+      }
+
+      return response;
     }
   }
 }

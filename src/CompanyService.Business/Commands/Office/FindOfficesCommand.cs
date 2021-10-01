@@ -1,11 +1,15 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Kernel.Validators.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
@@ -15,47 +19,43 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
     private readonly IOfficeRepository _officeRepository;
     private readonly IOfficeInfoMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IBaseFindFilterValidator _baseFindValidator;
+
 
     public FindOfficesCommand(
-        IOfficeRepository officeRepository,
-        IOfficeInfoMapper mapper,
-        IHttpContextAccessor httpContextAccessor)
+      IOfficeRepository officeRepository,
+      IOfficeInfoMapper mapper,
+      IHttpContextAccessor httpContextAccessor,
+      IBaseFindFilterValidator baseFindValidator)
     {
       _officeRepository = officeRepository;
       _mapper = mapper;
       _httpContextAccessor = httpContextAccessor;
+      _baseFindValidator = baseFindValidator;
     }
 
-    public FindResultResponse<OfficeInfo> Execute(int skipCount, int takeCount, bool? includeDeactivated)
+    public FindResultResponse<OfficeInfo> Execute(OfficeFindFilter filter)
     {
-      if (skipCount < 0)
+      FindResultResponse<OfficeInfo> response = new();
+
+      if (!_baseFindValidator.ValidateCustom(filter, out List<string> errors))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        return new()
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = new() { "Skip count can't be less than 0." }
-        };
+        response.Status = OperationResultStatusType.Failed;
+        response.Errors = errors;
+        return response;
       }
 
-      if (takeCount < 1)
-      {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+      response.Body = _officeRepository
+        .Find(filter, out int totalCount)
+        .Select(_mapper.Map)
+        .ToList();
 
-        return new()
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = new() { "Take count can't be less than 1." }
-        };
-      }
+      response.TotalCount = totalCount;
+      response.Status = OperationResultStatusType.FullSuccess;
 
-      return new()
-      {
-        Status = OperationResultStatusType.FullSuccess,
-        Body = _officeRepository.Find(skipCount, takeCount, includeDeactivated, out int totalCount).Select(o => _mapper.Map(o)).ToList(),
-        TotalCount = totalCount
-      };
+      return response;
     }
   }
 }

@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.CompanyService.Business.Commands.Office;
+﻿/*using LT.DigitalOffice.CompanyService.Business.Commands.Office;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
@@ -119,3 +119,4 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Office
         }
     }
 }
+*/
