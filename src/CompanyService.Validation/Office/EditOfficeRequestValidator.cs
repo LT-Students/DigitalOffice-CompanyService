@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
         x => x == OperationType.Replace,
         new()
         {
-          { x => !string.IsNullOrEmpty(x.value.ToString()), "Name cannot be empty." },
+          { x => !string.IsNullOrEmpty(x.value?.ToString()), "Name cannot be empty." },
         });
 
       AddFailureForPropertyIf(
@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
         x => x == OperationType.Replace,
         new()
         {
-          { x => !string.IsNullOrEmpty(x.value.ToString()), "City cannot be empty." },
+          { x => !string.IsNullOrEmpty(x.value?.ToString()), "City cannot be empty." },
         });
 
       AddFailureForPropertyIf(
@@ -53,7 +53,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
         x => x == OperationType.Replace,
         new()
         {
-          { x => !string.IsNullOrEmpty(x.value.ToString()), "Address cannot be empty." },
+          { x => !string.IsNullOrEmpty(x.value?.ToString()), "Address cannot be empty." },
         });
 
       #endregion
