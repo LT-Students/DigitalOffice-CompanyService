@@ -74,18 +74,21 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == request.DepartmentId);
 
-      totalCount = dbDepartmentUser.Count();
-
       if (request.ByEntryDate.HasValue)
       {
         dbDepartmentUser = dbDepartmentUser.Where(x =>
-          (x.CreatedAtUtc.Year * 12 + x.CreatedAtUtc.Month) <=
-          (request.ByEntryDate.Value.Year * 12 + request.ByEntryDate.Value.Month));
+          ((x.CreatedAtUtc.Year * 12 + x.CreatedAtUtc.Month) <=
+            (request.ByEntryDate.Value.Year * 12 + request.ByEntryDate.Value.Month)) &&
+          (x.IsActive ||
+            ((x.LeftAtUts.Value.Year * 12 + x.LeftAtUts.Value.Month) >=
+            (request.ByEntryDate.Value.Year * 12 + request.ByEntryDate.Value.Month))));
       }
       else
       {
         dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive);
       }
+
+      totalCount = dbDepartmentUser.Count();
 
       if (request.SkipCount.HasValue)
       {

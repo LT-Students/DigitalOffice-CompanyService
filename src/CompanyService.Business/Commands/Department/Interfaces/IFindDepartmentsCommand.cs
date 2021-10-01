@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+﻿using System.Threading.Tasks;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Responses;
 
@@ -7,6 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department.Interface
     [AutoInject]
     public interface IFindDepartmentsCommand
     {
-        FindResultResponse<DepartmentInfo> Execute(int skipCount, int takeCount, bool includeDeactivated);
+        Task<FindResultResponse<DepartmentInfo>> Execute(int skipCount, int takeCount, bool includeDeactivated);
     }
 }

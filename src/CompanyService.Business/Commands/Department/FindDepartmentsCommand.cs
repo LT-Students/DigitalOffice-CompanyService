@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Department.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
@@ -9,7 +10,9 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Models;
 using LT.DigitalOffice.Models.Broker.Requests.File;
@@ -19,6 +22,8 @@ using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 {
@@ -32,40 +37,55 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly ILogger<FindDepartmentsCommand> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IConnectionMultiplexer _cache;
 
-    private List<UserData> GetUsers(List<Guid> usersIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersData(List<Guid> userIds, List<string> errors)
     {
-      List<UserData> users = new();
-      string errorMessage = $"Can not get users info for users '{string.Join(", ", usersIds)}'. Please try again later.";
-
-      if (!usersIds.Any())
+      if (userIds == null || !userIds.Any())
       {
-        return users;
+        return new();
       }
+
+      RedisValue valueFromCache = await _cache.GetDatabase(Cache.Users).StringGetAsync(userIds.GetRedisCacheHashCode());
+
+      if (valueFromCache.HasValue)
+      {
+        return JsonConvert.DeserializeObject<List<UserData>>(valueFromCache.ToString());
+      }
+
+      return await GetUsersDataFromBroker(userIds, errors);
+    }
+
+    private async Task<List<UserData>> GetUsersDataFromBroker(List<Guid> userIds, List<string> errors)
+    {
+      if (userIds == null || !userIds.Any())
+      {
+        return new();
+      }
+
+      string message = "Can not get users data. Please try again later.";
+      string loggerMessage = $"Can not get users data for specific user ids:'{string.Join(",", userIds)}'.";
 
       try
       {
-        var usersDataResponse = _rcGetUsersData.GetResponse<IOperationResult<IGetUsersDataResponse>>(
-            IGetUsersDataRequest.CreateObj(usersIds)).Result;
+        var response = await _rcGetUsersData.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+          IGetUsersDataRequest.CreateObj(userIds));
 
-        if (usersDataResponse.Message.IsSuccess)
+        if (response.Message.IsSuccess)
         {
-          return usersDataResponse.Message.Body.UsersData;
+          return response.Message.Body.UsersData;
         }
-        else
-        {
-          _logger?.LogWarning(
-              $"Can not get users. Reason:{Environment.NewLine}{string.Join('\n', usersDataResponse.Message.Errors)}.");
-        }
+
+        _logger.LogWarning(loggerMessage + "Reasons: {Errors}", string.Join("\n", response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger?.LogError(exc, errorMessage);
+        _logger.LogError(exc, loggerMessage);
       }
 
-      errors.Add(errorMessage);
+      errors.Add(message);
 
-      return users;
+      return null;
     }
 
     private List<ImageData> GetImages(List<Guid> imageIds, List<string> errors)
@@ -73,7 +93,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       string logMessage = "Can not get images: {ids}.";
       string errorMessage = "Can not get images. Please try again later.";
 
-      if (!imageIds.Any())
+      if (imageIds == null || !imageIds.Any())
       {
         return new();
       }
@@ -81,7 +101,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       try
       {
         var response = _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
-            IGetImagesRequest.CreateObj(imageIds)).Result.Message;
+          IGetImagesRequest.CreateObj(imageIds)).Result.Message;
 
         if (response.IsSuccess)
         {
@@ -101,14 +121,15 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     }
 
     public FindDepartmentsCommand(
-        IDepartmentRepository repository,
-        IPositionUserRepository userPositionRepository,
-        IDepartmentInfoMapper departmentMapper,
-        IDepartmentUserInfoMapper userMapper,
-        IRequestClient<IGetUsersDataRequest> rcGetUsersData,
-        IRequestClient<IGetImagesRequest> rcGetImages,
-        ILogger<FindDepartmentsCommand> logger,
-        IHttpContextAccessor httpContextAccessor)
+      IDepartmentRepository repository,
+      IPositionUserRepository userPositionRepository,
+      IDepartmentInfoMapper departmentMapper,
+      IDepartmentUserInfoMapper userMapper,
+      IRequestClient<IGetUsersDataRequest> rcGetUsersData,
+      IRequestClient<IGetImagesRequest> rcGetImages,
+      ILogger<FindDepartmentsCommand> logger,
+      IHttpContextAccessor httpContextAccessor,
+      IConnectionMultiplexer cache)
     {
       _repository = repository;
       _userPositionRepository = userPositionRepository;
@@ -118,9 +139,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       _rcGetImages = rcGetImages;
       _logger = logger;
       _httpContextAccessor = httpContextAccessor;
+      _cache = cache;
     }
 
-    public FindResultResponse<DepartmentInfo> Execute(int skipCount, int takeCount, bool includeDeactivated)
+    public async Task<FindResultResponse<DepartmentInfo>> Execute(int skipCount, int takeCount, bool includeDeactivated)
     {
       if (skipCount < 0)
       {
@@ -151,12 +173,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       response.TotalCount = totalCount;
 
       Dictionary<Guid, Guid> departmentsDirectors =
-          dbDepartments
-              .SelectMany(d => d.Users.Where(u => u.Role == (int)DepartmentUserRole.Director)).ToDictionary(d => d.DepartmentId, d => d.UserId);
+        dbDepartments
+          .SelectMany(d => d.Users.Where(u => u.Role == (int)DepartmentUserRole.Director)).ToDictionary(d => d.DepartmentId, d => d.UserId);
 
-      List<UserData> usersData = GetUsers(
-          departmentsDirectors.Values.ToList(),
-          response.Errors);
+      List<UserData> usersData = await GetUsersData(
+        departmentsDirectors.Values.ToList(),
+        response.Errors);
 
       List<ImageData> images = GetImages(usersData.Where(d => d.ImageId.HasValue).Select(d => d.ImageId.Value).ToList(), response.Errors);
 
