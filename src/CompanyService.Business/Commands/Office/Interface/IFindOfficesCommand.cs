@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface
   [AutoInject]
   public interface IFindOfficesCommand
   {
-    FindResultResponse<OfficeInfo> Execute(BaseFindFilter filter);
+    FindResultResponse<OfficeInfo> Execute(OfficeFindFilter filter);
   }
 }

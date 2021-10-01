@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
     DbOffice Get(Guid officeId);
 
-    List<DbOffice> Find(BaseFindFilter filter, out int totalCount);
+    List<DbOffice> Find(OfficeFindFilter filter, out int totalCount);
 
     bool Edit(Guid officeId, JsonPatchDocument<DbOffice> news);
 

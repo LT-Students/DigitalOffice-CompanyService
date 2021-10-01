@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       return _provider.Offices.Any(o => o.Id == officeId);
     }
 
-    public List<DbOffice> Find(BaseFindFilter filter, out int totalCount)
+    public List<DbOffice> Find(OfficeFindFilter filter, out int totalCount)
     {
       if (filter == null)
       {
@@ -63,7 +63,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       totalCount = dbOffices.Count();
 
-      return dbOffices.Skip(filter.skipCount).Take(filter.takeCount).ToList();
+      return dbOffices.Skip(filter.SkipCount).Take(filter.TakeCount).ToList();
     }
 
     public bool Edit(Guid officeId, JsonPatchDocument<DbOffice> request)

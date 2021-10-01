@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     [HttpGet("find")]
     public FindResultResponse<OfficeInfo> Find(
       [FromServices] IFindOfficesCommand command,
-      [FromQuery] BaseFindFilter filter)
+      [FromQuery] OfficeFindFilter filter)
     {
       return command.Execute(filter);
     }

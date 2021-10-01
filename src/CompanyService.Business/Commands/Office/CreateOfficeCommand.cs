@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 
     public OperationResultResponse<Guid> Execute(CreateOfficeRequest request)
     {
-      if (!_accessValidator.HasRights(Rights.AddEditRemoveDepartments))
+      if (!_accessValidator.HasRights(Rights.EditCompany))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 

@@ -19,14 +19,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
     private readonly IOfficeRepository _officeRepository;
     private readonly IOfficeInfoMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IBaseFindRequestValidator _baseFindValidator;
+    private readonly IBaseFindFilterValidator _baseFindValidator;
 
 
     public FindOfficesCommand(
       IOfficeRepository officeRepository,
       IOfficeInfoMapper mapper,
       IHttpContextAccessor httpContextAccessor,
-      IBaseFindRequestValidator baseFindValidator)
+      IBaseFindFilterValidator baseFindValidator)
     {
       _officeRepository = officeRepository;
       _mapper = mapper;
@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
       _baseFindValidator = baseFindValidator;
     }
 
-    public FindResultResponse<OfficeInfo> Execute(BaseFindFilter filter)
+    public FindResultResponse<OfficeInfo> Execute(OfficeFindFilter filter)
     {
       FindResultResponse<OfficeInfo> response = new();
 
