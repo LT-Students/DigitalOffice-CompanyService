@@ -74,14 +74,24 @@ namespace LT.DigitalOffice.CompanyService.Data
         && (du.Role == (int)DepartmentUserRole.Director || du.UserId == newDirectorId)
         && du.IsActive).ToList();
 
-      if (directors.Count != 2)
+      if (!directors.Any())
       {
         return false;
       }
 
-      DbDepartmentUser prevDirector = directors.First(d => d.Role == (int)DepartmentUserRole.Director);
-      DbDepartmentUser newDirector = directors.First(d => d.Role == (int)DepartmentUserRole.Employee);
-      prevDirector.Role = (int)DepartmentUserRole.Employee;
+      DbDepartmentUser prevDirector = directors.FirstOrDefault(d => d.Role == (int)DepartmentUserRole.Director);
+      DbDepartmentUser newDirector = directors.FirstOrDefault(d => d.Role == (int)DepartmentUserRole.Employee);
+
+      if (newDirector == null)
+      {
+        return false;
+      }
+
+      if (prevDirector != null)
+      {
+        prevDirector.Role = (int)DepartmentUserRole.Employee;
+      }
+
       newDirector.Role = (int)DepartmentUserRole.Director;
 
       _provider.Save();
