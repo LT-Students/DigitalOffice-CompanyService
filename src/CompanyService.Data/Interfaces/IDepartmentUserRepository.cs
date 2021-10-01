@@ -24,5 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     void Remove(List<Guid> usersIds, Guid removedBy);
 
     bool IsDepartmentDirector(Guid departmentId, Guid userId);
+
+    bool ChangeDirector(Guid departmentId, Guid newDirectorId);
   }
 }
