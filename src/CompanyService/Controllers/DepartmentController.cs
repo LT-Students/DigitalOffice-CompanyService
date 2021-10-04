@@ -7,6 +7,7 @@ using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
 {
@@ -23,21 +24,21 @@ namespace LT.DigitalOffice.CompanyService.Controllers
         }
 
         [HttpGet("get")]
-        public OperationResultResponse<DepartmentResponse> Get(
+        public async Task<OperationResultResponse<DepartmentResponse>> Get(
             [FromServices] IGetDepartmentCommand command,
             [FromQuery] GetDepartmentFilter filter)
         {
-            return command.Execute(filter);
+            return await command.Execute(filter);
         }
 
         [HttpGet("find")]
-        public FindResultResponse<DepartmentInfo> Find(
+        public async Task<FindResultResponse<DepartmentInfo>> Find(
             [FromServices] IFindDepartmentsCommand command,
             [FromQuery] int skipCount,
             [FromQuery] int takeCount,
             [FromQuery] bool includeDeactivated = false)
         {
-            return command.Execute(skipCount, takeCount, includeDeactivated);
+            return await command.Execute(skipCount, takeCount, includeDeactivated);
         }
 
         [HttpPatch("edit")]

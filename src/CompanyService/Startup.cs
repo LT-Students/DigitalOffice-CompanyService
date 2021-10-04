@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -65,6 +66,18 @@ namespace LT.DigitalOffice.CompanyService
           });
       });
 
+      if (int.TryParse(Environment.GetEnvironmentVariable("RedisCacheLiveInMinutes"), out int redisCacheLifeTime))
+      {
+        services.Configure<RedisConfig>(options =>
+        {
+          options.CacheLiveInMinutes = redisCacheLifeTime;
+        });
+      }
+      else
+      {
+        services.Configure<RedisConfig>(Configuration.GetSection(RedisConfig.SectionName));
+      }
+
       services.Configure<TokenConfiguration>(Configuration.GetSection("CheckTokenMiddleware"));
       services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
       services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
@@ -93,6 +106,15 @@ namespace LT.DigitalOffice.CompanyService
       services.AddHealthChecks()
         .AddSqlServer(connStr)
         .AddRabbitMqCheck();
+
+      string redisConnStr = Environment.GetEnvironmentVariable("RedisConnectionString");
+      if (string.IsNullOrEmpty(redisConnStr))
+      {
+        redisConnStr = Configuration.GetConnectionString("Redis");
+      }
+
+      services.AddSingleton<IConnectionMultiplexer>(
+        x => ConnectionMultiplexer.Connect(redisConnStr));
 
       services.AddBusinessObjects();
 

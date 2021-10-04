@@ -23,6 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Department
                 {
                     nameof(EditDepartmentRequest.Name),
                     nameof(EditDepartmentRequest.Description),
+                    nameof(EditDepartmentRequest.DirectorId),
                     nameof(EditDepartmentRequest.IsActive)
                 });
 
@@ -31,6 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Department
             { 
                 OperationType.Add, OperationType.Replace, OperationType.Remove 
             });
+            AddСorrectOperations(nameof(EditDepartmentRequest.DirectorId), new() { OperationType.Replace });
             AddСorrectOperations(nameof(EditDepartmentRequest.IsActive), new() { OperationType.Replace });
 
             #endregion

@@ -1,70 +1,94 @@
-﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
-using LT.DigitalOffice.CompanyService.Data.Provider;
-using LT.DigitalOffice.CompanyService.Models.Db;
+﻿using LT.DigitalOffice.Kernel.Exceptions.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Data.Provider;
+using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
+using LT.DigitalOffice.Kernel.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.Extensions.Logging;
 
-namespace LT.DigitalOffice.CompanyService.Data
-{
   public class OfficeRepository : IOfficeRepository
+  {
+    private readonly IDataProvider _provider;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<OfficeRepository> _logger;
     {
-        private readonly IDataProvider _provider;
-
-        public OfficeRepository(IDataProvider provider)
-        {
+    public OfficeRepository(
+      IDataProvider provider,
+      IHttpContextAccessor httpContextAccessor,
+      ILogger<OfficeRepository> logger)
+    {
+      _httpContextAccessor = httpContextAccessor;
+      _provider = provider;
+      _logger = logger;
+    }
             _provider = provider;
         }
 
-        public void Add(DbOffice office)
-        {
-            if (office == null)
-            {
-                throw new ArgumentNullException(nameof(office));
+    public void Add(DbOffice office)
+    {
+      if (office == null)
+      {
+        _logger.LogWarning(new ArgumentNullException(nameof(office)).Message);
+        return;
+      }
+
+      _provider.Offices.Add(office);
+      _provider.Save();
+    public bool Contains(Guid officeId)
+    {
+      return _provider.Offices.Any(o => o.Id == officeId);
+    }
+
+    public List<DbOffice> Find(OfficeFindFilter filter, out int totalCount)
+    {
+      if (filter == null)
+      {
+        totalCount = 0;
+        return null;
+      }
+                throw new BadRequestException("Take count can't be equal or less than 0.");
             }
 
-            _provider.Offices.Add(office);
-            _provider.Save();
-        }
+      IQueryable<DbOffice> dbOffices = _provider.Offices
+        .AsQueryable();
 
-        public bool Contains(Guid officeId)
-        {
-            return _provider.Offices.Any(o => o.Id == officeId);
-        }
+      if (!filter.IncludeDeactivated)
+      {
+        dbOffices = dbOffices.Where(x => x.IsActive);
+      }
 
-        public List<DbOffice> Find(int skipCount, int takeCount, bool? includeDeactivated, out int totalCount)
-        {
-            if (skipCount < 0)
-            {
-                throw new ArgumentException("Skip count can't be less than 0.");
-            }
+      totalCount = dbOffices.Count();
 
-            if (takeCount < 1)
-            {
-                throw new ArgumentException("Take count can't less than 1.");
-            }
+      return dbOffices.Skip(filter.SkipCount).Take(filter.TakeCount).ToList();
+    }
 
-            IQueryable<DbOffice> dbOffices = _provider.Offices
-                .AsQueryable();
+    public bool Edit(Guid officeId, JsonPatchDocument<DbOffice> request)
+    {
+      DbOffice dbOffice = _provider.Offices.FirstOrDefault(x => x.Id == officeId);
 
-            if (!(includeDeactivated.HasValue && includeDeactivated.Value))
-            {
-                dbOffices = dbOffices.Where(o => o.IsActive);
-                totalCount = _provider.Offices.Count(o => o.IsActive);
-            }
-            else
-            {
-                totalCount = _provider.Offices.Count();
-            }
+      if (dbOffice == null || request == null)
+      {
+        return false;
+      }
 
-            dbOffices = dbOffices.Skip(skipCount).Take(takeCount);
+      request.ApplyTo(dbOffice);
+      dbOffice.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
+      dbOffice.ModifiedAtUtc = DateTime.UtcNow;
+      _provider.Save();
 
-            return dbOffices.ToList();
-        }
-
-        public DbOffice Get(Guid officeId)
-        {
-            return _provider.Offices.FirstOrDefault(x => x.Id == officeId);
+      return true;
+    public DbOffice Get(Guid officeId)
+    {
+      return _provider.Offices.FirstOrDefault(x => x.Id == officeId);
+    }
+  }
+                ?? throw new NotFoundException($"No office with id '{officeId}'");
         }
     }
 }

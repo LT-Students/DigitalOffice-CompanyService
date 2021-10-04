@@ -68,24 +68,58 @@ namespace LT.DigitalOffice.CompanyService.Data
       return user;
     }
 
+    public bool ChangeDirector(Guid departmentId, Guid newDirectorId)
+    {
+      List<DbDepartmentUser> directors = _provider.DepartmentUsers.Where(du => du.DepartmentId == departmentId
+        && (du.Role == (int)DepartmentUserRole.Director || du.UserId == newDirectorId)
+        && du.IsActive).ToList();
+
+      if (!directors.Any())
+      {
+        return false;
+      }
+
+      DbDepartmentUser prevDirector = directors.FirstOrDefault(d => d.Role == (int)DepartmentUserRole.Director);
+      DbDepartmentUser newDirector = directors.FirstOrDefault(d => d.Role == (int)DepartmentUserRole.Employee);
+
+      if (newDirector == null)
+      {
+        return false;
+      }
+
+      if (prevDirector != null)
+      {
+        prevDirector.Role = (int)DepartmentUserRole.Employee;
+      }
+
+      newDirector.Role = (int)DepartmentUserRole.Director;
+
+      _provider.Save();
+
+      return true;
+    }
+
     public List<Guid> Get(IGetDepartmentUsersRequest request, out int totalCount)
     {
       var dbDepartmentUser = _provider.DepartmentUsers.AsQueryable();
 
       dbDepartmentUser = dbDepartmentUser.Where(x => x.DepartmentId == request.DepartmentId);
 
-      totalCount = dbDepartmentUser.Count();
-
       if (request.ByEntryDate.HasValue)
       {
         dbDepartmentUser = dbDepartmentUser.Where(x =>
-          (x.CreatedAtUtc.Year * 12 + x.CreatedAtUtc.Month) <=
-          (request.ByEntryDate.Value.Year * 12 + request.ByEntryDate.Value.Month));
+          ((x.CreatedAtUtc.Year * 12 + x.CreatedAtUtc.Month) <=
+            (request.ByEntryDate.Value.Year * 12 + request.ByEntryDate.Value.Month)) &&
+          (x.IsActive ||
+            ((x.LeftAtUts.Value.Year * 12 + x.LeftAtUts.Value.Month) >=
+            (request.ByEntryDate.Value.Year * 12 + request.ByEntryDate.Value.Month))));
       }
       else
       {
         dbDepartmentUser = dbDepartmentUser.Where(x => x.IsActive);
       }
+
+      totalCount = dbDepartmentUser.Count();
 
       if (request.SkipCount.HasValue)
       {
