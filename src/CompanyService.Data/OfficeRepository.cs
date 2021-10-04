@@ -1,6 +1,4 @@
-﻿using LT.DigitalOffice.Kernel.Exceptions.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -12,12 +10,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 
+namespace LT.DigitalOffice.CompanyService.Data
+{
   public class OfficeRepository : IOfficeRepository
   {
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<OfficeRepository> _logger;
-    {
+
     public OfficeRepository(
       IDataProvider provider,
       IHttpContextAccessor httpContextAccessor,
@@ -27,8 +27,6 @@ using Microsoft.Extensions.Logging;
       _provider = provider;
       _logger = logger;
     }
-            _provider = provider;
-        }
 
     public void Add(DbOffice office)
     {
@@ -40,6 +38,8 @@ using Microsoft.Extensions.Logging;
 
       _provider.Offices.Add(office);
       _provider.Save();
+    }
+
     public bool Contains(Guid officeId)
     {
       return _provider.Offices.Any(o => o.Id == officeId);
@@ -52,8 +52,6 @@ using Microsoft.Extensions.Logging;
         totalCount = 0;
         return null;
       }
-                throw new BadRequestException("Take count can't be equal or less than 0.");
-            }
 
       IQueryable<DbOffice> dbOffices = _provider.Offices
         .AsQueryable();
@@ -83,12 +81,11 @@ using Microsoft.Extensions.Logging;
       _provider.Save();
 
       return true;
+    }
+
     public DbOffice Get(Guid officeId)
     {
       return _provider.Offices.FirstOrDefault(x => x.Id == officeId);
     }
   }
-                ?? throw new NotFoundException($"No office with id '{officeId}'");
-        }
-    }
 }
