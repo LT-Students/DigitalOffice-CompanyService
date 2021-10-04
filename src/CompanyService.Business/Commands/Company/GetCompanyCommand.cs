@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
   {
     private readonly ICompanyRepository _repository;
     private readonly ICompanyInfoMapper _companyInfoMapper;
-    private readonly IRequestClient<IGetImagesRequest> _requestClient;
+   // private readonly IRequestClient<IGetImagesRequest> _requestClient;
     private readonly ILogger<GetCompanyCommand> _logger;
     private readonly IImageInfoMapper _imageMapper;
 
@@ -32,12 +32,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         return null;
       }
 
-      ImageInfo result = null;
+      ImageInfo result = new();
 
       string errorMessage = $"Can not get image '{imageId}' information. Please try again later.";
       string logMessage = $"Can not get image '{imageId}' information.";
 
-      try
+      /*try
       {
         var response = _requestClient.GetResponse<IOperationResult<IGetImagesResponse>>(
             IGetImagesRequest.CreateObj(new() { imageId.Value })).Result.Message;
@@ -58,7 +58,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         _logger.LogError(exc, errorMessage);
 
         errors.Add(errorMessage);
-      }
+      }*/
 
       return result;
     }
@@ -66,13 +66,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     public GetCompanyCommand(
       ICompanyRepository repository,
       ICompanyInfoMapper mapper,
-      IRequestClient<IGetImagesRequest> requestClient,
+    //  IRequestClient<IGetImagesRequest> requestClient,
       ILogger<GetCompanyCommand> logger,
       IImageInfoMapper imageMapper)
     {
       _repository = repository;
       _companyInfoMapper = mapper;
-      _requestClient = requestClient;
+     // _requestClient = requestClient;
       _logger = logger;
       _imageMapper = imageMapper;
     }

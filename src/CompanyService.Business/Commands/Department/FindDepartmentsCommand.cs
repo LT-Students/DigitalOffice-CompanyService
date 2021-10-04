@@ -14,10 +14,11 @@ using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Models.Broker.Enums;
 using LT.DigitalOffice.Models.Broker.Models;
-using LT.DigitalOffice.Models.Broker.Requests.File;
+using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.User;
-using LT.DigitalOffice.Models.Broker.Responses.File;
+using LT.DigitalOffice.Models.Broker.Responses.Image;
 using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -88,31 +89,31 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       return null;
     }
 
-    private List<ImageData> GetImages(List<Guid> imageIds, List<string> errors)
+    private async Task<List<ImageData>> GetImages(List<Guid> imagesIds, List<string> errors)
     {
-      string logMessage = "Can not get images: {ids}.";
-      string errorMessage = "Can not get images. Please try again later.";
-
-      if (imageIds == null || !imageIds.Any())
+      if (imagesIds == null || !imagesIds.Any())
       {
         return new();
       }
 
+      string logMessage = "Can not get images: {ids}.";
+      string errorMessage = "Can not get images. Please try again later.";
+
       try
       {
-        var response = _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
-          IGetImagesRequest.CreateObj(imageIds)).Result.Message;
+        Response<IOperationResult<IGetImagesResponse>> response = await _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
+          IGetImagesRequest.CreateObj(imagesIds, ImageSource.User));
 
-        if (response.IsSuccess)
+        if (response.Message.IsSuccess)
         {
-          return response.Body.Images;
+          return response.Message.Body.ImagesData;
         }
 
-        _logger.LogWarning(logMessage + "Reason: {Errors}", string.Join(", ", imageIds), string.Join("\n", response.Errors));
+        _logger.LogWarning(logMessage + "Reason: {Errors}", string.Join(", ", imagesIds), string.Join("\n", response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError(exc, logMessage, string.Join(", ", imageIds));
+        _logger.LogError(exc, logMessage, string.Join(", ", imagesIds));
       }
 
       errors.Add(errorMessage);
@@ -180,7 +181,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         departmentsDirectors.Values.ToList(),
         response.Errors);
 
-      List<ImageData> images = GetImages(usersData.Where(d => d.ImageId.HasValue).Select(d => d.ImageId.Value).ToList(), response.Errors);
+      List<ImageData> images = await GetImages(
+        usersData.Where(d => d.ImageId.HasValue).Select(d => d.ImageId.Value).ToList(),
+        response.Errors);
 
       foreach (var department in dbDepartments)
       {

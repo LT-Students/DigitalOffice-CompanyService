@@ -10,11 +10,12 @@ using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Models.Broker.Enums;
 using LT.DigitalOffice.Models.Broker.Models;
-using LT.DigitalOffice.Models.Broker.Requests.File;
+using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.Project;
 using LT.DigitalOffice.Models.Broker.Requests.User;
-using LT.DigitalOffice.Models.Broker.Responses.File;
+using LT.DigitalOffice.Models.Broker.Responses.Image;
 using LT.DigitalOffice.Models.Broker.Responses.Project;
 using LT.DigitalOffice.Models.Broker.Responses.User;
 using MassTransit;
@@ -129,24 +130,24 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       return new();
     }
 
-    private List<ImageData> GetUsersImage(List<Guid> imageIds, List<string> errors)
+    private async Task<List<ImageData>> GetUsersImage(List<Guid> imagesIds, List<string> errors)
     {
-      if (imageIds == null || !imageIds.Any())
+      if (imagesIds == null || !imagesIds.Any())
       {
         return new();
       }
 
       string message = "Can not get users avatar. Please try again later.";
-      string loggerMessage = $"Can not get users avatar by specific image ids '{string.Join(",", imageIds)}.";
+      string loggerMessage = $"Can not get users avatar by specific image ids '{string.Join(",", imagesIds)}.";
 
       try
       {
-        var response = _rcImages.GetResponse<IOperationResult<IGetImagesResponse>>(
-          IGetImagesRequest.CreateObj(imageIds)).Result;
+        var response = await _rcImages.GetResponse<IOperationResult<IGetImagesResponse>>(
+          IGetImagesRequest.CreateObj(imagesIds, ImageSource.User));
 
         if (response.Message.IsSuccess)
         {
-          return response.Message.Body.Images;
+          return response.Message.Body.ImagesData;
         }
 
         _logger.LogWarning(loggerMessage + "Reasons: {Errors}", string.Join("\n", response.Message.Errors));
@@ -206,7 +207,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       if (directorId.HasValue || filter.IsIncludeUsers)
       {
         usersData = await GetUsersData(userIds, errors);
-        userImages = GetUsersImage(usersData.Where(
+        userImages = await GetUsersImage(usersData.Where(
           us => us.ImageId.HasValue).Select(us => us.ImageId.Value).ToList(), errors);
       }
 
