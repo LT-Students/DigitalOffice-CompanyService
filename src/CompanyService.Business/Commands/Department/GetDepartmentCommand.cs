@@ -50,6 +50,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       if (valueFromCache.HasValue)
       {
+        _logger.LogInformation("UsersData were taken from the cache.");
+
         return JsonConvert.DeserializeObject<List<UserData>>(valueFromCache.ToString());
       }
 
@@ -73,6 +75,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
         if (response.Message.IsSuccess)
         {
+          _logger.LogInformation("UsersData were taken from the service.");
+
           return response.Message.Body.UsersData;
         }
 
