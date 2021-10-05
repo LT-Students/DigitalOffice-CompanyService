@@ -67,37 +67,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       errors.Add(message);
     }
 
-    private Guid? GetImageId(AddImageRequest logo, List<string> errors)
-    {
-      string logMessage = "Cannot add image '{name}'.";
-      string errorMessage = $"Cannot change image '{logo.Name}' now. Please try again later.";
-
-      try
-      {
-        Guid userId = _httpContextAccessor.HttpContext.GetUserId();
-
-        IOperationResult<Guid> response = _rcAddImage.GetResponse<IOperationResult<Guid>>(
-            IAddImageRequest.CreateObj(logo.Name, logo.Content, logo.Extension, userId)).Result.Message;
-
-        if (response.IsSuccess)
-        {
-          return response.Body;
-        }
-
-        errors.Add(errorMessage);
-
-        _logger.LogWarning(logMessage + $" Reason: {string.Join("\n", response.Errors)}", logo.Name);
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(exc, logMessage);
-      }
-
-      errors.Add(errorMessage);
-
-      return null;
-    }
-
     public EditCompanyCommand(
         IAccessValidator accessValidator,
         IRequestClient<IAddImageRequest> rcAddImage,
@@ -156,14 +125,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       }
 
       var imageOperation = request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Logo), StringComparison.OrdinalIgnoreCase));
-      Guid? imageId = null;
 
-      if (imageOperation != null)
-      {
-        imageId = GetImageId(JsonConvert.DeserializeObject<AddImageRequest>(imageOperation.value?.ToString()), errors);
-      }
-
-      JsonPatchDocument<DbCompany> dbRequest = _mapper.Map(request, imageId);
+      JsonPatchDocument<DbCompany> dbRequest = _mapper.Map(request);
 
       _companyRepository.Edit(dbRequest);
 

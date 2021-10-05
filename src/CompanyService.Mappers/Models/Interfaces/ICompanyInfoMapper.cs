@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
     [AutoInject]
     public interface ICompanyInfoMapper
     {
-        CompanyInfo Map(DbCompany company, ImageInfo image, GetCompanyFilter filter);
+        CompanyInfo Map(DbCompany company, GetCompanyFilter filter);
     }
 }

@@ -132,7 +132,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 CompanyName = company.CompanyName,
                 Tagline = company.Tagline,
                 Description = company.Description,
-                Logo = imageInfo,
+                LogoContent = imageInfo,
                 SiteUrl = company.SiteUrl,
                 Departments = new List<DepartmentInfo> { expectedDepartament },
                 Positions = new List<PositionInfo> { expectedPosition },

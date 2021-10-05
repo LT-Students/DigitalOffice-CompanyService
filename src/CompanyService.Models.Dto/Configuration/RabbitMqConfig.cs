@@ -1,11 +1,10 @@
 ﻿using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Models.Broker.Common;
-using LT.DigitalOffice.Models.Broker.Requests.File;
+using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
 using LT.DigitalOffice.Models.Broker.Requests.Project;
 using LT.DigitalOffice.Models.Broker.Requests.User;
-using IGetImagesRequest = LT.DigitalOffice.Models.Broker.Requests.Image.IGetImagesRequest;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 {
@@ -23,9 +22,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 
     [AutoInjectRequest(typeof(IGetUsersDataRequest))]
     public string GetUsersDataEndpoint { get; set; }
-
-    [AutoInjectRequest(typeof(IAddImageRequest))]
-    public string AddImageEndpoint { get; set; }
 
     [AutoInjectRequest(typeof(IGetImagesRequest))]
     public string GetImagesEndpoint { get; set; }
