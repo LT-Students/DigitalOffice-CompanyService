@@ -39,40 +39,44 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
     private readonly IRequestClient<IGetProjectsRequest> _rcGetProjects;
     private readonly IConnectionMultiplexer _cache;
 
-    private async Task<List<UserData>> GetUsersData(List<Guid> userIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersData(List<Guid> usersIds, List<string> errors)
     {
-      if (userIds == null || !userIds.Any())
+      if (usersIds == null || !usersIds.Any())
       {
         return new();
       }
 
-      RedisValue valueFromCache = await _cache.GetDatabase(Cache.Users).StringGetAsync(userIds.GetRedisCacheHashCode());
+      RedisValue valueFromCache = await _cache.GetDatabase(Cache.Users).StringGetAsync(usersIds.GetRedisCacheHashCode());
 
       if (valueFromCache.HasValue)
       {
+        _logger.LogInformation("UsersData were taken from the cache. Users ids: {usersIds}", string.Join(", ", usersIds));
+
         return JsonConvert.DeserializeObject<List<UserData>>(valueFromCache.ToString());
       }
 
-      return await GetUsersDataThroughBroker(userIds, errors);
+      return await GetUsersDataThroughBroker(usersIds, errors);
     }
 
-    private async Task<List<UserData>> GetUsersDataThroughBroker(List<Guid> userIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersDataThroughBroker(List<Guid> usersIds, List<string> errors)
     {
-      if (userIds == null || !userIds.Any())
+      if (usersIds == null || !usersIds.Any())
       {
         return new();
       }
 
       string message = "Can not get users data. Please try again later.";
-      string loggerMessage = $"Can not get users data for specific user ids:'{string.Join(",", userIds)}'.";
+      string loggerMessage = $"Can not get users data for specific user ids:'{string.Join(",", usersIds)}'.";
 
       try
       {
         var response = await _rcDepartmentUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
-          IGetUsersDataRequest.CreateObj(userIds));
+          IGetUsersDataRequest.CreateObj(usersIds));
 
         if (response.Message.IsSuccess)
         {
+          _logger.LogInformation("UsersData were taken from the service. Users ids: {usersIds}", string.Join(", ", usersIds));
+
           return response.Message.Body.UsersData;
         }
 
