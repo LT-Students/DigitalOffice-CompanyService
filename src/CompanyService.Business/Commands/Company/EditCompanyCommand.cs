@@ -21,6 +21,7 @@ using LT.DigitalOffice.Models.Broker.Requests.Message;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -29,7 +30,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
   public class EditCompanyCommand : IEditCompanyCommand
   {
     private readonly IAccessValidator _accessValidator;
-    private readonly IRequestClient<IAddImageRequest> _rcAddImage;
     private readonly ILogger<EditCompanyCommand> _logger;
     private readonly IPatchDbCompanyMapper _mapper;
     private readonly ICompanyRepository _companyRepository;
@@ -69,7 +69,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
     public EditCompanyCommand(
         IAccessValidator accessValidator,
-        IRequestClient<IAddImageRequest> rcAddImage,
         ILogger<EditCompanyCommand> logger,
         IPatchDbCompanyMapper mapper,
         ICompanyRepository companyRepository,
@@ -79,7 +78,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         IHttpContextAccessor httpContextAccessor)
     {
       _accessValidator = accessValidator;
-      _rcAddImage = rcAddImage;
       _logger = logger;
       _mapper = mapper;
       _companyRepository = companyRepository;
@@ -124,7 +122,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         };
       }
 
-      var imageOperation = request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Logo), StringComparison.OrdinalIgnoreCase));
+      Operation<EditCompanyRequest> imageOperation = request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Logo), StringComparison.OrdinalIgnoreCase));
 
       JsonPatchDocument<DbCompany> dbRequest = _mapper.Map(request);
 

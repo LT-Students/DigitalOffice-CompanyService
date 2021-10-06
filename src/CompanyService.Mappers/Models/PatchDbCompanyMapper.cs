@@ -20,15 +20,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
 
       foreach (var item in request.Operations)
       {
-        if (item.path.EndsWith(nameof(EditCompanyRequest.Logo), StringComparison.OrdinalIgnoreCase))
-        {
-          if (imageId.HasValue)
-          {
-            result.Operations.Add(new Operation<DbCompany>(item.op, $"/{nameof(DbCompany.LogoId)}", item.from, imageId.Value));
-          }
-
-          continue;
-        }
         result.Operations.Add(new Operation<DbCompany>(item.op, item.path, item.from, item.value));
       }
 
