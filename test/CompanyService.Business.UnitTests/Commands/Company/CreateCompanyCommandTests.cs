@@ -134,7 +134,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
                     It.IsAny<object>(), default, default), Times.Never());
         }*/
 
-        [Test]
+        /*[Test]
         public void ShouldReturnFaliledResponseWhenCompanyAlreadyExists()
         {
             _autoMock
@@ -168,7 +168,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             _autoMock.Verify<IRequestClient<ICreateAdminRequest>>(
                 x => x.GetResponse<IOperationResult<bool>>(
                     It.IsAny<object>(), default, default), Times.Never());
-        }
+        }*/
 
         /*[Test]
         public void ShouldReturnFailedResponseWhenUpdateSMTPResponseThrowException()
