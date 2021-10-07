@@ -69,7 +69,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       try
       {
-        var response = await _rcGetUsersData.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+        Response<IOperationResult<IGetUsersDataResponse>> response = await _rcGetUsersData.GetResponse<IOperationResult<IGetUsersDataResponse>>(
           IGetUsersDataRequest.CreateObj(userIds));
 
         if (response.Message.IsSuccess)
@@ -169,7 +169,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       FindResultResponse<DepartmentInfo> response = new(body: new());
 
-      var dbDepartments = _repository.Find(skipCount, takeCount, includeDeactivated, out int totalCount);
+      List<DbDepartment> dbDepartments = _repository.Find(skipCount, takeCount, includeDeactivated, out int totalCount);
 
       response.TotalCount = totalCount;
 
@@ -185,12 +185,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
         usersData.Where(d => d.ImageId.HasValue).Select(d => d.ImageId.Value).ToList(),
         response.Errors);
 
-      foreach (var department in dbDepartments)
+      foreach (DbDepartment department in dbDepartments)
       {
         UserInfo director = null;
         if (departmentsDirectors.ContainsKey(department.Id) && usersData.Any())
         {
-          var directorUserData = usersData.FirstOrDefault(x => x.Id == departmentsDirectors[department.Id]);
+          UserData directorUserData = usersData.FirstOrDefault(x => x.Id == departmentsDirectors[department.Id]);
 
           DbPositionUser positionUser = _userPositionRepository.Get(directorUserData.Id);
 

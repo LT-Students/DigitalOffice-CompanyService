@@ -69,7 +69,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       try
       {
-        var response = await _rcDepartmentUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+        Response<IOperationResult<IGetUsersDataResponse>> response = await _rcDepartmentUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
           IGetUsersDataRequest.CreateObj(userIds));
 
         if (response.Message.IsSuccess)
@@ -110,7 +110,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       try
       {
-        var response = await _rcGetProjects.GetResponse<IOperationResult<IGetProjectsResponse>>(
+        Response<IOperationResult<IGetProjectsResponse>> response = await _rcGetProjects.GetResponse<IOperationResult<IGetProjectsResponse>>(
           IGetProjectsRequest.CreateObj(departmentId: departmentId));
 
         if (response.Message.IsSuccess)
@@ -142,7 +142,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
 
       try
       {
-        var response = await _rcImages.GetResponse<IOperationResult<IGetImagesResponse>>(
+        Response<IOperationResult<IGetImagesResponse>> response = await _rcImages.GetResponse<IOperationResult<IGetImagesResponse>>(
           IGetImagesRequest.CreateObj(imagesIds, ImageSource.User));
 
         if (response.Message.IsSuccess)
