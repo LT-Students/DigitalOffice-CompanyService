@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -38,26 +39,26 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
 
-    private void UpdateSmtp(DbCompany company, List<string> errors)
+    private async void UpdateSmtp(DbCompany company, List<string> errors)
     {
       string message = "Can not update smtp credentials.";
 
       try
       {
-        var response = _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
+        Response<IOperationResult<bool>> response = await _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
           IUpdateSmtpCredentialsRequest.CreateObj(
             host: company.Host,
             port: company.Port,
             enableSsl: company.EnableSsl,
             email: company.Email,
-            password: company.Password)).Result.Message;
+            password: company.Password));
 
-        if (response.IsSuccess && response.Body)
+        if (response.Message.IsSuccess && response.Message.Body)
         {
           return;
         }
 
-        _logger.LogWarning(message, string.Join("\n", response.Errors));
+        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
       }
       catch (Exception exc)
       {

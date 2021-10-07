@@ -39,31 +39,26 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
         .NotEmpty()
         .WithMessage("Work days api url can't be empty");
 
-      RuleFor(request => request)
-        .Must(requst => requst.LogoExtension != null && requst.LogoContent != null
-          || requst.LogoExtension == null && requst.LogoContent == null)
-        .WithMessage("Content and extension must both be filled");
-
-      When(project => !string.IsNullOrEmpty(project.LogoContent?.Trim()), () =>
+      When(w => w.Logo != null, () =>
       {
-        RuleFor(project => project.LogoContent)
-          .Must(content =>
+        RuleFor(w => w.Logo.Content)
+          .NotEmpty().WithMessage("Image content cannot be empty.")
+          .Must(x =>
           {
             try
             {
-              return Convert.TryFromBase64String(content, new Span<byte>(new byte[content.Length]), out _);
+              var byteString = new Span<byte>(new byte[x.Length]);
+              return Convert.TryFromBase64String(x, byteString, out _);
             }
             catch
             {
               return false;
             }
           }).WithMessage("Wrong image content.");
-      });
 
-      When(project => !string.IsNullOrEmpty(project.LogoExtension), () =>
-      {
-        RuleFor(project => project.LogoExtension)
-          .Must(extension => imageFormats.Contains(extension));
+        RuleFor(w => w.Logo.Extension)
+          .Must(imageFormats.Contains)
+          .WithMessage($"Image extension is not {string.Join('/', imageFormats)}");
       });
     }
   }

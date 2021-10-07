@@ -29,8 +29,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         IsDepartmentModuleEnabled = request.IsDepartmentModuleEnabled,
         IsActive = true,
         WorkDaysApiUrl = request.WorkDaysApiUrl,
-        LogoContent = request.LogoContent,
-        LogoExtension = request.LogoExtension
+        LogoContent = request.Logo.Content,
+        LogoExtension = request.Logo.Extension
       };
     }
   }

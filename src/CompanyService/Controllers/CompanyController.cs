@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
@@ -15,11 +16,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
   public class CompanyController : ControllerBase
   {
     [HttpPost("create")]
-    public OperationResultResponse<Guid> Create(
+    public async Task<OperationResultResponse<Guid>> Create(
       [FromServices] ICreateCompanyCommand command,
       [FromBody] CreateCompanyRequest request)
     {
-      return command.Execute(request);
+      return await command.Execute(request);
     }
 
     [HttpGet("get")]
