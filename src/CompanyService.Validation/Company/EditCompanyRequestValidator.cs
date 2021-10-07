@@ -79,32 +79,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
 
       #endregion
 
-      #region AvatarImage
-
-      AddFailureForPropertyIf(
-          nameof(EditCompanyRequest.Logo),
-          x => x == OperationType.Replace,
-          new()
-          {
-            {
-              x =>
-                {
-                  try
-                  {
-                    _ = JsonConvert.DeserializeObject<AddImageRequest>(x.value?.ToString());
-                    return true;
-                  }
-                  catch
-                  {
-                    return false;
-                  }
-                },
-                "Incorrect Image format"
-            }
-          });
-
-      #endregion
-
       #region IsDepartmentModuleEnabled
 
       AddFailureForPropertyIf(
@@ -117,7 +91,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
 
       #endregion
 
-      #region Image
+      #region Logo
 
       AddFailureForPropertyIf(
         nameof(EditCompanyRequest.Logo),
@@ -131,7 +105,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
               {
                 AddImageRequest image = JsonConvert.DeserializeObject<AddImageRequest>(x.value?.ToString());
 
-                var byteString = new Span<byte>(new byte[image.Content.Length]);
+                Span<byte> byteString = new Span<byte>(new byte[image.Content.Length]);
 
                 if (!String.IsNullOrEmpty(image.Content) &&
                   Convert.TryFromBase64String(image.Content, byteString, out _) &&
@@ -155,7 +129,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
     public EditCompanyRequestValidator()
     {
       RuleForEach(x => x.Operations)
-         .Custom(HandleInternalPropertyValidation);
+        .Custom(HandleInternalPropertyValidation);
     }
   }
 }
