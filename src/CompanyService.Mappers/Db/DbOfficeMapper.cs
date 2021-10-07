@@ -29,8 +29,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         Id = Guid.NewGuid(),
         CompanyId = companyId,
         Name = request.Name != null && request.Name.Trim().Any() ? request.Name.Trim() : null,
-        City = request.City != null && request.City.Trim().Any() ? request.City.Trim() : null,
-        Address = request.Address != null && request.Address.Trim().Any() ? request.Address.Trim() : null,
+        City = request.City.Trim(),
+        Address = request.Address.Trim(),
         CreatedAtUtc = DateTime.UtcNow,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         IsActive = true

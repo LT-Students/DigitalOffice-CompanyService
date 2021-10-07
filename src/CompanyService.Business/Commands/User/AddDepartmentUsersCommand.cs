@@ -44,7 +44,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.User
       Guid senderUserId = _httpContextAccessor.HttpContext.GetUserId();
 
       if (!_accessValidator.HasRights(Rights.AddEditRemoveDepartments) &&
-        _repository.IsDepartmentDirector(request.DeprtmentId, senderUserId))
+        _repository.IsDepartmentDirector(request.DepartmentId, senderUserId))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
@@ -73,7 +73,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.User
       _repository.Remove(request.UsersIds, senderUserId);
 
       response.Body = _repository.Add(
-        request.UsersIds.Select(x => _mapper.Map(x, request.DeprtmentId, senderUserId)).ToList());
+        request.UsersIds.Select(x => _mapper.Map(x, request.DepartmentId, senderUserId)).ToList());
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
