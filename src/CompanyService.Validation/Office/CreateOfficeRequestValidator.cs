@@ -8,9 +8,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
   {
     public CreateOfficeRequestValidator()
     {
-      RuleFor(request => request.Name)
-        .Must(n => !string.IsNullOrEmpty(n?.Trim())).WithMessage("Name must not be empty.");
-
       RuleFor(request => request.City)
         .Must(c => !string.IsNullOrEmpty(c?.Trim())).WithMessage("City must not be empty.");
 

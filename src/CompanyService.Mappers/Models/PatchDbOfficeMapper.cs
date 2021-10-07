@@ -19,7 +19,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
 
       foreach (Operation<EditOfficeRequest> item in request.Operations)
       {
-        patchDbNews.Operations.Add(new Operation<DbOffice>(item.op, item.path, item.from, item.value));
+        patchDbNews.Operations.Add(new Operation<DbOffice>(
+          item.op,
+          item.path,
+          item.from,
+          item.value?.ToString().Trim() == string.Empty ? null : item.value?.ToString().Trim()));
       }
 
       return patchDbNews;

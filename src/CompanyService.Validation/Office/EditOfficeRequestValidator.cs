@@ -33,14 +33,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Office
       #region string property
 
       AddFailureForPropertyIf(
-        nameof(EditOfficeRequest.Name),
-        x => x == OperationType.Replace,
-        new()
-        {
-          { x => !string.IsNullOrEmpty(x.value?.ToString()), "Name cannot be empty." },
-        });
-
-      AddFailureForPropertyIf(
         nameof(EditOfficeRequest.City),
         x => x == OperationType.Replace,
         new()
