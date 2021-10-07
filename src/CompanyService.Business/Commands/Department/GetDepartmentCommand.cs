@@ -72,7 +72,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Department
       try
       {
         Response<IOperationResult<IGetUsersDataResponse>> response = await _rcDepartmentUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
-          IGetUsersDataRequest.CreateObj(userIds));
+          IGetUsersDataRequest.CreateObj(usersIds));
 
         if (response.Message.IsSuccess)
         {
