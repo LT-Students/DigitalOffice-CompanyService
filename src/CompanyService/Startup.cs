@@ -20,6 +20,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Serilog;
+using System.Text.RegularExpressions;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -272,7 +273,7 @@ namespace LT.DigitalOffice.CompanyService
 
       if (index != -1)
       {
-        string[] words = line.Split(';', '=');
+        string[] words = Regex.Split(line, @"[=,; ]");
 
         for (int i = 0; i < words.Length; i++)
         {
