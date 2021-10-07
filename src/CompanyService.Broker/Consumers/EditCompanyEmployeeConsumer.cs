@@ -52,7 +52,8 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
       _departmentUserRepository.Remove(userId, modifiedBy);
 
-      if (!departmentId.HasValue) {
+      if (!departmentId.HasValue)
+      {
         return true;
       }
 
