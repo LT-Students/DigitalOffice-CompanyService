@@ -13,9 +13,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
     private readonly IOfficeInfoMapper _officeMapper;
 
     public CompanyInfoMapper(
-        IDepartmentInfoMapper departmentMapper,
-        IPositionInfoMapper positionMapper,
-        IOfficeInfoMapper officeMapper)
+      IDepartmentInfoMapper departmentMapper,
+      IPositionInfoMapper positionMapper,
+      IOfficeInfoMapper officeMapper)
     {
       _departmentMapper = departmentMapper;
       _positionMapper = positionMapper;
