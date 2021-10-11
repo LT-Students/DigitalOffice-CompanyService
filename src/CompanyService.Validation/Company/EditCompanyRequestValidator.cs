@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
       AddСorrectOperations(nameof(EditCompanyRequest.Email), new List<OperationType> { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyRequest.Password), new List<OperationType> { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyRequest.EnableSsl), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Logo), new List<OperationType> { OperationType.Replace, OperationType.Add, OperationType.Remove });
+      AddСorrectOperations(nameof(EditCompanyRequest.Logo), new List<OperationType> { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyRequest.IsDepartmentModuleEnabled), new List<OperationType> { OperationType.Replace });
 
       #endregion

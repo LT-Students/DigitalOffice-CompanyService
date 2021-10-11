@@ -31,7 +31,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public bool IsActive { get; set; }
     public string WorkDaysApiUrl { get; set; }
 
-
     [JsonIgnore]
     public ICollection<DbDepartment> Departments { get; set; }
     [JsonIgnore]
