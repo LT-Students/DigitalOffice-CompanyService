@@ -149,10 +149,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       _repository.Add(company);
 
+      //TODO async
+      //Task.Run(() =>
+      //{
       _companyChangesRepository.Add(
         company.Id,
         null,
         CreateHistoryMessageHelper.Create(company));
+      //}
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
