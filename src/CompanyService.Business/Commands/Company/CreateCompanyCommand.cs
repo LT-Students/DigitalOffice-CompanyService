@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -32,26 +33,26 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private bool UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
+    private async Task<bool> UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
     {
       string message = "Can not update smtp credentials.";
 
       try
       {
-        var response = _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
+        Response<IOperationResult<bool>> response = await _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
           IUpdateSmtpCredentialsRequest.CreateObj(
             host: smtpInfo.Host,
             port: smtpInfo.Port,
             enableSsl: smtpInfo.EnableSsl,
             email: smtpInfo.Email,
-            password: smtpInfo.Password)).Result.Message;
+            password: smtpInfo.Password));
 
-        if (response.IsSuccess && response.Body)
+        if (response.Message.IsSuccess && response.Message.Body)
         {
           return true;
         }
 
-        _logger.LogWarning(message, string.Join("\n", response.Errors));
+        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
       }
       catch (Exception exc)
       {
@@ -62,23 +63,23 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       return false;
     }
 
-    private bool CreateAdmin(AdminInfo info, List<string> errors)
+    private async Task<bool> CreateAdmin(AdminInfo info, List<string> errors)
     {
       string message = "Can not create admin.";
 
       try
       {
-        var response = _rcCreateAdmin.GetResponse<IOperationResult<bool>>(
-          ICreateAdminRequest.CreateObj(info.FirstName, info.MiddleName, info.LastName, info.Email, info.Login, info.Password)).Result.Message;
+        Response<IOperationResult<bool>> response = await _rcCreateAdmin.GetResponse<IOperationResult<bool>>(
+          ICreateAdminRequest.CreateObj(info.FirstName, info.MiddleName, info.LastName, info.Email, info.Login, info.Password));
 
-        if (response.IsSuccess && response.Body)
+        if (response.Message.IsSuccess && response.Message.Body)
         {
           return true;
         }
 
         errors.Add(message);
 
-        _logger.LogWarning(message, string.Join("\n", response.Errors));
+        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
       }
       catch (Exception exc)
       {
@@ -110,7 +111,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
+    public async Task<OperationResultResponse<Guid>> Execute(CreateCompanyRequest request)
     {
       if (_repository.Get() != null)
       {
@@ -134,8 +135,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         };
       }
 
-      if (!(UpdateSmtp(request.SmtpInfo, errors) &&
-          CreateAdmin(request.AdminInfo, errors)))
+      if (!(await UpdateSmtp(request.SmtpInfo, errors) &&
+        await CreateAdmin(request.AdminInfo, errors)))
       {
         return new OperationResultResponse<Guid>
         {
@@ -150,10 +151,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       //TODO async
       //Task.Run(() =>
+      //{
       _companyChangesRepository.Add(
         company.Id,
         null,
         CreateHistoryMessageHelper.Create(company));
+      //}
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 

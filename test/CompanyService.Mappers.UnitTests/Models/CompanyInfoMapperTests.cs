@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelIsNull()
         {
-            Assert.IsNull(_mapper.Map(null, null, null));
+            Assert.IsNull(_mapper.Map(null, null));
         }
 
         [Test]
@@ -65,7 +65,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 Description = "Description",
                 CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
-                LogoId = Guid.NewGuid(),
                 SiteUrl = "siteUrl",
                 Departments = new List<DbDepartment>
                 {
@@ -132,14 +131,13 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
                 CompanyName = company.CompanyName,
                 Tagline = company.Tagline,
                 Description = company.Description,
-                Logo = imageInfo,
                 SiteUrl = company.SiteUrl,
                 Departments = new List<DepartmentInfo> { expectedDepartament },
                 Positions = new List<PositionInfo> { expectedPosition },
                 Offices = new List<OfficeInfo> { expectedOffice },
             };
 
-            SerializerAssert.AreEqual(expected, _mapper.Map(company, imageInfo, new()));
+            SerializerAssert.AreEqual(expected, _mapper.Map(company, new()));
         }
     }
 }

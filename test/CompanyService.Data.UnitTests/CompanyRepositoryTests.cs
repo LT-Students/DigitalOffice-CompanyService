@@ -77,7 +77,6 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true,
                 Description = "Desc",
-                LogoId = Guid.NewGuid(),
                 CompanyName = "Name",
                 PortalName = "PortalName",
                 Tagline = "tagline"
