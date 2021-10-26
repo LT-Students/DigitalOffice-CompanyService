@@ -1,5 +1,4 @@
 ﻿using System;
-using LT.DigitalOffice.CompanyService.Models.Db;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -12,16 +11,16 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
     protected override void Up(MigrationBuilder builder)
     {
       builder.AddColumn<DateTime>(
-      name: nameof(DbDepartmentUser.LeftAtUts),
-      table: DbDepartmentUser.TableName,
+      name: "LeftAtUts",
+      table: "DepartmentUsers",
       nullable: true);
     }
 
     protected override void Down(MigrationBuilder builder)
     {
       builder.DropColumn(
-      name: nameof(DbDepartmentUser.LeftAtUts),
-      table: DbDepartmentUser.TableName);
+      name: "LeftAtUts",
+      table: "DepartmentUsers");
     }
   }
 }

@@ -111,7 +111,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<OperationResultResponse<Guid>> Execute(CreateCompanyRequest request)
+    public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateCompanyRequest request)
     {
       if (_repository.Get() != null)
       {

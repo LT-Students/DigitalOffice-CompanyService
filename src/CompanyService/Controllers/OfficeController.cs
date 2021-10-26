@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
@@ -14,11 +15,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
   public class OfficeController : ControllerBase
   {
     [HttpPost("create")]
-    public OperationResultResponse<Guid> Create(
+    public async Task<OperationResultResponse<Guid>> CreateAsync(
       [FromServices] ICreateOfficeCommand command,
       [FromBody] CreateOfficeRequest request)
     {
-      return command.Execute(request);
+      return await command.ExecuteAsync(request);
     }
 
     [HttpGet("find")]
@@ -30,12 +31,12 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     }
 
     [HttpPatch("edit")]
-    public OperationResultResponse<bool> Edit(
+    public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditOfficeCommand command,
       [FromQuery] Guid officeId,
       [FromBody] JsonPatchDocument<EditOfficeRequest> request)
     {
-      return command.Execute(officeId, request);
+      return await command.ExecuteAsync(officeId, request);
     }
   }
 }

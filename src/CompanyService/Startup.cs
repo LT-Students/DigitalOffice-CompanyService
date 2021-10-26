@@ -21,6 +21,9 @@ using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Serilog;
 using System.Text.RegularExpressions;
+using LT.DigitalOffice.Kernel.Helpers;
+using LT.DigitalOffice.Kernel.Helpers.Interfaces;
+using LT.DigitalOffice.UserService.Models.Dto.Configurations;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -130,6 +133,9 @@ namespace LT.DigitalOffice.CompanyService
       services.AddSingleton<IConnectionMultiplexer>(
         x => ConnectionMultiplexer.Connect(redisConnStr));
 
+      services.AddTransient<ICacheNotebook, CacheNotebook>();
+      services.AddTransient<IRedisHelper, RedisHelper>();
+
       services.AddBusinessObjects();
 
       ConfigureMassTransit(services);
@@ -177,15 +183,10 @@ namespace LT.DigitalOffice.CompanyService
     {
       services.AddMassTransit(x =>
       {
-        x.AddConsumer<GetPositionsConsumer>();
-        x.AddConsumer<GetDepartmentsConsumer>();
-        x.AddConsumer<EditCompanyEmployeeConsumer>();
-        x.AddConsumer<GetDepartmentUsersConsumer>();
-        x.AddConsumer<SearchDepartmentsConsumer>();
+        x.AddConsumer<EditUserOfficeConsumer>();
         x.AddConsumer<GetSmtpCredentialsConsumer>();
-        x.AddConsumer<GetCompanyEmployeesConsumer>();
+        x.AddConsumer<GetOfficesConsumer>();
         x.AddConsumer<DisactivateUserConsumer>();
-        x.AddConsumer<CheckDepartmentsExistenceConsumer>();
 
         x.UsingRabbitMq((context, cfg) =>
           {
@@ -208,49 +209,24 @@ namespace LT.DigitalOffice.CompanyService
       IBusRegistrationContext context,
       IRabbitMqBusFactoryConfigurator cfg)
     {
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetPositionsEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetPositionsConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetDepartmentsEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetDepartmentsConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetDepartmentUsersEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetDepartmentUsersConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.SearchDepartmentEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<SearchDepartmentsConsumer>(context);
-      });
-
       cfg.ReceiveEndpoint(_rabbitMqConfig.GetSmtpCredentialsEndpoint, ep =>
       {
         ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
       });
 
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetCompanyEmployeesEndpoint, ep =>
+      cfg.ReceiveEndpoint(_rabbitMqConfig.GetOfficesEndpoint, ep =>
       {
-        ep.ConfigureConsumer<GetCompanyEmployeesConsumer>(context);
+        ep.ConfigureConsumer<GetOfficesConsumer>(context);
       });
 
-      cfg.ReceiveEndpoint(_rabbitMqConfig.EditCompanyEmployeeEndpoint, ep =>
+      cfg.ReceiveEndpoint(_rabbitMqConfig.EditUserOfficeEndpoint, ep =>
       {
-        ep.ConfigureConsumer<EditCompanyEmployeeConsumer>(context);
+        ep.ConfigureConsumer<EditUserOfficeConsumer>(context);
       });
 
       cfg.ReceiveEndpoint(_rabbitMqConfig.DisactivateUserEndpoint, ep =>
       {
         ep.ConfigureConsumer<DisactivateUserConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.CheckDepartmentsExistenceEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<CheckDepartmentsExistenceConsumer>(context);
       });
     }
 

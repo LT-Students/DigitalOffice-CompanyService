@@ -88,9 +88,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<bool> Execute(JsonPatchDocument<EditCompanyRequest> request)
+    public async Task<OperationResultResponse<bool>> ExecuteAsync(JsonPatchDocument<EditCompanyRequest> request)
     {
-      if (!_accessValidator.IsAdmin())
+      if (!await _accessValidator.IsAdminAsync())
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 

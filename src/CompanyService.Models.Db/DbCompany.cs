@@ -32,18 +32,12 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public string WorkDaysApiUrl { get; set; }
 
     [JsonIgnore]
-    public ICollection<DbDepartment> Departments { get; set; }
-    [JsonIgnore]
-    public ICollection<DbPosition> Positions { get; set; }
-    [JsonIgnore]
     public ICollection<DbOffice> Offices { get; set; }
     [JsonIgnore]
     public ICollection<DbCompanyChanges> Changes { get; set; }
 
     public DbCompany()
     {
-      Departments = new HashSet<DbDepartment>();
-      Positions = new HashSet<DbPosition>();
       Offices = new HashSet<DbOffice>();
       Changes = new HashSet<DbCompanyChanges>();
     }
@@ -87,14 +81,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
       builder
         .HasMany(c => c.Offices)
         .WithOne(o => o.Company);
-
-      builder
-        .HasMany(c => c.Departments)
-        .WithOne(d => d.Company);
-
-      builder
-        .HasMany(c => c.Positions)
-        .WithOne(d => d.Company);
 
       builder
         .HasMany(c => c.Changes)

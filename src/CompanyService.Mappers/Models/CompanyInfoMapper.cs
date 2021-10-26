@@ -8,17 +8,17 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
   public class CompanyInfoMapper : ICompanyInfoMapper
   {
-    private readonly IDepartmentInfoMapper _departmentMapper;
-    private readonly IPositionInfoMapper _positionMapper;
+    //private readonly IDepartmentInfoMapper _departmentMapper;
+    //private readonly IPositionInfoMapper _positionMapper;
     private readonly IOfficeInfoMapper _officeMapper;
 
     public CompanyInfoMapper(
-      IDepartmentInfoMapper departmentMapper,
-      IPositionInfoMapper positionMapper,
+      //IDepartmentInfoMapper departmentMapper,
+      //IPositionInfoMapper positionMapper,
       IOfficeInfoMapper officeMapper)
     {
-      _departmentMapper = departmentMapper;
-      _positionMapper = positionMapper;
+      //_departmentMapper = departmentMapper;
+      //_positionMapper = positionMapper;
       _officeMapper = officeMapper;
     }
 
@@ -50,9 +50,9 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
           Email = company.Email,
           Password = company.Password
         } : null,
-        Departments = company?.Departments.Select(d => _departmentMapper.Map(d, null)).ToList(),
-        Offices = company?.Offices.Select(o => _officeMapper.Map(o)).ToList(),
-        Positions = company?.Positions.Select(p => _positionMapper.Map(p)).ToList()
+        //Departments = company?.Departments.Select(d => _departmentMapper.Map(d, null)).ToList(),
+        Offices = company?.Offices.Select(o => _officeMapper.Map(o)).ToList()
+        //Positions = company?.Positions.Select(p => _positionMapper.Map(p)).ToList()
       };
     }
   }

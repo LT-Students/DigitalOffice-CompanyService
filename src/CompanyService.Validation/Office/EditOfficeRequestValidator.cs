@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Office;
-using LT.DigitalOffice.CompanyService.Validation.Helper;
 using LT.DigitalOffice.CompanyService.Validation.Office.Interfaces;
+using LT.DigitalOffice.Kernel.Validators;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.CompanyService.Validation.Office

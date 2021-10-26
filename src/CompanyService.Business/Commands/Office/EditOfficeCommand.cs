@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
@@ -38,9 +39,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<bool> Execute(Guid officeId, JsonPatchDocument<EditOfficeRequest> request)
+    public async Task<OperationResultResponse<bool>> ExecuteAsync(Guid officeId, JsonPatchDocument<EditOfficeRequest> request)
     {
-      if (!_accessValidator.HasRights(Rights.EditCompany))
+      if (!await _accessValidator.HasRightsAsync(Rights.EditCompany))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 

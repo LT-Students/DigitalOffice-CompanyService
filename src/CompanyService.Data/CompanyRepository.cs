@@ -17,22 +17,13 @@ namespace LT.DigitalOffice.CompanyService.Data
         private readonly IDataProvider _provider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private IQueryable<DbCompany> CreateGetPredicates(
-            GetCompanyFilter filter,
-            IQueryable<DbCompany> dbCompanies)
+          GetCompanyFilter filter,
+          IQueryable<DbCompany> dbCompanies)
         {
-            if (filter.IsIncludeDepartments)
-            {
-                dbCompanies = dbCompanies.Include(c => c.Departments.Where(d => d.IsActive));
-            }
 
             if (filter.IsIncludeOffices)
             {
                 dbCompanies = dbCompanies.Include(c => c.Offices.Where(o => o.IsActive));
-            }
-
-            if (filter.IsIncludePositions)
-            {
-                dbCompanies = dbCompanies.Include(c => c.Positions.Where(p => p.IsActive));
             }
 
             return dbCompanies;

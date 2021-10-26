@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Attributes;
 
@@ -12,6 +13,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
     List<DbOfficeUser> Get(List<Guid> userIds);
 
-    void Remove(Guid userId, Guid removedBy);
+    Task<Guid?> RemoveAsync(Guid userId, Guid removedBy);
   }
 }

@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
       [FromServices] ICreateCompanyCommand command,
       [FromBody] CreateCompanyRequest request)
     {
-      return await command.Execute(request);
+      return await command.ExecuteAsync(request);
     }
 
     [HttpGet("get")]
@@ -32,11 +32,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     }
 
     [HttpPatch("edit")]
-    public OperationResultResponse<bool> Patch(
+    public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditCompanyCommand command,
       [FromBody] JsonPatchDocument<EditCompanyRequest> request)
     {
-      return command.Execute(request);
+      return await command.ExecuteAsync(request);
     }
   }
 }
