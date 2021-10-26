@@ -9,9 +9,9 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   [AutoInject]
   public interface IOfficeUserRepository
   {
-    bool Add(DbOfficeUser user);
+    Task<bool> CreateAsync(DbOfficeUser user);
 
-    List<DbOfficeUser> Get(List<Guid> userIds);
+    Task<List<DbOfficeUser>> GetAsync(List<Guid> userIds);
 
     Task<Guid?> RemoveAsync(Guid userId, Guid removedBy);
   }

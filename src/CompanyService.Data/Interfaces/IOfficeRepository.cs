@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Attributes;
@@ -10,14 +11,14 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   [AutoInject]
   public interface IOfficeRepository
   {
-    void Add(DbOffice office);
+    Task CreateAsync(DbOffice office);
 
-    DbOffice Get(Guid officeId);
+    Task<DbOffice> GetAsync(Guid officeId);
 
-    List<DbOffice> Find(OfficeFindFilter filter, out int totalCount);
+    Task<(List<DbOffice>, int totalCount)> FindAsync(OfficeFindFilter filter);
 
-    bool Edit(Guid officeId, JsonPatchDocument<DbOffice> news);
+    Task<bool> EditAsync(Guid officeId, JsonPatchDocument<DbOffice> news);
 
-    bool Contains(Guid officeId);
+    Task<bool> DoesExistAsync(Guid officeId);
   }
 }

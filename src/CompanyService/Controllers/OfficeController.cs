@@ -23,11 +23,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     }
 
     [HttpGet("find")]
-    public FindResultResponse<OfficeInfo> Find(
+    public async Task<FindResultResponse<OfficeInfo>> FindAsync(
       [FromServices] IFindOfficesCommand command,
       [FromQuery] OfficeFindFilter filter)
     {
-      return command.Execute(filter);
+      return await command.ExecuteAsync(filter);
     }
 
     [HttpPatch("edit")]

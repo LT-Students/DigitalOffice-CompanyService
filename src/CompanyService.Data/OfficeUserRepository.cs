@@ -18,27 +18,27 @@ namespace LT.DigitalOffice.CompanyService.Data
       _provider = provider;
     }
 
-    public bool Add(DbOfficeUser user)
+    public async Task<bool> CreateAsync(DbOfficeUser user)
     {
       if (user == null)
       {
-        throw new ArgumentNullException(nameof(user));
+        return false;
       }
 
       _provider.OfficeUsers.Add(user);
-      _provider.Save();
+      await _provider.SaveAsync();
 
       return true;
     }
 
-    public List<DbOfficeUser> Get(List<Guid> userIds)
+    public async Task<List<DbOfficeUser>> GetAsync(List<Guid> userIds)
     {
-      return _provider.OfficeUsers.Where(x => userIds.Contains(x.UserId) && x.IsActive).Include(x => x.Office).ToList();
+      return await _provider.OfficeUsers.Where(x => userIds.Contains(x.UserId) && x.IsActive).Include(x => x.Office).ToListAsync();
     }
 
     public async Task<Guid?> RemoveAsync(Guid userId, Guid removedBy)
     {
-      DbOfficeUser user = _provider.OfficeUsers.FirstOrDefault(u => u.UserId == userId && u.IsActive);
+      DbOfficeUser user = await _provider.OfficeUsers.FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
 
       if (user != null)
       {

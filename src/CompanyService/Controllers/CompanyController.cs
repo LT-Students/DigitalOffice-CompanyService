@@ -24,11 +24,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     }
 
     [HttpGet("get")]
-    public OperationResultResponse<CompanyInfo> Get(
+    public async Task<OperationResultResponse<CompanyInfo>> GetAsync(
       [FromServices] IGetCompanyCommand command,
       [FromQuery] GetCompanyFilter filter)
     {
-      return command.Execute(filter);
+      return await command.ExecuteAsync(filter);
     }
 
     [HttpPatch("edit")]

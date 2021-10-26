@@ -65,7 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
 
       OperationResultResponse<bool> response = new();
 
-      response.Body = _officeRepository.Edit(officeId, _mapper.Map(request));
+      response.Body = await _officeRepository.EditAsync(officeId, _mapper.Map(request));
       response.Status = OperationResultStatusType.FullSuccess;
 
       if (!response.Body)

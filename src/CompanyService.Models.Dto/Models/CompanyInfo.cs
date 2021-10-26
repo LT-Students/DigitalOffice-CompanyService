@@ -15,9 +15,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
     public string LogoContent { get; set; }
     public string LogoExtension { get; set; }
     public SmtpInfo SmtpInfo { get; set; }
-    //TODO
-    //public List<DepartmentInfo> Departments { get; set; }
-    //public List<PositionInfo> Positions { get; set; }
+    public List<DepartmentInfo> Departments { get; set; }
+    public List<PositionInfo> Positions { get; set; }
     public List<OfficeInfo> Offices { get; set; }
   }
 }

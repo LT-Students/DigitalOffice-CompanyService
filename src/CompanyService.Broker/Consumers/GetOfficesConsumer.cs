@@ -24,10 +24,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     private readonly IOptions<RedisConfig> _redisConfig;
     private readonly ICacheNotebook _cacheNotebook;
 
-    private List<OfficeData> GetOffices(List<Guid> userIds)
+    private async Task<List<OfficeData>> GetOfficesAsync(List<Guid> userIds)
     {
-      List<DbOffice> offices = _officeUserRepository
-        .Get(userIds)
+      List<DbOffice> offices = (await _officeUserRepository
+        .GetAsync(userIds))
         .Select(du => du.Office)
         .Distinct()
         .ToList();
@@ -71,7 +71,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     {
       List<OfficeData> offices = null;
 
-      offices = GetOffices(context.Message.UserIds);
+      offices = await GetOfficesAsync(context.Message.UserIds);
 
       object response = OperationResultWrapper.CreateResponse((_) => IGetOfficesResponse.CreateObj(offices), context);
 

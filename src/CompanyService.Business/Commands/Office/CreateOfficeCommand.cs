@@ -66,8 +66,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
         };
       }
 
-      DbOffice office = _mapper.Map(request, _companyRepository.Get().Id);
-      _officeRepository.Add(office);
+      DbOffice office = _mapper.Map(request, (await _companyRepository.GetAsync()).Id);
+      await _officeRepository.CreateAsync(office);
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 

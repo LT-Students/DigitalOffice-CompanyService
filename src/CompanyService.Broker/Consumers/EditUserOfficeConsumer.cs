@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     private async Task<bool> ChangeOffice(IEditUserOfficeRequest request)
     {
-      if (request.OfficeId.HasValue && !_officeRepository.Contains(request.OfficeId.Value))
+      if (request.OfficeId.HasValue && !await _officeRepository.DoesExistAsync(request.OfficeId.Value))
       {
         return false;
       }
@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
         await _cacheNotebook.RemoveAsync(removedOfficeId.Value);
       }
 
-      return request.OfficeId == null ? true : _officeUserRepository.Add(_officeUserMapper.Map(request));
+      return request.OfficeId == null ? true : await _officeUserRepository.CreateAsync(_officeUserMapper.Map(request));
     }
 
     public EditUserOfficeConsumer(

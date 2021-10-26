@@ -65,7 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenModelsToAddIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _repository.Add(null));
+            Assert.Throws<ArgumentNullException>(() => _repository.CreateAsync(null));
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
                 Tagline = "tagline"
             };
 
-            _repository.Add(company);
+            _repository.CreateAsync(company);
 
             Assert.IsTrue(_provider.Companies.Contains(company));
         }
@@ -93,9 +93,9 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             DbCompany company1 = new();
             DbCompany company2 = new();
 
-            _repository.Add(company1);
+            _repository.CreateAsync(company1);
 
-            Assert.Throws<BadRequestException>(() => _repository.Add(company2));
+            Assert.Throws<BadRequestException>(() => _repository.CreateAsync(company2));
         }
 
         #endregion
@@ -110,13 +110,13 @@ namespace LT.DigitalOffice.CompanyService.Data.UnitTests
             _provider.Companies.Add(company);
             _provider.Save();
 
-            Assert.AreEqual(company, _repository.Get(null));
+            Assert.AreEqual(company, _repository.GetAsync(null));
         }
 
         [Test]
         public void ShouldThrowExceptionWhetCompanyDoesNotExist()
         {
-            Assert.IsNull(_repository.Get(null));
+            Assert.IsNull(_repository.GetAsync(null));
         }
 
         #endregion
