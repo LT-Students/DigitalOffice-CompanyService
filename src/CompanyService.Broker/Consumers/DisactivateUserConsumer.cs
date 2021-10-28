@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.Models.Broker.Common;
 using MassTransit;
@@ -9,21 +7,17 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
   public class DisactivateUserConsumer : IConsumer<IDisactivateUserRequest>
   {
-    private readonly IDepartmentUserRepository _departmentUserRepository;
-    private readonly IPositionUserRepository _positionUserRepository;
+    private readonly IOfficeUserRepository _officeRepository;
 
     public DisactivateUserConsumer(
-      IDepartmentUserRepository departmentUserRepository,
-      IPositionUserRepository positionUserRepository)
+      IOfficeUserRepository officeRepository)
     {
-      _departmentUserRepository = departmentUserRepository;
-      _positionUserRepository = positionUserRepository;
+      _officeRepository = officeRepository;
     }
 
     public Task Consume(ConsumeContext<IDisactivateUserRequest> context)
     {
-      _departmentUserRepository.Remove(context.Message.UserId, context.Message.ModifiedBy);
-      _positionUserRepository.Remove(context.Message.UserId, context.Message.ModifiedBy);
+      _officeRepository.RemoveAsync(context.Message.UserId, context.Message.ModifiedBy);
 
       return Task.FromResult(0);
     }

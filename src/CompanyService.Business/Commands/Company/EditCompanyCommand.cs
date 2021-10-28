@@ -8,7 +8,6 @@ using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
@@ -17,14 +16,12 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.File;
 using LT.DigitalOffice.Models.Broker.Requests.Message;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -39,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
 
-    private async void UpdateSmtp(DbCompany company, List<string> errors)
+    private async Task UpdateSmtp(DbCompany company, List<string> errors)
     {
       string message = "Can not update smtp credentials.";
 
@@ -69,14 +66,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     }
 
     public EditCompanyCommand(
-        IAccessValidator accessValidator,
-        ILogger<EditCompanyCommand> logger,
-        IPatchDbCompanyMapper mapper,
-        ICompanyRepository companyRepository,
-        IEditCompanyRequestValidator validator,
-        IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
-        ICompanyChangesRepository companyChangesRepository,
-        IHttpContextAccessor httpContextAccessor)
+      IAccessValidator accessValidator,
+      ILogger<EditCompanyCommand> logger,
+      IPatchDbCompanyMapper mapper,
+      ICompanyRepository companyRepository,
+      IEditCompanyRequestValidator validator,
+      IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+      ICompanyChangesRepository companyChangesRepository,
+      IHttpContextAccessor httpContextAccessor)
     {
       _accessValidator = accessValidator;
       _logger = logger;
@@ -88,9 +85,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<bool> Execute(JsonPatchDocument<EditCompanyRequest> request)
+    public async Task<OperationResultResponse<bool>> ExecuteAsync(JsonPatchDocument<EditCompanyRequest> request)
     {
-      if (!_accessValidator.IsAdmin())
+      if (!await _accessValidator.IsAdminAsync())
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
@@ -101,7 +98,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         };
       }
 
-      if (_companyRepository.Get() == null)
+      if (await _companyRepository.GetAsync() == null)
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
@@ -127,7 +124,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       JsonPatchDocument<DbCompany> dbRequest = _mapper.Map(request);
 
-      _companyRepository.Edit(dbRequest);
+      await _companyRepository.EditAsync(dbRequest);
 
       DbCompany company = null;
 
@@ -137,16 +134,16 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Email), StringComparison.OrdinalIgnoreCase)) != null
         || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Password), StringComparison.OrdinalIgnoreCase)) != null)
       {
-        company = _companyRepository.Get();
+        company = await _companyRepository.GetAsync();
 
-        UpdateSmtp(company, errors);
+        await UpdateSmtp(company, errors);
       }
 
       //TODO async
       //Task.Run(() =>
       //{
-      company ??= _companyRepository.Get();
-      _companyChangesRepository.Add(
+      company ??= await _companyRepository.GetAsync();
+      await _companyChangesRepository.CreateAsync(
         company.Id,
         _httpContextAccessor.HttpContext.GetUserId(),
         CreateHistoryMessageHelper.Create(company, dbRequest));

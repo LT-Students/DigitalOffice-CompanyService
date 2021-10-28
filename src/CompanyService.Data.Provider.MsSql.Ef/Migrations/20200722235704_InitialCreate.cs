@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTableDeparments(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbDepartment.TableName,
+                name: "Departments",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -36,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTableDeparmentsUsers(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbDepartmentUser.TableName,
+                name: "DepartmentUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -53,13 +53,13 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
                     table.ForeignKey(
                         name: "FK_DepartmentUser_Departments",
                         column: x => x.DepartmentId,
-                        principalTable: DbDepartment.TableName,
+                        principalTable: "Departments",
                         principalColumn: ColumnIdName,
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DepartmentUser_Positions",
                         column: x => x.PositionId,
-                        principalTable: DbPosition.TableName,
+                        principalTable: "Positions",
                         principalColumn: ColumnIdName,
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -68,7 +68,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTablePositions(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbPosition.TableName,
+                name: "Positions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -95,11 +95,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(DbDepartmentUser.TableName);
+            migrationBuilder.DropTable("DepartmentUsers");
 
-            migrationBuilder.DropTable(DbPosition.TableName);
+            migrationBuilder.DropTable("Positions");
 
-            migrationBuilder.DropTable(DbDepartment.TableName);
+            migrationBuilder.DropTable("Departments");
         }
 
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

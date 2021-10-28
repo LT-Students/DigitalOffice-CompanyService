@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +15,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
     {
     }
 
-    public DbSet<DbPosition> Positions { get; set; }
-    public DbSet<DbDepartment> Departments { get; set; }
-    public DbSet<DbDepartmentUser> DepartmentUsers { get; set; }
-    public DbSet<DbPositionUser> PositionUsers { get; set; }
     public DbSet<DbCompany> Companies { get; set; }
     public DbSet<DbOffice> Offices { get; set; }
     public DbSet<DbOfficeUser> OfficeUsers { get; set; }
@@ -49,6 +46,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
     public bool IsInMemory()
     {
       return Database.IsInMemory();
+    }
+
+    public async Task SaveAsync()
+    {
+      await SaveChangesAsync();
     }
   }
 }

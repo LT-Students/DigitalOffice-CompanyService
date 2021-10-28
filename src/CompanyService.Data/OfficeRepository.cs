@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -8,6 +9,7 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -28,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       _logger = logger;
     }
 
-    public void Add(DbOffice office)
+    public async Task CreateAsync(DbOffice office)
     {
       if (office == null)
       {
@@ -37,20 +39,19 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       _provider.Offices.Add(office);
-      _provider.Save();
+      await _provider.SaveAsync();
     }
 
-    public bool Contains(Guid officeId)
+    public async Task<bool> DoesExistAsync(Guid officeId)
     {
-      return _provider.Offices.Any(o => o.Id == officeId);
+      return await _provider.Offices.AnyAsync(o => o.Id == officeId);
     }
 
-    public List<DbOffice> Find(OfficeFindFilter filter, out int totalCount)
+    public async Task<(List<DbOffice>, int totalCount)> FindAsync(OfficeFindFilter filter)
     {
       if (filter == null)
       {
-        totalCount = 0;
-        return null;
+        return (null, 0);
       }
 
       IQueryable<DbOffice> dbOffices = _provider.Offices
@@ -61,14 +62,12 @@ namespace LT.DigitalOffice.CompanyService.Data
         dbOffices = dbOffices.Where(x => x.IsActive);
       }
 
-      totalCount = dbOffices.Count();
-
-      return dbOffices.Skip(filter.SkipCount).Take(filter.TakeCount).ToList();
+      return (await dbOffices.Skip(filter.SkipCount).Take(filter.TakeCount).ToListAsync(), await dbOffices.CountAsync());
     }
 
-    public bool Edit(Guid officeId, JsonPatchDocument<DbOffice> request)
+    public async Task<bool> EditAsync(Guid officeId, JsonPatchDocument<DbOffice> request)
     {
-      DbOffice dbOffice = _provider.Offices.FirstOrDefault(x => x.Id == officeId);
+      DbOffice dbOffice = await _provider.Offices.FirstOrDefaultAsync(x => x.Id == officeId);
 
       if (dbOffice == null || request == null)
       {
@@ -78,14 +77,14 @@ namespace LT.DigitalOffice.CompanyService.Data
       request.ApplyTo(dbOffice);
       dbOffice.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
       dbOffice.ModifiedAtUtc = DateTime.UtcNow;
-      _provider.Save();
+      await _provider.SaveAsync();
 
       return true;
     }
 
-    public DbOffice Get(Guid officeId)
+    public async Task<DbOffice> GetAsync(Guid officeId)
     {
-      return _provider.Offices.FirstOrDefault(x => x.Id == officeId);
+      return await _provider.Offices.FirstOrDefaultAsync(x => x.Id == officeId);
     }
   }
 }

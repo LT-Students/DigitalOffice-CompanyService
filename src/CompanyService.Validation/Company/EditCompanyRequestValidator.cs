@@ -5,7 +5,7 @@ using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
-using LT.DigitalOffice.CompanyService.Validation.Helper;
+using LT.DigitalOffice.Kernel.Validators;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Newtonsoft.Json;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
@@ -41,9 +42,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<Guid> Execute(CreateOfficeRequest request)
+    public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateOfficeRequest request)
     {
-      if (!_accessValidator.HasRights(Rights.EditCompany))
+      if (!await _accessValidator.HasRightsAsync(Rights.EditCompany))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
@@ -65,8 +66,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
         };
       }
 
-      DbOffice office = _mapper.Map(request, _companyRepository.Get().Id);
-      _officeRepository.Add(office);
+      DbOffice office = _mapper.Map(request, (await _companyRepository.GetAsync()).Id);
+      await _officeRepository.CreateAsync(office);
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 

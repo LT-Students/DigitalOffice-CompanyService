@@ -12,9 +12,9 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
   {
     private ICompanyRepository _repository;
 
-    private object GetSmtpCredentials(object arg)
+    private async Task<object> GetSmtpCredentialsAsync(object arg)
     {
-      DbCompany company = _repository.Get();
+      DbCompany company = await _repository.GetAsync();
 
       return IGetSmtpCredentialsResponse.CreateObj(
         host: company.Host,
@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IGetSmtpCredentialsRequest> context)
     {
-      object response = OperationResultWrapper.CreateResponse(GetSmtpCredentials, context.Message);
+      object response = OperationResultWrapper.CreateResponse(GetSmtpCredentialsAsync, context.Message);
 
       await context.RespondAsync<IOperationResult<IGetSmtpCredentialsResponse>>(response);
     }

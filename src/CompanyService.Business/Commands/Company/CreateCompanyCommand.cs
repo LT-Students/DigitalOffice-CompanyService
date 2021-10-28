@@ -111,9 +111,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<OperationResultResponse<Guid>> Execute(CreateCompanyRequest request)
+    public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateCompanyRequest request)
     {
-      if (_repository.Get() != null)
+      if (_repository.GetAsync() != null)
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
@@ -147,12 +147,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       DbCompany company = _mapper.Map(request);
 
-      _repository.Add(company);
+      await _repository.CreateAsync(company);
 
       //TODO async
       //Task.Run(() =>
       //{
-      _companyChangesRepository.Add(
+      await _companyChangesRepository.CreateAsync(
         company.Id,
         null,
         CreateHistoryMessageHelper.Create(company));

@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         private void CreatePositionUsersTable(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbPositionUser.TableName,
+                name: "PositionUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -32,11 +32,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_DepartmentUser_Positions",
-                table: DbDepartmentUser.TableName);
+                table: "DepartmentUsers");
 
             migrationBuilder.DropColumn(
                 name: "PositionId",
-                table: DbDepartmentUser.TableName);
+                table: "DepartmentUsers");
         }
 
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,11 +47,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: DbPositionUser.TableName);
+            migrationBuilder.DropTable(name: "PositionUsers");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "PositionId",
-                table: DbDepartmentUser.TableName,
+                table: "DepartmentUsers",
                 nullable: false);
         }
     }

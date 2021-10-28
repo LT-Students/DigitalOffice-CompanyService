@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Office.Interface;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.Kernel.Enums;
@@ -34,7 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
       _baseFindValidator = baseFindValidator;
     }
 
-    public FindResultResponse<OfficeInfo> Execute(OfficeFindFilter filter)
+    public async Task<FindResultResponse<OfficeInfo>> ExecuteAsync(OfficeFindFilter filter)
     {
       FindResultResponse<OfficeInfo> response = new();
 
@@ -47,8 +49,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Office
         return response;
       }
 
-      response.Body = _officeRepository
-        .Find(filter, out int totalCount)
+      (List<DbOffice> offices, int totalCount) = await _officeRepository.FindAsync(filter);
+
+      response.Body = offices
         .Select(_mapper.Map)
         .ToList();
 

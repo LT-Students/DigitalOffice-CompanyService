@@ -20,23 +20,23 @@ namespace LT.DigitalOffice.CompanyService.Controllers
       [FromServices] ICreateCompanyCommand command,
       [FromBody] CreateCompanyRequest request)
     {
-      return await command.Execute(request);
+      return await command.ExecuteAsync(request);
     }
 
     [HttpGet("get")]
-    public OperationResultResponse<CompanyInfo> Get(
+    public async Task<OperationResultResponse<CompanyInfo>> GetAsync(
       [FromServices] IGetCompanyCommand command,
       [FromQuery] GetCompanyFilter filter)
     {
-      return command.Execute(filter);
+      return await command.ExecuteAsync(filter);
     }
 
     [HttpPatch("edit")]
-    public OperationResultResponse<bool> Patch(
+    public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditCompanyCommand command,
       [FromBody] JsonPatchDocument<EditCompanyRequest> request)
     {
-      return command.Execute(request);
+      return await command.ExecuteAsync(request);
     }
   }
 }

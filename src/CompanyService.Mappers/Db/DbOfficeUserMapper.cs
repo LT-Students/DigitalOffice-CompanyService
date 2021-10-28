@@ -1,23 +1,28 @@
-﻿using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+﻿using System;
+using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
-using System;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
-    public class DbOfficeUserMapper : IDbOfficeUserMapper
+  public class DbOfficeUserMapper : IDbOfficeUserMapper
+  {
+    public DbOfficeUser Map(IEditUserOfficeRequest request)
     {
-        public DbOfficeUser Map(Guid userId, Guid officeId, Guid modifiedBy)
-        {
-            return new DbOfficeUser
-            {
-                Id = Guid.NewGuid(),
-                OfficeId = officeId,
-                UserId = userId,
-                CreatedAtUtc = DateTime.UtcNow,
-                CreatedBy = modifiedBy,
-                IsActive = true
-            };
-        }
+      if (request == null || !request.OfficeId.HasValue)
+      {
+        return null;
+      }
+
+      return new DbOfficeUser
+      {
+        Id = Guid.NewGuid(),
+        OfficeId = request.OfficeId.Value,
+        UserId = request.UserId,
+        CreatedAtUtc = DateTime.UtcNow,
+        CreatedBy = request.ModifiedBy,
+        IsActive = true
+      };
     }
+  }
 }
