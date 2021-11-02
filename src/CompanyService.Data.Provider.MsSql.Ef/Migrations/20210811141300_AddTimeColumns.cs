@@ -86,21 +86,21 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
             migrationBuilder.RenameColumn(
                 name: "CreatedAt",
                 newName: "CreatedAtUtc",
-                table: DbOffice.TableName);
+                table: "Offices");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "CreatedBy",
-                table: DbOffice.TableName,
+                table: "Offices",
                 nullable: false);
 
             migrationBuilder.AddColumn<DateTime?>(
                 name: "ModifiedAtUtc",
-                table: DbOffice.TableName,
+                table: "Offices",
                 nullable: true);
 
             migrationBuilder.AddColumn<Guid?>(
                 name: "ModifiedBy",
-                table: DbOffice.TableName,
+                table: "Offices",
                 nullable: true);
         }
 
@@ -109,16 +109,16 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
             migrationBuilder.RenameColumn(
                 name: "CreatedAt",
                 newName: "CreatedAtUtc",
-                table: DbOfficeUser.TableName);
+                table: "OfficeUsers");
 
             migrationBuilder.AddColumn<DateTime?>(
                 name: "ModifiedAtUtc",
-                table: DbOfficeUser.TableName,
+                table: "OfficeUsers",
                 nullable: true);
 
             migrationBuilder.AddColumn<Guid?>(
                 name: "ModifiedBy",
-                table: DbOfficeUser.TableName,
+                table: "OfficeUsers",
                 nullable: true);
         }
 

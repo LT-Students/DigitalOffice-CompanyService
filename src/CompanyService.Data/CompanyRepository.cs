@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -16,23 +14,6 @@ namespace LT.DigitalOffice.CompanyService.Data
   {
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
-
-    private IQueryable<DbCompany> CreateGetPredicates(
-      GetCompanyFilter filter,
-      IQueryable<DbCompany> dbCompanies)
-    {
-      if (filter == null)
-      {
-        return dbCompanies;
-      }
-
-      if (filter.IncludeOffices)
-      {
-        dbCompanies = dbCompanies.Include(c => c.Offices.Where(o => o.IsActive));
-      }
-
-      return dbCompanies;
-    }
 
     public CompanyRepository(
       IDataProvider provider,
@@ -58,13 +39,9 @@ namespace LT.DigitalOffice.CompanyService.Data
       await _provider.SaveAsync();
     }
 
-    public async Task<DbCompany> GetAsync(GetCompanyFilter filter = null)
+    public async Task<DbCompany> GetAsync()
     {
-      var dbUsers = _provider.Companies
-        .AsSingleQuery()
-        .AsQueryable();
-
-      return await CreateGetPredicates(filter, dbUsers).FirstOrDefaultAsync();
+      return await _provider.Companies.FirstOrDefaultAsync();
     }
 
     public async Task EditAsync(JsonPatchDocument<DbCompany> request)

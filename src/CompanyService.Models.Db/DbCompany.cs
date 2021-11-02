@@ -32,13 +32,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public string WorkDaysApiUrl { get; set; }
 
     [JsonIgnore]
-    public ICollection<DbOffice> Offices { get; set; }
-    [JsonIgnore]
     public ICollection<DbCompanyChanges> Changes { get; set; }
 
     public DbCompany()
     {
-      Offices = new HashSet<DbOffice>();
       Changes = new HashSet<DbCompanyChanges>();
     }
   }
@@ -77,10 +74,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
       builder
         .Property(c => c.WorkDaysApiUrl)
         .IsRequired();
-
-      builder
-        .HasMany(c => c.Offices)
-        .WithOne(o => o.Company);
 
       builder
         .HasMany(c => c.Changes)

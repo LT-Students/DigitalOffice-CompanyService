@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   {
     Task CreateAsync(DbCompany company);
 
-    Task<DbCompany> GetAsync(GetCompanyFilter filter = null);
+    Task<DbCompany> GetAsync();
 
     Task EditAsync(JsonPatchDocument<DbCompany> request);
   }

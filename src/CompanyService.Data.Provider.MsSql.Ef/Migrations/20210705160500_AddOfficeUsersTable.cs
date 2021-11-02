@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbOfficeUser.TableName,
+                name: "OfficeUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(DbOfficeUser.TableName);
+            migrationBuilder.DropTable("OfficeUsers");
         }
     }
 }
