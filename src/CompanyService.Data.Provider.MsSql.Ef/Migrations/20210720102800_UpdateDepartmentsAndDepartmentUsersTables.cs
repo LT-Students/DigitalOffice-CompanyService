@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "Role",
-                table: "DepartmentUsers",
+                table: "DepartmentsUsers",
                 nullable: false,
                 defaultValue: 0);
         }
@@ -26,7 +26,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Role",
-                table: "DepartmentUsers");
+                table: "DepartmentsUsers");
 
             migrationBuilder.AddColumn<Guid?>(
                 name: "DirectorUserId",

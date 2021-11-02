@@ -67,17 +67,17 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 
             migrationBuilder.AddColumn<Guid>(
                 name: "CreatedBy",
-                table: "DepartmentUsers",
+                table: "DepartmentsUsers",
                 nullable: false);
 
             migrationBuilder.RenameColumn(
                 name: "EndTime",
                 newName: "ModifiedAtUtc",
-                table: "DepartmentUsers");
+                table: "DepartmentsUsers");
 
             migrationBuilder.AddColumn<Guid?>(
                 name: "ModifiedBy",
-                table: "DepartmentUsers",
+                table: "DepartmentsUsers",
                 nullable: true);
         }
 
