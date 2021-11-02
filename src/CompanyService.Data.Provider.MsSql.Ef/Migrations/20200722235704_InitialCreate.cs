@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTableDeparmentsUsers(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "DepartmentUsers",
+                name: "DepartmentsUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),

@@ -63,7 +63,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
             migrationBuilder.RenameColumn(
                 name: "StartTime",
                 newName: "CreatedAtUtc",
-                table: "DepartmentUsers");
+                table: "DepartmentsUsers");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "CreatedBy",
