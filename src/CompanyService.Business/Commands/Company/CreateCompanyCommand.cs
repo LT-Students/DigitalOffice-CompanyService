@@ -113,7 +113,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
     public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateCompanyRequest request)
     {
-      if (_repository.GetAsync() != null)
+      if (await _repository.GetAsync() != null)
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
