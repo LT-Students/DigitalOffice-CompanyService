@@ -32,11 +32,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_DepartmentUser_Positions",
-                table: "DepartmentUsers");
+                table: "DepartmentsUsers");
 
             migrationBuilder.DropColumn(
                 name: "PositionId",
-                table: "DepartmentUsers");
+                table: "DepartmentsUsers");
         }
 
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 
             migrationBuilder.AddColumn<Guid>(
                 name: "PositionId",
-                table: "DepartmentUsers",
+                table: "DepartmentsUsers",
                 nullable: false);
         }
     }

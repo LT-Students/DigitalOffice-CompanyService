@@ -1,6 +1,5 @@
 ﻿using System;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.CompanyService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LT.DigitalOffice.CompanyService.Data.Migrations
 {
-    [DbContext(typeof(CompanyServiceDbContext))]
+  [DbContext(typeof(CompanyServiceDbContext))]
     [Migration("20200722235704_InitialCreate")]
     public class InitialCreate : Migration
     {
@@ -36,7 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTableDeparmentsUsers(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "DepartmentUsers",
+                name: "DepartmentsUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -95,7 +94,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("DepartmentUsers");
+            migrationBuilder.DropTable("DepartmentsUsers");
 
             migrationBuilder.DropTable("Positions");
 

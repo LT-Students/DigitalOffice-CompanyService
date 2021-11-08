@@ -48,7 +48,7 @@ namespace LT.DigitalOffice.CompanyService
         .GetSection(BaseServiceInfoConfig.SectionName)
         .Get<BaseServiceInfoConfig>();
 
-      Version = "1.6.3.0";
+      Version = "1.6.4.0";
       Description = "CompanyService is an API that intended to work with positions and departments.";
       StartTime = DateTime.UtcNow;
       ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
@@ -183,10 +183,7 @@ namespace LT.DigitalOffice.CompanyService
     {
       services.AddMassTransit(x =>
       {
-        x.AddConsumer<EditUserOfficeConsumer>();
         x.AddConsumer<GetSmtpCredentialsConsumer>();
-        x.AddConsumer<GetOfficesConsumer>();
-        x.AddConsumer<DisactivateUserConsumer>();
 
         x.UsingRabbitMq((context, cfg) =>
           {
@@ -212,21 +209,6 @@ namespace LT.DigitalOffice.CompanyService
       cfg.ReceiveEndpoint(_rabbitMqConfig.GetSmtpCredentialsEndpoint, ep =>
       {
         ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetOfficesEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetOfficesConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.EditUserOfficeEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<EditUserOfficeConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.DisactivateUserEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<DisactivateUserConsumer>(context);
       });
     }
 

@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
     {
       builder.AddColumn<DateTime>(
       name: "LeftAtUts",
-      table: "DepartmentUsers",
+      table: "DepartmentsUsers",
       nullable: true);
     }
 
@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
     {
       builder.DropColumn(
       name: "LeftAtUts",
-      table: "DepartmentUsers");
+      table: "DepartmentsUsers");
     }
   }
 }
