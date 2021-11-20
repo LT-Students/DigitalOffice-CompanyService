@@ -6,7 +6,6 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
@@ -30,18 +29,18 @@ namespace LT.DigitalOffice.CompanyService.Data
         return;
       }
 
-      if (await _provider.Companies.AnyAsync())
+      if (await _provider.AnyCompanyAsync())
       {
         return;
       }
 
-      _provider.Companies.Add(company);
+      _provider.AddCompanyOrChanges(company);
       await _provider.SaveAsync();
     }
 
     public async Task<DbCompany> GetAsync()
     {
-      return await _provider.Companies.FirstOrDefaultAsync();
+      return await _provider.GetCompanyAsync();
     }
 
     public async Task EditAsync(JsonPatchDocument<DbCompany> request)
@@ -51,7 +50,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         return;
       }
 
-      var company = await _provider.Companies.FirstOrDefaultAsync();
+      var company = await _provider.GetCompanyAsync();
 
       if (company == null)
       {

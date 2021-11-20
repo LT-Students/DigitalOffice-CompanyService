@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public async Task CreateAsync(Guid companyId, Guid? changedBy, string changes)
     {
-      _provider.CompanyChanges.Add(
+      _provider.AddCompanyOrChanges(
         new DbCompanyChanges
         {
           Id = Guid.NewGuid(),

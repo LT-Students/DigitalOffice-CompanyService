@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +16,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
     {
     }
 
-    public DbSet<DbCompany> Companies { get; set; }
-    public DbSet<DbCompanyChanges> CompanyChanges { get; set; }
+    public IQueryable<DbCompany> Companies => _companies.AsQueryable();
+    public IQueryable<DbCompanyChanges> CompanyChanges => _companyChanges.AsQueryable();
+
+    private DbSet<DbCompany> _companies { get; set; }
+    private DbSet<DbCompanyChanges> _companyChanges { get; set; }
 
     // Fluent API is written here.
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -49,6 +53,31 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
     public async Task SaveAsync()
     {
       await SaveChangesAsync();
+    }
+
+    public void AddCompanyOrChanges<T>(T item)
+    {
+      if (typeof(DbCompany) == typeof(T))
+      {
+        DbCompany company = item as DbCompany;
+        _companies.Add(company);
+      }
+
+      if (typeof(DbCompanyChanges) == typeof(T))
+      {
+        DbCompanyChanges changes = item as DbCompanyChanges;
+        _companyChanges.Add(changes);
+      }
+    }
+
+    public async Task<DbCompany> GetCompanyAsync()
+    {
+      return await _companies.FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> AnyCompanyAsync()
+    {
+      return await _companies.AnyAsync();
     }
   }
 }

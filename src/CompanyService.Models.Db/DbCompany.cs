@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LT.DigitalOffice.CompanyService.Models.Db
 {
@@ -37,47 +35,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public DbCompany()
     {
       Changes = new HashSet<DbCompanyChanges>();
-    }
-  }
-
-  public class DbCompanyConfiguration : IEntityTypeConfiguration<DbCompany>
-  {
-    public void Configure(EntityTypeBuilder<DbCompany> builder)
-    {
-      builder
-        .ToTable(DbCompany.TableName);
-
-      builder
-        .Property(c => c.PortalName)
-        .IsRequired();
-
-      builder
-        .Property(c => c.CompanyName)
-        .IsRequired();
-
-      builder
-        .Property(c => c.Host)
-        .IsRequired();
-
-      builder
-        .Property(c => c.Email)
-        .IsRequired();
-
-      builder
-        .Property(c => c.Password)
-        .IsRequired();
-
-      builder
-        .Property(c => c.SiteUrl)
-        .IsRequired();
-
-      builder
-        .Property(c => c.WorkDaysApiUrl)
-        .IsRequired();
-
-      builder
-        .HasMany(c => c.Changes)
-        .WithOne(ch => ch.Company);
     }
   }
 }
