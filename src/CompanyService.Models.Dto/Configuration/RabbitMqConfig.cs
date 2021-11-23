@@ -3,7 +3,7 @@ using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.Models.Broker.Requests.Department;
 using LT.DigitalOffice.Models.Broker.Requests.Image;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Email;
 using LT.DigitalOffice.Models.Broker.Requests.Office;
 using LT.DigitalOffice.Models.Broker.Requests.Position;
 using LT.DigitalOffice.Models.Broker.Requests.Project;
@@ -51,9 +51,9 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
     [AutoInjectRequest(typeof(IGetProjectsRequest))]
     public string GetProjectsEndpoint { get; set; }
 
-    // message
+    // email
 
-    [AutoInjectRequest(typeof(IUpdateSmtpCredentialsRequest))]
-    public string UpdateSmtpCredentialsEndpoint { get; set; }
+    [AutoInjectRequest(typeof(ICreateSmtpCredentialsRequest))]
+    public string CreateSmtpCredentialsEndpoint { get; set; }
   }
 }
