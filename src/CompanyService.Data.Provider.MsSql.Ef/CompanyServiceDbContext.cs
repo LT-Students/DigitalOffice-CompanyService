@@ -11,16 +11,16 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
   /// </summary>
   public class CompanyServiceDbContext : DbContext, IDataProvider
   {
-    public CompanyServiceDbContext(DbContextOptions<CompanyServiceDbContext> options)
-      : base(options)
-    {
-    }
+    private DbSet<DbCompany> _companies { get; set; }
+    private DbSet<DbCompanyChanges> _companyChanges { get; set; }
 
     public IQueryable<DbCompany> Companies => _companies.AsQueryable();
     public IQueryable<DbCompanyChanges> CompanyChanges => _companyChanges.AsQueryable();
 
-    private DbSet<DbCompany> _companies { get; set; }
-    private DbSet<DbCompanyChanges> _companyChanges { get; set; }
+    public CompanyServiceDbContext(DbContextOptions<CompanyServiceDbContext> options)
+      : base(options)
+    {
+    }
 
     // Fluent API is written here.
     protected override void OnModelCreating(ModelBuilder modelBuilder)
