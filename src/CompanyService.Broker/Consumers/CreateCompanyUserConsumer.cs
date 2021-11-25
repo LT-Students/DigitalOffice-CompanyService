@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
 using MassTransit;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers

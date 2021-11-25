@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
@@ -16,7 +17,9 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
     Task<bool> DoesExistAsync(Guid userId);
 
-    Task<List<DbCompanyUser>> GetAsync(IGetCompanyUserRequest request);
+    Task<List<DbCompanyUser>> GetAsync(IGetCompaniesRequest request);
+
+    Task<DbCompanyUser> GetAsync(Guid userId);
 
     Task RemoveAsync(Guid userId, Guid removedBy);
   }

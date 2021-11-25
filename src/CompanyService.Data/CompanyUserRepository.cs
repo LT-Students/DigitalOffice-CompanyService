@@ -7,6 +7,7 @@ using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         return null;
       }
 
-      _provider.CompanysUsers.Add(dbCompanyUser);
+      _provider.CompaniesUsers.Add(dbCompanyUser);
       await _provider.SaveAsync();
 
       return dbCompanyUser.Id;
@@ -40,7 +41,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public async Task<bool> DoesExistAsync(Guid userId)
     {
-      return await _provider.CompanysUsers.AnyAsync(u => u.UserId == userId);
+      return await _provider.CompaniesUsers.AnyAsync(u => u.UserId == userId);
     }
 
     public async Task<bool> EditAsync(EditCompanyUserRequest request)
@@ -50,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         return false;
       }
 
-      var companyUser = await _provider.CompanysUsers.FirstOrDefaultAsync(r => r.UserId == request.UserId);
+      var companyUser = await _provider.CompaniesUsers.FirstOrDefaultAsync(r => r.UserId == request.UserId);
       companyUser.Rate = request.Rate;
       companyUser.StartWorkingAt = request.StartWorkingAt;
       companyUser.ModifiedAtUtc = DateTime.UtcNow;
@@ -60,22 +61,35 @@ namespace LT.DigitalOffice.CompanyService.Data
       return true;
     }
 
-    public async Task<List<DbCompanyUser>> GetAsync(IGetCompanyUserRequest request)
+    public async Task<List<DbCompanyUser>> GetAsync(IGetCompaniesRequest request)
     {
-      if (request is null)
+      if (request.UsersIds is null)
       {
         return null;
       }
 
-      return await _provider.CompanysUsers
+      return await _provider.CompaniesUsers
         .Include(cu => cu.Company)
-        .Where(u => u.IsActive && request.usersIds.Contains(u.UserId))
+        .Where(u => u.IsActive && request.UsersIds.Contains(u.UserId))
+        .ToListAsync();
+    }
+
+    public async Task<DbCompanyUser> GetAsync(Guid userId)
+    {
+      return await _provider.CompaniesUsers.Include(u => u.Company).FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
+    }
+
+    public async Task<List<DbCompanyUser>> GetAsync(List<Guid> userIds)
+    {
+      return await _provider.CompaniesUsers
+        .Include(cu => cu.Company)
+        .Where(u => userIds.Contains(u.UserId) && u.IsActive)
         .ToListAsync();
     }
 
     public async Task RemoveAsync(Guid userId, Guid removedBy)
     {
-      DbCompanyUser user = await _provider.CompanysUsers.FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
+      DbCompanyUser user = await _provider.CompaniesUsers.FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
 
       if (user != null)
       {

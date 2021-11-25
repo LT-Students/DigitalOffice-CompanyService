@@ -10,11 +10,11 @@ using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Email;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICreateCompanyRequestValidator _validator;
     private readonly ICompanyRepository _repository;
     private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
-    private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcCreateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -39,8 +39,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       try
       {
-        Response<IOperationResult<bool>> response = await _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
-          IUpdateSmtpCredentialsRequest.CreateObj(
+        Response<IOperationResult<bool>> response = await _rcCreateSmtp.GetResponse<IOperationResult<bool>>(
+          ICreateSmtpCredentialsRequest.CreateObj(
             host: smtpInfo.Host,
             port: smtpInfo.Port,
             enableSsl: smtpInfo.EnableSsl,
@@ -97,7 +97,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       ICreateCompanyRequestValidator validator,
       ICompanyRepository repository,
       IRequestClient<ICreateAdminRequest> rcCreateAdmin,
-      IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+      IRequestClient<ICreateSmtpCredentialsRequest> rcCreateSmtp,
       ICompanyChangesRepository companyChangesRepository,
       IHttpContextAccessor httpContextAccessor)
     {
@@ -106,7 +106,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _validator = validator;
       _repository = repository;
       _rcCreateAdmin = rcCreateAdmin;
-      _rcUpdateSmtp = rcUpdateSmtp;
+      _rcCreateSmtp = rcCreateSmtp;
       _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
     }

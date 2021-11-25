@@ -7,10 +7,11 @@ using LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.CompanyService.Validation.CompanyUser.Interfaces;
-using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
@@ -23,13 +24,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
     private readonly IResponseCreator _responseCreator;
     private readonly ICacheNotebook _cacheNotebook;
 
-    private async Task ClearCache(Guid userId, Guid newPositionId)
+    private async Task ClearCache(Guid userId)
     {
-      Guid positionId = (await _repository.GetAsync(userId)).PositionId;
+      Guid companyId = (await _repository.GetAsync(userId)).CompanyId;
 
-      await Task.WhenAll(
-        _cacheNotebook.RemoveAsync(positionId),
-        _cacheNotebook.RemoveAsync(newPositionId));
+      await _cacheNotebook.RemoveAsync(companyId);
     }
 
     public EditCompanyUserCommand(
@@ -64,9 +63,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
 
       bool result = await _repository.EditAsync(request);
 
-      if (result.HasValue)
+      if (result)
       {
-        await ClearCache(request.UserId request.CompanyId);
+        await ClearCache(request.UserId);
       }
 
       return new OperationResultResponse<bool>
