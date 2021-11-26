@@ -102,11 +102,11 @@ namespace LT.DigitalOffice.CompanyService
       {
         connStr = Configuration.GetConnectionString("SQLConnectionString");
 
-        Log.Information($"SQL connection string from appsettings.json was used. Value '{HidePassord(connStr)}'.");
+        Log.Information($"SQL connection string from appsettings.json was used. Value '{HidePassword(connStr)}'.");
       }
       else
       {
-        Log.Information($"SQL connection string from environment was used. Value '{HidePassord(connStr)}'.");
+        Log.Information($"SQL connection string from environment was used. Value '{HidePassword(connStr)}'.");
       }
 
       services.AddDbContext<CompanyServiceDbContext>(options =>
@@ -123,11 +123,11 @@ namespace LT.DigitalOffice.CompanyService
       {
         redisConnStr = Configuration.GetConnectionString("Redis");
 
-        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePassord(redisConnStr)}'");
+        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePassword(redisConnStr)}'");
       }
       else
       {
-        Log.Information($"Redis connection string from environment was used. Value '{HidePassord(redisConnStr)}'");
+        Log.Information($"Redis connection string from environment was used. Value '{HidePassword(redisConnStr)}'");
       }
 
       services.AddSingleton<IConnectionMultiplexer>(
@@ -251,7 +251,7 @@ namespace LT.DigitalOffice.CompanyService
       context.Database.Migrate();
     }
 
-    private string HidePassord(string line)
+    private string HidePassword(string line)
     {
       string password = "Password";
 
