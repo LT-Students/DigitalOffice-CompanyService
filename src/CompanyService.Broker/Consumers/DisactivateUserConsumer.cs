@@ -5,7 +5,7 @@ using MassTransit;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-  internal class DisactivateUserConsumer : IConsumer<IDisactivateUserRequest>
+  public class DisactivateUserConsumer : IConsumer<IDisactivateUserRequest>
   {
     private readonly ICompanyUserRepository _companyUserRepository;
 
@@ -17,8 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IDisactivateUserRequest> context)
     {
-      await Task.WhenAll(
-        _companyUserRepository.RemoveAsync(context.Message.UserId, context.Message.ModifiedBy));
+      await _companyUserRepository.RemoveAsync(context.Message.UserId, context.Message.ModifiedBy);
     }
   }
 }

@@ -7,20 +7,19 @@ using MassTransit;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-  public class CreateCompanyUserConsumer : IConsumer<ICreateCompanyUserRequest>
+  public class CreateCompanyUsersConsumer : IConsumer<ICreateCompanyUserRequest>
   {
     private readonly ICompanyUserRepository _companyUserRepository;
     private readonly IDbCompanyUserMapper _companyUserMapper;
 
     private async Task<bool> CreateAsync(ICreateCompanyUserRequest request)
     {
-      await Task.WhenAll(
-        _companyUserRepository.CreateAsync(_companyUserMapper.Map(request)));
+      await _companyUserRepository.CreateAsync(_companyUserMapper.Map(request));
 
       return true;
     }
 
-    public CreateCompanyUserConsumer(
+    public CreateCompanyUsersConsumer(
       ICompanyUserRepository companyUserRepository,
       IDbCompanyUserMapper companyUserMapper)
     {

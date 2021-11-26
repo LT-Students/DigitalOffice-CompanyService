@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.Kernel.Attributes;
-using LT.DigitalOffice.Models.Broker.Requests.Company;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
@@ -13,11 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   {
     Task<Guid?> CreateAsync(DbCompanyUser dbCompanyUser);
 
-    Task<bool> EditAsync(EditCompanyUserRequest request);
-
-    Task<bool> DoesExistAsync(Guid userId);
-
-    Task<List<DbCompanyUser>> GetAsync(IGetCompaniesRequest request);
+    Task<bool> EditAsync(Guid userId, JsonPatchDocument<DbCompanyUser> request);
 
     Task<DbCompanyUser> GetAsync(Guid userId);
 

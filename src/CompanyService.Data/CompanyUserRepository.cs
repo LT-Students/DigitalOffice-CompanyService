@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.Models.Broker.Requests.Company;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 
 namespace LT.DigitalOffice.CompanyService.Data
@@ -39,39 +38,21 @@ namespace LT.DigitalOffice.CompanyService.Data
       return dbCompanyUser.Id;
     }
 
-    public async Task<bool> DoesExistAsync(Guid userId)
+    public async Task<bool> EditAsync(Guid userId, JsonPatchDocument<DbCompanyUser> request)
     {
-      return await _provider.CompaniesUsers.AnyAsync(u => u.UserId == userId);
-    }
+      DbCompanyUser dbCompanyUser = await _provider.CompaniesUsers.FirstOrDefaultAsync(x => x.UserId == userId);
 
-    public async Task<bool> EditAsync(EditCompanyUserRequest request)
-    {
-      if (request is null)
+      if (request is null || dbCompanyUser is null)
       {
         return false;
       }
 
-      var companyUser = await _provider.CompaniesUsers.FirstOrDefaultAsync(r => r.UserId == request.UserId);
-      companyUser.Rate = request.Rate;
-      companyUser.StartWorkingAt = request.StartWorkingAt;
-      companyUser.ModifiedAtUtc = DateTime.UtcNow;
-      companyUser.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
+      request.ApplyTo(dbCompanyUser);
+      dbCompanyUser.ModifiedAtUtc = DateTime.UtcNow;
+      dbCompanyUser.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
       await _provider.SaveAsync();
 
       return true;
-    }
-
-    public async Task<List<DbCompanyUser>> GetAsync(IGetCompaniesRequest request)
-    {
-      if (request.UsersIds is null)
-      {
-        return null;
-      }
-
-      return await _provider.CompaniesUsers
-        .Include(cu => cu.Company)
-        .Where(u => u.IsActive && request.UsersIds.Contains(u.UserId))
-        .ToListAsync();
     }
 
     public async Task<DbCompanyUser> GetAsync(Guid userId)

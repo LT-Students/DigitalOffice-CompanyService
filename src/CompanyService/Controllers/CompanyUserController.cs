@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LT.DigitalOffice.CompanyService.Controllers
@@ -13,9 +15,10 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     [HttpPatch("edit")]
     public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditCompanyUserCommand command,
-      [FromBody] EditCompanyUserRequest request)
+      [FromQuery] Guid userId,
+      [FromBody] JsonPatchDocument<EditCompanyUserRequest> request)
     {
-      return await command.ExecuteAsync(request);
+      return await command.ExecuteAsync(userId, request);
     }
   }
 }

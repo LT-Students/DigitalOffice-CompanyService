@@ -20,29 +20,27 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
   public class GetCompanyConsumer : IConsumer<IGetCompaniesRequest>
   {
-    private readonly ICompanyUserRepository _userRepository;
+    private readonly ICompanyRepository _repository;
     private readonly IOptions<RedisConfig> _redisConfig;
     private readonly IRedisHelper _redisHelper;
     private readonly ICacheNotebook _cacheNotebook;
     private readonly ICompanyDataMapper _companyDataMapper;
 
-    private async Task<List<CompanyData>> GetCompanyAsync(IGetCompaniesRequest request)
+    private async Task<List<CompanyData>> GetCompaniesAsync(IGetCompaniesRequest request)
     {
-      List<DbCompanyUser> usersInfo = await _userRepository.GetAsync(request);
+      List<DbCompany> dbCompanies = await _repository.GetAsync(request);
 
-      List<DbCompany> companies = usersInfo.Select(u => u.Company).Distinct().ToList();
-
-      return companies.Select(p => _companyDataMapper.Map(p)).ToList();
+      return dbCompanies.Select(p => _companyDataMapper.Map(p)).ToList();
     }
 
     public GetCompanyConsumer(
-      ICompanyUserRepository userRepository,
+      ICompanyRepository repository,
       IOptions<RedisConfig> redisConfig,
       IRedisHelper redisHelper,
       ICacheNotebook cacheNotebook,
       ICompanyDataMapper companyDataMapper)
     {
-      _userRepository = userRepository;
+      _repository = repository;
       _redisConfig = redisConfig;
       _redisHelper = redisHelper;
       _cacheNotebook = cacheNotebook;
@@ -51,7 +49,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IGetCompaniesRequest> context)
     {
-      List<CompanyData> companies = await GetCompanyAsync(context.Message);
+      List<CompanyData> companies = await GetCompaniesAsync(context.Message);
 
       object response = OperationResultWrapper.CreateResponse((_) => IGetCompaniesResponse.CreateObj(companies), context.Message);
 

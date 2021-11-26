@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.Patch.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.CompanyService.Validation.CompanyUser.Interfaces;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
@@ -13,6 +14,7 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
 {
@@ -23,6 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
     private readonly IEditCompanyUserRequestValidator _validator;
     private readonly IResponseCreator _responseCreator;
     private readonly ICacheNotebook _cacheNotebook;
+    private readonly IPatchCompanyUserMapper _mapper;
 
     private async Task ClearCache(Guid userId)
     {
@@ -36,16 +39,20 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
       ICompanyUserRepository repository,
       IEditCompanyUserRequestValidator validator,
       IResponseCreator responseCreator,
-      ICacheNotebook cacheNotebook)
+      ICacheNotebook cacheNotebook,
+      IPatchCompanyUserMapper mapper)
     {
       _accessValidator = accessValidator;
       _repository = repository;
       _validator = validator;
       _responseCreator = responseCreator;
       _cacheNotebook = cacheNotebook;
+      _mapper = mapper;
     }
 
-    public async Task<OperationResultResponse<bool>> ExecuteAsync(EditCompanyUserRequest request)
+    public async Task<OperationResultResponse<bool>> ExecuteAsync(
+      Guid userId,
+      JsonPatchDocument<EditCompanyUserRequest> request)
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveUsers))
       {
@@ -61,11 +68,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
           validationResult.Errors.Select(e => e.ErrorMessage).ToList());
       }
 
-      bool result = await _repository.EditAsync(request);
+      bool result = await _repository.EditAsync(userId, _mapper.Map(request));
 
       if (result)
       {
-        await ClearCache(request.UserId);
+        await ClearCache(userId);
       }
 
       return new OperationResultResponse<bool>

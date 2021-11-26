@@ -15,6 +15,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
   {
     public string GetSmtpCredentialsEndpoint { get; set; }
     public string CreateCompanyUserEndpoint { get; set; }
+    public string GetCompanyEndpoint { get; set; }
+    public string DisactivateUserEndpoint { get; set; }
 
     // department
 
@@ -52,9 +54,9 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
     [AutoInjectRequest(typeof(IGetProjectsRequest))]
     public string GetProjectsEndpoint { get; set; }
 
-    // message
+    // email
 
-    [AutoInjectRequest(typeof(IUpdateSmtpCredentialsRequest))]
-    public string UpdateSmtpCredentialsEndpoint { get; set; }
+    [AutoInjectRequest(typeof(ICreateSmtpCredentialsRequest))]
+    public string CreateSmtpCredentialsEndpoint { get; set; }
   }
 }
