@@ -1,12 +1,12 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+using LT.DigitalOffice.Models.Broker.Models.Office;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
   public class OfficeInfoMapper : IOfficeInfoMapper
   {
-    public OfficeInfo Map(DbOffice office)
+    public OfficeInfo Map(OfficeData office)
     {
       if (office == null)
       {
@@ -19,7 +19,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
         Name = office.Name,
         City = office.City,
         Address = office.Address,
-        IsActive = office.IsActive
+        Longitude = office.Longitude,
+        Latitude = office.Latitude
       };
     }
   }

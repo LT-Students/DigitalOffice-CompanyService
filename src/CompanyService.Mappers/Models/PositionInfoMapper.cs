@@ -1,26 +1,23 @@
 ﻿using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using System;
+using LT.DigitalOffice.Models.Broker.Models.Position;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {
-    public class PositionInfoMapper : IPositionInfoMapper
+  public class PositionInfoMapper : IPositionInfoMapper
+  {
+    public PositionInfo Map(PositionData position)
     {
-        public PositionInfo Map(DbPosition position)
-        {
-            if (position == null)
-            {
-                throw new ArgumentNullException(nameof(position));
-            }
+      if (position == null)
+      {
+        return null;
+      }
 
-            return new PositionInfo
-            {
-                Id = position.Id,
-                Name = position.Name,
-                Description = position.Description,
-                IsActive = position.IsActive
-            };
-        }
+      return new PositionInfo
+      {
+        Id = position.Id,
+        Name = position.Name
+      };
     }
+  }
 }

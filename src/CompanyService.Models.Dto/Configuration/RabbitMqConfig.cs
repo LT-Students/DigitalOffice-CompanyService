@@ -1,8 +1,11 @@
 ﻿using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Models.Broker.Common;
-using LT.DigitalOffice.Models.Broker.Requests.File;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Department;
+using LT.DigitalOffice.Models.Broker.Requests.Image;
+using LT.DigitalOffice.Models.Broker.Requests.Email;
+using LT.DigitalOffice.Models.Broker.Requests.Office;
+using LT.DigitalOffice.Models.Broker.Requests.Position;
 using LT.DigitalOffice.Models.Broker.Requests.Project;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 
@@ -10,35 +13,47 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 {
   public class RabbitMqConfig : BaseRabbitMqConfig
   {
-    public string GetDepartmentsEndpoint { get; set; }
-    public string GetDepartmentUsersEndpoint { get; set; }
-    public string GetCompanyEmployeesEndpoint { get; set; }
-    public string EditCompanyEmployeeEndpoint { get; set; }
     public string GetSmtpCredentialsEndpoint { get; set; }
+
+    // department
+
+    [AutoInjectRequest(typeof(IGetDepartmentsRequest))]
+    public string GetDepartmentsEndpoint { get; set; }
+
+    // position
+
+    [AutoInjectRequest(typeof(IGetPositionsRequest))]
     public string GetPositionsEndpoint { get; set; }
-    public string DisactivateUserEndpoint { get; set; }
-    public string CheckDepartmentsExistenceEndpoint { get; set; }
-    public string SearchDepartmentEndpoint { get; set; }
+
+    // office
+
+    [AutoInjectRequest(typeof(IGetOfficesRequest))]
+    public string GetOfficesEndpoint { get; set; }
+
+    // user
 
     [AutoInjectRequest(typeof(IGetUsersDataRequest))]
     public string GetUsersDataEndpoint { get; set; }
 
-    [AutoInjectRequest(typeof(IAddImageRequest))]
-    public string AddImageEndpoint { get; set; }
+    [AutoInjectRequest(typeof(ICreateAdminRequest))]
+    public string CreateAdminEndpoint { get; set; }
+
+    [AutoInjectRequest(typeof(ICheckUsersExistence))]
+    public string CheckUsersExistenceEndpoint { get; set; }
+
+    // image
 
     [AutoInjectRequest(typeof(IGetImagesRequest))]
     public string GetImagesEndpoint { get; set; }
 
+    // project
+
     [AutoInjectRequest(typeof(IGetProjectsRequest))]
     public string GetProjectsEndpoint { get; set; }
 
-    [AutoInjectRequest(typeof(ICreateAdminRequest))]
-    public string CreateAdminEndpoint { get; set; }
+    // email
 
-    [AutoInjectRequest(typeof(IUpdateSmtpCredentialsRequest))]
-    public string UpdateSmtpCredentialsEndpoint { get; set; }
-
-    [AutoInjectRequest(typeof(ICheckUsersExistence))]
-    public string CheckUsersExistenceEndpoint { get; set; }
+    [AutoInjectRequest(typeof(ICreateSmtpCredentialsRequest))]
+    public string CreateSmtpCredentialsEndpoint { get; set; }
   }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -13,7 +14,7 @@ using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Email;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -28,30 +29,30 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICreateCompanyRequestValidator _validator;
     private readonly ICompanyRepository _repository;
     private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
-    private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcCreateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private bool UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
+    private async Task<bool> CreateSmtp(SmtpInfo smtpInfo, List<string> errors)
     {
-      string message = "Can not update smtp credentials.";
+      string message = "Can not create smtp credentials.";
 
       try
       {
-        var response = _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
-          IUpdateSmtpCredentialsRequest.CreateObj(
+        Response<IOperationResult<bool>> response = await _rcCreateSmtp.GetResponse<IOperationResult<bool>>(
+          ICreateSmtpCredentialsRequest.CreateObj(
             host: smtpInfo.Host,
             port: smtpInfo.Port,
             enableSsl: smtpInfo.EnableSsl,
             email: smtpInfo.Email,
-            password: smtpInfo.Password)).Result.Message;
+            password: smtpInfo.Password));
 
-        if (response.IsSuccess && response.Body)
+        if (response.Message.IsSuccess && response.Message.Body)
         {
           return true;
         }
 
-        _logger.LogWarning(message, string.Join("\n", response.Errors));
+        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
       }
       catch (Exception exc)
       {
@@ -62,23 +63,23 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       return false;
     }
 
-    private bool CreateAdmin(AdminInfo info, List<string> errors)
+    private async Task<bool> CreateAdmin(AdminInfo info, List<string> errors)
     {
       string message = "Can not create admin.";
 
       try
       {
-        var response = _rcCreateAdmin.GetResponse<IOperationResult<bool>>(
-          ICreateAdminRequest.CreateObj(info.FirstName, info.MiddleName, info.LastName, info.Email, info.Login, info.Password)).Result.Message;
+        Response<IOperationResult<bool>> response = await _rcCreateAdmin.GetResponse<IOperationResult<bool>>(
+          ICreateAdminRequest.CreateObj(info.FirstName, info.MiddleName, info.LastName, info.Email, info.Login, info.Password));
 
-        if (response.IsSuccess && response.Body)
+        if (response.Message.IsSuccess && response.Message.Body)
         {
           return true;
         }
 
         errors.Add(message);
 
-        _logger.LogWarning(message, string.Join("\n", response.Errors));
+        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
       }
       catch (Exception exc)
       {
@@ -96,7 +97,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       ICreateCompanyRequestValidator validator,
       ICompanyRepository repository,
       IRequestClient<ICreateAdminRequest> rcCreateAdmin,
-      IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+      IRequestClient<ICreateSmtpCredentialsRequest> rcCreateSmtp,
       ICompanyChangesRepository companyChangesRepository,
       IHttpContextAccessor httpContextAccessor)
     {
@@ -105,14 +106,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _validator = validator;
       _repository = repository;
       _rcCreateAdmin = rcCreateAdmin;
-      _rcUpdateSmtp = rcUpdateSmtp;
+      _rcCreateSmtp = rcCreateSmtp;
       _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<Guid> Execute(CreateCompanyRequest request)
+    public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateCompanyRequest request)
     {
-      if (_repository.Get() != null)
+      if (await _repository.GetAsync() != null)
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
@@ -134,8 +135,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         };
       }
 
-      if (!(UpdateSmtp(request.SmtpInfo, errors) &&
-          CreateAdmin(request.AdminInfo, errors)))
+      if (!(await CreateSmtp(request.SmtpInfo, errors) &&
+        await CreateAdmin(request.AdminInfo, errors)))
       {
         return new OperationResultResponse<Guid>
         {
@@ -146,14 +147,16 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       DbCompany company = _mapper.Map(request);
 
-      _repository.Add(company);
+      await _repository.CreateAsync(company);
 
       //TODO async
       //Task.Run(() =>
-      _companyChangesRepository.Add(
+      //{
+      await _companyChangesRepository.CreateAsync(
         company.Id,
         null,
         CreateHistoryMessageHelper.Create(company));
+      //}
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 

@@ -1,31 +1,33 @@
-﻿using LT.DigitalOffice.CompanyService.Data.Interfaces;
+﻿using System;
+using System.Threading.Tasks;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using System;
 
 namespace LT.DigitalOffice.CompanyService.Data
 {
-    public class CompanyChangesRepository : ICompanyChangesRepository
+  public class CompanyChangesRepository : ICompanyChangesRepository
+  {
+    private IDataProvider _provider;
+
+    public CompanyChangesRepository(IDataProvider provider)
     {
-        private IDataProvider _provider;
-
-        public CompanyChangesRepository(IDataProvider provider)
-        {
-            _provider = provider;
-        }
-
-        public void Add(Guid companyId, Guid? changedBy, string changes)
-        {
-            _provider.CompanyChanges.Add(
-                new DbCompanyChanges
-                {
-                    Id = Guid.NewGuid(),
-                    CompanyId = companyId,
-                    ModifiedBy = changedBy,
-                    ModifiedAtUtc = DateTime.UtcNow,
-                    Changes = changes
-                });
-            _provider.Save();
-        }
+      _provider = provider;
     }
+
+    public async Task CreateAsync(Guid companyId, Guid? changedBy, string changes)
+    {
+      _provider.CompanyChanges.Add(
+        new DbCompanyChanges
+        {
+          Id = Guid.NewGuid(),
+          CompanyId = companyId,
+          ModifiedBy = changedBy,
+          ModifiedAtUtc = DateTime.UtcNow,
+          Changes = changes
+        });
+
+      await _provider.SaveAsync();
+    }
+  }
 }

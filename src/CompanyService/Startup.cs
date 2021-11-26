@@ -21,6 +21,9 @@ using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Serilog;
 using System.Text.RegularExpressions;
+using LT.DigitalOffice.Kernel.Helpers;
+using LT.DigitalOffice.Kernel.Helpers.Interfaces;
+using LT.DigitalOffice.UserService.Models.Dto.Configurations;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -45,7 +48,7 @@ namespace LT.DigitalOffice.CompanyService
         .GetSection(BaseServiceInfoConfig.SectionName)
         .Get<BaseServiceInfoConfig>();
 
-      Version = "1.6.2.2";
+      Version = "1.6.4.0";
       Description = "CompanyService is an API that intended to work with positions and departments.";
       StartTime = DateTime.UtcNow;
       ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
@@ -130,6 +133,9 @@ namespace LT.DigitalOffice.CompanyService
       services.AddSingleton<IConnectionMultiplexer>(
         x => ConnectionMultiplexer.Connect(redisConnStr));
 
+      services.AddTransient<ICacheNotebook, CacheNotebook>();
+      services.AddTransient<IRedisHelper, RedisHelper>();
+
       services.AddBusinessObjects();
 
       ConfigureMassTransit(services);
@@ -173,26 +179,46 @@ namespace LT.DigitalOffice.CompanyService
 
     #region private methods
 
+    private (string username, string password) GetRabbitMqCredentials()
+    {
+      static string GetString(string envVar, string formAppsettings, string generated, string fieldName)
+      {
+        string str = Environment.GetEnvironmentVariable(envVar);
+        if (string.IsNullOrEmpty(str))
+        {
+          str = formAppsettings ?? generated;
+
+          Log.Information(
+            formAppsettings == null
+              ? $"Default RabbitMq {fieldName} was used."
+              : $"RabbitMq {fieldName} from appsetings.json was used.");
+        }
+        else
+        {
+          Log.Information($"RabbitMq {fieldName} from environment was used.");
+        }
+
+        return str;
+      }
+
+      return (GetString("RabbitMqUsername", _rabbitMqConfig.Username, $"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}", "Username"),
+        GetString("RabbitMqPassword", _rabbitMqConfig.Password, _serviceInfoConfig.Id, "Password"));
+    }
+
     private void ConfigureMassTransit(IServiceCollection services)
     {
+      (string username, string password) = GetRabbitMqCredentials();
+
       services.AddMassTransit(x =>
       {
-        x.AddConsumer<GetPositionsConsumer>();
-        x.AddConsumer<GetDepartmentsConsumer>();
-        x.AddConsumer<EditCompanyEmployeeConsumer>();
-        x.AddConsumer<GetDepartmentUsersConsumer>();
-        x.AddConsumer<SearchDepartmentsConsumer>();
         x.AddConsumer<GetSmtpCredentialsConsumer>();
-        x.AddConsumer<GetCompanyEmployeesConsumer>();
-        x.AddConsumer<DisactivateUserConsumer>();
-        x.AddConsumer<CheckDepartmentsExistenceConsumer>();
 
         x.UsingRabbitMq((context, cfg) =>
           {
             cfg.Host(_rabbitMqConfig.Host, "/", host =>
               {
-                host.Username($"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}");
-                host.Password(_serviceInfoConfig.Id);
+                host.Username(username);
+                host.Password(password);
               });
 
             ConfigureEndpoints(context, cfg);
@@ -208,49 +234,9 @@ namespace LT.DigitalOffice.CompanyService
       IBusRegistrationContext context,
       IRabbitMqBusFactoryConfigurator cfg)
     {
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetPositionsEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetPositionsConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetDepartmentsEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetDepartmentsConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetDepartmentUsersEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetDepartmentUsersConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.SearchDepartmentEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<SearchDepartmentsConsumer>(context);
-      });
-
       cfg.ReceiveEndpoint(_rabbitMqConfig.GetSmtpCredentialsEndpoint, ep =>
       {
         ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetCompanyEmployeesEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetCompanyEmployeesConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.EditCompanyEmployeeEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<EditCompanyEmployeeConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.DisactivateUserEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<DisactivateUserConsumer>(context);
-      });
-
-      cfg.ReceiveEndpoint(_rabbitMqConfig.CheckDepartmentsExistenceEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<CheckDepartmentsExistenceConsumer>(context);
       });
     }
 

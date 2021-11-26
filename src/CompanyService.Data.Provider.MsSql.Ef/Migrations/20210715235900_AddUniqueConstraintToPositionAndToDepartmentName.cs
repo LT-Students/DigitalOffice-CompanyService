@@ -11,24 +11,24 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         protected override void Up(MigrationBuilder builder)
         {
             builder.AlterColumn<string>(
-                name: nameof(DbPosition.Name),
-                table: DbPosition.TableName,
+                name: "Name",
+                table: "Positions",
                 maxLength: 100);
 
             builder.AddUniqueConstraint(
                 name: $"UX_PositionName_unique",
-                table: DbPosition.TableName,
-                column: nameof(DbPosition.Name));
+                table: "Positions",
+                column: "Name");
 
             builder.AlterColumn<string>(
-                name: nameof(DbDepartment.Name),
-                table: DbDepartment.TableName,
+                name: "Name",
+                table: "Departments",
                 maxLength: 100);
 
             builder.AddUniqueConstraint(
                 name: $"UX_DepartmentName_unique",
-                table: DbDepartment.TableName,
-                column: nameof(DbDepartment.Name));
+                table: "Departments",
+                column: "Name");
         }
     }
 }

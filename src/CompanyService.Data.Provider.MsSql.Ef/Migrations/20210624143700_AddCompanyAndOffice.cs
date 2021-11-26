@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         public void CreateOfficeTable(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbOffice.TableName,
+                name: "Offices",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -55,14 +55,14 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         {
             migrationBuilder.AddColumn<Guid>(
                 name: "CompanyId",
-                table: DbDepartment.TableName);
+                table: "Departments");
         }
 
         public void UpdatePositionTable(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
                 name: "CompanyId",
-                table: DbPosition.TableName);
+                table: "Positions");
         }
 
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -76,13 +76,13 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(name: DbCompany.TableName);
-            migrationBuilder.DropTable(name: DbOffice.TableName);
+            migrationBuilder.DropTable(name: "Offices");
             migrationBuilder.DropColumn(
                 name: "CompanyId",
-                table: DbDepartment.TableName);
+                table: "Departments");
             migrationBuilder.DropColumn(
                 name: "CompanyId",
-                table: DbPosition.TableName);
+                table: "Positions");
         }
     }
 }

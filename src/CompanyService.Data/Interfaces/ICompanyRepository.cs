@@ -1,17 +1,18 @@
-﻿using LT.DigitalOffice.CompanyService.Models.Db;
+﻿using System.Threading.Tasks;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.Kernel.Attributes;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 {
-    [AutoInject]
-    public interface ICompanyRepository
-    {
-        void Add(DbCompany company);
+  [AutoInject]
+  public interface ICompanyRepository
+  {
+    Task CreateAsync(DbCompany company);
 
-        DbCompany Get(GetCompanyFilter filter = null);
+    Task<DbCompany> GetAsync();
 
-        void Edit(JsonPatchDocument<DbCompany> request);
-    }
+    Task EditAsync(JsonPatchDocument<DbCompany> request);
+  }
 }

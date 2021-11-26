@@ -1,6 +1,5 @@
 ﻿using System;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.CompanyService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LT.DigitalOffice.CompanyService.Data.Migrations
 {
-    [DbContext(typeof(CompanyServiceDbContext))]
+  [DbContext(typeof(CompanyServiceDbContext))]
     [Migration("20200722235704_InitialCreate")]
     public class InitialCreate : Migration
     {
@@ -19,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTableDeparments(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbDepartment.TableName,
+                name: "Departments",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -36,7 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTableDeparmentsUsers(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbDepartmentUser.TableName,
+                name: "DepartmentsUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -53,13 +52,13 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
                     table.ForeignKey(
                         name: "FK_DepartmentUser_Departments",
                         column: x => x.DepartmentId,
-                        principalTable: DbDepartment.TableName,
+                        principalTable: "Departments",
                         principalColumn: ColumnIdName,
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DepartmentUser_Positions",
                         column: x => x.PositionId,
-                        principalTable: DbPosition.TableName,
+                        principalTable: "Positions",
                         principalColumn: ColumnIdName,
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -68,7 +67,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
         private void CreateTablePositions(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: DbPosition.TableName,
+                name: "Positions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -95,11 +94,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(DbDepartmentUser.TableName);
+            migrationBuilder.DropTable("DepartmentsUsers");
 
-            migrationBuilder.DropTable(DbPosition.TableName);
+            migrationBuilder.DropTable("Positions");
 
-            migrationBuilder.DropTable(DbDepartment.TableName);
+            migrationBuilder.DropTable("Departments");
         }
 
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
