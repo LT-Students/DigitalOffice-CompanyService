@@ -54,7 +54,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
 
     // message
 
-    [AutoInjectRequest(typeof(ICreateSmtpCredentialsRequest))]
-    public string CreateSmtpCredentialsEndpoint { get; set; }
+    [AutoInjectRequest(typeof(IUpdateSmtpCredentialsRequest))]
+    public string UpdateSmtpCredentialsEndpoint { get; set; }
   }
 }

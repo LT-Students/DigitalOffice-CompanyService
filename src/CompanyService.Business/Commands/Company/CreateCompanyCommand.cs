@@ -33,9 +33,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private async Task<bool> UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
+    private async Task<bool> CreateSmtp(SmtpInfo smtpInfo, List<string> errors)
     {
-      string message = "Can not update smtp credentials.";
+      string message = "Can not create smtp credentials.";
 
       try
       {
@@ -135,7 +135,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         };
       }
 
-      if (!(await UpdateSmtp(request.SmtpInfo, errors) &&
+      if (!(await CreateSmtp(request.SmtpInfo, errors) &&
         await CreateAdmin(request.AdminInfo, errors)))
       {
         return new OperationResultResponse<Guid>
