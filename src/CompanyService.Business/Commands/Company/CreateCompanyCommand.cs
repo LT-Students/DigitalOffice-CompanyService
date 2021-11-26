@@ -14,7 +14,7 @@ using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Email;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -29,18 +29,18 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICreateCompanyRequestValidator _validator;
     private readonly ICompanyRepository _repository;
     private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
-    private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcCreateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private async Task<bool> UpdateSmtp(SmtpInfo smtpInfo, List<string> errors)
+    private async Task<bool> CreateSmtp(SmtpInfo smtpInfo, List<string> errors)
     {
-      string message = "Can not update smtp credentials.";
+      string message = "Can not create smtp credentials.";
 
       try
       {
-        Response<IOperationResult<bool>> response = await _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
-          IUpdateSmtpCredentialsRequest.CreateObj(
+        Response<IOperationResult<bool>> response = await _rcCreateSmtp.GetResponse<IOperationResult<bool>>(
+          ICreateSmtpCredentialsRequest.CreateObj(
             host: smtpInfo.Host,
             port: smtpInfo.Port,
             enableSsl: smtpInfo.EnableSsl,
@@ -97,7 +97,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       ICreateCompanyRequestValidator validator,
       ICompanyRepository repository,
       IRequestClient<ICreateAdminRequest> rcCreateAdmin,
-      IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+      IRequestClient<ICreateSmtpCredentialsRequest> rcCreateSmtp,
       ICompanyChangesRepository companyChangesRepository,
       IHttpContextAccessor httpContextAccessor)
     {
@@ -106,7 +106,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _validator = validator;
       _repository = repository;
       _rcCreateAdmin = rcCreateAdmin;
-      _rcUpdateSmtp = rcUpdateSmtp;
+      _rcCreateSmtp = rcCreateSmtp;
       _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
     }
@@ -135,7 +135,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         };
       }
 
-      if (!(await UpdateSmtp(request.SmtpInfo, errors) &&
+      if (!(await CreateSmtp(request.SmtpInfo, errors) &&
         await CreateAdmin(request.AdminInfo, errors)))
       {
         return new OperationResultResponse<Guid>

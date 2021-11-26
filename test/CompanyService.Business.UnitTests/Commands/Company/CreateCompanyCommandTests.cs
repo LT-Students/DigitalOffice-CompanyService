@@ -10,7 +10,7 @@ using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Email;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
@@ -90,7 +90,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
             _autoMock.GetMock<ICreateCompanyRequestValidator>().Reset();
             _autoMock.GetMock<ICompanyRepository>().Reset();
             _autoMock.GetMock<IRequestClient<ICreateAdminRequest>>().Reset();
-            _autoMock.GetMock<IRequestClient<IUpdateSmtpCredentialsRequest>>().Reset();
+            _autoMock.GetMock<IRequestClient<ICreateSmtpCredentialsRequest>>().Reset();
 
             _autoMock
                 .Setup<ICreateCompanyRequestValidator, bool>(

@@ -16,7 +16,7 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Message;
+using LT.DigitalOffice.Models.Broker.Requests.Email;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -33,7 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICompanyRepository _companyRepository;
     private readonly IEditCompanyRequestValidator _validator;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IRequestClient<IUpdateSmtpCredentialsRequest> _rcUpdateSmtp;
+    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcUpdateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
 
     private async Task UpdateSmtp(DbCompany company, List<string> errors)
@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       try
       {
         Response<IOperationResult<bool>> response = await _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
-          IUpdateSmtpCredentialsRequest.CreateObj(
+          ICreateSmtpCredentialsRequest.CreateObj(
             host: company.Host,
             port: company.Port,
             enableSsl: company.EnableSsl,
@@ -71,7 +71,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       IPatchDbCompanyMapper mapper,
       ICompanyRepository companyRepository,
       IEditCompanyRequestValidator validator,
-      IRequestClient<IUpdateSmtpCredentialsRequest> rcUpdateSmtp,
+      IRequestClient<ICreateSmtpCredentialsRequest> rcUpdateSmtp,
       ICompanyChangesRepository companyChangesRepository,
       IHttpContextAccessor httpContextAccessor)
     {
