@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
 
       #endregion
 
-      #region Validation
+      #region StartWorkingAt
 
       AddFailureForPropertyIf(
         nameof(EditCompanyUserRequest.StartWorkingAt),
@@ -49,12 +49,16 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
           },
         });
 
+      #endregion
+
+      #region Rate
+
       AddFailureForPropertyIf(
         nameof(EditCompanyUserRequest.Rate),
         x => x == OperationType.Replace,
         new()
         {
-          { x => (x.value?.ToString().Length >= 0 && x.value?.ToString().Length <= 1),
+          { x => double.TryParse(x.value.ToString(), out double rate) && rate > 0 && rate <= 1,
               "The rate must be between 0 and 1." },
         });
 
