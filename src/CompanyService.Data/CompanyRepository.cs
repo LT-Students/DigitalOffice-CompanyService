@@ -49,16 +49,16 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public async Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request)
     {
-      IQueryable<DbCompany> dbDepartments = _provider.Companies.AsQueryable();
+      IQueryable<DbCompany> dbCompanies = _provider.Companies.AsQueryable();
 
       if (request.UsersIds is not null && request.UsersIds.Any())
       {
-        dbDepartments = dbDepartments.Where(d => d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
+        dbCompanies = dbCompanies.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
       }
 
-      dbDepartments = dbDepartments.Include(d => d.Users.Where(du => du.IsActive));
+      dbCompanies = dbCompanies.Include(d => d.Users.Where(du => du.IsActive));
 
-      return await dbDepartments.ToListAsync();
+      return await dbCompanies.ToListAsync();
     }
 
     public async Task EditAsync(JsonPatchDocument<DbCompany> request)

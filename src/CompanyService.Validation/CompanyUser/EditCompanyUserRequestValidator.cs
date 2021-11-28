@@ -32,7 +32,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
       AddСorrectOperations(nameof(EditCompanyUserRequest.Rate), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyUserRequest.StartWorkingAt), new() { OperationType.Replace });
 
-
       #endregion
 
       #region StartWorkingAt
@@ -43,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
         new Dictionary<Func<Operation<EditCompanyUserRequest>, bool>, string>
         {
           {
-            x => string.IsNullOrEmpty(x.value?.ToString())? true :
+            x => x.value?.ToString() is null ? true :
               DateTime.TryParse(x.value.ToString(), out DateTime result),
             "Start working at has incorrect format."
           },
@@ -58,16 +57,18 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
         x => x == OperationType.Replace,
         new()
         {
-          { x => double.TryParse(x.value.ToString(), out double rate) && rate > 0 && rate <= 1,
-              "The rate must be between 0 and 1." },
+          { x => x.value?.ToString() is null ? true : 
+              double.TryParse(x.value.ToString(), out double rate) && rate > 0 && rate <= 1,
+            "The rate must be between 0 and 1." },
         });
 
       #endregion
     }
+
     public EditCompanyUserRequestValidator()
     {
       RuleForEach(x => x.Operations)
-            .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
+        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
     }
   }
 }

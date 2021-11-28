@@ -7,7 +7,7 @@ using MassTransit;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-  public class CreateCompanyUsersConsumer : IConsumer<ICreateCompanyUserRequest>
+  public class CreateCompanyUserConsumer : IConsumer<ICreateCompanyUserRequest>
   {
     private readonly ICompanyUserRepository _companyUserRepository;
     private readonly IDbCompanyUserMapper _companyUserMapper;
@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
       return true;
     }
 
-    public CreateCompanyUsersConsumer(
+    public CreateCompanyUserConsumer(
       ICompanyUserRepository companyUserRepository,
       IDbCompanyUserMapper companyUserMapper)
     {

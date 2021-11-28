@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
   {
     public string GetSmtpCredentialsEndpoint { get; set; }
     public string CreateCompanyUserEndpoint { get; set; }
-    public string GetCompanyEndpoint { get; set; }
+    public string GetCompaniesEndpoint { get; set; }
     public string DisactivateUserEndpoint { get; set; }
 
     // department

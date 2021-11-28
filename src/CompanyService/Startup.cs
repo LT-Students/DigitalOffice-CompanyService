@@ -215,9 +215,9 @@ namespace LT.DigitalOffice.CompanyService
       {
         x.AddConsumer<GetSmtpCredentialsConsumer>();
 
-        x.AddConsumer<CreateCompanyUsersConsumer>();
+        x.AddConsumer<CreateCompanyUserConsumer>();
 
-        x.AddConsumer<GetCompanyConsumer>();
+        x.AddConsumer<GetCompaniesConsumer>();
 
         x.AddConsumer<DisactivateUserConsumer>();
 
@@ -249,12 +249,12 @@ namespace LT.DigitalOffice.CompanyService
 
       cfg.ReceiveEndpoint(_rabbitMqConfig.CreateCompanyUserEndpoint, ep =>
       {
-        ep.ConfigureConsumer<CreateCompanyUsersConsumer>(context);
+        ep.ConfigureConsumer<CreateCompanyUserConsumer>(context);
       });
 
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetCompanyEndpoint, ep =>
+      cfg.ReceiveEndpoint(_rabbitMqConfig.GetCompaniesEndpoint, ep =>
       {
-        ep.ConfigureConsumer<GetCompanyConsumer>(context);
+        ep.ConfigureConsumer<GetCompaniesConsumer>(context);
       });
 
       cfg.ReceiveEndpoint(_rabbitMqConfig.DisactivateUserEndpoint, ep =>

@@ -18,7 +18,7 @@ using Microsoft.Extensions.Options;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-  public class GetCompanyConsumer : IConsumer<IGetCompaniesRequest>
+  public class GetCompaniesConsumer : IConsumer<IGetCompaniesRequest>
   {
     private readonly ICompanyRepository _repository;
     private readonly IOptions<RedisConfig> _redisConfig;
@@ -33,7 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
       return dbCompanies.Select(p => _companyDataMapper.Map(p)).ToList();
     }
 
-    public GetCompanyConsumer(
+    public GetCompaniesConsumer(
       ICompanyRepository repository,
       IOptions<RedisConfig> redisConfig,
       IRedisHelper redisHelper,
