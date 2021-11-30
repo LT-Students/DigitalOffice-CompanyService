@@ -1,12 +1,12 @@
 ﻿using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces
 {
   [AutoInject]
-  public interface IDbCompanyMapper
+  public interface IDbCompanyUserMapper
   {
-    DbCompany Map(CreateCompanyRequest request);
+    DbCompanyUser Map(ICreateCompanyUserRequest request);
   }
 }

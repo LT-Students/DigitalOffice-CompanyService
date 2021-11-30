@@ -1,9 +1,9 @@
-﻿using LT.DigitalOffice.Kernel.Attributes;
-using LT.DigitalOffice.Kernel.Configurations;
+﻿using LT.DigitalOffice.Kernel.BrokerSupport.Attributes;
+using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.Models.Broker.Requests.Department;
-using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.Email;
+using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.Office;
 using LT.DigitalOffice.Models.Broker.Requests.Position;
 using LT.DigitalOffice.Models.Broker.Requests.Project;
@@ -14,6 +14,9 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
   public class RabbitMqConfig : BaseRabbitMqConfig
   {
     public string GetSmtpCredentialsEndpoint { get; set; }
+    public string CreateCompanyUserEndpoint { get; set; }
+    public string GetCompaniesEndpoint { get; set; }
+    public string DisactivateUserEndpoint { get; set; }
 
     // department
 

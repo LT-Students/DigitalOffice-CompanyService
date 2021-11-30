@@ -10,8 +10,8 @@ using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
-using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
@@ -33,7 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICompanyRepository _companyRepository;
     private readonly IEditCompanyRequestValidator _validator;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcUpdateSmtp;
+    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcCreateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
 
     private async Task UpdateSmtp(DbCompany company, List<string> errors)
@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       try
       {
-        Response<IOperationResult<bool>> response = await _rcUpdateSmtp.GetResponse<IOperationResult<bool>>(
+        Response<IOperationResult<bool>> response = await _rcCreateSmtp.GetResponse<IOperationResult<bool>>(
           ICreateSmtpCredentialsRequest.CreateObj(
             host: company.Host,
             port: company.Port,
@@ -71,7 +71,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       IPatchDbCompanyMapper mapper,
       ICompanyRepository companyRepository,
       IEditCompanyRequestValidator validator,
-      IRequestClient<ICreateSmtpCredentialsRequest> rcUpdateSmtp,
+      IRequestClient<ICreateSmtpCredentialsRequest> rcCreateSmtp,
       ICompanyChangesRepository companyChangesRepository,
       IHttpContextAccessor httpContextAccessor)
     {
@@ -80,7 +80,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _mapper = mapper;
       _companyRepository = companyRepository;
       _validator = validator;
-      _rcUpdateSmtp = rcUpdateSmtp;
+      _rcCreateSmtp = rcCreateSmtp;
       _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
     }
