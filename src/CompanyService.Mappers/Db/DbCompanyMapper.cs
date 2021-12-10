@@ -9,7 +9,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
   {
     public DbCompany Map(CreateCompanyRequest request)
     {
-      if (request == null)
+      if (request is null)
       {
         return null;
       }

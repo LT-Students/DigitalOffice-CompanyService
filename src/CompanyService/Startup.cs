@@ -5,10 +5,16 @@ using HealthChecks.UI.Client;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
 using LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.CompanyService.Models.Dto.Configuration;
+using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
+using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
+using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.Helpers;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
-using LT.DigitalOffice.Kernel.Middlewares.Token;
+using LT.DigitalOffice.Kernel.RedisSupport.Configurations;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using MassTransit;
 using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
@@ -18,12 +24,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
 using Serilog;
-using System.Text.RegularExpressions;
-using LT.DigitalOffice.Kernel.Helpers;
-using LT.DigitalOffice.Kernel.Helpers.Interfaces;
-using LT.DigitalOffice.UserService.Models.Dto.Configurations;
+using StackExchange.Redis;
 
 namespace LT.DigitalOffice.CompanyService
 {
@@ -102,11 +104,11 @@ namespace LT.DigitalOffice.CompanyService
       {
         connStr = Configuration.GetConnectionString("SQLConnectionString");
 
-        Log.Information($"SQL connection string from appsettings.json was used. Value '{HidePassord(connStr)}'.");
+        Log.Information($"SQL connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(connStr)}'.");
       }
       else
       {
-        Log.Information($"SQL connection string from environment was used. Value '{HidePassord(connStr)}'.");
+        Log.Information($"SQL connection string from environment was used. Value '{HidePasswordHelper.HidePassword(connStr)}'.");
       }
 
       services.AddDbContext<CompanyServiceDbContext>(options =>
@@ -123,11 +125,11 @@ namespace LT.DigitalOffice.CompanyService
       {
         redisConnStr = Configuration.GetConnectionString("Redis");
 
-        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePassord(redisConnStr)}'");
+        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
       }
       else
       {
-        Log.Information($"Redis connection string from environment was used. Value '{HidePassord(redisConnStr)}'");
+        Log.Information($"Redis connection string from environment was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
       }
 
       services.AddSingleton<IConnectionMultiplexer>(
@@ -213,6 +215,12 @@ namespace LT.DigitalOffice.CompanyService
       {
         x.AddConsumer<GetSmtpCredentialsConsumer>();
 
+        x.AddConsumer<CreateCompanyUserConsumer>();
+
+        x.AddConsumer<GetCompaniesConsumer>();
+
+        x.AddConsumer<DisactivateUserConsumer>();
+
         x.UsingRabbitMq((context, cfg) =>
           {
             cfg.Host(_rabbitMqConfig.Host, "/", host =>
@@ -238,6 +246,21 @@ namespace LT.DigitalOffice.CompanyService
       {
         ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
       });
+
+      cfg.ReceiveEndpoint(_rabbitMqConfig.CreateCompanyUserEndpoint, ep =>
+      {
+        ep.ConfigureConsumer<CreateCompanyUserConsumer>(context);
+      });
+
+      cfg.ReceiveEndpoint(_rabbitMqConfig.GetCompaniesEndpoint, ep =>
+      {
+        ep.ConfigureConsumer<GetCompaniesConsumer>(context);
+      });
+
+      cfg.ReceiveEndpoint(_rabbitMqConfig.DisactivateUserEndpoint, ep =>
+      {
+        ep.ConfigureConsumer<DisactivateUserConsumer>(context);
+      });
     }
 
     private void UpdateDatabase(IApplicationBuilder app)
@@ -249,29 +272,6 @@ namespace LT.DigitalOffice.CompanyService
       using var context = serviceScope.ServiceProvider.GetService<CompanyServiceDbContext>();
 
       context.Database.Migrate();
-    }
-
-    private string HidePassord(string line)
-    {
-      string password = "Password";
-
-      int index = line.IndexOf(password, 0, StringComparison.OrdinalIgnoreCase);
-
-      if (index != -1)
-      {
-        string[] words = Regex.Split(line, @"[=,; ]");
-
-        for (int i = 0; i < words.Length; i++)
-        {
-          if (string.Equals(password, words[i], StringComparison.OrdinalIgnoreCase))
-          {
-            line = line.Replace(words[i + 1], "****");
-            break;
-          }
-        }
-      }
-
-      return line;
     }
 
     #endregion

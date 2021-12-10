@@ -4,8 +4,8 @@ using LT.DigitalOffice.Kernel.Attributes;
 
 namespace LT.DigitalOffice.CompanyService.Validation.Company.Interfaces
 {
-    [AutoInject]
-    public interface ICreateCompanyRequestValidator : IValidator<CreateCompanyRequest>
-    {
-    }
+  [AutoInject]
+  public interface ICreateCompanyRequestValidator : IValidator<CreateCompanyRequest>
+  {
+  }
 }
