@@ -15,6 +15,7 @@ using LT.DigitalOffice.Kernel.Helpers;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.Kernel.RedisSupport.Configurations;
 using LT.DigitalOffice.Kernel.RedisSupport.Constants;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers;
 using MassTransit;
 using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
@@ -145,7 +146,11 @@ namespace LT.DigitalOffice.CompanyService
     {
       UpdateDatabase(app);
 
-      FlushRedisDatabase(redisConnStr);
+      string error = FlushRedisDbHelper.FlushDatabase(redisConnStr, Cache.Companies);
+      if (error is not null)
+      {
+        Log.Error(error);
+      }
 
       app.UseForwardedHeaders();
 
@@ -272,27 +277,6 @@ namespace LT.DigitalOffice.CompanyService
       using var context = serviceScope.ServiceProvider.GetService<CompanyServiceDbContext>();
 
       context.Database.Migrate();
-    }
-
-    private void FlushRedisDatabase(string redisConnStr)
-    {
-      try
-      {
-        using (ConnectionMultiplexer cm = ConnectionMultiplexer.Connect(redisConnStr + ",allowAdmin=true,connectRetry=1,connectTimeout=2000"))
-        {
-          EndPoint[] endpoints = cm.GetEndPoints(true);
-
-          foreach (EndPoint endpoint in endpoints)
-          {
-            IServer server = cm.GetServer(endpoint);
-            server.FlushDatabase(Cache.Companies);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error($"Error while flushing Redis database. Text: {ex.Message}");
-      }
     }
 
     #endregion

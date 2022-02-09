@@ -24,10 +24,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<IDisactivateUserRequest> context)
     {
-      await _companyUserRepository.RemoveAsync(context.Message.UserId, context.Message.ModifiedBy);
+      Guid? companyId = await _companyUserRepository.RemoveAsync(context.Message.UserId, context.Message.ModifiedBy);
 
-      DbCompanyUser user = await _companyUserRepository.GetAsync(context.Message.UserId);
-      await _globalCache.RemoveAsync(user.CompanyId);
+      if (companyId.HasValue)
+      {
+        await _globalCache.RemoveAsync(companyId.Value);
+      }
     }
   }
 }
