@@ -24,14 +24,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
     private readonly ICompanyUserRepository _repository;
     private readonly IEditCompanyUserRequestValidator _validator;
     private readonly IResponseCreator _responseCreator;
-    private readonly ICacheNotebook _cacheNotebook;
     private readonly IPatchCompanyUserMapper _mapper;
+    private readonly IGlobalCacheRepository _globalCache;
 
     private async Task ClearCache(Guid userId)
     {
       Guid companyId = (await _repository.GetAsync(userId)).CompanyId;
 
-      await _cacheNotebook.RemoveAsync(companyId);
+      await _globalCache.RemoveAsync(companyId);
     }
 
     public EditCompanyUserCommand(
@@ -39,14 +39,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
       ICompanyUserRepository repository,
       IEditCompanyUserRequestValidator validator,
       IResponseCreator responseCreator,
-      ICacheNotebook cacheNotebook,
+      IGlobalCacheRepository globalCache,
       IPatchCompanyUserMapper mapper)
     {
       _accessValidator = accessValidator;
       _repository = repository;
       _validator = validator;
       _responseCreator = responseCreator;
-      _cacheNotebook = cacheNotebook;
+      _globalCache = globalCache;
       _mapper = mapper;
     }
 

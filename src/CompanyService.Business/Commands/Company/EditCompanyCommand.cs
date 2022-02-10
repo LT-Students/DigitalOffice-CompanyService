@@ -15,6 +15,7 @@ using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Requests.Email;
 using MassTransit;
@@ -35,6 +36,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcCreateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
+    private readonly IGlobalCacheRepository _globalCache;
 
     private async Task UpdateSmtp(DbCompany company, List<string> errors)
     {
@@ -73,7 +75,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       IEditCompanyRequestValidator validator,
       IRequestClient<ICreateSmtpCredentialsRequest> rcCreateSmtp,
       ICompanyChangesRepository companyChangesRepository,
-      IHttpContextAccessor httpContextAccessor)
+      IHttpContextAccessor httpContextAccessor,
+      IGlobalCacheRepository globalCache)
     {
       _accessValidator = accessValidator;
       _logger = logger;
@@ -83,6 +86,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _rcCreateSmtp = rcCreateSmtp;
       _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
+      _globalCache = globalCache;
     }
 
     public async Task<OperationResultResponse<bool>> ExecuteAsync(JsonPatchDocument<EditCompanyRequest> request)
@@ -105,7 +109,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         return new OperationResultResponse<bool>
         {
           Status = OperationResultStatusType.Failed,
-          Errors = new() { "Compan does not exist" }
+          Errors = new() { "Company does not exist." }
         };
       }
 
@@ -148,6 +152,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         _httpContextAccessor.HttpContext.GetUserId(),
         CreateHistoryMessageHelper.Create(company, dbRequest));
       //});
+
+      await _globalCache.RemoveAsync(company.Id);
 
       return new OperationResultResponse<bool>
       {

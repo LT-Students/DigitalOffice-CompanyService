@@ -68,17 +68,22 @@ namespace LT.DigitalOffice.CompanyService.Data
         .ToListAsync();
     }
 
-    public async Task RemoveAsync(Guid userId, Guid removedBy)
+    public async Task<Guid?> RemoveAsync(Guid userId, Guid removedBy)
     {
       DbCompanyUser user = await _provider.CompaniesUsers.FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
 
-      if (user != null)
+      if (user is null)
       {
-        user.IsActive = false;
-        user.ModifiedAtUtc = DateTime.UtcNow;
-        user.ModifiedBy = removedBy;
-        await _provider.SaveAsync();
+        return null;
       }
+
+      user.IsActive = false;
+      user.ModifiedAtUtc = DateTime.UtcNow;
+      user.ModifiedBy = removedBy;
+
+      await _provider.SaveAsync();
+
+      return user.CompanyId;
     }
   }
 }

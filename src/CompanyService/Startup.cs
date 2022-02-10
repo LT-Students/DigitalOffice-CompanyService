@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.CompanyService.Broker.Consumers;
@@ -13,8 +14,8 @@ using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Helpers;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.Kernel.RedisSupport.Configurations;
+using LT.DigitalOffice.Kernel.RedisSupport.Constants;
 using LT.DigitalOffice.Kernel.RedisSupport.Helpers;
-using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using MassTransit;
 using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
@@ -32,6 +33,7 @@ namespace LT.DigitalOffice.CompanyService
   public class Startup : BaseApiInfo
   {
     public const string CorsPolicyName = "LtDoCorsPolicy";
+    private string redisConnStr;
 
     private readonly RabbitMqConfig _rabbitMqConfig;
     private readonly BaseServiceInfoConfig _serviceInfoConfig;
@@ -120,7 +122,7 @@ namespace LT.DigitalOffice.CompanyService
         .AddSqlServer(connStr)
         .AddRabbitMqCheck();
 
-      string redisConnStr = Environment.GetEnvironmentVariable("RedisConnectionString");
+      redisConnStr = Environment.GetEnvironmentVariable("RedisConnectionString");
       if (string.IsNullOrEmpty(redisConnStr))
       {
         redisConnStr = Configuration.GetConnectionString("Redis");
@@ -133,10 +135,7 @@ namespace LT.DigitalOffice.CompanyService
       }
 
       services.AddSingleton<IConnectionMultiplexer>(
-        x => ConnectionMultiplexer.Connect(redisConnStr));
-
-      services.AddTransient<ICacheNotebook, CacheNotebook>();
-      services.AddTransient<IRedisHelper, RedisHelper>();
+        x => ConnectionMultiplexer.Connect(redisConnStr + ",abortConnect=false,connectRetry=1,connectTimeout=2000"));
 
       services.AddBusinessObjects();
 
@@ -146,6 +145,12 @@ namespace LT.DigitalOffice.CompanyService
     public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
     {
       UpdateDatabase(app);
+
+      string error = FlushRedisDbHelper.FlushDatabase(redisConnStr, Cache.Companies);
+      if (error is not null)
+      {
+        Log.Error(error);
+      }
 
       app.UseForwardedHeaders();
 

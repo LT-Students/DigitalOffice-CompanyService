@@ -22,8 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
   {
     private readonly ICompanyRepository _repository;
     private readonly IOptions<RedisConfig> _redisConfig;
-    private readonly IRedisHelper _redisHelper;
-    private readonly ICacheNotebook _cacheNotebook;
+    private readonly IGlobalCacheRepository _globalCache;
     private readonly ICompanyDataMapper _companyDataMapper;
 
     private async Task<List<CompanyData>> GetCompaniesAsync(IGetCompaniesRequest request)
@@ -36,14 +35,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
     public GetCompaniesConsumer(
       ICompanyRepository repository,
       IOptions<RedisConfig> redisConfig,
-      IRedisHelper redisHelper,
-      ICacheNotebook cacheNotebook,
+      IGlobalCacheRepository globalCache,
       ICompanyDataMapper companyDataMapper)
     {
       _repository = repository;
       _redisConfig = redisConfig;
-      _redisHelper = redisHelper;
-      _cacheNotebook = cacheNotebook;
+      _globalCache = globalCache;
       _companyDataMapper = companyDataMapper;
     }
 
@@ -59,9 +56,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
       {
         string key = context.Message.UsersIds.GetRedisCacheHashCode();
 
-        await _redisHelper.CreateAsync(Cache.Companies, key, companies, TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
-
-        _cacheNotebook.Add(companies.Select(c => c.Id).ToList(), Cache.Companies, key);
+        await _globalCache.CreateAsync(
+          Cache.Companies,
+          key,
+          companies,
+          companies.Select(c => c.Id).ToList(),
+          TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
       }
     }
   }
