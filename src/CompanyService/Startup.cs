@@ -52,7 +52,7 @@ namespace LT.DigitalOffice.CompanyService
         .GetSection(BaseServiceInfoConfig.SectionName)
         .Get<BaseServiceInfoConfig>();
 
-      Version = "1.6.4.0";
+      Version = "1.6.5.0";
       Description = "CompanyService is an API that intended to work with positions and departments.";
       StartTime = DateTime.UtcNow;
       ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
