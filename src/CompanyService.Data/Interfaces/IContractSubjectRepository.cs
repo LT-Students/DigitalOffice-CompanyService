@@ -12,6 +12,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   {
     Task<Guid?> CreateAsync(DbContractSubject contractSubject);
     Task<bool> EditAsync(Guid contractSubjectId, JsonPatchDocument<DbContractSubject> request);
-    Task<List<DbContractSubject>> GetAsync(Guid companyId);
+    Task<List<DbContractSubject>> GetAllSubjectsAsync(Guid companyId);
+    Task<DbContractSubject> GetAsync(Guid contractSubjectId);
   }
 }

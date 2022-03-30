@@ -11,6 +11,5 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser
     public DateTime StartWorkingAt { get; set; }
     public DateTime? EndWorkingAt { get; set; }
     public DateTime? Probation { get; set; }
-    public bool IsActive { get; set; }
   }
 }

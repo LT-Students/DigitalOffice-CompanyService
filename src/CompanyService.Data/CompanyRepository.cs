@@ -81,5 +81,10 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       await _provider.SaveAsync();
     }
+
+    public async Task<bool> DoesCompanyExistAsync(Guid companyId)
+    {
+      return await _provider.Companies.AnyAsync(x => x.Id == companyId);
+    }
   }
 }
