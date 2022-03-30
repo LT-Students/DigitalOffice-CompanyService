@@ -5,6 +5,7 @@ using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Validators;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Newtonsoft.Json;
@@ -13,11 +14,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
 {
   public class EditCompanyRequestValidator : BaseEditRequestValidator<EditCompanyRequest>, IEditCompanyRequestValidator
   {
-    private readonly List<string> imageFormats = new()
-    {
-      ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tga"
-    };
-
     private void HandleInternalPropertyValidation(Operation<EditCompanyRequest> requestedOperation, CustomContext context)
     {
       Context = context;
@@ -28,65 +24,29 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
       AddСorrectPaths(
         new List<string>
         {
-          nameof(EditCompanyRequest.PortalName),
-          nameof(EditCompanyRequest.CompanyName),
+          nameof(EditCompanyRequest.Name),
           nameof(EditCompanyRequest.Description),
-          nameof(EditCompanyRequest.SiteUrl),
-          nameof(EditCompanyRequest.Host),
-          nameof(EditCompanyRequest.Port),
-          nameof(EditCompanyRequest.Email),
-          nameof(EditCompanyRequest.Password),
-          nameof(EditCompanyRequest.EnableSsl),
-          nameof(EditCompanyRequest.Logo),
-          nameof(EditCompanyRequest.IsDepartmentModuleEnabled)
+          nameof(EditCompanyRequest.Tagline),
+          nameof(EditCompanyRequest.Contacts),
+          nameof(EditCompanyRequest.Logo)
         });
 
-      AddСorrectOperations(nameof(EditCompanyRequest.PortalName), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.CompanyName), new List<OperationType> { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyRequest.Name), new List<OperationType> { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyRequest.Description), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.SiteUrl), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Host), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Port), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Email), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Password), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.EnableSsl), new List<OperationType> { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyRequest.Tagline), new List<OperationType> { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyRequest.Contacts), new List<OperationType> { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyRequest.Logo), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.IsDepartmentModuleEnabled), new List<OperationType> { OperationType.Replace });
-
-      #endregion
-
-      #region PortalName
-
-      AddFailureForPropertyIf(
-          nameof(EditCompanyRequest.PortalName),
-          x => x == OperationType.Replace,
-          new()
-          {
-            { x => !string.IsNullOrEmpty(x.value.ToString()), "PortalName is too short" },
-          });
 
       #endregion
 
       #region CompanyName
 
       AddFailureForPropertyIf(
-          nameof(EditCompanyRequest.CompanyName),
+          nameof(EditCompanyRequest.Name),
           x => x == OperationType.Replace,
           new()
           {
             { x => !string.IsNullOrEmpty(x.value.ToString()), "CompanyName is too short" },
-          });
-
-      #endregion
-
-      #region IsDepartmentModuleEnabled
-
-      AddFailureForPropertyIf(
-          nameof(EditCompanyRequest.IsDepartmentModuleEnabled),
-          x => x == OperationType.Replace,
-          new()
-          {
-            { x => bool.TryParse(x.value.ToString(), out bool _), "Incorrect format of IsDepartmentModuleEnabled." },
           });
 
       #endregion
@@ -109,7 +69,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
 
                 if (!String.IsNullOrEmpty(image.Content) &&
                   Convert.TryFromBase64String(image.Content, byteString, out _) &&
-                  imageFormats.Contains(image.Extension))
+                  ImageFormats.formats.Contains(image.Extension))
                 {
                   return true;
                 }

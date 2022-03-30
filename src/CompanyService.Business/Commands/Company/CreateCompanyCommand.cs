@@ -33,64 +33,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private async Task<bool> CreateSmtp(SmtpInfo smtpInfo, List<string> errors)
-    {
-      string message = "Can not create smtp credentials.";
-
-      try
-      {
-        Response<IOperationResult<bool>> response = await _rcCreateSmtp.GetResponse<IOperationResult<bool>>(
-          ICreateSmtpCredentialsRequest.CreateObj(
-            host: smtpInfo.Host,
-            port: smtpInfo.Port,
-            enableSsl: smtpInfo.EnableSsl,
-            email: smtpInfo.Email,
-            password: smtpInfo.Password));
-
-        if (response.Message.IsSuccess && response.Message.Body)
-        {
-          return true;
-        }
-
-        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(exc, message);
-      }
-      errors.Add(message);
-
-      return false;
-    }
-
-    private async Task<bool> CreateAdmin(AdminInfo info, List<string> errors)
-    {
-      string message = "Can not create admin.";
-
-      try
-      {
-        Response<IOperationResult<bool>> response = await _rcCreateAdmin.GetResponse<IOperationResult<bool>>(
-          ICreateAdminRequest.CreateObj(info.FirstName, info.MiddleName, info.LastName, info.Email, info.Login, info.Password));
-
-        if (response.Message.IsSuccess && response.Message.Body)
-        {
-          return true;
-        }
-
-        errors.Add(message);
-
-        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(exc, message);
-
-        errors.Add(message);
-      }
-
-      return false;
-    }
-
     public CreateCompanyCommand(
       IDbCompanyMapper mapper,
       ILogger<ICreateCompanyCommand> logger,
@@ -128,16 +70,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        return new OperationResultResponse<Guid>
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = errors
-        };
-      }
-
-      if (!(await CreateSmtp(request.SmtpInfo, errors) &&
-        await CreateAdmin(request.AdminInfo, errors)))
-      {
         return new OperationResultResponse<Guid>
         {
           Status = OperationResultStatusType.Failed,

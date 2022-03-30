@@ -38,35 +38,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IGlobalCacheRepository _globalCache;
 
-    private async Task UpdateSmtp(DbCompany company, List<string> errors)
-    {
-      string message = "Can not update smtp credentials.";
-
-      try
-      {
-        Response<IOperationResult<bool>> response = await _rcCreateSmtp.GetResponse<IOperationResult<bool>>(
-          ICreateSmtpCredentialsRequest.CreateObj(
-            host: company.Host,
-            port: company.Port,
-            enableSsl: company.EnableSsl,
-            email: company.Email,
-            password: company.Password));
-
-        if (response.Message.IsSuccess && response.Message.Body)
-        {
-          return;
-        }
-
-        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(exc, message);
-      }
-
-      errors.Add(message);
-    }
-
+    
     public EditCompanyCommand(
       IAccessValidator accessValidator,
       ILogger<EditCompanyCommand> logger,
@@ -131,17 +103,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       await _companyRepository.EditAsync(dbRequest);
 
       DbCompany company = null;
-
-      if (request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Host), StringComparison.OrdinalIgnoreCase)) != null
-        || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Port), StringComparison.OrdinalIgnoreCase)) != null
-        || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.EnableSsl), StringComparison.OrdinalIgnoreCase)) != null
-        || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Email), StringComparison.OrdinalIgnoreCase)) != null
-        || request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Password), StringComparison.OrdinalIgnoreCase)) != null)
-      {
-        company = await _companyRepository.GetAsync();
-
-        await UpdateSmtp(company, errors);
-      }
 
       //TODO async
       //Task.Run(() =>

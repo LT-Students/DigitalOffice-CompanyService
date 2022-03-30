@@ -15,7 +15,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         CompanyId = request.CompanyId,
         UserId = request.UserId,
         Rate = request.Rate,
-        StartWorkingAt = request.StartWorkingAt,
         CreatedBy = request.CreatedBy,
         CreatedAtUtc = DateTime.UtcNow,
         IsActive = true

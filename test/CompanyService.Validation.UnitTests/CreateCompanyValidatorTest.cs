@@ -8,7 +8,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
 {
     class CreateCompanyValidatorTest
     {
-        private ICreateCompanyRequestValidator _validator;
+        /*private ICreateCompanyRequestValidator _validator;
         private AutoMocker _mocker;
 
         [SetUp]
@@ -44,6 +44,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.UnitTests
 
             _validator.ShouldHaveValidationErrorFor(x => x.WorkDaysApiUrl, "");
             _validator.ShouldHaveValidationErrorFor(x => x.WorkDaysApiUrl, null as string);
-        }
+        }*/
     }
 }

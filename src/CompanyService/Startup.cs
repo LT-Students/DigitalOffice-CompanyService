@@ -106,11 +106,11 @@ namespace LT.DigitalOffice.CompanyService
       {
         connStr = Configuration.GetConnectionString("SQLConnectionString");
 
-        Log.Information($"SQL connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(connStr)}'.");
+        Log.Information($"SQL connection string from appsettings.json was used. Value '{PasswordHider.Hide(connStr)}'.");
       }
       else
       {
-        Log.Information($"SQL connection string from environment was used. Value '{HidePasswordHelper.HidePassword(connStr)}'.");
+        Log.Information($"SQL connection string from environment was used. Value '{PasswordHider.Hide(connStr)}'.");
       }
 
       services.AddDbContext<CompanyServiceDbContext>(options =>
@@ -127,11 +127,11 @@ namespace LT.DigitalOffice.CompanyService
       {
         redisConnStr = Configuration.GetConnectionString("Redis");
 
-        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+        Log.Information($"Redis connection string from appsettings.json was used. Value '{PasswordHider.Hide(redisConnStr)}'");
       }
       else
       {
-        Log.Information($"Redis connection string from environment was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+        Log.Information($"Redis connection string from environment was used. Value '{PasswordHider.Hide(redisConnStr)}'");
       }
 
       services.AddSingleton<IConnectionMultiplexer>(
@@ -218,8 +218,6 @@ namespace LT.DigitalOffice.CompanyService
 
       services.AddMassTransit(x =>
       {
-        x.AddConsumer<GetSmtpCredentialsConsumer>();
-
         x.AddConsumer<CreateCompanyUserConsumer>();
 
         x.AddConsumer<GetCompaniesConsumer>();
@@ -247,11 +245,6 @@ namespace LT.DigitalOffice.CompanyService
       IBusRegistrationContext context,
       IRabbitMqBusFactoryConfigurator cfg)
     {
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetSmtpCredentialsEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
-      });
-
       cfg.ReceiveEndpoint(_rabbitMqConfig.CreateCompanyUserEndpoint, ep =>
       {
         ep.ConfigureConsumer<CreateCompanyUserConsumer>(context);

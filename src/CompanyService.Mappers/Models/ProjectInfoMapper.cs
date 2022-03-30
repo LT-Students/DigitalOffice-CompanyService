@@ -1,7 +1,7 @@
 ﻿using System;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
-using LT.DigitalOffice.Models.Broker.Models;
+using LT.DigitalOffice.Models.Broker.Models.Project;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Models
 {

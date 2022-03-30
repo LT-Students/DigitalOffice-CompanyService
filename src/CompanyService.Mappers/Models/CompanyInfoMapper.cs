@@ -40,22 +40,12 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
       return new CompanyInfo
       {
         Id = company.Id,
-        PortalName = company.PortalName,
-        CompanyName = company.CompanyName,
+        Name = company.Name,
         Description = company.Description,
         LogoContent = company.LogoContent,
         LogoExtension = company.LogoExtension,
         Tagline = company.Tagline,
-        SiteUrl = company.SiteUrl,
-        IsDepartmentModuleEnabled = company.IsDepartmentModuleEnabled,
-        SmtpInfo = filter.IncludeSmtpCredentials ? new SmtpInfo
-        {
-          Port = company.Port,
-          Host = company.Host,
-          EnableSsl = company.EnableSsl,
-          Email = company.Email,
-          Password = company.Password
-        } : null,
+        Contacts = company.Contacts,
         Departments = departments?.Select(_departmentMapper.Map).ToList(),
         Offices = offices?.Select(_officeMapper.Map).ToList(),
         Positions = positions?.Select(_positionMapper.Map).ToList()
