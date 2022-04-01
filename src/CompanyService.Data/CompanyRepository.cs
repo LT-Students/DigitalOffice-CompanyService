@@ -56,7 +56,9 @@ namespace LT.DigitalOffice.CompanyService.Data
         dbCompanies = dbCompanies.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
       }
 
-      dbCompanies = dbCompanies.Include(d => d.Users.Where(du => du.IsActive));
+      dbCompanies = dbCompanies
+        .Include(d => d.Users.Where(du => du.IsActive))
+        .ThenInclude(u => u.ContractSubject);
 
       return await dbCompanies.ToListAsync();
     }

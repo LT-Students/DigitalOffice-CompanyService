@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           CompanyId = table.Column<Guid>(nullable: false),
           UserId = table.Column<Guid>(nullable: false),
           ContractSubjectId = table.Column<Guid>(nullable: true),
-          ContractType = table.Column<string>(nullable: false),
+          ContractTermType = table.Column<int>(nullable: false),
           Rate = table.Column<decimal>(nullable: true),
           StartWorkingAt = table.Column<DateTime>(nullable: false),
           EndWorkingAt = table.Column<DateTime>(nullable: true),

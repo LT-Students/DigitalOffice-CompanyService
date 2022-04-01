@@ -62,7 +62,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
     public async Task<List<DbContractSubject>> GetAllSubjectsAsync(Guid companyId)
     {
-      return await _provider.ContractSubjects.Where(cs => cs.CompanyId == companyId).ToListAsync();
+      return await _provider.ContractSubjects.Where(cs => cs.IsActive && cs.CompanyId == companyId).ToListAsync();
     }
 
     public async Task<DbContractSubject> GetAsync(Guid contractSubjectId)

@@ -1,5 +1,5 @@
 ﻿using System;
-using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
+using LT.DigitalOffice.Models.Broker.Enums;
 
 namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser
 {

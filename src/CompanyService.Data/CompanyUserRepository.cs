@@ -88,7 +88,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public async Task<bool> AnyAsync(Guid contractSubjectId)
     {
-      return await _provider.CompaniesUsers.AnyAsync(x => x.ContractSubjectId == contractSubjectId);
+      return await _provider.CompaniesUsers.AnyAsync(x => x.IsActive && x.ContractSubjectId == contractSubjectId);
     }
   }
 }

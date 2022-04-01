@@ -1,5 +1,4 @@
 ﻿using System;
-using LT.DigitalOffice.CompanyService.Models.Dto.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,8 +11,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }
     public Guid UserId { get; set; }
-    public Guid ContractSubjectId { get; set; }
-    public ContractTerm ContractTermType { get; set; }
+    public Guid? ContractSubjectId { get; set; }
+    public int ContractTermType { get; set; }
     public double? Rate { get; set; }
     public DateTime StartWorkingAt { get; set; }
     public DateTime? EndWorkingAt { get; set; }

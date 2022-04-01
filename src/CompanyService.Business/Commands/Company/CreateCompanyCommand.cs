@@ -7,15 +7,11 @@ using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
-using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Email;
-using LT.DigitalOffice.Models.Broker.Requests.User;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -28,8 +24,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ILogger<ICreateCompanyCommand> _logger;
     private readonly ICreateCompanyRequestValidator _validator;
     private readonly ICompanyRepository _repository;
-    private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
-    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcCreateSmtp;
     private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -38,8 +32,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       ILogger<ICreateCompanyCommand> logger,
       ICreateCompanyRequestValidator validator,
       ICompanyRepository repository,
-      IRequestClient<ICreateAdminRequest> rcCreateAdmin,
-      IRequestClient<ICreateSmtpCredentialsRequest> rcCreateSmtp,
       ICompanyChangesRepository companyChangesRepository,
       IHttpContextAccessor httpContextAccessor)
     {
@@ -47,8 +39,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _logger = logger;
       _validator = validator;
       _repository = repository;
-      _rcCreateAdmin = rcCreateAdmin;
-      _rcCreateSmtp = rcCreateSmtp;
       _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
     }
