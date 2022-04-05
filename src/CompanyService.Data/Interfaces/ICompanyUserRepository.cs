@@ -17,6 +17,8 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
     Task<Guid?> RemoveAsync(Guid userId, Guid removedBy);
 
+    Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId);
+
     Task<bool> AnyAsync(Guid contractSubjectId);
   }
 }

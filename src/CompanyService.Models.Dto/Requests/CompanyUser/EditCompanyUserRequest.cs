@@ -5,7 +5,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser
 {
   public record EditCompanyUserRequest
   {
-    public Guid ContractSubjectId { get; set; }
+    public Guid? ContractSubjectId { get; set; }
     public ContractTerm ContractTermType { get; set; }
     public double? Rate { get; set; }
     public DateTime StartWorkingAt { get; set; }

@@ -42,9 +42,9 @@ namespace LT.DigitalOffice.CompanyService.Data
       await _provider.SaveAsync();
     }
 
-    public async Task<DbCompany> GetAsync()
+    public async Task<DbCompany> GetAsync(Guid companyId)
     {
-      return await _provider.Companies.FirstOrDefaultAsync();
+      return await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
     }
 
     public async Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request)
@@ -63,14 +63,14 @@ namespace LT.DigitalOffice.CompanyService.Data
       return await dbCompanies.ToListAsync();
     }
 
-    public async Task EditAsync(JsonPatchDocument<DbCompany> request)
+    public async Task EditAsync(Guid companyId, JsonPatchDocument<DbCompany> request)
     {
       if (request == null)
       {
         return;
       }
 
-      var company = await _provider.Companies.FirstOrDefaultAsync();
+      var company = await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
 
       if (company == null)
       {
@@ -84,7 +84,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       await _provider.SaveAsync();
     }
 
-    public async Task<bool> DoesCompanyExistAsync(Guid companyId)
+    public async Task<bool> DoesExistAsync(Guid companyId)
     {
       return await _provider.Companies.AnyAsync(x => x.Id == companyId);
     }

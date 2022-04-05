@@ -26,7 +26,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
 
     public async Task<OperationResultResponse<List<ContractSubjectInfo>>> ExecuteAsync(Guid companyId)
     {
-      List<DbContractSubject> dbContractSubjects = await _contractSubjectRepository.GetAllSubjectsAsync(companyId);
+      List<DbContractSubject> dbContractSubjects = await _contractSubjectRepository.FindAsync(companyId);
 
       OperationResultResponse<List<ContractSubjectInfo>> response = new();
 

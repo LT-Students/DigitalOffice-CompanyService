@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 {
   [DbContext(typeof(CompanyServiceDbContext))]
-  [Migration("2022280320150000_Initial")]
+  [Migration("2022032820150000_Initial")]
   public class Initial : Migration
   {
     #region CreateTables
@@ -23,6 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           Contacts = table.Column<string>(nullable: true),
           LogoContent = table.Column<string>(nullable: true),
           LogoExtension = table.Column<string>(nullable: true),
+          CreatedBy = table.Column<Guid>(nullable: false),
           CreatedAtUtc = table.Column<DateTime>(nullable: false),
           ModifiedBy = table.Column<Guid>(nullable: true),
           ModifiedAtUtc = table.Column<DateTime>(nullable: true)

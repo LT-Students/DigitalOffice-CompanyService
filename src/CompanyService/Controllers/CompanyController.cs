@@ -15,28 +15,30 @@ namespace LT.DigitalOffice.CompanyService.Controllers
   [ApiController]
   public class CompanyController : ControllerBase
   {
-    [HttpPost("create")]
-    public async Task<OperationResultResponse<Guid>> Create(
+    [HttpPost]
+    public async Task<OperationResultResponse<Guid?>> Create(
       [FromServices] ICreateCompanyCommand command,
       [FromBody] CreateCompanyRequest request)
     {
       return await command.ExecuteAsync(request);
     }
 
-    [HttpGet("get")]
+    [HttpGet("{companyId}")]
     public async Task<OperationResultResponse<CompanyInfo>> GetAsync(
       [FromServices] IGetCompanyCommand command,
+      [FromRoute] Guid companyId,
       [FromQuery] GetCompanyFilter filter)
     {
-      return await command.ExecuteAsync(filter);
+      return await command.ExecuteAsync(companyId, filter);
     }
 
-    [HttpPatch("edit")]
+    [HttpPatch("{companyId}")]
     public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditCompanyCommand command,
+      [FromRoute] Guid companyId,
       [FromBody] JsonPatchDocument<EditCompanyRequest> request)
     {
-      return await command.ExecuteAsync(request);
+      return await command.ExecuteAsync(companyId, request);
     }
   }
 }

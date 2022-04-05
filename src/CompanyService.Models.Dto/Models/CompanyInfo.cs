@@ -10,8 +10,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
     public string Description { get; set; }
     public string Tagline { get; set; }
     public string Contacts { get; set; }
-    public string LogoContent { get; set; }
-    public string LogoExtension { get; set; }
+    public ImageConsist Logo { get; set; }
     public List<DepartmentInfo> Departments { get; set; }
     public List<PositionInfo> Positions { get; set; }
     public List<OfficeInfo> Offices { get; set; }

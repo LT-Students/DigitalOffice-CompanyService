@@ -1,4 +1,6 @@
-﻿namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
+﻿using LT.DigitalOffice.CompanyService.Models.Dto.Models;
+
+namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
 {
   public record CreateCompanyRequest
   {
@@ -6,6 +8,6 @@
     public string Description { get; set; }
     public string Tagline { get; set; }
     public string Contacts { get; set; }
-    public AddImageRequest Logo { get; set; }
+    public ImageConsist Logo { get; set; }
   }
 }

@@ -6,14 +6,13 @@ using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.CompanyService.Validation.CompanyUser.Interfaces;
 using LT.DigitalOffice.Kernel.Validators;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
 {
   public class EditCompanyUserRequestValidator : BaseEditRequestValidator<EditCompanyUserRequest>, IEditCompanyUserRequestValidator
   {
-    private async Task HandleInternalPropertyValidation(
+    private void HandleInternalPropertyValidation(
       Operation<EditCompanyUserRequest> requestedOperation,
       CustomContext context)
     {
@@ -68,7 +67,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
     public EditCompanyUserRequestValidator()
     {
       RuleForEach(x => x.Operations)
-        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
+        .Custom(HandleInternalPropertyValidation);
     }
   }
 }

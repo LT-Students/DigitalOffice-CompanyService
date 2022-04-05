@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
@@ -42,14 +43,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
 
     public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateContractSubjectRequest request)
     {
-      //which rights?
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanies)
         || !await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData))
       {
         return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
       }
 
-      var validationResults = await _requestValidator.ValidateAsync(request);
+      ValidationResult validationResults = await _requestValidator.ValidateAsync(request);
       if (!validationResults.IsValid)
       {
         return _responseCreator.CreateFailureResponse<Guid?>(

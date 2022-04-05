@@ -7,12 +7,11 @@ namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
 {
   public class CreateContractSubjectRequestValidator : AbstractValidator<CreateContractSubjectRequest>, ICreateContractSubjectRequestValidator
   {
-    private readonly ICompanyRepository _companyRepository;
     public CreateContractSubjectRequestValidator(
-      ICompanyRepository companyRepository)
+      ICompanyRepository _companyRepository)
     {
       RuleFor(request => request.CompanyId)
-        .MustAsync(async (companyId, _) => !await _companyRepository.DoesCompanyExistAsync(companyId))
+        .MustAsync(async (companyId, _) => !await _companyRepository.DoesExistAsync(companyId))
         .WithMessage("Company doesn't exist.");
 
       RuleFor(request => request.Name)

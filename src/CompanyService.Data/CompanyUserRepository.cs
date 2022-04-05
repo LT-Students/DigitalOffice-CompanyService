@@ -90,6 +90,20 @@ namespace LT.DigitalOffice.CompanyService.Data
     {
       return await _provider.CompaniesUsers.AnyAsync(x => x.IsActive && x.ContractSubjectId == contractSubjectId);
     }
+
+    public async Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId)
+    {
+      List<DbCompanyUser> dbUsers = await _provider.CompaniesUsers.Where(x => x.ContractSubjectId == contractSubjectId).ToListAsync();
+
+      foreach (DbCompanyUser user in dbUsers)
+      {
+        user.ContractSubjectId = null;
+      }
+
+      await _provider.SaveAsync();
+
+      return true;
+    }
   }
 }
 

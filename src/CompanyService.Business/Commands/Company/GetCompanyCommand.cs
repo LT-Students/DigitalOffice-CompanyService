@@ -149,10 +149,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _logger = logger;
     }
 
-    public async Task<OperationResultResponse<CompanyInfo>> ExecuteAsync(GetCompanyFilter filter)
+    public async Task<OperationResultResponse<CompanyInfo>> ExecuteAsync(Guid companyId, GetCompanyFilter filter)
     {
       List<string> errors = new();
-      DbCompany company = await _repository.GetAsync();
+      DbCompany company = await _repository.GetAsync(companyId);
 
       Task<List<DepartmentData>> departmentsTask = filter.IncludeDepartments
         ? GetDepartmensThroughBrokerAsync(errors) : Task.FromResult(null as List<DepartmentData>);

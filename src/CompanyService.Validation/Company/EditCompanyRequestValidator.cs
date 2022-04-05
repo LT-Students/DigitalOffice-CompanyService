@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using FluentValidation;
 using FluentValidation.Validators;
-using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
-using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Validators;
+using LT.DigitalOffice.Kernel.Validators.Interfaces;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Newtonsoft.Json;
 
 namespace LT.DigitalOffice.CompanyService.Validation.Company
 {
-  public class EditCompanyRequestValidator : BaseEditRequestValidator<EditCompanyRequest>, IEditCompanyRequestValidator
+  public class EditCompanyRequestValidator : ExtendedEditRequestValidator<Guid, EditCompanyRequest>, IEditCompanyRequestValidator
   {
+    private readonly ICompanyRepository _companyRepository;
+    private readonly IImageContentValidator _imageContentValidator;
+    private readonly IImageExtensionValidator _imageExtensionValidator;
+
     private void HandleInternalPropertyValidation(Operation<EditCompanyRequest> requestedOperation, CustomContext context)
     {
       Context = context;
@@ -46,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
           x => x == OperationType.Replace,
           new()
           {
-            { x => !string.IsNullOrEmpty(x.value.ToString()), "CompanyName is too short" },
+            { x => !string.IsNullOrEmpty(x.value?.ToString()), "CompanyName is too short" },
           });
 
       #endregion
@@ -61,23 +66,12 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
           {
             x =>
             {
-              try
-              {
-                AddImageRequest image = JsonConvert.DeserializeObject<AddImageRequest>(x.value?.ToString());
+              ImageConsist image = JsonConvert.DeserializeObject<ImageConsist>(x.value?.ToString());
 
-                Span<byte> byteString = new Span<byte>(new byte[image.Content.Length]);
-
-                if (!String.IsNullOrEmpty(image.Content) &&
-                  Convert.TryFromBase64String(image.Content, byteString, out _) &&
-                  ImageFormats.formats.Contains(image.Extension))
-                {
-                  return true;
-                }
-              }
-              catch
-              {
-              }
-              return false;
+              return image is null
+                ? true
+                : _imageContentValidator.Validate(image.Content).IsValid &&
+                  _imageExtensionValidator.Validate(image.Extension).IsValid;
             },
             "Incorrect Image format"
           }
@@ -86,9 +80,20 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
       #endregion
     }
 
-    public EditCompanyRequestValidator()
+    public EditCompanyRequestValidator(
+      ICompanyRepository companyRepository,
+      IImageContentValidator imageContentValidator,
+      IImageExtensionValidator imageExtensionValidator)
     {
-      RuleForEach(x => x.Operations)
+      _companyRepository = companyRepository;
+      _imageContentValidator = imageContentValidator;
+      _imageExtensionValidator = imageExtensionValidator;
+
+      RuleFor(x => x.Item1)
+        .MustAsync(async (companyId, _) => await _companyRepository.DoesExistAsync(companyId))
+        .WithMessage("Company doesn't exist.");
+
+      RuleForEach(x => x.Item2.Operations)
         .Custom(HandleInternalPropertyValidation);
     }
   }

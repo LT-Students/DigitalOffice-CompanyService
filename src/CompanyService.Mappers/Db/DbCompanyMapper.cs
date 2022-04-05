@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.ImageSupport.Helpers.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
@@ -10,19 +12,26 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
   public class DbCompanyMapper : IDbCompanyMapper
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IImageResizeHelper _imageResizeHelper;
     
     public DbCompanyMapper(
-      IHttpContextAccessor httpContextAccessor)
+      IHttpContextAccessor httpContextAccessor,
+      IImageResizeHelper imageResizeHelper)
     {
       _httpContextAccessor = httpContextAccessor;
+      _imageResizeHelper = imageResizeHelper;
     }
 
-    public DbCompany Map(CreateCompanyRequest request)
+    public async Task<DbCompany> MapAsync(CreateCompanyRequest request)
     {
       if (request is null)
       {
         return null;
       }
+
+      (bool isSucces, string content, string extension) resizeResults = request.Logo is null
+        ? default
+        : await _imageResizeHelper.ResizeAsync(request.Logo.Content, request.Logo.Extension);
 
       return new DbCompany
       {
@@ -34,8 +43,8 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         CreatedAtUtc = DateTime.UtcNow,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         IsActive = true,
-        LogoContent = request.Logo?.Content,
-        LogoExtension = request.Logo?.Extension
+        LogoContent = resizeResults.isSucces ? resizeResults.content : null,
+        LogoExtension = resizeResults.isSucces ? resizeResults.extension : null
       };
     }
   }
