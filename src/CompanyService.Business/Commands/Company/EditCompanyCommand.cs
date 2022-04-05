@@ -56,8 +56,8 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
     public async Task<OperationResultResponse<bool>> ExecuteAsync(Guid companyId, JsonPatchDocument<EditCompanyRequest> request)
     {
-      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanies)
-        && !await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData))
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData)
+        && !await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanies))
       {
         return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.Forbidden);
       }

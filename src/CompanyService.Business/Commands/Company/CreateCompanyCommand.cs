@@ -9,6 +9,8 @@ using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
+using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
@@ -20,6 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
   public class CreateCompanyCommand : ICreateCompanyCommand
   {
     private readonly IDbCompanyMapper _mapper;
+    private readonly IAccessValidator _accessValidator;
     private readonly ICreateCompanyRequestValidator _validator;
     private readonly ICompanyRepository _repository;
     private readonly ICompanyChangesRepository _companyChangesRepository;
@@ -28,6 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
     public CreateCompanyCommand(
       IDbCompanyMapper mapper,
+      IAccessValidator accessValidator,
       ICreateCompanyRequestValidator validator,
       ICompanyRepository repository,
       ICompanyChangesRepository companyChangesRepository,
@@ -35,6 +39,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       IResponseCreator responseCreator)
     {
       _mapper = mapper;
+      _accessValidator = accessValidator;
       _validator = validator;
       _repository = repository;
       _companyChangesRepository = companyChangesRepository;
@@ -44,6 +49,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
     public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateCompanyRequest request)
     {
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanies))
+      {
+        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
+      }
+
       if (!_validator.ValidateCustom(request, out List<string> errors))
       {
         return _responseCreator.CreateFailureResponse<Guid?>(
