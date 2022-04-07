@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         columns: table => new
         {
           Id = table.Column<Guid>(nullable: false),
-          Name = table.Column<string>(nullable: false),
+          Name = table.Column<string>(maxLength: 150, nullable: false),
           Description = table.Column<string>(nullable: true),
           Tagline = table.Column<string>(nullable: true),
           Contacts = table.Column<string>(nullable: true),
@@ -31,6 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         constraints: table =>
         {
           table.PrimaryKey("PR_Companies", x => x.Id);
+          table.UniqueConstraint("UC_Companies_Name", x => x.Name);
         });
     }
 
@@ -86,7 +87,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         columns: table => new
         {
           Id = table.Column<Guid>(nullable: false),
-          Name = table.Column<string>(nullable: false),
+          Name = table.Column<string>(maxLength: 150, nullable: false),
           Description = table.Column<string>(nullable: true),
           CreatedBy = table.Column<Guid>(nullable: false),
           CreatedAtUtc = table.Column<DateTime>(nullable: false),
@@ -97,6 +98,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         constraints: table =>
         {
           table.PrimaryKey("PR_ContractSubjects", x => x.Id);
+          table.UniqueConstraint("UC_PR_ContractSubjects_Name", x => x.Name);
         });
     }
     #endregion
