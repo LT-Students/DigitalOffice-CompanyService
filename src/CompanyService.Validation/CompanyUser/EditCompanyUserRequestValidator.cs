@@ -143,8 +143,11 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
       #endregion
     }
 
-    public EditCompanyUserRequestValidator()
+    public EditCompanyUserRequestValidator(
+      IContractSubjectRepository contractSubjectRepository)
     {
+      _contractSubjectRepository = contractSubjectRepository;
+
       RuleForEach(x => x.Operations)
         .Custom(HandleInternalPropertyValidation);
     }

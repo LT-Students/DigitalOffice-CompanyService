@@ -5,7 +5,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests.ContractSubject.Fi
 {
   public record FindContractSubjectFilter : BaseFindFilter
   {
-    [FromQuery(Name = "IncludeNotActive")]
+    [FromQuery(Name = "IsActive")]
     public bool? IsActive { get; set; }
   }
 }

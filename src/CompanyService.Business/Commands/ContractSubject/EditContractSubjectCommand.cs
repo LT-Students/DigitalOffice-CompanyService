@@ -62,12 +62,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
 
       result.Body = await _contractSubjectRepository.EditAsync(contractSubjectId, _contractSubjectMapper.Map(request));
 
-      bool isActive = true;
-
       if (result.Body
         && bool.TryParse(request.Operations.FirstOrDefault(
           o => o.path.EndsWith(nameof(EditContractSubjectRequest.IsActive), StringComparison.OrdinalIgnoreCase))?.value?.ToString(),
-          out isActive)
+          out bool isActive)
         && !isActive)
       {
         await _companyUserRepository.RemoveContractSubjectAsync(contractSubjectId);

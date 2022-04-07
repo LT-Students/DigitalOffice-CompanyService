@@ -12,10 +12,10 @@ namespace LT.DigitalOffice.CompanyService.Controllers
   [ApiController]
   public class CompanyUserController : ControllerBase
   {
-    [HttpPatch("edit")]
+    [HttpPatch("{userId}")]
     public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditCompanyUserCommand command,
-      [FromQuery] Guid userId,
+      [FromRoute] Guid userId,
       [FromBody] JsonPatchDocument<EditCompanyUserRequest> request)
     {
       return await command.ExecuteAsync(userId, request);
