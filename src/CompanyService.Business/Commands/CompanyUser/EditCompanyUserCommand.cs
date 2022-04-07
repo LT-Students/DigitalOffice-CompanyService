@@ -60,7 +60,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
-
       if (!validationResult.IsValid)
       {
         return _responseCreator.CreateFailureResponse<bool>(

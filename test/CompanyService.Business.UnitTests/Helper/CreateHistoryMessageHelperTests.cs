@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Helper
 {
     public class CreateHistoryMessageHelperTests
     {
-        [Test]
+        /*[Test]
         public void Test()
         {
             DbCompany company = new DbCompany
@@ -51,6 +51,6 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Helper
             str = CreateHistoryMessageHelper.Create(company, patch);
 
             var i = 0 + 1;
-        }
+        }*/
     }
 }

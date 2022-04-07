@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.CompanyService.Validation.CompanyUser.Interfaces;
 using LT.DigitalOffice.Kernel.Validators;
-using Microsoft.AspNetCore.JsonPatch;
+using LT.DigitalOffice.Models.Broker.Enums;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
 {
   public class EditCompanyUserRequestValidator : BaseEditRequestValidator<EditCompanyUserRequest>, IEditCompanyUserRequestValidator
   {
-    private async Task HandleInternalPropertyValidation(
+    private readonly IContractSubjectRepository _contractSubjectRepository;
+
+    private async Task HandleInternalPropertyValidationAsync(
       Operation<EditCompanyUserRequest> requestedOperation,
       CustomContext context)
     {
@@ -34,6 +37,34 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
 
       #endregion
 
+      #region ContractSubjectId
+
+      await AddFailureForPropertyIfAsync(
+        nameof(EditCompanyUserRequest.ContractSubjectId),
+        x => x == OperationType.Replace,
+        new()
+        {
+          {
+            async (x) =>
+            {
+              if (x.value?.ToString() is null)
+              {
+                return true;
+              }
+
+              if (!Guid.TryParse(x.value.ToString(), out Guid id))
+              {
+                return false;
+              }
+
+              return !await _contractSubjectRepository.DoesExistAsync(id);
+            },
+            "Wrong contract subject id value."
+          }
+        });
+
+      #endregion
+
       #region StartWorkingAt
 
       AddFailureForPropertyIf(
@@ -42,9 +73,24 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
         new Dictionary<Func<Operation<EditCompanyUserRequest>, bool>, string>
         {
           {
-            x => x.value?.ToString() is null ? true :
+            x => x.value?.ToString() is null ? false :
               DateTime.TryParse(x.value.ToString(), out DateTime result),
             "Start working at has incorrect format."
+          },
+        });
+
+      #endregion
+
+      #region ContractTermType
+
+      AddFailureForPropertyIf(
+        nameof(EditCompanyUserRequest.ContractTermType),
+        x => x == OperationType.Replace,
+        new()
+        {
+          {
+            x => Enum.IsDefined(typeof(ContractTerm), x.value?.ToString()),
+            "Wrong contract term type."
           },
         });
 
@@ -63,12 +109,47 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
         });
 
       #endregion
+
+      #region EndWorkingAt
+
+      AddFailureForPropertyIf(
+        nameof(EditCompanyUserRequest.EndWorkingAt),
+        x => x == OperationType.Replace,
+        new Dictionary<Func<Operation<EditCompanyUserRequest>, bool>, string>
+        {
+          {
+            x => x.value?.ToString() is null ? true :
+              DateTime.TryParse(x.value.ToString(), out DateTime result),
+            "End working data has incorrect format."
+          },
+        });
+
+      #endregion
+
+      #region Probation
+
+      AddFailureForPropertyIf(
+        nameof(EditCompanyUserRequest.Probation),
+        x => x == OperationType.Replace,
+        new Dictionary<Func<Operation<EditCompanyUserRequest>, bool>, string>
+        {
+          {
+            x => x.value?.ToString() is null ? true :
+              DateTime.TryParse(x.value.ToString(), out DateTime result),
+            "Probation date has incorrect format."
+          },
+        });
+
+      #endregion
     }
 
-    public EditCompanyUserRequestValidator()
+    public EditCompanyUserRequestValidator(
+      IContractSubjectRepository contractSubjectRepository)
     {
+      _contractSubjectRepository = contractSubjectRepository;
+
       RuleForEach(x => x.Operations)
-        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
+        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidationAsync(x, context));
     }
   }
 }

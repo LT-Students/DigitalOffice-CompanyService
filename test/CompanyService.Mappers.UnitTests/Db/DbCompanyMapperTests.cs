@@ -9,7 +9,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
 {
     public class DbCompanyMapperTests
     {
-        private IDbCompanyMapper _mapper;
+        /*private IDbCompanyMapper _mapper;
 
         [SetUp]
         public void SetUp()
@@ -17,11 +17,11 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             _mapper = new DbCompanyMapper();
         }
 
-        /*[Test]
+        *//*[Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
-        }*/
+        }*//*
 
         [Test]
         public void ShouldMapSuccessfuly()
@@ -62,6 +62,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Db
             Assert.IsTrue(response.IsActive);
             Assert.LessOrEqual(expected.CreatedAtUtc, response.CreatedAtUtc);
             Assert.AreEqual(expected.WorkDaysApiUrl, response.WorkDaysApiUrl);
-        }
+        }*/
     }
 }

@@ -14,8 +14,12 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         Id = Guid.NewGuid(),
         CompanyId = request.CompanyId,
         UserId = request.UserId,
+        ContractSubjectId = request.ContractSubjectId,
+        ContractTermType = (int)request.ContractTermType,
         Rate = request.Rate,
         StartWorkingAt = request.StartWorkingAt,
+        EndWorkingAt = request.EndWorkingAt,
+        Probation = request.Probation,
         CreatedBy = request.CreatedBy,
         CreatedAtUtc = DateTime.UtcNow,
         IsActive = true

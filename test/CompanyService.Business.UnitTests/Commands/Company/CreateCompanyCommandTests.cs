@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
 {
   public class CreateCompanyCommandTests
   {
-    private AutoMocker _autoMock;
+    /*private AutoMocker _autoMock;
     private ICreateCompanyCommand _command;
 
     private CreateCompanyRequest _request;
@@ -89,7 +89,7 @@ namespace LT.DigitalOffice.CompanyService.Business.UnitTests.Commands.Company
           .Setup<ICreateCompanyRequestValidator, bool>(
               x => x.Validate(It.IsAny<IValidationContext>()).IsValid)
           .Returns(true);
-    }
+    }*/
 
     /*[Test]
     public void ShouldThrowValidationException()

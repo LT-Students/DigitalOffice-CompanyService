@@ -85,6 +85,20 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       return user.CompanyId;
     }
+
+    public async Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId)
+    {
+      List<DbCompanyUser> dbUsers = await _provider.CompaniesUsers.Where(x => x.ContractSubjectId == contractSubjectId).ToListAsync();
+
+      foreach (DbCompanyUser user in dbUsers)
+      {
+        user.ContractSubjectId = null;
+      }
+
+      await _provider.SaveAsync();
+
+      return true;
+    }
   }
 }
 

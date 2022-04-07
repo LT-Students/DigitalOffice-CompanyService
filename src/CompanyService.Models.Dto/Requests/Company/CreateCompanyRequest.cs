@@ -4,13 +4,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Requests
 {
   public record CreateCompanyRequest
   {
-    public string PortalName { get; set; }
-    public SmtpInfo SmtpInfo { get; set; }
-    public string CompanyName { get; set; }
-    public string SiteUrl { get; set; }
-    public AdminInfo AdminInfo { get; set; }
-    public bool IsDepartmentModuleEnabled { get; set; }
-    public string WorkDaysApiUrl { get; set; }
-    public AddImageRequest Logo { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string Tagline { get; set; }
+    public string Contacts { get; set; }
+    public ImageConsist Logo { get; set; }
   }
 }

@@ -1,36 +1,50 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
+using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.ImageSupport.Helpers.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
 {
   public class DbCompanyMapper : IDbCompanyMapper
   {
-    public DbCompany Map(CreateCompanyRequest request)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IImageResizeHelper _imageResizeHelper;
+    
+    public DbCompanyMapper(
+      IHttpContextAccessor httpContextAccessor,
+      IImageResizeHelper imageResizeHelper)
+    {
+      _httpContextAccessor = httpContextAccessor;
+      _imageResizeHelper = imageResizeHelper;
+    }
+
+    public async Task<DbCompany> MapAsync(CreateCompanyRequest request)
     {
       if (request is null)
       {
         return null;
       }
 
+      (bool isSucces, string content, string extension) resizeResults = request.Logo is null
+        ? default
+        : await _imageResizeHelper.ResizeAsync(request.Logo.Content, request.Logo.Extension);
+
       return new DbCompany
       {
         Id = Guid.NewGuid(),
-        PortalName = request.PortalName,
-        CompanyName = request.CompanyName,
-        SiteUrl = request.SiteUrl,
+        Name = request.Name,
+        Description = request.Description,
+        Tagline = request.Tagline,
+        Contacts = request.Contacts,
         CreatedAtUtc = DateTime.UtcNow,
-        Host = request.SmtpInfo.Host,
-        Port = request.SmtpInfo.Port,
-        EnableSsl = request.SmtpInfo.EnableSsl,
-        Email = request.SmtpInfo.Email,
-        Password = request.SmtpInfo.Password,
-        IsDepartmentModuleEnabled = request.IsDepartmentModuleEnabled,
+        CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         IsActive = true,
-        WorkDaysApiUrl = request.WorkDaysApiUrl,
-        LogoContent = request.Logo?.Content,
-        LogoExtension = request.Logo?.Extension
+        LogoContent = resizeResults.isSucces ? resizeResults.content : null,
+        LogoExtension = resizeResults.isSucces ? resizeResults.extension : null
       };
     }
   }

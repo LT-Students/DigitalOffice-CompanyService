@@ -42,9 +42,9 @@ namespace LT.DigitalOffice.CompanyService.Data
       await _provider.SaveAsync();
     }
 
-    public async Task<DbCompany> GetAsync()
+    public async Task<DbCompany> GetAsync(Guid companyId)
     {
-      return await _provider.Companies.FirstOrDefaultAsync();
+      return await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
     }
 
     public async Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request)
@@ -56,19 +56,21 @@ namespace LT.DigitalOffice.CompanyService.Data
         dbCompanies = dbCompanies.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
       }
 
-      dbCompanies = dbCompanies.Include(d => d.Users.Where(du => du.IsActive));
+      dbCompanies = dbCompanies
+        .Include(d => d.Users.Where(du => du.IsActive))
+        .ThenInclude(u => u.ContractSubject);
 
       return await dbCompanies.ToListAsync();
     }
 
-    public async Task EditAsync(JsonPatchDocument<DbCompany> request)
+    public async Task EditAsync(Guid companyId, JsonPatchDocument<DbCompany> request)
     {
       if (request == null)
       {
         return;
       }
 
-      var company = await _provider.Companies.FirstOrDefaultAsync();
+      DbCompany company = await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
 
       if (company == null)
       {
@@ -80,6 +82,26 @@ namespace LT.DigitalOffice.CompanyService.Data
       company.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
 
       await _provider.SaveAsync();
+    }
+
+    public async Task<bool> DoesExistAsync(Guid companyId)
+    {
+      return await _provider.Companies.AnyAsync(x => x.Id == companyId);
+    }
+
+    public async Task<bool> DoesExistAsync()
+    {
+      return await _provider.Companies.AnyAsync(x => x.IsActive);
+    }
+
+    public async Task<bool> DoesNameExistAsync(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+      {
+        return false;
+      }
+
+      return await _provider.Companies.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
     }
   }
 }
