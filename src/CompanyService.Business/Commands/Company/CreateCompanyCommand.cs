@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -54,11 +56,12 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
       }
 
-      if (!_validator.ValidateCustom(request, out List<string> errors))
+      ValidationResult validationResults = await _validator.ValidateAsync(request);
+      if (!validationResults.IsValid)
       {
         return _responseCreator.CreateFailureResponse<Guid?>(
           HttpStatusCode.BadRequest,
-          errors);
+          validationResults.Errors.Select(x => x.ErrorMessage).ToList());
       }
 
       DbCompany company = await _mapper.MapAsync(request);

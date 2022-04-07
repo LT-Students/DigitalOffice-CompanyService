@@ -51,7 +51,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
           x => x == OperationType.Replace,
           new()
           {
-            { x => !string.IsNullOrEmpty(x.value?.ToString()), "CompanyName is too short" },
+            { x => !string.IsNullOrEmpty(x.value?.ToString()), "CompanyName can't be empty." },
           });
 
       #endregion

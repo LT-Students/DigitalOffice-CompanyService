@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Provider;
 using LT.DigitalOffice.CompanyService.Models.Db;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.ContractSubject.Filters;
 using LT.DigitalOffice.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -60,14 +61,40 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
       return true;
     }
 
-    public async Task<List<DbContractSubject>> FindAsync(Guid companyId)
+    public async Task<(List<DbContractSubject> dbContractSubjects, int totalCount)> FindAsync(FindContractSubjectFilter filter)
     {
-      return await _provider.ContractSubjects.Where(cs => cs.IsActive && cs.CompanyId == companyId).ToListAsync();
+      if (filter is null)
+      {
+        return default;
+      }
+
+      IQueryable<DbContractSubject> contractSubjects = _provider.ContractSubjects.AsQueryable();
+
+      if (filter.IsActive.HasValue)
+      {
+        contractSubjects = filter.IsActive.Value
+          ? contractSubjects.Where(x => x.IsActive)
+          : contractSubjects.Where(x => !x.IsActive);
+      }
+
+      return (
+        await contractSubjects.Skip(filter.SkipCount).Take(filter.TakeCount).ToListAsync(),
+        await contractSubjects.CountAsync());
     }
 
     public async Task<DbContractSubject> GetAsync(Guid contractSubjectId)
     {
       return await _provider.ContractSubjects.FirstOrDefaultAsync(x => x.Id == contractSubjectId);
+    }
+
+    public async Task<bool> DoesExistAsync(Guid contractSubjectId)
+    {
+      return await _provider.ContractSubjects.AnyAsync(x => x.Id == contractSubjectId);
+    }
+
+    public async Task<bool> DoesNameExistAsync(string name)
+    {
+      return await _provider.ContractSubjects.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
     }
   }
 }

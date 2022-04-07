@@ -11,7 +11,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Data
       return new ContractSubjectInfo
       {
         Id = contractSubject.Id,
-        CompanyId = contractSubject.CompanyId,
         Name = contractSubject.Name,
         Description = contractSubject.Description,
         IsActive = contractSubject.IsActive

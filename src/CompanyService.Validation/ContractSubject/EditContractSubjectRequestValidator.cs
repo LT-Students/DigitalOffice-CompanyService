@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
@@ -15,10 +12,9 @@ namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
 {
   public class EditContractSubjectRequestValidator : ExtendedEditRequestValidator<Guid, EditContractSubjectRequest>, IEditContractSubjectRequestValidator
   {
-    private bool isActive = true;
-    private readonly ICompanyUserRepository _companyUserRepository;
+    private readonly IContractSubjectRepository _contractSubjectRepository;
 
-    private void HandleInternalPorpetyValidation(
+    private async Task HandleInternalPorpetyValidationAsync(
       Operation<EditContractSubjectRequest> requestedOperation,
       CustomContext context)
     {
@@ -43,13 +39,15 @@ namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
 
       #region Name
 
-      AddFailureForPropertyIf(
+      await AddFailureForPropertyIfAsync(
         nameof(EditContractSubjectRequest.Name),
         x => x == OperationType.Replace,
         new()
         {
-          { x => !string.IsNullOrEmpty(x.value?.ToString().Trim()), "Name can't be empty." }
-        });
+          { x => Task.FromResult(!string.IsNullOrEmpty(x.value?.ToString().Trim())), "Name can't be empty." },
+          { async x => await _contractSubjectRepository.DoesNameExistAsync(x.value?.ToString()), "Name already exists."}
+        },
+        CascadeMode.Stop);
 
       #endregion
 
@@ -67,25 +65,12 @@ namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
     }
 
     public EditContractSubjectRequestValidator(
-      ICompanyUserRepository companyUserRepository)
+      IContractSubjectRepository contractSubjectRepository)
     {
-      _companyUserRepository = companyUserRepository;
+      _contractSubjectRepository = contractSubjectRepository;
 
       RuleForEach(x => x.Item2.Operations)
-        .Custom(HandleInternalPorpetyValidation);
-
-      When(x => bool.TryParse(
-        x.Item2.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditContractSubjectRequest.IsActive), StringComparison.OrdinalIgnoreCase))?.value?.ToString(),
-        out isActive)
-        && !isActive,
-        () =>
-        {
-          RuleFor(x => x.Item1)
-            .MustAsync(async (contractSubjectId, _) =>
-            {
-              return !await _companyUserRepository.AnyAsync(contractSubjectId);
-            });
-        });
+        .CustomAsync(async (x, context, _) => await HandleInternalPorpetyValidationAsync(x, context));
     }
   }
 }

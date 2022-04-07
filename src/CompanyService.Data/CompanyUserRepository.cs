@@ -86,11 +86,6 @@ namespace LT.DigitalOffice.CompanyService.Data
       return user.CompanyId;
     }
 
-    public async Task<bool> AnyAsync(Guid contractSubjectId)
-    {
-      return await _provider.CompaniesUsers.AnyAsync(x => x.IsActive && x.ContractSubjectId == contractSubjectId);
-    }
-
     public async Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId)
     {
       List<DbCompanyUser> dbUsers = await _provider.CompaniesUsers.Where(x => x.ContractSubjectId == contractSubjectId).ToListAsync();

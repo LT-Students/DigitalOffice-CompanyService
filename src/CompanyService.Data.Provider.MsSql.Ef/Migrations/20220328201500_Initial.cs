@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 {
   [DbContext(typeof(CompanyServiceDbContext))]
-  [Migration("2022032820150000_Initial")]
+  [Migration("20220328201500_Initial")]
   public class Initial : Migration
   {
     #region CreateTables
@@ -86,7 +86,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         columns: table => new
         {
           Id = table.Column<Guid>(nullable: false),
-          CompanyId = table.Column<Guid>(nullable: false),
           Name = table.Column<string>(nullable: false),
           Description = table.Column<string>(nullable: true),
           CreatedBy = table.Column<Guid>(nullable: false),

@@ -11,7 +11,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public const string TableName = "ContractSubjects";
 
     public Guid Id { get; set; }
-    public Guid CompanyId { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public bool IsActive { get; set; }
@@ -37,6 +36,13 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     {
       builder
         .ToTable(DbContractSubject.TableName);
+
+      builder
+        .HasKey(cs => cs.Id);
+
+      builder
+        .Property(cs => cs.Name)
+        .IsRequired();
 
       builder
         .HasMany(ct => ct.Users)

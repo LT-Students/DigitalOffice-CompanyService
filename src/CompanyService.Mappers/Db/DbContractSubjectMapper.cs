@@ -27,7 +27,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
       return new DbContractSubject
       {
         Id = Guid.NewGuid(),
-        CompanyId = request.CompanyId,
         Name = request.Name,
         Description = request.Description,
         IsActive = true,

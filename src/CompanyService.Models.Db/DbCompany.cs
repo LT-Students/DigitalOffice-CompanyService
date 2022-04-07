@@ -51,6 +51,9 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         .ToTable(DbCompany.TableName);
 
       builder
+        .HasKey(t => t.Id);
+
+      builder
         .Property(c => c.Name)
         .IsRequired();
 

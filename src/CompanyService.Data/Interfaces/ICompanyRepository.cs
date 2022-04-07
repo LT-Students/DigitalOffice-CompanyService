@@ -20,5 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request);
 
     Task<bool> DoesExistAsync(Guid companyId);
+
+    Task<bool> DoesExistAsync();
   }
 }

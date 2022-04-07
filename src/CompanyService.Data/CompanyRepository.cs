@@ -70,7 +70,7 @@ namespace LT.DigitalOffice.CompanyService.Data
         return;
       }
 
-      var company = await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
+      DbCompany company = await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
 
       if (company == null)
       {
@@ -87,6 +87,11 @@ namespace LT.DigitalOffice.CompanyService.Data
     public async Task<bool> DoesExistAsync(Guid companyId)
     {
       return await _provider.Companies.AnyAsync(x => x.Id == companyId);
+    }
+
+    public async Task<bool> DoesExistAsync()
+    {
+      return await _provider.Companies.AnyAsync(x => x.IsActive);
     }
   }
 }

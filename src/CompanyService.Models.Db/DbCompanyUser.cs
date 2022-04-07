@@ -35,6 +35,9 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         .ToTable(DbCompanyUser.TableName);
 
       builder
+        .HasKey(t => t.Id);
+
+      builder
         .HasOne(u => u.Company)
         .WithMany(c => c.Users);
 

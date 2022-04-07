@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.ContractSubject;
+using LT.DigitalOffice.CompanyService.Models.Dto.Requests.ContractSubject.Filters;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -23,11 +24,11 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     }
 
     [HttpGet]
-    public async Task<OperationResultResponse<List<ContractSubjectInfo>>> GetAsync(
-      [FromServices] IGetContractSubjectsCommand command,
-      [FromQuery] Guid companyId)
+    public async Task<FindResultResponse<ContractSubjectInfo>> FindAsync(
+      [FromServices] IFindContractSubjectsCommand command,
+      [FromQuery] FindContractSubjectFilter filter)
     {
-      return await command.ExecuteAsync(companyId);
+      return await command.ExecuteAsync(filter);
     }
 
     [HttpPatch("{contractSubjectId}")]
