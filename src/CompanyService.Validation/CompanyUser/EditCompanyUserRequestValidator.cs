@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
   {
     private readonly IContractSubjectRepository _contractSubjectRepository;
 
-    private void HandleInternalPropertyValidation(
+    private async Task HandleInternalPropertyValidationAsync(
       Operation<EditCompanyUserRequest> requestedOperation,
       CustomContext context)
     {
@@ -39,7 +39,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
 
       #region ContractSubjectId
 
-      AddFailureForPropertyIfAsync(
+      await AddFailureForPropertyIfAsync(
         nameof(EditCompanyUserRequest.ContractSubjectId),
         x => x == OperationType.Replace,
         new()
@@ -149,7 +149,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
       _contractSubjectRepository = contractSubjectRepository;
 
       RuleForEach(x => x.Operations)
-        .Custom(HandleInternalPropertyValidation);
+        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidationAsync(x, context));
     }
   }
 }
