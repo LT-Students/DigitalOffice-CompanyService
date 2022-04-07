@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Models.Broker.Models.Office;
 
-namespace LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces
+namespace LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces
 {
   [AutoInject]
-  public interface ICompanyInfoMapper
+  public interface ICompanyResponseMapper
   {
-    CompanyInfo Map(DbCompany company,
+    CompanyResponse Map(DbCompany company,
       List<OfficeData> offices,
       GetCompanyFilter filter);
   }

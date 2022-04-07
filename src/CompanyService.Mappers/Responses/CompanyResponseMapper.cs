@@ -1,24 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Models.Broker.Models.Office;
 
-namespace LT.DigitalOffice.CompanyService.Mappers.Models
+namespace LT.DigitalOffice.CompanyService.Mappers.Responses
 {
-  public class CompanyInfoMapper : ICompanyInfoMapper
+  public class CompanyResponseMapper : ICompanyResponseMapper
   {
     private readonly IOfficeInfoMapper _officeMapper;
 
-    public CompanyInfoMapper(
+    public CompanyResponseMapper(
       IOfficeInfoMapper officeMapper)
     {
       _officeMapper = officeMapper;
     }
 
-    public CompanyInfo Map(DbCompany company,
+    public CompanyResponse Map(DbCompany company,
       List<OfficeData> offices,
       GetCompanyFilter filter)
     {
@@ -27,7 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Models
         return null;
       }
 
-      return new CompanyInfo
+      return new CompanyResponse
       {
         Id = company.Id,
         Name = company.Name,

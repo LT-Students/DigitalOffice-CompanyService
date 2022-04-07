@@ -5,21 +5,16 @@ using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.CompanyService.Mappers.Responses.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Models.Department;
 using LT.DigitalOffice.Models.Broker.Models.Office;
-using LT.DigitalOffice.Models.Broker.Models.Position;
-using LT.DigitalOffice.Models.Broker.Requests.Department;
 using LT.DigitalOffice.Models.Broker.Requests.Office;
-using LT.DigitalOffice.Models.Broker.Requests.Position;
-using LT.DigitalOffice.Models.Broker.Responses.Department;
 using LT.DigitalOffice.Models.Broker.Responses.Office;
-using LT.DigitalOffice.Models.Broker.Responses.Position;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
   public class GetCompanyCommand : IGetCompanyCommand
   {
     private readonly ICompanyRepository _repository;
-    private readonly ICompanyInfoMapper _companyInfoMapper;
+    private readonly ICompanyResponseMapper _companyResponseMapper;
     private readonly IRequestClient<IGetOfficesRequest> _rcGetOffices;
     private readonly ILogger<GetCompanyCommand> _logger;
 
@@ -67,17 +62,17 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
     public GetCompanyCommand(
       ICompanyRepository repository,
-      ICompanyInfoMapper mapper,
+      ICompanyResponseMapper mapper,
       IRequestClient<IGetOfficesRequest> rcGetOffices,
       ILogger<GetCompanyCommand> logger)
     {
       _repository = repository;
-      _companyInfoMapper = mapper;
+      _companyResponseMapper = mapper;
       _rcGetOffices = rcGetOffices;
       _logger = logger;
     }
 
-    public async Task<OperationResultResponse<CompanyInfo>> ExecuteAsync(Guid companyId, GetCompanyFilter filter)
+    public async Task<OperationResultResponse<CompanyResponse>> ExecuteAsync(Guid companyId, GetCompanyFilter filter)
     {
       List<string> errors = new();
       DbCompany company = await _repository.GetAsync(companyId);
@@ -86,10 +81,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         ? await GetOfficesThroughBrokerAsync(errors)
         : null;
 
-      return new OperationResultResponse<CompanyInfo>
+      return new OperationResultResponse<CompanyResponse>
       {
         Status = errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess,
-        Body = _companyInfoMapper.Map(company, offices, filter)
+        Body = _companyResponseMapper.Map(company, offices, filter)
       };
     }
   }

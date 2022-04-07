@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
+using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     }
 
     [HttpGet("{companyId}")]
-    public async Task<OperationResultResponse<CompanyInfo>> GetAsync(
+    public async Task<OperationResultResponse<CompanyResponse>> GetAsync(
       [FromServices] IGetCompanyCommand command,
       [FromRoute] Guid companyId,
       [FromQuery] GetCompanyFilter filter)

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 
-namespace LT.DigitalOffice.CompanyService.Models.Dto.Models
+namespace LT.DigitalOffice.CompanyService.Models.Dto.Responses
 {
-  public record CompanyInfo
+  public record CompanyResponse
   {
     public Guid Id { get; set; }
     public string Name { get; set; }
