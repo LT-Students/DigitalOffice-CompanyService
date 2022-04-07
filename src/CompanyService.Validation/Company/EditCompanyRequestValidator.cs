@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
@@ -19,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
     private readonly IImageContentValidator _imageContentValidator;
     private readonly IImageExtensionValidator _imageExtensionValidator;
 
-    private void HandleInternalPropertyValidation(Operation<EditCompanyRequest> requestedOperation, CustomContext context)
+    private async Task HandleInternalPropertyValidation(Operation<EditCompanyRequest> requestedOperation, CustomContext context)
     {
       Context = context;
       RequestedOperation = requestedOperation;
@@ -47,12 +48,22 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
       #region CompanyName
 
       AddFailureForPropertyIf(
-          nameof(EditCompanyRequest.Name),
-          x => x == OperationType.Replace,
-          new()
-          {
-            { x => !string.IsNullOrEmpty(x.value?.ToString()), "CompanyName can't be empty." },
-          });
+        nameof(EditCompanyRequest.Name),
+        x => x == OperationType.Replace,
+        new()
+        {
+          { x => !string.IsNullOrEmpty(x.value?.ToString()), "CompanyName can't be empty." },
+          { x => x.value?.ToString().Length < 151, "Company name is too long." }
+        },
+        CascadeMode.Stop);
+
+      await AddFailureForPropertyIfAsync(
+        nameof(EditCompanyRequest.Name),
+        x => x == OperationType.Replace,
+        new()
+        {
+          { async x => !await _companyRepository.DoesNameExistAsync(x.value?.ToString()), "CompanyName can't be empty." },
+        });
 
       #endregion
 
@@ -94,7 +105,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
         .WithMessage("Company doesn't exist.");
 
       RuleForEach(x => x.Item2.Operations)
-        .Custom(HandleInternalPropertyValidation);
+        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
     }
   }
 }

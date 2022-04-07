@@ -22,5 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
     Task<bool> DoesExistAsync(Guid companyId);
 
     Task<bool> DoesExistAsync();
+
+    Task<bool> DoesNameExistAsync(string name);
   }
 }

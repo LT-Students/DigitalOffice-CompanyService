@@ -93,5 +93,15 @@ namespace LT.DigitalOffice.CompanyService.Data
     {
       return await _provider.Companies.AnyAsync(x => x.IsActive);
     }
+
+    public async Task<bool> DoesNameExistAsync(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+      {
+        return false;
+      }
+
+      return await _provider.Companies.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
+    }
   }
 }

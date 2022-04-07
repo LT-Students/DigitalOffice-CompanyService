@@ -94,6 +94,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
 
     public async Task<bool> DoesNameExistAsync(string name)
     {
+      if (string.IsNullOrEmpty(name))
+      {
+        return false;
+      }
+
       return await _provider.ContractSubjects.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
     }
   }
