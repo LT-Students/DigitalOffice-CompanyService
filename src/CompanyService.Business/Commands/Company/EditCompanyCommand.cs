@@ -62,7 +62,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
         return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.Forbidden);
       }
 
-
       ValidationResult validationResult = await _validator.ValidateAsync((companyId, request));
       if (validationResult.IsValid)
       {

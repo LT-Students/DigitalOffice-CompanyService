@@ -13,6 +13,8 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
       IImageContentValidator _imageContentValidator,
       IImageExtensionValidator _imageExtensionValidator)
     {
+      // TODO rework for supprot more than one company
+
       RuleFor(request => request)
         .Cascade(CascadeMode.Stop)
         .MustAsync(async (x, _) => !await _companyRepository.DoesExistAsync())
