@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.CompanyService.Data
     {
       if (dbCompanyUser is null)
       {
-        return null;
+        return default;
       }
 
       _provider.CompaniesUsers.Add(dbCompanyUser);
