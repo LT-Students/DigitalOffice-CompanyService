@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public async Task CreateAsync(DbCompany company)
     {
-      if (company == null)
+      if (company is null)
       {
         return;
       }
