@@ -3,7 +3,7 @@ using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Publishing.Subscriber.Company;
 using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
 
     public DbCompanyUser Map(CreateCompanyUserRequest request)
     {
-      return request is null 
+      return request is null
         ? default
         : new DbCompanyUser
         {
@@ -39,7 +39,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         };
     }
 
-    public DbCompanyUser Map(ICreateCompanyUserRequest request)
+    public DbCompanyUser Map(ICreateCompanyUserPublish request)
     {
       return new DbCompanyUser
       {
