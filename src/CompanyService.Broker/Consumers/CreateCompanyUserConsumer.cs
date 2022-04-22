@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Models.Broker.Publishing.Subscriber.Company;
 using MassTransit;
-using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
@@ -11,24 +11,22 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
   {
     private readonly ICompanyUserRepository _companyUserRepository;
     private readonly IDbCompanyUserMapper _companyUserMapper;
-    private readonly ILogger<CreateCompanyUserConsumer> _logger;
+    private readonly IGlobalCacheRepository _globalCache;
 
     public CreateCompanyUserConsumer(
       ICompanyUserRepository companyUserRepository,
       IDbCompanyUserMapper companyUserMapper,
-      ILogger<CreateCompanyUserConsumer> logger)
+      IGlobalCacheRepository globalCache)
     {
       _companyUserRepository = companyUserRepository;
       _companyUserMapper = companyUserMapper;
-      _logger = logger;
+      _globalCache = globalCache;
     }
 
     public async Task Consume(ConsumeContext<ICreateCompanyUserPublish> context)
     {
-      if (!(await _companyUserRepository.CreateAsync(_companyUserMapper.Map(context.Message))).HasValue)
-      {
-        _logger.LogError("Error while assign company to user.");
-      }
+      await _companyUserRepository.CreateAsync(_companyUserMapper.Map(context.Message));
+      await _globalCache.RemoveAsync(context.Message.CompanyId);
     }
   }
 }
