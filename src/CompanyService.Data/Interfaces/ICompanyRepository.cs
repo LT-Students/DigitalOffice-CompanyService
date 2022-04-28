@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   {
     Task CreateAsync(DbCompany company);
 
-    Task<DbCompany> GetAsync(Guid companyId);
+    Task<DbCompany> GetAsync();
 
     Task EditAsync(Guid companyId, JsonPatchDocument<DbCompany> request);
 

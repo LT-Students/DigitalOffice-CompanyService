@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company.Filters;
 using LT.DigitalOffice.CompanyService.Models.Dto.Responses;
 using LT.DigitalOffice.Kernel.Attributes;
@@ -10,6 +9,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces
   [AutoInject]
   public interface IGetCompanyCommand
   {
-    Task<OperationResultResponse<CompanyResponse>> ExecuteAsync(Guid companyId, GetCompanyFilter filter);
+    Task<OperationResultResponse<CompanyResponse>> ExecuteAsync(GetCompanyFilter filter);
   }
 }

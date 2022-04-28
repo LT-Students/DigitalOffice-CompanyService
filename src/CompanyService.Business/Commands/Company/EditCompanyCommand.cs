@@ -81,7 +81,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       //TODO async
       //Task.Run(() =>
       //{
-      company ??= await _companyRepository.GetAsync(companyId);
+      company ??= await _companyRepository.GetAsync();
       await _companyChangesRepository.CreateAsync(
         company.Id,
         _httpContextAccessor.HttpContext.GetUserId(),

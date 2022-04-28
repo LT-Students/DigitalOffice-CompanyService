@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Broker.Requests.Interfaces;
@@ -31,10 +30,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _officeService = officeService;
     }
 
-    public async Task<OperationResultResponse<CompanyResponse>> ExecuteAsync(Guid companyId, GetCompanyFilter filter)
+    public async Task<OperationResultResponse<CompanyResponse>> ExecuteAsync(GetCompanyFilter filter)
     {
       List<string> errors = new();
-      DbCompany company = await _repository.GetAsync(companyId);
+      DbCompany company = await _repository.GetAsync();
 
       List<OfficeData> offices = filter.IncludeOffices
         ? await _officeService.GetOfficesAsync(errors)

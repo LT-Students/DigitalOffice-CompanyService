@@ -42,9 +42,9 @@ namespace LT.DigitalOffice.CompanyService.Data
       await _provider.SaveAsync();
     }
 
-    public async Task<DbCompany> GetAsync(Guid companyId)
+    public async Task<DbCompany> GetAsync()
     {
-      return await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
+      return await _provider.Companies.FirstOrDefaultAsync();
     }
 
     public async Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request)

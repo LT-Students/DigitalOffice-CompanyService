@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
@@ -15,7 +14,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
   [ApiController]
   public class ContractSubjectController : ControllerBase
   {
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<OperationResultResponse<Guid?>> CreateAsync(
       [FromServices] ICreateContractSubjectCommand command,
       [FromBody] CreateContractSubjectRequest request)
@@ -23,7 +22,7 @@ namespace LT.DigitalOffice.CompanyService.Controllers
       return await command.ExecuteAsync(request);
     }
 
-    [HttpGet]
+    [HttpGet("find")]
     public async Task<FindResultResponse<ContractSubjectInfo>> FindAsync(
       [FromServices] IFindContractSubjectsCommand command,
       [FromQuery] FindContractSubjectFilter filter)
@@ -31,10 +30,10 @@ namespace LT.DigitalOffice.CompanyService.Controllers
       return await command.ExecuteAsync(filter);
     }
 
-    [HttpPatch("{contractSubjectId}")]
+    [HttpPatch("edit")]
     public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditContractSubjectCommand command,
-      [FromRoute] Guid contractSubjectId,
+      [FromQuery] Guid contractSubjectId,
       [FromBody] JsonPatchDocument<EditContractSubjectRequest> request)
     {
       return await command.ExecuteAsync(contractSubjectId, request);
