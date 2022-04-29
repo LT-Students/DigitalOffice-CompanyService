@@ -71,10 +71,10 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       //TODO async
       //Task.Run(() =>
       //{
-      await _companyChangesRepository.CreateAsync(
+      /*await _companyChangesRepository.CreateAsync(
         company.Id,
         null,
-        CreateHistoryMessageHelper.Create(company));
+        CreateHistoryMessageHelper.Create(company));*/
       //}
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;

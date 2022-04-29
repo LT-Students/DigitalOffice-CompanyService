@@ -23,6 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           Contacts = table.Column<string>(nullable: true),
           LogoContent = table.Column<string>(nullable: true),
           LogoExtension = table.Column<string>(nullable: true),
+          IsActive = table.Column<bool>(nullable: false),
           CreatedBy = table.Column<Guid>(nullable: false),
           CreatedAtUtc = table.Column<DateTime>(nullable: false),
           ModifiedBy = table.Column<Guid>(nullable: true),
