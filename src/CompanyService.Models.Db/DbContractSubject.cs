@@ -19,8 +19,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
 
-    public DbCompany Company { get; set; }
-
     [JsonIgnore]
     public ICollection<DbCompanyUser> Users { get; set; }
 
@@ -47,10 +45,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
       builder
         .HasMany(ct => ct.Users)
         .WithOne(cu => cu.ContractSubject);
-
-      builder
-        .HasOne(cs => cs.Company)
-        .WithMany(c => c.ContractSubjects);
     }
   }
 }
