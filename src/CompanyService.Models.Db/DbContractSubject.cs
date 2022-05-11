@@ -35,7 +35,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public void Configure(EntityTypeBuilder<DbContractSubject> builder)
     {
       builder
-        .ToTable(DbContractSubject.TableName);
+        .ToTable(
+          DbContractSubject.TableName);
 
       builder
         .HasKey(cs => cs.Id);
