@@ -27,7 +27,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly IAccessValidator _accessValidator;
     private readonly ICreateCompanyRequestValidator _validator;
     private readonly ICompanyRepository _repository;
-    private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IResponseCreator _responseCreator;
 
@@ -36,7 +35,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       IAccessValidator accessValidator,
       ICreateCompanyRequestValidator validator,
       ICompanyRepository repository,
-      ICompanyChangesRepository companyChangesRepository,
       IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator)
     {
@@ -44,7 +42,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _accessValidator = accessValidator;
       _validator = validator;
       _repository = repository;
-      _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
       _responseCreator = responseCreator;
     }
@@ -67,15 +64,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       DbCompany company = await _mapper.MapAsync(request);
 
       await _repository.CreateAsync(company);
-
-      //TODO async
-      //Task.Run(() =>
-      //{
-      /*await _companyChangesRepository.CreateAsync(
-        company.Id,
-        null,
-        CreateHistoryMessageHelper.Create(company));*/
-      //}
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 {
   [DbContext(typeof(CompanyServiceDbContext))]
-  [Migration("20220328201500_Initial")]
+  [Migration("20220505144800_Initial")]
   public class Initial : Migration
   {
     #region CreateTables
@@ -52,33 +52,26 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           EndWorkingAt = table.Column<DateTime>(nullable: true),
           Probation = table.Column<DateTime>(nullable: true),
           CreatedBy = table.Column<Guid>(nullable: false),
-          CreatedAtUtc = table.Column<DateTime>(nullable: false),
           ModifiedBy = table.Column<Guid>(nullable: true),
-          ModifiedAtUtc = table.Column<DateTime>(nullable: true),
-          IsActive = table.Column<bool>(nullable: false)
+          IsActive = table.Column<bool>(nullable: false),
+          PeriodEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart"),
+          PeriodStart = table.Column<DateTime>(type: "datetime2", nullable: false)
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart")
         },
         constraints: table =>
         {
           table.PrimaryKey("PR_CompaniesUsers", x => x.Id);
-        });
-    }
-
-    private void CreateCompaniesChangesTable(MigrationBuilder migrationBuilder)
-    {
-      migrationBuilder.CreateTable(
-        name: DbCompanyChanges.TableName,
-        columns: table => new
-        {
-          Id = table.Column<Guid>(nullable: false),
-          CompanyId = table.Column<Guid>(nullable: false),
-          ModifiedBy = table.Column<Guid>(nullable: true),
-          ModifiedAtUtc = table.Column<DateTime>(nullable: true),
-          Changes = table.Column<string>(nullable: false)
-        },
-        constraints: table =>
-        {
-          table.PrimaryKey("PR_CompaniesChanges", x => x.Id);
-        });
+        })
+        .Annotation("SqlServer:IsTemporal", true)
+        .Annotation("SqlServer:TemporalHistoryTableName", "CompanyUsersHistory")
+        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+        .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
+        .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart");
     }
 
     private void CreateContractSubjectsTable(MigrationBuilder migrationBuilder)
@@ -91,16 +84,27 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           Name = table.Column<string>(maxLength: 150, nullable: false),
           Description = table.Column<string>(nullable: true),
           CreatedBy = table.Column<Guid>(nullable: false),
-          CreatedAtUtc = table.Column<DateTime>(nullable: false),
           ModifiedBy = table.Column<Guid>(nullable: true),
-          ModifiedAtUtc = table.Column<DateTime>(nullable: true),
-          IsActive = table.Column<bool>(nullable: false)
+          IsActive = table.Column<bool>(nullable: false),
+          PeriodEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart"),
+          PeriodStart = table.Column<DateTime>(type: "datetime2", nullable: false)
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart")
         },
         constraints: table =>
         {
           table.PrimaryKey("PR_ContractSubjects", x => x.Id);
           table.UniqueConstraint("UC_PR_ContractSubjects_Name", x => x.Name);
-        });
+        })
+        .Annotation("SqlServer:IsTemporal", true)
+        .Annotation("SqlServer:TemporalHistoryTableName", "ContractSubjectsHistory")
+        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+        .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
+        .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart");
     }
     #endregion
 
@@ -110,8 +114,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
 
       CreateCompaniesUsersTable(migrationBuilder);
 
-      CreateCompaniesChangesTable(migrationBuilder);
-
       CreateContractSubjectsTable(migrationBuilder);
     }
 
@@ -119,7 +121,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
     {
       migrationBuilder.DropTable(name: DbCompany.TableName);
       migrationBuilder.DropTable(name: DbCompanyUser.TableName);
-      migrationBuilder.DropTable(name: DbCompanyChanges.TableName);
       migrationBuilder.DropTable(name: DbContractSubject.TableName);
     }
   }

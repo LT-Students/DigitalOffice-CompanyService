@@ -34,7 +34,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
           EndWorkingAt = request.EndWorkingAt,
           Probation = request.Probation,
           CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
-          CreatedAtUtc = DateTime.UtcNow,
           IsActive = true
         };
     }
@@ -53,7 +52,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         EndWorkingAt = request.EndWorkingAt,
         Probation = request.Probation,
         CreatedBy = request.CreatedBy,
-        CreatedAtUtc = DateTime.UtcNow,
         IsActive = true
       };
     }

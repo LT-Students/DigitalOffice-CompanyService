@@ -48,7 +48,6 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       request.ApplyTo(dbCompanyUser);
-      dbCompanyUser.ModifiedAtUtc = DateTime.UtcNow;
       dbCompanyUser.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
       await _provider.SaveAsync();
 
@@ -78,7 +77,6 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       user.IsActive = false;
-      user.ModifiedAtUtc = DateTime.UtcNow;
       user.ModifiedBy = removedBy;
 
       await _provider.SaveAsync();

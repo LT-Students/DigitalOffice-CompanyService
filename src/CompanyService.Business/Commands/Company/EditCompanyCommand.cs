@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
-using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Patch.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
@@ -12,7 +11,6 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
@@ -30,7 +28,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly IEditCompanyRequestValidator _validator;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IResponseCreator _responseCreator;
-    private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IGlobalCacheRepository _globalCache;
 
     
@@ -41,7 +38,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       IEditCompanyRequestValidator validator,
       IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator,
-      ICompanyChangesRepository companyChangesRepository,
       IGlobalCacheRepository globalCache)
     {
       _accessValidator = accessValidator;
@@ -50,7 +46,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _validator = validator;
       _httpContextAccessor = httpContextAccessor;
       _responseCreator = responseCreator;
-      _companyChangesRepository = companyChangesRepository;
       _globalCache = globalCache;
     }
 
@@ -76,17 +71,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       await _companyRepository.EditAsync(companyId, dbRequest);
 
-      DbCompany company = null;
-
-      //TODO async
-      //Task.Run(() =>
-      //{
-      company ??= await _companyRepository.GetAsync();
-      await _companyChangesRepository.CreateAsync(
-        company.Id,
-        _httpContextAccessor.HttpContext.GetUserId(),
-        CreateHistoryMessageHelper.Create(company, dbRequest));
-      //});
+      DbCompany company = await _companyRepository.GetAsync();
 
       await _globalCache.RemoveAsync(companyId);
 

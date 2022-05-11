@@ -15,9 +15,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public string Description { get; set; }
     public bool IsActive { get; set; }
     public Guid CreatedBy { get; set; }
-    public DateTime CreatedAtUtc { get; set; }
     public Guid? ModifiedBy { get; set; }
-    public DateTime? ModifiedAtUtc { get; set; }
 
     public DbCompany Company { get; set; }
 
@@ -35,7 +33,9 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public void Configure(EntityTypeBuilder<DbContractSubject> builder)
     {
       builder
-        .ToTable(DbContractSubject.TableName);
+        .ToTable(
+          DbContractSubject.TableName,
+          cs => cs.IsTemporal());
 
       builder
         .HasKey(cs => cs.Id);

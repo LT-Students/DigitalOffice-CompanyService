@@ -53,7 +53,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
       }
 
       request.ApplyTo(dbContractSubject);
-      dbContractSubject.ModifiedAtUtc = DateTime.UtcNow;
       dbContractSubject.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
 
       await _provider.SaveAsync();
