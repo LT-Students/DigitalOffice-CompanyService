@@ -84,27 +84,16 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           Name = table.Column<string>(maxLength: 150, nullable: false),
           Description = table.Column<string>(nullable: true),
           CreatedBy = table.Column<Guid>(nullable: false),
+          CreatedAtUtc = table.Column<DateTime>(nullable: false),
           ModifiedBy = table.Column<Guid>(nullable: true),
-          IsActive = table.Column<bool>(nullable: false),
-          PeriodEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
-            .Annotation("SqlServer:IsTemporal", true)
-            .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
-            .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart"),
-          PeriodStart = table.Column<DateTime>(type: "datetime2", nullable: false)
-            .Annotation("SqlServer:IsTemporal", true)
-            .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
-            .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart")
+          ModifiedAtUtc = table.Column<DateTime>(nullable: true),
+          IsActive = table.Column<bool>(nullable: false)
         },
         constraints: table =>
         {
           table.PrimaryKey("PR_ContractSubjects", x => x.Id);
           table.UniqueConstraint("UC_PR_ContractSubjects_Name", x => x.Name);
-        })
-        .Annotation("SqlServer:IsTemporal", true)
-        .Annotation("SqlServer:TemporalHistoryTableName", "ContractSubjectsHistory")
-        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
-        .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
-        .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart");
+        });
     }
     #endregion
 
