@@ -25,8 +25,12 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<ICreateCompanyUserPublish> context)
     {
-      await _companyUserRepository.CreateAsync(_companyUserMapper.Map(context.Message));
-      await _globalCache.RemoveAsync(context.Message.CompanyId);
+      if (!await _companyUserRepository.DoesExistAsync(context.Message.UserId))
+      {
+        await _companyUserRepository.CreateAsync(_companyUserMapper.Map(context.Message));
+
+        await _globalCache.RemoveAsync(context.Message.CompanyId);
+      }
     }
   }
 }

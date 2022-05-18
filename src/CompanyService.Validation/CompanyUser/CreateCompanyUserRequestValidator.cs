@@ -12,33 +12,40 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
   {
     public CreateCompanyUserRequestValidator(
       ICompanyRepository companyRepository,
+      ICompanyUserRepository companyUserRepository,
       IContractSubjectRepository contractRepository,
       IUserService userService)
     {
-      When(x => x.Rate.HasValue, () =>
-      {
-        RuleFor(x => x.Rate)
-        .Must(x => x.Value > 0 && x.Value <= 1)
-        .WithMessage("Rame must be from 0 to 1.");
-      });
-
-      RuleFor(x => x.ContractTermType)
-        .IsInEnum();
-
-      RuleFor(x => x.CompanyId)
-        .MustAsync(async (request, _) => await companyRepository.DoesExistAsync())
-        .WithMessage("Company does not exist.");
-      
-      When(x => x.ContractSubjectId.HasValue, () =>
-      {
-        RuleFor(x => x.ContractSubjectId)
-          .MustAsync(async (request, _) => await contractRepository.DoesExistAsync(request.Value))
-          .WithMessage("Contract subject does not exist.");
-      });
-
       RuleFor(x => x.UserId)
-        .MustAsync(async (request, _) => (await userService.CheckUsersExistence(new List<Guid> { request }, new List<string>())).Count == 1)
-        .WithMessage("User does not exist.");
+        .MustAsync(async (userId, _) => !await companyUserRepository.DoesExistAsync(userId))
+        .WithMessage("User already exists.")
+        .DependentRules(() =>
+        {
+          When(x => x.Rate.HasValue, () =>
+          {
+            RuleFor(x => x.Rate)
+              .Must(x => x.Value > 0 && x.Value <= 1)
+              .WithMessage("Rate must be from 0 to 1.");
+          });
+
+          RuleFor(x => x.ContractTermType)
+            .IsInEnum();
+
+          RuleFor(x => x.CompanyId)
+            .MustAsync(async (request, _) => await companyRepository.DoesExistAsync())
+            .WithMessage("Company does not exist.");
+
+          When(x => x.ContractSubjectId.HasValue, () =>
+          {
+            RuleFor(x => x.ContractSubjectId)
+              .MustAsync(async (request, _) => await contractRepository.DoesExistAsync(request.Value))
+              .WithMessage("Contract subject does not exist.");
+          });
+
+          RuleFor(x => x.UserId)
+            .MustAsync(async (request, _) => (await userService.CheckUsersExistence(new List<Guid> { request }, new List<string>())).Count == 1)
+            .WithMessage("User does not exist.");
+        });
     }
   }
 }
