@@ -19,7 +19,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public DateTime? Probation { get; set; }
     public bool IsActive { get; set; }
     public Guid CreatedBy { get; set; }
-    public Guid? ModifiedBy { get; set; }
 
     public DbCompany Company { get; set; }
     public DbContractSubject ContractSubject { get; set; }

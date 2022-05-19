@@ -31,6 +31,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         Description = request.Description,
         IsActive = true,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
+        CreatedAtUtc = DateTime.UtcNow
       };
     }
   }

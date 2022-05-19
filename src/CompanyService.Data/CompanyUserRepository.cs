@@ -48,7 +48,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       request.ApplyTo(dbCompanyUser);
-      dbCompanyUser.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
+      dbCompanyUser.CreatedBy = _httpContextAccessor.HttpContext.GetUserId();
       await _provider.SaveAsync();
 
       return true;
@@ -77,7 +77,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       user.IsActive = false;
-      user.ModifiedBy = removedBy;
+      user.CreatedBy = removedBy;
 
       await _provider.SaveAsync();
 

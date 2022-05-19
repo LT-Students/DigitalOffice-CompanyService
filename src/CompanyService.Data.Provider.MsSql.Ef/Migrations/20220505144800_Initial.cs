@@ -47,12 +47,11 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           UserId = table.Column<Guid>(nullable: false),
           ContractSubjectId = table.Column<Guid>(nullable: true),
           ContractTermType = table.Column<int>(nullable: false),
-          Rate = table.Column<decimal>(nullable: true),
+          Rate = table.Column<double>(nullable: true),
           StartWorkingAt = table.Column<DateTime>(nullable: false),
           EndWorkingAt = table.Column<DateTime>(nullable: true),
           Probation = table.Column<DateTime>(nullable: true),
           CreatedBy = table.Column<Guid>(nullable: false),
-          ModifiedBy = table.Column<Guid>(nullable: true),
           IsActive = table.Column<bool>(nullable: false),
           PeriodEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
             .Annotation("SqlServer:IsTemporal", true)
@@ -69,7 +68,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
         })
         .Annotation("SqlServer:IsTemporal", true)
         .Annotation("SqlServer:TemporalHistoryTableName", "CompanyUsersHistory")
-        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
         .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
         .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart");
     }
