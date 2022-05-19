@@ -27,14 +27,9 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     [JsonIgnore]
     public ICollection<DbCompanyUser> Users { get; set; }
 
-    [JsonIgnore]
-    public ICollection<DbContractSubject> ContractSubjects { get; set; }
-
     public DbCompany()
     {
       Users = new HashSet<DbCompanyUser>();
-
-      ContractSubjects = new HashSet<DbContractSubject>();
     }
   }
 
@@ -55,10 +50,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
       builder
         .HasMany(c => c.Users)
         .WithOne(cu => cu.Company);
-
-      builder
-        .HasMany(c => c.ContractSubjects)
-        .WithOne(cs => cs.Company);
     }
   }
 }
