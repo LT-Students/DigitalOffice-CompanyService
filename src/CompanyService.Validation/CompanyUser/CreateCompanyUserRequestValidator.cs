@@ -32,7 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
             .IsInEnum();
 
           RuleFor(x => x.CompanyId)
-            .MustAsync(async (request, _) => await companyRepository.DoesExistAsync())
+            .MustAsync(async (companyId, _) => await companyRepository.DoesExistAsync(companyId))
             .WithMessage("Company does not exist.");
 
           When(x => x.ContractSubjectId.HasValue, () =>

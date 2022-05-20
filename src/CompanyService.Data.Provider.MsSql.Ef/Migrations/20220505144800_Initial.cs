@@ -67,7 +67,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef.Migrations
           table.PrimaryKey("PR_CompaniesUsers", x => x.Id);
         })
         .Annotation("SqlServer:IsTemporal", true)
-        .Annotation("SqlServer:TemporalHistoryTableName", "CompanyUsersHistory")
+        .Annotation("SqlServer:TemporalHistoryTableName", DbCompanyUser.HistoryTableName)
         .Annotation("SqlServer:TemporalPeriodEndColumnName", "PeriodEnd")
         .Annotation("SqlServer:TemporalPeriodStartColumnName", "PeriodStart");
     }

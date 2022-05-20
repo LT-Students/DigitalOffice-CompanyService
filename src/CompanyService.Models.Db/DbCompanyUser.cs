@@ -7,6 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
   public record DbCompanyUser
   {
     public const string TableName = "CompaniesUsers";
+    public const string HistoryTableName = "CompaniesUsersHistroy";
 
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }
@@ -31,7 +32,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
       builder
         .ToTable(
           DbCompanyUser.TableName,
-          cu => cu.IsTemporal());
+          cu => cu.IsTemporal(b =>
+          {
+            b.UseHistoryTable(DbCompanyUser.HistoryTableName);
+          }));
 
       builder
         .HasKey(t => t.Id);
