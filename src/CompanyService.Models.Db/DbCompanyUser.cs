@@ -7,7 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
   public record DbCompanyUser
   {
     public const string TableName = "CompaniesUsers";
-    public const string HistoryTableName = "CompaniesUsersHistroy";
+    public const string HistoryTableName = "CompaniesUsersHistory";
 
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }
