@@ -25,15 +25,10 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public bool IsActive { get; set; }
 
     [JsonIgnore]
-    public ICollection<DbCompanyChanges> Changes { get; set; }
-
-    [JsonIgnore]
     public ICollection<DbCompanyUser> Users { get; set; }
 
     public DbCompany()
     {
-      Changes = new HashSet<DbCompanyChanges>();
-
       Users = new HashSet<DbCompanyUser>();
     }
   }
@@ -51,10 +46,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
       builder
         .Property(c => c.Name)
         .IsRequired();
-
-      builder
-        .HasMany(c => c.Changes)
-        .WithOne(ch => ch.Company);
 
       builder
         .HasMany(c => c.Users)

@@ -7,6 +7,7 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
   public record DbCompanyUser
   {
     public const string TableName = "CompaniesUsers";
+    public const string HistoryTableName = "CompaniesUsersHistory";
 
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }
@@ -19,9 +20,6 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public DateTime? Probation { get; set; }
     public bool IsActive { get; set; }
     public Guid CreatedBy { get; set; }
-    public DateTime CreatedAtUtc { get; set; }
-    public Guid? ModifiedBy { get; set; }
-    public DateTime? ModifiedAtUtc { get; set; }
 
     public DbCompany Company { get; set; }
     public DbContractSubject ContractSubject { get; set; }
@@ -32,7 +30,12 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public void Configure(EntityTypeBuilder<DbCompanyUser> builder)
     {
       builder
-        .ToTable(DbCompanyUser.TableName);
+        .ToTable(
+          DbCompanyUser.TableName,
+          cu => cu.IsTemporal(b =>
+          {
+            b.UseHistoryTable(DbCompanyUser.HistoryTableName);
+          }));
 
       builder
         .HasKey(t => t.Id);

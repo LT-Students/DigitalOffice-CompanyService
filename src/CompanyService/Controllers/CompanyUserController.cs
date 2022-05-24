@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Company;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 

@@ -48,8 +48,7 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       request.ApplyTo(dbCompanyUser);
-      dbCompanyUser.ModifiedAtUtc = DateTime.UtcNow;
-      dbCompanyUser.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
+      dbCompanyUser.CreatedBy = _httpContextAccessor.HttpContext.GetUserId();
       await _provider.SaveAsync();
 
       return true;
@@ -78,12 +77,16 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       user.IsActive = false;
-      user.ModifiedAtUtc = DateTime.UtcNow;
-      user.ModifiedBy = removedBy;
+      user.CreatedBy = removedBy;
 
       await _provider.SaveAsync();
 
       return user.CompanyId;
+    }
+
+    public async Task<bool> DoesExistAsync(Guid userId)
+    {
+      return await _provider.CompaniesUsers.AnyAsync(u => u.UserId == userId);
     }
 
     public async Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId)

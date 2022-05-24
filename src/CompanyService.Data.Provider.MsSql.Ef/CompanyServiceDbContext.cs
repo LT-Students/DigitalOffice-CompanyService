@@ -16,7 +16,6 @@ namespace LT.DigitalOffice.CompanyService.Data.Provider.MsSql.Ef
     }
 
     public DbSet<DbCompany> Companies { get; set; }
-    public DbSet<DbCompanyChanges> CompanyChanges { get; set; }
     public DbSet<DbCompanyUser> CompaniesUsers { get; set; }
     public DbSet<DbContractSubject> ContractSubjects { get; set; }
 
