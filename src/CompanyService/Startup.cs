@@ -9,6 +9,8 @@ using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
 using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
 using LT.DigitalOffice.Kernel.Configurations;
+using LT.DigitalOffice.Kernel.EFSupport.Extensions;
+using LT.DigitalOffice.Kernel.EFSupport.Helpers;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Helpers;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
@@ -99,18 +101,7 @@ namespace LT.DigitalOffice.CompanyService
         })
         .AddNewtonsoftJson();
 
-
-      string connStr = Environment.GetEnvironmentVariable("ConnectionString");
-      if (string.IsNullOrEmpty(connStr))
-      {
-        connStr = Configuration.GetConnectionString("SQLConnectionString");
-
-        Log.Information($"SQL connection string from appsettings.json was used. Value '{PasswordHider.Hide(connStr)}'.");
-      }
-      else
-      {
-        Log.Information($"SQL connection string from environment was used. Value '{PasswordHider.Hide(connStr)}'.");
-      }
+      string connStr = ConnectionStringHandler.Get(Configuration);
 
       services.AddDbContext<CompanyServiceDbContext>(options =>
       {
@@ -143,7 +134,7 @@ namespace LT.DigitalOffice.CompanyService
 
     public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
     {
-      UpdateDatabase(app);
+      app.UpdateDatabase<CompanyServiceDbContext>();
 
       string error = FlushRedisDbHelper.FlushDatabase(redisConnStr, Cache.Companies);
       if (error is not null)
@@ -258,17 +249,6 @@ namespace LT.DigitalOffice.CompanyService
       {
         ep.ConfigureConsumer<DisactivateUserConsumer>(context);
       });
-    }
-
-    private void UpdateDatabase(IApplicationBuilder app)
-    {
-      using var serviceScope = app.ApplicationServices
-        .GetRequiredService<IServiceScopeFactory>()
-        .CreateScope();
-
-      using var context = serviceScope.ServiceProvider.GetService<CompanyServiceDbContext>();
-
-      context.Database.Migrate();
     }
 
     #endregion

@@ -37,12 +37,11 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
           nameof(EditCompanyRequest.Logo)
         });
 
-      AddСorrectOperations(nameof(EditCompanyRequest.Name), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Description), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Tagline), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Contacts), new List<OperationType> { OperationType.Replace });
-      AddСorrectOperations(nameof(EditCompanyRequest.Logo), new List<OperationType> { OperationType.Replace });
-
+      AddСorrectOperations(nameof(EditCompanyRequest.Name), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyRequest.Description), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyRequest.Tagline), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyRequest.Contacts), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyRequest.Logo), new() { OperationType.Replace });
       #endregion
 
       #region CompanyName

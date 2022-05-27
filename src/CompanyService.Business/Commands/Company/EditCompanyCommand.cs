@@ -14,7 +14,6 @@ using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
@@ -26,17 +25,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly IPatchDbCompanyMapper _mapper;
     private readonly ICompanyRepository _companyRepository;
     private readonly IEditCompanyRequestValidator _validator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IResponseCreator _responseCreator;
     private readonly IGlobalCacheRepository _globalCache;
 
-    
     public EditCompanyCommand(
       IAccessValidator accessValidator,
       IPatchDbCompanyMapper mapper,
       ICompanyRepository companyRepository,
       IEditCompanyRequestValidator validator,
-      IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator,
       IGlobalCacheRepository globalCache)
     {
@@ -44,7 +40,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       _mapper = mapper;
       _companyRepository = companyRepository;
       _validator = validator;
-      _httpContextAccessor = httpContextAccessor;
       _responseCreator = responseCreator;
       _globalCache = globalCache;
     }
@@ -58,7 +53,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync((companyId, request));
-      if (validationResult.IsValid)
+      if (!validationResult.IsValid)
       {
         return _responseCreator.CreateFailureResponse<bool>(
           HttpStatusCode.BadRequest,
@@ -70,8 +65,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
       JsonPatchDocument<DbCompany> dbRequest = await _mapper.MapAsync(request);
 
       await _companyRepository.EditAsync(companyId, dbRequest);
-
-      DbCompany company = await _companyRepository.GetAsync();
 
       await _globalCache.RemoveAsync(companyId);
 
