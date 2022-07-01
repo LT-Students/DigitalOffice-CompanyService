@@ -10,7 +10,6 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests.ContractSubject;
 using LT.DigitalOffice.CompanyService.Validation.ContractSubject.Interfaces;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.JsonPatch;
@@ -70,10 +69,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
       {
         await _companyUserRepository.RemoveContractSubjectAsync(contractSubjectId);
       }
-
-      result.Status = result.Body
-        ? OperationResultStatusType.FullSuccess
-        : OperationResultStatusType.Failed;
 
       return result;
     }

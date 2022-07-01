@@ -67,18 +67,16 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
           validationResult.Errors.Select(e => e.ErrorMessage).ToList());
       }
 
-      bool result = await _repository.EditAsync(userId, _mapper.Map(request));
+      OperationResultResponse<bool> response = new();
 
-      if (result)
+      response.Body = await _repository.EditAsync(userId, _mapper.Map(request));
+
+      if (response.Body)
       {
         await ClearCache(userId);
       }
 
-      return new OperationResultResponse<bool>
-      {
-        Status = result ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed,
-        Body = result
-      };
+      return response;
     }
   }
 }

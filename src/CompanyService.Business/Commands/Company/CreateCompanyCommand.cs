@@ -11,7 +11,6 @@ using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.Http;
@@ -64,11 +63,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
-      return new OperationResultResponse<Guid?>
-      {
-        Status = OperationResultStatusType.FullSuccess,
-        Body = company.Id
-      };
+      return new OperationResultResponse<Guid?>(body: company.Id);
     }
   }
 }
