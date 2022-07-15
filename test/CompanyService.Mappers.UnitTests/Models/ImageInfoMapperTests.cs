@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
       Assert.IsNull(_mapper.Map(null));
     }
 
-    [Test]
+    /*[Test]
     public void ShouldMapSuccessfuly()
     {
       ImageInfo expected = new()
@@ -44,6 +44,6 @@ namespace LT.DigitalOffice.CompanyService.Mappers.UnitTests.Models
               expected.Content,
               expected.Extension,
               expected.Name)));
-    }
+    }*/
   }
 }
