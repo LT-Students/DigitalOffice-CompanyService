@@ -8,12 +8,12 @@ namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
   public class CreateContractSubjectRequestValidator : AbstractValidator<CreateContractSubjectRequest>, ICreateContractSubjectRequestValidator
   {
     public CreateContractSubjectRequestValidator(
-      IContractSubjectRepository _contractSubjectRepository)
+      IContractSubjectRepository contractSubjectRepository)
     {
       RuleFor(request => request.Name)
-        .NotEmpty().WithMessage("Name can't be empty.")
         .MaximumLength(150).WithMessage("Name is too long.")
-        .MustAsync(async (name, _) => await _contractSubjectRepository.DoesNameExistAsync(name));
+        .MustAsync(async (name, _) => !await contractSubjectRepository.DoesNameExistAsync(name))
+        .WithMessage("Еhis Name already exists.");
     }
   }
 }

@@ -22,7 +22,6 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
         .ChildRules((request) =>
         { 
           RuleFor(request => request.Name)
-            .NotEmpty().WithMessage("Company name can't be empty.")
             .MaximumLength(150).WithMessage("Name is too long")
             .MustAsync(async (x, _) => !await _companyRepository.DoesNameExistAsync(x))
             .WithMessage("Name already exists.");

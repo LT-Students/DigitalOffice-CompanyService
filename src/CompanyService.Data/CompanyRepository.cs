@@ -42,30 +42,30 @@ namespace LT.DigitalOffice.CompanyService.Data
       await _provider.SaveAsync();
     }
 
-    public async Task<DbCompany> GetAsync()
+    public Task<DbCompany> GetAsync()
     {
-      return await _provider.Companies.FirstOrDefaultAsync();
+      return _provider.Companies.FirstOrDefaultAsync();
     }
 
-    public async Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request)
+    public Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request)
     {
-      IQueryable<DbCompany> dbCompanies = _provider.Companies.AsQueryable();
+      IQueryable<DbCompany> query = _provider.Companies.AsQueryable();
 
       if (request.UsersIds is not null && request.UsersIds.Any())
       {
-        dbCompanies = dbCompanies.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
+        query = query.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
       }
 
-      dbCompanies = dbCompanies
+      query = query
         .Include(d => d.Users.Where(du => du.IsActive))
         .ThenInclude(u => u.ContractSubject);
 
-      return await dbCompanies.ToListAsync();
+      return query.ToListAsync();
     }
 
     public async Task EditAsync(Guid companyId, JsonPatchDocument<DbCompany> request)
     {
-      if (request == null)
+      if (request is null)
       {
         return;
       }
@@ -84,24 +84,19 @@ namespace LT.DigitalOffice.CompanyService.Data
       await _provider.SaveAsync();
     }
 
-    public async Task<bool> DoesExistAsync(Guid companyId)
+    public Task<bool> DoesExistAsync(Guid companyId)
     {
-      return await _provider.Companies.AnyAsync(x => x.Id == companyId);
+      return _provider.Companies.AnyAsync(x => x.Id == companyId);
     }
 
-    public async Task<bool> DoesExistAsync()
+    public Task<bool> DoesExistAsync()
     {
-      return await _provider.Companies.AnyAsync(x => x.IsActive);
+      return _provider.Companies.AnyAsync(x => x.IsActive);
     }
 
-    public async Task<bool> DoesNameExistAsync(string name)
+    public Task<bool> DoesNameExistAsync(string name)
     {
-      if (string.IsNullOrEmpty(name))
-      {
-        return false;
-      }
-
-      return await _provider.Companies.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
+      return _provider.Companies.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
     }
   }
 }

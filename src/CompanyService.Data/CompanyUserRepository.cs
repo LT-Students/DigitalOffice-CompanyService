@@ -54,14 +54,16 @@ namespace LT.DigitalOffice.CompanyService.Data
       return true;
     }
 
-    public async Task<DbCompanyUser> GetAsync(Guid userId)
+    public Task<DbCompanyUser> GetAsync(Guid userId)
     {
-      return await _provider.CompaniesUsers.Include(u => u.Company).FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
+      return _provider.CompaniesUsers
+        .Include(u => u.Company)
+        .FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
     }
 
-    public async Task<List<DbCompanyUser>> GetAsync(List<Guid> userIds)
+    public Task<List<DbCompanyUser>> GetAsync(List<Guid> userIds)
     {
-      return await _provider.CompaniesUsers
+      return _provider.CompaniesUsers
         .Include(cu => cu.Company)
         .Where(u => userIds.Contains(u.UserId) && u.IsActive)
         .ToListAsync();
@@ -84,9 +86,9 @@ namespace LT.DigitalOffice.CompanyService.Data
       return user.CompanyId;
     }
 
-    public async Task<bool> DoesExistAsync(Guid userId)
+    public Task<bool> DoesExistAsync(Guid userId)
     {
-      return await _provider.CompaniesUsers.AnyAsync(u => u.UserId == userId);
+      return _provider.CompaniesUsers.AnyAsync(u => u.UserId == userId);
     }
 
     public async Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId)

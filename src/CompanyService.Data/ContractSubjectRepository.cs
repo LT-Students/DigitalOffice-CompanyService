@@ -82,24 +82,19 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         await contractSubjects.CountAsync());
     }
 
-    public async Task<DbContractSubject> GetAsync(Guid contractSubjectId)
+    public Task<DbContractSubject> GetAsync(Guid contractSubjectId)
     {
-      return await _provider.ContractSubjects.FirstOrDefaultAsync(x => x.Id == contractSubjectId);
+      return _provider.ContractSubjects.FirstOrDefaultAsync(x => x.Id == contractSubjectId);
     }
 
-    public async Task<bool> DoesExistAsync(Guid contractSubjectId)
+    public Task<bool> DoesExistAsync(Guid contractSubjectId)
     {
-      return await _provider.ContractSubjects.AnyAsync(x => x.Id == contractSubjectId);
+      return _provider.ContractSubjects.AnyAsync(x => x.Id == contractSubjectId);
     }
 
-    public async Task<bool> DoesNameExistAsync(string name)
+    public Task<bool> DoesNameExistAsync(string name)
     {
-      if (string.IsNullOrEmpty(name))
-      {
-        return false;
-      }
-
-      return await _provider.ContractSubjects.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
+      return _provider.ContractSubjects.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
     }
   }
 }
