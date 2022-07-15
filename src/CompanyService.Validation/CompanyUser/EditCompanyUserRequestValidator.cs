@@ -25,15 +25,23 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
 
       #region Paths
 
-      AddСorrectPaths(
+    AddСorrectPaths(
         new()
         {
+          nameof(EditCompanyUserRequest.ContractSubjectId),
+          nameof(EditCompanyUserRequest.ContractTermType),
           nameof(EditCompanyUserRequest.Rate),
-          nameof(EditCompanyUserRequest.StartWorkingAt)
+          nameof(EditCompanyUserRequest.StartWorkingAt),
+          nameof(EditCompanyUserRequest.EndWorkingAt),
+          nameof(EditCompanyUserRequest.Probation),
         });
 
+      AddСorrectOperations(nameof(EditCompanyUserRequest.ContractSubjectId), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyUserRequest.ContractTermType), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyUserRequest.Rate), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditCompanyUserRequest.StartWorkingAt), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyUserRequest.EndWorkingAt), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditCompanyUserRequest.Probation), new() { OperationType.Replace });
 
       #endregion
 
@@ -57,7 +65,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
                 return false;
               }
 
-              return !await _contractSubjectRepository.DoesExistAsync(id);
+              return await _contractSubjectRepository.DoesExistAsync(id);
             },
             "Wrong contract subject id value."
           }
@@ -105,7 +113,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
         {
           { x => x.value?.ToString() is null ? true : 
               double.TryParse(x.value.ToString(), out double rate) && rate > 0 && rate <= 1,
-            "The rate must be between 0 and 1." },
+            "Rate must be between 0 and 1." },
         });
 
       #endregion
@@ -120,7 +128,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
           {
             x => x.value?.ToString() is null ? true :
               DateTime.TryParse(x.value.ToString(), out DateTime result),
-            "End working data has incorrect format."
+            "EndWorkingAt has incorrect format."
           },
         });
 
@@ -136,7 +144,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
           {
             x => x.value?.ToString() is null ? true :
               DateTime.TryParse(x.value.ToString(), out DateTime result),
-            "Probation date has incorrect format."
+            "Probation has incorrect format."
           },
         });
 
