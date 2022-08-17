@@ -32,7 +32,7 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
     public async Task Consume(ConsumeContext<ICreateCompanyUserPublish> context)
     {
-      if (!await _companyRepository.DoesExistAsync(context.Message.CompanyId)
+      if (await _companyRepository.DoesExistAsync(context.Message.CompanyId)
         && !await _companyUserRepository.DoesExistAsync(context.Message.UserId))
       {
         await _companyUserRepository.CreateAsync(_companyUserMapper.Map(context.Message));
