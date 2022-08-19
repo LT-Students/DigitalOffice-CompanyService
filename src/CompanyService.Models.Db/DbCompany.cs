@@ -12,35 +12,23 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
     public const string TableName = "Companies";
 
     public Guid Id { get; set; }
-    public string PortalName { get; set; }
-    public string CompanyName { get; set; }
+    public string Name { get; set; }
     public string Description { get; set; }
     public string Tagline { get; set; }
-    public string SiteUrl { get; set; }
-    public string Host { get; set; }
-    public int Port { get; set; }
-    public bool EnableSsl { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
+    public string Contacts { get; set; }
     public string LogoContent { get; set; }
     public string LogoExtension { get; set; }
+    public Guid CreatedBy { get; set; }
     public DateTime CreatedAtUtc { get; set; }
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
-    public bool IsDepartmentModuleEnabled { get; set; }
     public bool IsActive { get; set; }
-    public string WorkDaysApiUrl { get; set; }
-
-    [JsonIgnore]
-    public ICollection<DbCompanyChanges> Changes { get; set; }
 
     [JsonIgnore]
     public ICollection<DbCompanyUser> Users { get; set; }
 
     public DbCompany()
     {
-      Changes = new HashSet<DbCompanyChanges>();
-
       Users = new HashSet<DbCompanyUser>();
     }
   }
@@ -53,36 +41,11 @@ namespace LT.DigitalOffice.CompanyService.Models.Db
         .ToTable(DbCompany.TableName);
 
       builder
-        .Property(c => c.PortalName)
-        .IsRequired();
+        .HasKey(t => t.Id);
 
       builder
-        .Property(c => c.CompanyName)
+        .Property(c => c.Name)
         .IsRequired();
-
-      builder
-        .Property(c => c.Host)
-        .IsRequired();
-
-      builder
-        .Property(c => c.Email)
-        .IsRequired();
-
-      builder
-        .Property(c => c.Password)
-        .IsRequired();
-
-      builder
-        .Property(c => c.SiteUrl)
-        .IsRequired();
-
-      builder
-        .Property(c => c.WorkDaysApiUrl)
-        .IsRequired();
-
-      builder
-        .HasMany(c => c.Changes)
-        .WithOne(ch => ch.Company);
 
       builder
         .HasMany(c => c.Users)

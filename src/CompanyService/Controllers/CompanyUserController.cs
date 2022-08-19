@@ -20,5 +20,13 @@ namespace LT.DigitalOffice.CompanyService.Controllers
     {
       return await command.ExecuteAsync(userId, request);
     }
+
+    [HttpPost("create")]
+    public async Task<OperationResultResponse<Guid?>> CreateAsync(
+      [FromServices] ICreateCompanyUserCommand command,
+      [FromBody] CreateCompanyUserRequest request)
+    {
+      return await command.ExecuteAsync(request);
+    }
   }
 }

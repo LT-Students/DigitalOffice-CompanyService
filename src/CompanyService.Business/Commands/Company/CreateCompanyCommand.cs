@@ -1,170 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces;
-using LT.DigitalOffice.CompanyService.Business.Helper;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
-using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
-using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
-using LT.DigitalOffice.Kernel.Enums;
-using LT.DigitalOffice.Kernel.FluentValidationExtensions;
+using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.Models.Broker.Requests.Email;
-using LT.DigitalOffice.Models.Broker.Requests.User;
-using MassTransit;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
   public class CreateCompanyCommand : ICreateCompanyCommand
   {
     private readonly IDbCompanyMapper _mapper;
-    private readonly ILogger<ICreateCompanyCommand> _logger;
+    private readonly IAccessValidator _accessValidator;
     private readonly ICreateCompanyRequestValidator _validator;
     private readonly ICompanyRepository _repository;
-    private readonly IRequestClient<ICreateAdminRequest> _rcCreateAdmin;
-    private readonly IRequestClient<ICreateSmtpCredentialsRequest> _rcCreateSmtp;
-    private readonly ICompanyChangesRepository _companyChangesRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-
-    private async Task<bool> CreateSmtp(SmtpInfo smtpInfo, List<string> errors)
-    {
-      string message = "Can not create smtp credentials.";
-
-      try
-      {
-        Response<IOperationResult<bool>> response = await _rcCreateSmtp.GetResponse<IOperationResult<bool>>(
-          ICreateSmtpCredentialsRequest.CreateObj(
-            host: smtpInfo.Host,
-            port: smtpInfo.Port,
-            enableSsl: smtpInfo.EnableSsl,
-            email: smtpInfo.Email,
-            password: smtpInfo.Password));
-
-        if (response.Message.IsSuccess && response.Message.Body)
-        {
-          return true;
-        }
-
-        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(exc, message);
-      }
-      errors.Add(message);
-
-      return false;
-    }
-
-    private async Task<bool> CreateAdmin(AdminInfo info, List<string> errors)
-    {
-      string message = "Can not create admin.";
-
-      try
-      {
-        Response<IOperationResult<bool>> response = await _rcCreateAdmin.GetResponse<IOperationResult<bool>>(
-          ICreateAdminRequest.CreateObj(info.FirstName, info.MiddleName, info.LastName, info.Email, info.Login, info.Password));
-
-        if (response.Message.IsSuccess && response.Message.Body)
-        {
-          return true;
-        }
-
-        errors.Add(message);
-
-        _logger.LogWarning(message, string.Join("\n", response.Message.Errors));
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(exc, message);
-
-        errors.Add(message);
-      }
-
-      return false;
-    }
+    private readonly IResponseCreator _responseCreator;
 
     public CreateCompanyCommand(
       IDbCompanyMapper mapper,
-      ILogger<ICreateCompanyCommand> logger,
+      IAccessValidator accessValidator,
       ICreateCompanyRequestValidator validator,
       ICompanyRepository repository,
-      IRequestClient<ICreateAdminRequest> rcCreateAdmin,
-      IRequestClient<ICreateSmtpCredentialsRequest> rcCreateSmtp,
-      ICompanyChangesRepository companyChangesRepository,
-      IHttpContextAccessor httpContextAccessor)
+      IHttpContextAccessor httpContextAccessor,
+      IResponseCreator responseCreator)
     {
       _mapper = mapper;
-      _logger = logger;
+      _accessValidator = accessValidator;
       _validator = validator;
       _repository = repository;
-      _rcCreateAdmin = rcCreateAdmin;
-      _rcCreateSmtp = rcCreateSmtp;
-      _companyChangesRepository = companyChangesRepository;
       _httpContextAccessor = httpContextAccessor;
+      _responseCreator = responseCreator;
     }
 
-    public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateCompanyRequest request)
+    public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateCompanyRequest request)
     {
-      if (await _repository.GetAsync() != null)
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanies))
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-        return new OperationResultResponse<Guid>
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = new() { "Company already exists" }
-        };
+        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
       }
 
-      if (!_validator.ValidateCustom(request, out List<string> errors))
+      ValidationResult validationResults = await _validator.ValidateAsync(request);
+      if (!validationResults.IsValid)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-        return new OperationResultResponse<Guid>
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = errors
-        };
+        return _responseCreator.CreateFailureResponse<Guid?>(
+          HttpStatusCode.BadRequest,
+          validationResults.Errors.Select(x => x.ErrorMessage).ToList());
       }
 
-      if (!(await CreateSmtp(request.SmtpInfo, errors) &&
-        await CreateAdmin(request.AdminInfo, errors)))
-      {
-        return new OperationResultResponse<Guid>
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = errors
-        };
-      }
-
-      DbCompany company = _mapper.Map(request);
+      DbCompany company = await _mapper.MapAsync(request);
 
       await _repository.CreateAsync(company);
 
-      //TODO async
-      //Task.Run(() =>
-      //{
-      await _companyChangesRepository.CreateAsync(
-        company.Id,
-        null,
-        CreateHistoryMessageHelper.Create(company));
-      //}
-
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
-      return new OperationResultResponse<Guid>
-      {
-        Status = OperationResultStatusType.FullSuccess,
-        Body = company.Id
-      };
+      return new OperationResultResponse<Guid?>(body: company.Id);
     }
   }
 }

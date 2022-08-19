@@ -1,65 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentValidation;
+﻿using FluentValidation;
+using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
+using LT.DigitalOffice.Kernel.Validators.Interfaces;
 
 namespace LT.DigitalOffice.CompanyService.Validation.Company
 {
   public class CreateCompanyRequestValidator : AbstractValidator<CreateCompanyRequest>, ICreateCompanyRequestValidator
   {
-    private readonly List<string> imageFormats = new()
+    public CreateCompanyRequestValidator(
+      ICompanyRepository _companyRepository,
+      IImageContentValidator _imageContentValidator,
+      IImageExtensionValidator _imageExtensionValidator)
     {
-      ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tga"
-    };
+      // TODO rework for supprot more than one company
 
-    public CreateCompanyRequestValidator()
-    {
-      RuleFor(request => request.PortalName)
-        .NotEmpty()
-        .WithMessage("Portal name can't be empty");
+      RuleFor(request => request)
+        .Cascade(CascadeMode.Stop)
+        .MustAsync(async (x, _) => !await _companyRepository.DoesExistAsync())
+        .WithMessage("Company already exists.")
+        .ChildRules((request) =>
+        { 
+          RuleFor(request => request.Name)
+            .MaximumLength(150).WithMessage("Name is too long")
+            .MustAsync(async (x, _) => !await _companyRepository.DoesNameExistAsync(x))
+            .WithMessage("Name already exists.");
 
-      RuleFor(request => request.CompanyName)
-        .NotEmpty()
-        .WithMessage("Company name can't be empty");
-
-      RuleFor(request => request.SiteUrl)
-        .NotEmpty()
-        .WithMessage("Site url can't be empty");
-
-      RuleFor(request => request.AdminInfo)
-        .NotNull()
-        .WithMessage("Admin information can't be null");
-
-      RuleFor(request => request.SmtpInfo)
-        .NotNull()
-        .WithMessage("Smtp information can't be null");
-
-      RuleFor(request => request.WorkDaysApiUrl)
-        .NotEmpty()
-        .WithMessage("Work days api url can't be empty");
-
-      When(w => w.Logo != null, () =>
-      {
-        RuleFor(w => w.Logo.Content)
-          .NotEmpty().WithMessage("Image content cannot be empty.")
-          .Must(x =>
+          When(w => w.Logo != null, () =>
           {
-            try
-            {
-              var byteString = new Span<byte>(new byte[x.Length]);
-              return Convert.TryFromBase64String(x, byteString, out _);
-            }
-            catch
-            {
-              return false;
-            }
-          }).WithMessage("Wrong image content.");
+            RuleFor(w => w.Logo.Content)
+              .SetValidator(_imageContentValidator);
 
-        RuleFor(w => w.Logo.Extension)
-          .Must(imageFormats.Contains)
-          .WithMessage($"Image extension is not {string.Join('/', imageFormats)}");
-      });
+            RuleFor(w => w.Logo.Extension)
+              .SetValidator(_imageExtensionValidator);
+          });
+        });
     }
   }
 }

@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.CompanyService.Data
     {
       if (dbCompanyUser is null)
       {
-        return null;
+        return default;
       }
 
       _provider.CompaniesUsers.Add(dbCompanyUser);
@@ -48,37 +48,61 @@ namespace LT.DigitalOffice.CompanyService.Data
       }
 
       request.ApplyTo(dbCompanyUser);
-      dbCompanyUser.ModifiedAtUtc = DateTime.UtcNow;
-      dbCompanyUser.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
+      dbCompanyUser.CreatedBy = _httpContextAccessor.HttpContext.GetUserId();
       await _provider.SaveAsync();
 
       return true;
     }
 
-    public async Task<DbCompanyUser> GetAsync(Guid userId)
+    public Task<DbCompanyUser> GetAsync(Guid userId)
     {
-      return await _provider.CompaniesUsers.Include(u => u.Company).FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
+      return _provider.CompaniesUsers
+        .Include(u => u.Company)
+        .FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
     }
 
-    public async Task<List<DbCompanyUser>> GetAsync(List<Guid> userIds)
+    public Task<List<DbCompanyUser>> GetAsync(List<Guid> userIds)
     {
-      return await _provider.CompaniesUsers
+      return _provider.CompaniesUsers
         .Include(cu => cu.Company)
         .Where(u => userIds.Contains(u.UserId) && u.IsActive)
         .ToListAsync();
     }
 
-    public async Task RemoveAsync(Guid userId, Guid removedBy)
+    public async Task<Guid?> RemoveAsync(Guid userId, Guid removedBy)
     {
       DbCompanyUser user = await _provider.CompaniesUsers.FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
 
-      if (user != null)
+      if (user is null)
       {
-        user.IsActive = false;
-        user.ModifiedAtUtc = DateTime.UtcNow;
-        user.ModifiedBy = removedBy;
-        await _provider.SaveAsync();
+        return null;
       }
+
+      user.IsActive = false;
+      user.CreatedBy = removedBy;
+
+      await _provider.SaveAsync();
+
+      return user.CompanyId;
+    }
+
+    public Task<bool> DoesExistAsync(Guid userId)
+    {
+      return _provider.CompaniesUsers.AnyAsync(u => u.UserId == userId);
+    }
+
+    public async Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId)
+    {
+      List<DbCompanyUser> dbUsers = await _provider.CompaniesUsers.Where(x => x.ContractSubjectId == contractSubjectId).ToListAsync();
+
+      foreach (DbCompanyUser user in dbUsers)
+      {
+        user.ContractSubjectId = null;
+      }
+
+      await _provider.SaveAsync();
+
+      return true;
     }
   }
 }

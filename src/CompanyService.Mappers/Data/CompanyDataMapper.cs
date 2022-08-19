@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Data
 
       return new CompanyData(
         company.Id,
-        company.CompanyName,
+        company.Name,
         company.Users.Select(u => _userMapper.Map(u)).ToList());
     }
   }

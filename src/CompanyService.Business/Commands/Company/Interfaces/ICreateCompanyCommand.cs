@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company.Interfaces
   [AutoInject]
   public interface ICreateCompanyCommand
   {
-    Task<OperationResultResponse<Guid>> ExecuteAsync(CreateCompanyRequest request);
+    Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateCompanyRequest request);
   }
 }

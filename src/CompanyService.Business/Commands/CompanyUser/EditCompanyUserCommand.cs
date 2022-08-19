@@ -24,14 +24,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
     private readonly ICompanyUserRepository _repository;
     private readonly IEditCompanyUserRequestValidator _validator;
     private readonly IResponseCreator _responseCreator;
-    private readonly ICacheNotebook _cacheNotebook;
     private readonly IPatchCompanyUserMapper _mapper;
+    private readonly IGlobalCacheRepository _globalCache;
 
     private async Task ClearCache(Guid userId)
     {
       Guid companyId = (await _repository.GetAsync(userId)).CompanyId;
 
-      await _cacheNotebook.RemoveAsync(companyId);
+      await _globalCache.RemoveAsync(companyId);
     }
 
     public EditCompanyUserCommand(
@@ -39,14 +39,14 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
       ICompanyUserRepository repository,
       IEditCompanyUserRequestValidator validator,
       IResponseCreator responseCreator,
-      ICacheNotebook cacheNotebook,
+      IGlobalCacheRepository globalCache,
       IPatchCompanyUserMapper mapper)
     {
       _accessValidator = accessValidator;
       _repository = repository;
       _validator = validator;
       _responseCreator = responseCreator;
-      _cacheNotebook = cacheNotebook;
+      _globalCache = globalCache;
       _mapper = mapper;
     }
 
@@ -60,7 +60,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
-
       if (!validationResult.IsValid)
       {
         return _responseCreator.CreateFailureResponse<bool>(
@@ -68,18 +67,16 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
           validationResult.Errors.Select(e => e.ErrorMessage).ToList());
       }
 
-      bool result = await _repository.EditAsync(userId, _mapper.Map(request));
+      OperationResultResponse<bool> response = new();
 
-      if (result)
+      response.Body = await _repository.EditAsync(userId, _mapper.Map(request));
+
+      if (response.Body)
       {
         await ClearCache(userId);
       }
 
-      return new OperationResultResponse<bool>
-      {
-        Status = result ? OperationResultStatusType.FullSuccess : OperationResultStatusType.Failed,
-        Body = result
-      };
+      return response;
     }
   }
 }

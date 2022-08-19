@@ -9,12 +9,14 @@ using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
 using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
 using LT.DigitalOffice.Kernel.Configurations;
+using LT.DigitalOffice.Kernel.EFSupport.Extensions;
+using LT.DigitalOffice.Kernel.EFSupport.Helpers;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Helpers;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.Kernel.RedisSupport.Configurations;
+using LT.DigitalOffice.Kernel.RedisSupport.Constants;
 using LT.DigitalOffice.Kernel.RedisSupport.Helpers;
-using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using MassTransit;
 using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
@@ -32,6 +34,7 @@ namespace LT.DigitalOffice.CompanyService
   public class Startup : BaseApiInfo
   {
     public const string CorsPolicyName = "LtDoCorsPolicy";
+    private string redisConnStr;
 
     private readonly RabbitMqConfig _rabbitMqConfig;
     private readonly BaseServiceInfoConfig _serviceInfoConfig;
@@ -50,7 +53,7 @@ namespace LT.DigitalOffice.CompanyService
         .GetSection(BaseServiceInfoConfig.SectionName)
         .Get<BaseServiceInfoConfig>();
 
-      Version = "1.6.4.0";
+      Version = "1.6.5.0";
       Description = "CompanyService is an API that intended to work with positions and departments.";
       StartTime = DateTime.UtcNow;
       ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
@@ -98,18 +101,7 @@ namespace LT.DigitalOffice.CompanyService
         })
         .AddNewtonsoftJson();
 
-
-      string connStr = Environment.GetEnvironmentVariable("ConnectionString");
-      if (string.IsNullOrEmpty(connStr))
-      {
-        connStr = Configuration.GetConnectionString("SQLConnectionString");
-
-        Log.Information($"SQL connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(connStr)}'.");
-      }
-      else
-      {
-        Log.Information($"SQL connection string from environment was used. Value '{HidePasswordHelper.HidePassword(connStr)}'.");
-      }
+      string connStr = ConnectionStringHandler.Get(Configuration);
 
       services.AddDbContext<CompanyServiceDbContext>(options =>
       {
@@ -120,23 +112,20 @@ namespace LT.DigitalOffice.CompanyService
         .AddSqlServer(connStr)
         .AddRabbitMqCheck();
 
-      string redisConnStr = Environment.GetEnvironmentVariable("RedisConnectionString");
+      redisConnStr = Environment.GetEnvironmentVariable("RedisConnectionString");
       if (string.IsNullOrEmpty(redisConnStr))
       {
         redisConnStr = Configuration.GetConnectionString("Redis");
 
-        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+        Log.Information($"Redis connection string from appsettings.json was used. Value '{PasswordHider.Hide(redisConnStr)}'");
       }
       else
       {
-        Log.Information($"Redis connection string from environment was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+        Log.Information($"Redis connection string from environment was used. Value '{PasswordHider.Hide(redisConnStr)}'");
       }
 
       services.AddSingleton<IConnectionMultiplexer>(
-        x => ConnectionMultiplexer.Connect(redisConnStr));
-
-      services.AddTransient<ICacheNotebook, CacheNotebook>();
-      services.AddTransient<IRedisHelper, RedisHelper>();
+        x => ConnectionMultiplexer.Connect(redisConnStr + ",abortConnect=false,connectRetry=1,connectTimeout=2000"));
 
       services.AddBusinessObjects();
 
@@ -145,7 +134,13 @@ namespace LT.DigitalOffice.CompanyService
 
     public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
     {
-      UpdateDatabase(app);
+      app.UpdateDatabase<CompanyServiceDbContext>();
+
+      string error = FlushRedisDbHelper.FlushDatabase(redisConnStr, Cache.Companies);
+      if (error is not null)
+      {
+        Log.Error(error);
+      }
 
       app.UseForwardedHeaders();
 
@@ -213,8 +208,6 @@ namespace LT.DigitalOffice.CompanyService
 
       services.AddMassTransit(x =>
       {
-        x.AddConsumer<GetSmtpCredentialsConsumer>();
-
         x.AddConsumer<CreateCompanyUserConsumer>();
 
         x.AddConsumer<GetCompaniesConsumer>();
@@ -242,11 +235,6 @@ namespace LT.DigitalOffice.CompanyService
       IBusRegistrationContext context,
       IRabbitMqBusFactoryConfigurator cfg)
     {
-      cfg.ReceiveEndpoint(_rabbitMqConfig.GetSmtpCredentialsEndpoint, ep =>
-      {
-        ep.ConfigureConsumer<GetSmtpCredentialsConsumer>(context);
-      });
-
       cfg.ReceiveEndpoint(_rabbitMqConfig.CreateCompanyUserEndpoint, ep =>
       {
         ep.ConfigureConsumer<CreateCompanyUserConsumer>(context);
@@ -261,17 +249,6 @@ namespace LT.DigitalOffice.CompanyService
       {
         ep.ConfigureConsumer<DisactivateUserConsumer>(context);
       });
-    }
-
-    private void UpdateDatabase(IApplicationBuilder app)
-    {
-      using var serviceScope = app.ApplicationServices
-        .GetRequiredService<IServiceScopeFactory>()
-        .CreateScope();
-
-      using var context = serviceScope.ServiceProvider.GetService<CompanyServiceDbContext>();
-
-      context.Database.Migrate();
     }
 
     #endregion
