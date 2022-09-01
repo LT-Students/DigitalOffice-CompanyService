@@ -6,6 +6,7 @@ using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.ContractSubject;
 using LT.DigitalOffice.CompanyService.Validation.ContractSubject.Interfaces;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
@@ -57,19 +58,11 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
           validationResults.Errors.Select(vf => vf.ErrorMessage).ToList());
       }
 
-      OperationResultResponse<Guid?> response = new();
-
-      response.Body = await _contractSubjectRepository.CreateAsync(
-        _dbContractSubjectMapper.Map(request));
-
-      if (response.Body is null)
-      {
-        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
-      }
-
+      DbContractSubject dbContractSubject = _dbContractSubjectMapper.Map(request);
+      await _contractSubjectRepository.CreateAsync(dbContractSubject);
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
-      return response;
+      return new OperationResultResponse<Guid?>(body: dbContractSubject.Id);
     }
   }
 }

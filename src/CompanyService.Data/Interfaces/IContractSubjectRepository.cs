@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
   [AutoInject]
   public interface IContractSubjectRepository
   {
-    Task<Guid?> CreateAsync(DbContractSubject contractSubject);
+    Task CreateAsync(DbContractSubject contractSubject);
     Task<bool> EditAsync(Guid contractSubjectId, JsonPatchDocument<DbContractSubject> request);
     Task<(List<DbContractSubject> dbContractSubjects, int totalCount)> FindAsync(FindContractSubjectFilter filter);
     Task<DbContractSubject> GetAsync(Guid contractSubjectId);

@@ -37,7 +37,10 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
       {
         await _companyUserRepository.CreateAsync(_companyUserMapper.Map(context.Message));
 
-        await _globalCache.RemoveAsync(context.Message.CompanyId);
+        if (context.Message.IsActive)
+        {
+          await _globalCache.RemoveAsync(context.Message.CompanyId);
+        }
       }
       else
       {
