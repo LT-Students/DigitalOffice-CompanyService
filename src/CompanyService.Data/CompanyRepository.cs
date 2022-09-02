@@ -72,7 +72,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       DbCompany company = await _provider.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
 
-      if (company == null)
+      if (company is null)
       {
         return;
       }

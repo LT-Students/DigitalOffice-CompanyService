@@ -11,7 +11,8 @@ namespace LT.DigitalOffice.CompanyService.Models.Dto.Configuration
   {
     public string CreateCompanyUserEndpoint { get; set; }
     public string GetCompaniesEndpoint { get; set; }
-    public string DisactivateUserEndpoint { get; set; }
+    public string DisactivateCompanyUserEndpoint { get; set; }
+    public string ActivateCompanyUserEndpoint { get; set; }
 
     // office
 

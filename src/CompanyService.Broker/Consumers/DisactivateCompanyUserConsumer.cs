@@ -7,12 +7,12 @@ using MassTransit;
 
 namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 {
-  public class DisactivateUserConsumer : IConsumer<IDisactivateUserPublish>
+  public class DisactivateCompanyUserConsumer : IConsumer<IDisactivateUserPublish>
   {
     private readonly ICompanyUserRepository _companyUserRepository;
     private readonly IGlobalCacheRepository _globalCache;
 
-    public DisactivateUserConsumer(
+    public DisactivateCompanyUserConsumer(
       ICompanyUserRepository companyUserRepository,
       IGlobalCacheRepository globalCache)
     {
