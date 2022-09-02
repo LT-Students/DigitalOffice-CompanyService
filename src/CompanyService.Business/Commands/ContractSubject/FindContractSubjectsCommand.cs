@@ -13,6 +13,7 @@ using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Kernel.Validators.Interfaces;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
 {
@@ -44,12 +45,9 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
 
       (List<DbContractSubject> dbContractSubjects, int totalCount) = await _contractSubjectRepository.FindAsync(filter);
 
-      FindResultResponse<ContractSubjectInfo> response = new();
-
-      response.Body = dbContractSubjects.Select(cs => _contractSubjectInfoMapper.Map(cs)).ToList();
-      response.TotalCount = totalCount;
-
-      return response;
+      return new FindResultResponse<ContractSubjectInfo>(
+        body:dbContractSubjects.Select(cs => _contractSubjectInfoMapper.Map(cs)).ToList(),
+        totalCount: totalCount);
     }
   }
 }
