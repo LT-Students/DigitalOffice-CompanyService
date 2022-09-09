@@ -66,10 +66,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
       {
         DbCompanyUser user = await _repository.GetAsync(userId);
 
-        if (user.IsActive)
-        {
-          await _globalCache.RemoveAsync(user.CompanyId);
-        }  
+        await _globalCache.RemoveAsync(user.CompanyId);
       }
 
       return response;
