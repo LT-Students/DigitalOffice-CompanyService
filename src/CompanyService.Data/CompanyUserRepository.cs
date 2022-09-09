@@ -39,7 +39,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public async Task<bool> EditAsync(Guid userId, JsonPatchDocument<DbCompanyUser> request)
     {
-      DbCompanyUser dbCompanyUser = await _provider.CompaniesUsers.FirstOrDefaultAsync(x => x.UserId == userId);
+      DbCompanyUser dbCompanyUser = await _provider.CompaniesUsers.FirstOrDefaultAsync(x => x.UserId == userId && x.IsActive);
 
       if (request is null || dbCompanyUser is null)
       {
@@ -48,6 +48,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       request.ApplyTo(dbCompanyUser);
       dbCompanyUser.CreatedBy = _httpContextAccessor.HttpContext.GetUserId();
+
       await _provider.SaveAsync();
 
       return true;
