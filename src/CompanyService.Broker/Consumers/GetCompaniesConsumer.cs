@@ -54,11 +54,9 @@ namespace LT.DigitalOffice.CompanyService.Broker.Consumers
 
       if (companies != null && companies.Any() && context.Message.UsersIds != null)
       {
-        string key = context.Message.UsersIds.GetRedisCacheHashCode();
-
         await _globalCache.CreateAsync(
           Cache.Companies,
-          key,
+          context.Message.UsersIds.GetRedisCacheKey(context.Message.GetBasicProperties()),
           companies,
           companies.Select(c => c.Id).ToList(),
           TimeSpan.FromMinutes(_redisConfig.Value.CacheLiveInMinutes));
