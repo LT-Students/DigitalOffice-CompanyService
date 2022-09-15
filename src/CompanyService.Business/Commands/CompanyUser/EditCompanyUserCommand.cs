@@ -6,11 +6,11 @@ using FluentValidation.Results;
 using LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser.Interfaces;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Patch.Interfaces;
+using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.CompanyService.Validation.CompanyUser.Interfaces;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
@@ -26,13 +26,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
     private readonly IResponseCreator _responseCreator;
     private readonly IPatchCompanyUserMapper _mapper;
     private readonly IGlobalCacheRepository _globalCache;
-
-    private async Task ClearCache(Guid userId)
-    {
-      Guid companyId = (await _repository.GetAsync(userId)).CompanyId;
-
-      await _globalCache.RemoveAsync(companyId);
-    }
 
     public EditCompanyUserCommand(
       IAccessValidator accessValidator,
@@ -67,13 +60,13 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
           validationResult.Errors.Select(e => e.ErrorMessage).ToList());
       }
 
-      OperationResultResponse<bool> response = new();
-
-      response.Body = await _repository.EditAsync(userId, _mapper.Map(request));
+      OperationResultResponse<bool> response = new(body: await _repository.EditAsync(userId, _mapper.Map(request)));
 
       if (response.Body)
       {
-        await ClearCache(userId);
+        DbCompanyUser user = await _repository.GetAsync(userId);
+
+        await _globalCache.RemoveAsync(user.CompanyId);
       }
 
       return response;

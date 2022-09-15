@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<Guid?> CreateAsync(DbContractSubject contractSubject)
+    public Task CreateAsync(DbContractSubject contractSubject)
     {
       if (contractSubject is null)
       {
@@ -33,9 +33,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
       }
 
       _provider.ContractSubjects.Add(contractSubject);
-      await _provider.SaveAsync();
-
-      return contractSubject.Id;
+      return _provider.SaveAsync();
     }
 
     public async Task<bool> EditAsync(Guid contractSubjectId, JsonPatchDocument<DbContractSubject> request)
@@ -68,18 +66,18 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         return default;
       }
 
-      IQueryable<DbContractSubject> contractSubjects = _provider.ContractSubjects.AsQueryable();
+      IQueryable<DbContractSubject> contractSubjectQuery = _provider.ContractSubjects.AsQueryable();
 
       if (filter.IsActive.HasValue)
       {
-        contractSubjects = filter.IsActive.Value
-          ? contractSubjects.Where(x => x.IsActive)
-          : contractSubjects.Where(x => !x.IsActive);
+        contractSubjectQuery = filter.IsActive.Value
+          ? contractSubjectQuery.Where(x => x.IsActive)
+          : contractSubjectQuery.Where(x => !x.IsActive);
       }
 
       return (
-        await contractSubjects.Skip(filter.SkipCount).Take(filter.TakeCount).ToListAsync(),
-        await contractSubjects.CountAsync());
+        await contractSubjectQuery.Skip(filter.SkipCount).Take(filter.TakeCount).ToListAsync(),
+        await contractSubjectQuery.CountAsync());
     }
 
     public Task<DbContractSubject> GetAsync(Guid contractSubjectId)

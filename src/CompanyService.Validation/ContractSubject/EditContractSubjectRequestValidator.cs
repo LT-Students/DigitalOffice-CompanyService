@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
         {
           { x => Task.FromResult(!string.IsNullOrEmpty(x.value?.ToString().Trim())), "Name can't be empty." },
           { x => Task.FromResult(x.value?.ToString().Length < 151), "Contract subject's name is too long." },
-          { async x => await _contractSubjectRepository.DoesNameExistAsync(x.value?.ToString()), "Name already exists."}
+          { async x => !await _contractSubjectRepository.DoesNameExistAsync(x.value?.ToString()), "Name already exists."}
         },
         CascadeMode.Stop);
 

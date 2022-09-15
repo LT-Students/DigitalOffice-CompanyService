@@ -52,7 +52,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
         EndWorkingAt = request.EndWorkingAt,
         Probation = request.Probation,
         CreatedBy = request.CreatedBy,
-        IsActive = true
+        IsActive = request.IsActive
       };
     }
   }
