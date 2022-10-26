@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
-using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.CompanyUser;
 using LT.DigitalOffice.CompanyService.Validation.CompanyUser.Interfaces;
 using LT.DigitalOffice.Kernel.Validators;
 using LT.DigitalOffice.Models.Broker.Enums;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.CompanyUser
 
     private async Task HandleInternalPropertyValidationAsync(
       Operation<EditCompanyUserRequest> requestedOperation,
-      CustomContext context)
+      ValidationContext<JsonPatchDocument<EditCompanyUserRequest>> context)
     {
       Context = context;
       RequestedOperation = requestedOperation;

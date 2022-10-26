@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentValidation;
-using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.ContractSubject;
 using LT.DigitalOffice.CompanyService.Validation.ContractSubject.Interfaces;
 using LT.DigitalOffice.Kernel.Validators;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.CompanyService.Validation.ContractSubject
 
     private async Task HandleInternalPorpetyValidationAsync(
       Operation<EditContractSubjectRequest> requestedOperation,
-      CustomContext context)
+      ValidationContext<(Guid, JsonPatchDocument<EditContractSubjectRequest>)> context)
     {
       Context = context;
       RequestedOperation = requestedOperation;
