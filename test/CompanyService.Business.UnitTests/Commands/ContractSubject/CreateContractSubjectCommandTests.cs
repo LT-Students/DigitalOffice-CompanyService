@@ -141,7 +141,7 @@ public class CreateContractSubjectCommandTests
   {
     _mocker
       .Setup<IAccessValidator, Task<bool>>(x => x.HasRightsAsync(It.IsAny<int[]>()))
-      .Returns(Task.FromResult(false));
+      .ReturnsAsync(false);
 
     SerializerAssert.AreEqual(_failureResponse, await _command.ExecuteAsync(_request));
 
@@ -159,7 +159,7 @@ public class CreateContractSubjectCommandTests
     _mocker
       .Setup<ICreateContractSubjectRequestValidator, Task<ValidationResult>>(
       x => x.ValidateAsync(It.IsAny<CreateContractSubjectRequest>(), default))
-      .Returns(Task.FromResult(new ValidationResult(new List<ValidationFailure>() { new ValidationFailure("_", "Error") })));
+      .ReturnsAsync(new ValidationResult(new List<ValidationFailure>() { new ValidationFailure("_", "Error") }));
 
     SerializerAssert.AreEqual(_failureResponse, await _command.ExecuteAsync(_request));
 
