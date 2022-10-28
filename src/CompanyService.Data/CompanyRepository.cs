@@ -53,12 +53,10 @@ namespace LT.DigitalOffice.CompanyService.Data
 
       if (request.UsersIds is not null && request.UsersIds.Any())
       {
-        query = query.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
+        query = query.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)))
+          .Include(d => d.Users.Where(du => du.IsActive && request.UsersIds.Contains(du.UserId)))
+          .ThenInclude(u => u.ContractSubject);
       }
-
-      query = query
-        .Include(d => d.Users.Where(du => du.IsActive))
-        .ThenInclude(u => u.ContractSubject);
 
       return query.ToListAsync();
     }
