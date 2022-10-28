@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
-using FluentValidation.Validators;
 using LT.DigitalOffice.CompanyService.Data.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Dto.Models;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests.Company;
 using LT.DigitalOffice.CompanyService.Validation.Company.Interfaces;
 using LT.DigitalOffice.Kernel.Validators;
 using LT.DigitalOffice.Kernel.Validators.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Newtonsoft.Json;
 
@@ -20,7 +20,9 @@ namespace LT.DigitalOffice.CompanyService.Validation.Company
     private readonly IImageContentValidator _imageContentValidator;
     private readonly IImageExtensionValidator _imageExtensionValidator;
 
-    private async Task HandleInternalPropertyValidation(Operation<EditCompanyRequest> requestedOperation, CustomContext context)
+    private async Task HandleInternalPropertyValidation(
+      Operation<EditCompanyRequest> requestedOperation,
+      ValidationContext<(Guid, JsonPatchDocument<EditCompanyRequest>)> context)
     {
       Context = context;
       RequestedOperation = requestedOperation;
