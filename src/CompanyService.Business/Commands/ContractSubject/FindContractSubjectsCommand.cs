@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
       (List<DbContractSubject> dbContractSubjects, int totalCount) = await _contractSubjectRepository.FindAsync(filter);
 
       return new FindResultResponse<ContractSubjectInfo>(
-        body: dbContractSubjects.Select(cs => _contractSubjectInfoMapper.Map(cs)).ToList(),
+        body: dbContractSubjects?.Select(cs => _contractSubjectInfoMapper.Map(cs)).ToList(),
         totalCount: totalCount);
     }
   }

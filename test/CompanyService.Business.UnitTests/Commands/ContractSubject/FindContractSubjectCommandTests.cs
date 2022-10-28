@@ -90,7 +90,7 @@ public class FindContractSubjectCommandTests
     _mocker
       .Setup<IContractSubjectRepository, Task<(List<DbContractSubject>, int)>>(
         x => x.FindAsync(It.IsAny<FindContractSubjectFilter>()))
-      .Returns(Task.FromResult((_dbContractSubjects, 1)));
+      .ReturnsAsync((_dbContractSubjects, 1));
 
     _mocker
       .Setup<IContractSubjectInfoMapper, ContractSubjectInfo>(
@@ -101,39 +101,12 @@ public class FindContractSubjectCommandTests
   }
 
   [Test]
-  public void FindContractSubjectsSuccesTest()
+  public async Task FindContractSubjectsSuccessTestAsync()
   {
-    SerializerAssert.AreEqual(_response, _command.ExecuteAsync(_filter).Result);
+    SerializerAssert.AreEqual(_response, await _command.ExecuteAsync(_filter));
 
     Verifiable(
       contractSubjectRepositoryCalls: Times.Once(),
       mapperCalls: Times.Once());
-  }
-
-  [Test]
-  public void FilterIsNullTest()
-  {
-    _response = new(
-      body: new List<ContractSubjectInfo>(),
-      totalCount: 1,
-      errors: null);
-
-    _filter = new()
-    {
-      SkipCount = 0,
-      TakeCount = 0,
-      IsActive = null
-    };
-
-    _mocker
-      .Setup<IContractSubjectRepository, Task<(List<DbContractSubject>, int)>>(
-        x => x.FindAsync(It.IsAny<FindContractSubjectFilter>()))
-      .Returns(Task.FromResult((new List<DbContractSubject>(), 1)));
-
-    SerializerAssert.AreEqual(_response, _command.ExecuteAsync(_filter).Result);
-
-    Verifiable(
-      contractSubjectRepositoryCalls: Times.Once(),
-      mapperCalls: Times.Never());
   }
 }
