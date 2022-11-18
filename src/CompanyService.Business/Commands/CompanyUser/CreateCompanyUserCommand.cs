@@ -44,8 +44,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
 
     public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateCompanyUserRequest request)
     {
-      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData) 
-        && await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanies))
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData, Rights.AddEditRemoveCompanies))
       {
         return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
       }

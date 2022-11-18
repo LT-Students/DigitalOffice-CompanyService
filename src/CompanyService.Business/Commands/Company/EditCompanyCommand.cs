@@ -15,7 +15,6 @@ using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 {
@@ -46,8 +45,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
 
     public async Task<OperationResultResponse<bool>> ExecuteAsync(Guid companyId, JsonPatchDocument<EditCompanyRequest> request)
     {
-      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData)
-        && !await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanies))
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData, Rights.AddEditRemoveCompanies))
       {
         return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.Forbidden);
       }
@@ -59,8 +57,6 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
           HttpStatusCode.BadRequest,
           validationResult.Errors.Select(x => x.ErrorMessage).ToList());
       }
-
-      Operation<EditCompanyRequest> imageOperation = request.Operations.FirstOrDefault(o => o.path.EndsWith(nameof(EditCompanyRequest.Logo), StringComparison.OrdinalIgnoreCase));
 
       JsonPatchDocument<DbCompany> dbRequest = await _mapper.MapAsync(request);
 
