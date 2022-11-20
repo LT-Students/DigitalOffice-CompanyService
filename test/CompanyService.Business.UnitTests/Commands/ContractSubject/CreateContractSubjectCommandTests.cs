@@ -138,8 +138,8 @@ public class CreateContractSubjectCommandTests
     SerializerAssert.AreEqual(_successResponse, await _command.ExecuteAsync(_request));
 
     Verifiable(
-      hasRightsCalls: Times.Never(),
-      hasAnyRightCalls: Times.Once(),
+      hasRightsCalls: Times.Once(),
+      hasAnyRightCalls: Times.Never(),
       responseCreatorCalls: Times.Never(),
       validatorCalls: Times.Once(),
       mapperCalls: Times.Once(),
@@ -150,14 +150,14 @@ public class CreateContractSubjectCommandTests
   public async Task NotEnoughRightTestAsync()
   {
     _mocker
-      .Setup<IAccessValidator, Task<bool>>(x => x.HasAnyRightAsync(It.IsAny<int[]>()))
+      .Setup<IAccessValidator, Task<bool>>(x => x.HasRightsAsync(It.IsAny<int[]>()))
       .ReturnsAsync(false);
 
     SerializerAssert.AreEqual(_failureResponse, await _command.ExecuteAsync(_request));
 
     Verifiable(
-      hasRightsCalls: Times.Never(),
-      hasAnyRightCalls: Times.Once(),
+      hasRightsCalls: Times.Once(),
+      hasAnyRightCalls: Times.Never(),
       responseCreatorCalls: Times.Once(),
       validatorCalls: Times.Never(),
       mapperCalls: Times.Never(),
@@ -175,8 +175,8 @@ public class CreateContractSubjectCommandTests
     SerializerAssert.AreEqual(_failureResponse, await _command.ExecuteAsync(_request));
 
     Verifiable(
-      hasRightsCalls: Times.Never(),
-      hasAnyRightCalls: Times.Once(),
+      hasRightsCalls: Times.Once(),
+      hasAnyRightCalls: Times.Never(),
       responseCreatorCalls: Times.Once(),
       validatorCalls: Times.Once(),
       mapperCalls: Times.Never(),
