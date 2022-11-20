@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.ContractSubject
 
     public async Task<OperationResultResponse<bool>> ExecuteAsync(Guid contractSubjectId, JsonPatchDocument<EditContractSubjectRequest> request)
     {
-      if (!await _accessValidator.HasAnyRightAsync(Rights.AddEditRemoveCompanyData, Rights.AddEditRemoveCompanies))
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData, Rights.AddEditRemoveCompanies))
       {
         return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.Forbidden);
       }
