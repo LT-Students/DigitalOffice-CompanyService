@@ -31,7 +31,8 @@ public class CreateContractSubjectCommandTests
   private DbContractSubject _dbContractSubject;
 
   private void Verifiable(
-    Times accessValidatorCalls,
+    Times hasRightsCalls,
+    Times hasAnyRightCalls,
     Times responseCreatorCalls,
     Times validatorCalls,
     Times mapperCalls,
@@ -39,7 +40,11 @@ public class CreateContractSubjectCommandTests
   {
     _mocker.Verify<IAccessValidator, Task<bool>>(
       x => x.HasRightsAsync(It.IsAny<int[]>()),
-      accessValidatorCalls);
+      hasRightsCalls);
+
+    _mocker.Verify<IAccessValidator, Task<bool>>(
+      x => x.HasAnyRightAsync(It.IsAny<int[]>()),
+      hasAnyRightCalls);
 
     _mocker.Verify<IResponseCreator, OperationResultResponse<Guid?>>(
       x => x.CreateFailureResponse<Guid?>(It.IsAny<HttpStatusCode>(), It.IsAny<List<string>>()),
@@ -100,6 +105,10 @@ public class CreateContractSubjectCommandTests
       .ReturnsAsync(true);
 
     _mocker
+      .Setup<IAccessValidator, Task<bool>>(x => x.HasAnyRightAsync(It.IsAny<int[]>()))
+      .ReturnsAsync(true);
+
+    _mocker
       .Setup<IResponseCreator, OperationResultResponse<Guid?>>(
         x => x.CreateFailureResponse<Guid?>(It.IsAny<HttpStatusCode>(), It.IsAny<List<string>>()))
       .Returns(_failureResponse);
@@ -107,7 +116,7 @@ public class CreateContractSubjectCommandTests
     _mocker
       .Setup<ICreateContractSubjectRequestValidator, Task<ValidationResult>>(
         x => x.ValidateAsync(It.IsAny<CreateContractSubjectRequest>(), default))
-      .ReturnsAsync(new ValidationResult() { });
+      .ReturnsAsync(new ValidationResult());
 
     _mocker
       .Setup<IDbContractSubjectMapper, DbContractSubject>(x => x.Map(It.IsAny<CreateContractSubjectRequest>()))
@@ -129,7 +138,8 @@ public class CreateContractSubjectCommandTests
     SerializerAssert.AreEqual(_successResponse, await _command.ExecuteAsync(_request));
 
     Verifiable(
-      accessValidatorCalls: Times.Exactly(2),
+      hasRightsCalls: Times.Once(),
+      hasAnyRightCalls: Times.Never(),
       responseCreatorCalls: Times.Never(),
       validatorCalls: Times.Once(),
       mapperCalls: Times.Once(),
@@ -146,7 +156,8 @@ public class CreateContractSubjectCommandTests
     SerializerAssert.AreEqual(_failureResponse, await _command.ExecuteAsync(_request));
 
     Verifiable(
-      accessValidatorCalls: Times.Once(),
+      hasRightsCalls: Times.Once(),
+      hasAnyRightCalls: Times.Never(),
       responseCreatorCalls: Times.Once(),
       validatorCalls: Times.Never(),
       mapperCalls: Times.Never(),
@@ -159,12 +170,13 @@ public class CreateContractSubjectCommandTests
     _mocker
       .Setup<ICreateContractSubjectRequestValidator, Task<ValidationResult>>(
       x => x.ValidateAsync(It.IsAny<CreateContractSubjectRequest>(), default))
-      .ReturnsAsync(new ValidationResult(new List<ValidationFailure>() { new ValidationFailure("_", "Error") }));
+      .ReturnsAsync(new ValidationResult(new List<ValidationFailure> { new("_", "Error") }));
 
     SerializerAssert.AreEqual(_failureResponse, await _command.ExecuteAsync(_request));
 
     Verifiable(
-      accessValidatorCalls: Times.Exactly(2),
+      hasRightsCalls: Times.Once(),
+      hasAnyRightCalls: Times.Never(),
       responseCreatorCalls: Times.Once(),
       validatorCalls: Times.Once(),
       mapperCalls: Times.Never(),
