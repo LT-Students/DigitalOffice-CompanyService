@@ -19,28 +19,27 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.Company
     private readonly ICompanyRepository _repository;
     private readonly ICompanyResponseMapper _mapper;
     private readonly IOfficeService _officeService;
-    private readonly IResponseCreator _reponseCreator;
+    private readonly IResponseCreator _responseCreator;
 
     public GetCompanyCommand(
       ICompanyRepository repository,
       ICompanyResponseMapper mapper,
       IOfficeService officeService,
-      IResponseCreator reponseCreator)
+      IResponseCreator responseCreator)
     {
       _repository = repository;
       _mapper = mapper;
       _officeService = officeService;
-      _reponseCreator = reponseCreator;
+      _responseCreator = responseCreator;
     }
 
     public async Task<OperationResultResponse<CompanyResponse>> ExecuteAsync(GetCompanyFilter filter)
     {
-
       DbCompany company = await _repository.GetAsync();
 
       if (company is null)
       {
-        return _reponseCreator.CreateFailureResponse<CompanyResponse>(HttpStatusCode.NotFound);
+        return _responseCreator.CreateFailureResponse<CompanyResponse>(HttpStatusCode.NotFound);
       }
 
       OperationResultResponse<CompanyResponse> response = new();

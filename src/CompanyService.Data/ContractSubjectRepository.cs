@@ -66,7 +66,7 @@ namespace LT.DigitalOffice.CompanyService.Data.Interfaces
         return default;
       }
 
-      IQueryable<DbContractSubject> contractSubjectQuery = _provider.ContractSubjects.AsQueryable();
+      IQueryable<DbContractSubject> contractSubjectQuery = _provider.ContractSubjects.AsNoTracking();
 
       if (filter.IsActive.HasValue)
       {

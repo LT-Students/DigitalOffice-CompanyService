@@ -47,7 +47,7 @@ namespace LT.DigitalOffice.CompanyService.Business.Commands.CompanyUser
       Guid userId,
       JsonPatchDocument<EditCompanyUserRequest> request)
     {
-      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveUsers))
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveCompanyData))
       {
         return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.Forbidden);
       }

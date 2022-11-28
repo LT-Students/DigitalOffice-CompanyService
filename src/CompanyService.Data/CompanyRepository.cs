@@ -49,16 +49,14 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public Task<List<DbCompany>> GetAsync(IGetCompaniesRequest request)
     {
-      IQueryable<DbCompany> query = _provider.Companies.AsQueryable();
+      IQueryable<DbCompany> query = _provider.Companies;
 
       if (request.UsersIds is not null && request.UsersIds.Any())
       {
-        query = query.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)));
+        query = query.Where(d => d.IsActive && d.Users.Any(du => request.UsersIds.Contains(du.UserId)))
+          .Include(d => d.Users.Where(du => du.IsActive && request.UsersIds.Contains(du.UserId)))
+          .ThenInclude(u => u.ContractSubject);
       }
-
-      query = query
-        .Include(d => d.Users.Where(du => du.IsActive))
-        .ThenInclude(u => u.ContractSubject);
 
       return query.ToListAsync();
     }
@@ -96,7 +94,7 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public Task<bool> DoesNameExistAsync(string name)
     {
-      return _provider.Companies.AnyAsync(x => string.Equals(x.Name.ToLower(), name.ToLower()));
+      return _provider.Companies.AnyAsync(x => x.Name == name);
     }
   }
 }

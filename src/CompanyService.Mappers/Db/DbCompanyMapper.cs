@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DigitalOffice.Kernel.ImageSupport.Helpers.Interfaces;
 using LT.DigitalOffice.CompanyService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.CompanyService.Models.Db;
 using LT.DigitalOffice.CompanyService.Models.Dto.Requests;
 using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.Kernel.ImageSupport.Helpers.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.CompanyService.Mappers.Db
@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.CompanyService.Mappers.Db
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IImageResizeHelper _imageResizeHelper;
-    
+
     public DbCompanyMapper(
       IHttpContextAccessor httpContextAccessor,
       IImageResizeHelper imageResizeHelper)

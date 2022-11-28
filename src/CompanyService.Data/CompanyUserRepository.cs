@@ -61,14 +61,6 @@ namespace LT.DigitalOffice.CompanyService.Data
         .FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
     }
 
-    public Task<List<DbCompanyUser>> GetAsync(List<Guid> userIds)
-    {
-      return _provider.CompaniesUsers
-        .Include(cu => cu.Company)
-        .Where(u => userIds.Contains(u.UserId) && u.IsActive)
-        .ToListAsync();
-    }
-
     public async Task<Guid?> ActivateAsync(IActivateUserPublish request)
     {
       DbCompanyUser user = await _provider.CompaniesUsers.FirstOrDefaultAsync(u => u.UserId == request.UserId && !u.IsActive);
@@ -108,7 +100,9 @@ namespace LT.DigitalOffice.CompanyService.Data
 
     public async Task<bool> RemoveContractSubjectAsync(Guid contractSubjectId)
     {
-      List<DbCompanyUser> dbUsers = await _provider.CompaniesUsers.Where(x => x.ContractSubjectId == contractSubjectId).ToListAsync();
+      List<DbCompanyUser> dbUsers = await _provider.CompaniesUsers
+        .Where(x => x.ContractSubjectId == contractSubjectId)
+        .ToListAsync();
 
       foreach (DbCompanyUser user in dbUsers)
       {
